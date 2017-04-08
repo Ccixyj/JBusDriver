@@ -1,9 +1,10 @@
 package jbusdriver.me.jbusdriver
 
 import io.reactivex.Flowable
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subscribers.ResourceSubscriber
 import org.junit.Test
-
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -16,26 +17,28 @@ class ExampleUnitTest {
     @Test
     @Throws(Exception::class)
     fun addition_isCorrect() {
-        Flowable.range(1, 3).subscribeWith(object : ResourceSubscriber<Int>() {
+        listOf(300, 100, 400, 600).map { Flowable.just(it).delay(it.toLong(), TimeUnit.MILLISECONDS, Schedulers.computation()) }.let { Flowable.concat(it) }
+                .subscribeWith(object : ResourceSubscriber<Int>() {
 
-            override fun onStart() {
-                super.onStart()
-                println("OnSubscribe start")
-                println("OnSubscribe end")
-            }
+                    override fun onStart() {
+                        super.onStart()
+                        println("OnSubscribe start")
+                        println("OnSubscribe end")
+                    }
 
-            override fun onNext(v: Int?) {
-                println(v)
-                if (v ==2) dispose()
-            }
+                    override fun onNext(v: Int?) {
+                        println(v)
+                        if (v == 5) dispose()
+                    }
 
-            override fun onError(e: Throwable) {
-                e.printStackTrace()
-            }
+                    override fun onError(e: Throwable) {
+                        e.printStackTrace()
+                    }
 
-            override fun onComplete() {
-                println("Done")
-            }
-        })
+                    override fun onComplete() {
+                        println("Done")
+                    }
+                })
+
     }
 }

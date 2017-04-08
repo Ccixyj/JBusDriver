@@ -1,28 +1,24 @@
 package me.jbusdriver.ui.activity
 
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
-import android.view.View
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
-
 import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.common.AppBaseActivity
+import me.jbusdriver.mvp.MainContract
+import me.jbusdriver.mvp.MainPrensterImpl
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppBaseActivity<MainContract.MainPrenster<MainContract.MainView>, MainContract.MainView>(), NavigationView.OnNavigationItemSelectedListener, MainContract.MainView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
-
 
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
         val toggle = ActionBarDrawerToggle(
@@ -85,4 +81,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer.closeDrawer(GravityCompat.START)
         return true
     }
+
+    override fun createPresenter() = MainPrensterImpl()
+
+    override val layoutId = R.layout.activity_main
+
+
 }

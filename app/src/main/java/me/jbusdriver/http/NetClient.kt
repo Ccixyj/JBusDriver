@@ -9,10 +9,12 @@ import okhttp3.*
 import okio.BufferedSink
 import okio.GzipSink
 import okio.Okio
+import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import java.io.File
 import java.io.IOException
+import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 
 
@@ -21,6 +23,7 @@ import java.util.concurrent.TimeUnit
  */
 object NetClient {
     private val TAG = "NetClient"
+    private const val USER_AGENT = "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 5 Build/LMY48B; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/43.0.2357.65 Mobile Safari/537.36"
     // private val gsonConverterFactory = GsonConverterFactory.create(AppContext.gson)
     private val rxJavaCallAdapterFactory = RxJava2CallAdapterFactory.create()
     private val REWRITE_CACHE_CONTROL_INTERCEPTOR by lazy {
@@ -35,16 +38,16 @@ object NetClient {
                 request = request.newBuilder().cacheControl(CacheControl.FORCE_CACHE).build()
             } else {
                 KLog.t(TAG).i("Has NetWork , go on")
+                request = request.newBuilder().header("User-Agent", USER_AGENT).build()
             }
 
             val response = chain.proceed(request)
             if (netWorkConection) {
                 //有网的时候读接口上的@Headers里的配置，你可以在这里进行统一的设置
                 //@Headers("Cache-Control: max-age=640000")
-                val cacheControl = request.cacheControl().toString()
-                KLog.t(TAG).i("cacheControl:" + cacheControl)
+                val cacheControl =
                 response.newBuilder().removeHeader("Pragma")// 清除头信息，因为服务器如果不支持，会返回一些干扰信息，不清除下面无法生效
-                        .header("Cache-Control", cacheControl).build()
+                        .header("Cache-Control", request.cacheControl().toString()).build()
             } else {
                 val maxStale = 60 * 60 * 24 * 7 //一周
                 response.newBuilder().removeHeader("Pragma").header("Cache-Control", "public, only-if-cached, max-stale=" + maxStale).build()
@@ -53,8 +56,14 @@ object NetClient {
         }
     }
 
-    private fun getRetrofit(baseUrl: String) = Retrofit.Builder().client(okHttpClient).baseUrl(baseUrl)
-            // .addConverterFactory(gsonConverterFactory)
+    fun getRetrofit(baseUrl: String) = Retrofit.Builder().client(okHttpClient).baseUrl(baseUrl)
+            .addConverterFactory(object : Converter.Factory() {
+                override fun responseBodyConverter(type: Type?, annotations: Array<out Annotation>?, retrofit: Retrofit?): Converter<ResponseBody, *> {
+                     return Converter<ResponseBody, String> { it.string() }
+                }
+
+
+            })
             .addCallAdapterFactory(rxJavaCallAdapterFactory).build()
 
     //endregion
