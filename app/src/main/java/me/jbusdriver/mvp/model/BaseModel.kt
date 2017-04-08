@@ -1,0 +1,17 @@
+package me.jbusdriver.mvp.model
+
+import io.reactivex.Flowable
+
+/**
+ * Created by Administrator on 2017/4/8.
+ */
+interface BaseModel<in T, R> {
+    //默认请求q
+    fun requestFor(t: T): Flowable<R> {
+        return Flowable.empty()
+    }
+    fun requestForCache(t: T): Flowable<R> //默认请求
+    fun abortCache() {
+        TODO()
+    }
+}
