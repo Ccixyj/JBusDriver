@@ -1,18 +1,21 @@
-package me.jbusdriver.mvp
+package me.jbusdriver.mvp.presenter
 
 import android.support.v4.util.ArrayMap
+import android.widget.Toast
 import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import me.jbusdriver.common.AppContext
 import me.jbusdriver.common.C
 import me.jbusdriver.common.KLog
 import me.jbusdriver.http.JAVBusService
+import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.presenter.BasePresenterImpl
 import org.jsoup.Jsoup
 
-class MainPrensterImpl : BasePresenterImpl<MainContract.MainView>(), MainContract.MainPrenster<MainContract.MainView> {
+class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContract.MainPresenter {
 
     override fun onFirstLoad() {
         super.onFirstLoad()
@@ -21,6 +24,7 @@ class MainPrensterImpl : BasePresenterImpl<MainContract.MainView>(), MainContrac
 
     override fun loadFastJAVUrl() {
         KLog.d("load loadFastJAVUrl")
+        Toast.makeText(AppContext.instace, "load loadFastJAVUrl", Toast.LENGTH_LONG).show()
         val map: ArrayMap<Flowable<String>, String> = ArrayMap(3)
         JAVBusService.INSTANCE.get(JAVBusService.annonceurl)
                 .map { Jsoup.parse(it).select("a").map { it.attr("href") } }
@@ -36,7 +40,9 @@ class MainPrensterImpl : BasePresenterImpl<MainContract.MainView>(), MainContrac
                     }
                 }.firstOrError()
                 .subscribeOn(Schedulers.io())
-                .subscribeBy({ KLog.d("get fast it : ${it}") }, { KLog.e("error : $it") })
+                .subscribeBy({ KLog.d("get fast it : $it") }, { KLog.e("error : $it") })
                 .addTo(rxManager)
+
+
     }
 }

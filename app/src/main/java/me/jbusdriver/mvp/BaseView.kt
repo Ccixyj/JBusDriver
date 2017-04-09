@@ -28,7 +28,7 @@ interface BaseView {
     fun showError(e: Throwable?): Unit = TODO(" no impl")
 
     interface BaseListView : BaseView {
-        fun <T> showContents(datas: List<T>?)
+        fun  showContents(datas: List<*>?)
 
         fun loadComplete()
 

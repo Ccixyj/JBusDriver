@@ -19,6 +19,7 @@ open abstract class BaseActivity : AppCompatActivity() {
     private var destroyed = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        KLog.d("onCreate")
         super.onCreate(savedInstanceState)
         MobclickAgent.setDebugMode(jbusdriver.me.jbusdriver.BuildConfig.DEBUG)
         MobclickAgent.openActivityDurationTrack(BuildConfig.DEBUG)
@@ -26,15 +27,37 @@ open abstract class BaseActivity : AppCompatActivity() {
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        KLog.d("onStart")
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        KLog.d("onRestart")
+    }
 
     override fun onResume() {
         super.onResume()
-        MobclickAgent.onResume(this)
+        KLog.d("onResume")
     }
 
+    override fun onPostResume() {
+        super.onPostResume()
+        KLog.d("onPostResume")
+    }
+    override fun onPause() {
+        super.onPause()
+        KLog.d("onPause")
+    }
+    override fun onStop() {
+        super.onStop()
+        KLog.d("onStop")
+    }
 
     override fun onDestroy() {
         super.onDestroy()
+        KLog.d("onDestroy")
         destroyed = true
     }
 

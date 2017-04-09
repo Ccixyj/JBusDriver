@@ -1,5 +1,8 @@
 package me.jbusdriver.common
 
+import android.graphics.pdf.PdfDocument
+import android.support.v4.util.ArrayMap
+import android.util.SparseArray
 import com.orhanobut.logger.Logger
 import java.util.*
 
@@ -16,7 +19,7 @@ enum class SizeUnit {
     Auto
 }
 
-fun  Long.formatFileSize(unit: SizeUnit = SizeUnit.Auto): String {
+fun Long.formatFileSize(unit: SizeUnit = SizeUnit.Auto): String {
     var unit = unit
     if (this < 0) {
         return "未知大小"
@@ -48,6 +51,10 @@ fun  Long.formatFileSize(unit: SizeUnit = SizeUnit.Auto): String {
         SizeUnit.TB -> return String.format(Locale.US, "%.2fPB", this / TB)
         else -> return this.toString() + "B"
     }
-
 }
+
+/*array map*/
+
+fun <K, V> arrayMapof(vararg pairs: Pair<K, V>): ArrayMap<K, V> = ArrayMap<K,V>(pairs.size).apply { putAll(pairs) }
+fun <K, V> arrayMapof(): ArrayMap<K, V> = ArrayMap()
 

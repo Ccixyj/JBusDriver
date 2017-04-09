@@ -56,7 +56,7 @@ interface BasePresenter<V> {
 
 
     /**
-     * 加载更多的通用接口,presenter 继承 com.cfzx.mvp.presenter.AbstractRefreshLoadMorePresenterImpl，并实现view的loadComplete方法
+     * 加载更多的通用接口,presenter 继承 me.jbusdriver.mvp.presenter.AbstractRefreshLoadMorePresenterImpl，并实现view的loadComplete方法
      */
     interface LoadMorePresenter {
         /**

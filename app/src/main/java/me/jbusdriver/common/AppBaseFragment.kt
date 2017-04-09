@@ -34,7 +34,6 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        KLog.d(TAG, TAG + "onCreate_save:" + savedInstanceState)
         mFirstStart = savedInstanceState == null || savedInstanceState.getBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE)
         mUniqueLoaderIdentifier = savedInstanceState?.getInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE) ?: AppBaseActivity.sViewCounter.incrementAndGet()
 
@@ -75,7 +74,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     }
 
     private fun doStart() {
-        KLog.t(TAG).d(" doStart", "mFirstStart :" + mFirstStart, "mUniqueLoaderIdentifier :" + mUniqueLoaderIdentifier, "instance = " + this)
+        KLog.t(TAG).d("doStart : mFirstStart :" + mFirstStart, "mUniqueLoaderIdentifier :" + mUniqueLoaderIdentifier, "instance = " + this)
         mBasePresenter!!.onViewAttached(this as V)
         mBasePresenter!!.onStart(mFirstStart)
         if (mFirstStart || mViewReCreate) {
@@ -129,7 +128,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
 
     protected fun onInvisible() {}
 
-    protected abstract fun initData()
+    protected fun initData() {}
 
 
     override fun onPause() {
