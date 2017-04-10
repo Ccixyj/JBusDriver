@@ -6,9 +6,9 @@ package me.jbusdriver.mvp.bean
 
 data class PageItem(val page: Int = 0, val url: String = "")
 
-data class Page(val activePage: PageItem = PageItem(), val nextPage: PageItem = PageItem())
+data class PageInfo(val activePage: PageItem = PageItem(), val nextPage: PageItem = PageItem())
 
-val Page.hasNext
+val PageInfo.hasNext
     inline get() = activePage.page < nextPage.page
 
 data class Movie(

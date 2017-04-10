@@ -1,8 +1,11 @@
 package me.jbusdriver.common
 
-import android.graphics.pdf.PdfDocument
+import android.content.Context
 import android.support.v4.util.ArrayMap
-import android.util.SparseArray
+import android.util.DisplayMetrics
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.orhanobut.logger.Logger
 import java.util.*
 
@@ -55,6 +58,29 @@ fun Long.formatFileSize(unit: SizeUnit = SizeUnit.Auto): String {
 
 /*array map*/
 
-fun <K, V> arrayMapof(vararg pairs: Pair<K, V>): ArrayMap<K, V> = ArrayMap<K,V>(pairs.size).apply { putAll(pairs) }
+fun <K, V> arrayMapof(vararg pairs: Pair<K, V>): ArrayMap<K, V> = ArrayMap<K, V>(pairs.size).apply { putAll(pairs) }
 fun <K, V> arrayMapof(): ArrayMap<K, V> = ArrayMap()
 
+
+/*Context*/
+val Context.inflater: LayoutInflater
+    get() = LayoutInflater.from(this)
+
+val Context.displayMetrics: DisplayMetrics
+    get() = resources.displayMetrics
+
+
+fun Context.dpToPx(dp: Float): Int {
+    return (dp * this.displayMetrics.density + 0.5).toInt()
+}
+
+fun Context.pxToDp(px: Float): Int {
+    return (px / this.displayMetrics.density + 0.5).toInt()
+}
+
+private fun inflateView(context: Context, layoutResId: Int, parent: ViewGroup?,
+                        attachToRoot: Boolean): View =
+        LayoutInflater.from(context).inflate(layoutResId, parent, attachToRoot)
+
+fun Context.inflate(layoutResId: Int, parent: ViewGroup? = null, attachToRoot: Boolean = false): View =
+        inflateView(this, layoutResId, parent, attachToRoot)

@@ -12,7 +12,6 @@ import me.jbusdriver.common.C
 import me.jbusdriver.common.KLog
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.MainContract
-import me.jbusdriver.mvp.presenter.BasePresenterImpl
 import org.jsoup.Jsoup
 
 class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContract.MainPresenter {

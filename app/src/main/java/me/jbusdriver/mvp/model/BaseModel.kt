@@ -10,7 +10,8 @@ interface BaseModel<in T, R> {
     fun requestFor(t: T): Flowable<R> {
         return Flowable.empty()
     }
-    fun requestForCache(t: T): Flowable<R> //默认请求
+    fun requestFromCache(t: T): Flowable<R> //默认请求
+
     fun abortCache() {
         TODO()
     }

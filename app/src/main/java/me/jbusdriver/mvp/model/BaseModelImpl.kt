@@ -8,7 +8,7 @@ class BaseModelImpl<in T, R> : BaseModel<T, R> {
         return super.requestFor(t)
     }
 
-    override fun requestForCache(t: T): Flowable<R> {
+    override fun requestFromCache(t: T): Flowable<R> {
         return Flowable.empty()
     }
 }

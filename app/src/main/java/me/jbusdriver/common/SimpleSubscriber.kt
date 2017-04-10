@@ -9,12 +9,13 @@ import org.reactivestreams.Subscription
 open class SimpleSubscriber<T> : DisposableSubscriber<T>() {
 
     private val TAG: String = this.javaClass.name
-    var sub : Subscription? = null
+    var sub: Subscription? = null
 
-   /* override fun onStart() {
+    override fun onStart() {
         super.onStart()
         KLog.t(TAG).i(": onStart >>")
-    }*/
+    }
+
     override fun onComplete() {
         KLog.t(TAG).i("onCompleted >> ")
         sub?.cancel()
@@ -22,7 +23,7 @@ open class SimpleSubscriber<T> : DisposableSubscriber<T>() {
 
     override fun onError(e: Throwable) {
         e.printStackTrace()
-        KLog.t(TAG).e( "onError >> code = info : ${e.message}")
+        KLog.t(TAG).e("onError >> code = info : ${e.message}")
     }
 
     override fun onNext(t: T) {

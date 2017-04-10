@@ -10,17 +10,17 @@ import retrofit2.http.Url
  */
 interface AvMoService {
 
-    @GET(AvMoService.LANGUAGE_NODE + "/page/{page}")
-    fun getHomePage(@Path("page") page: Int): Flowable<String>
+    @GET(AvMoService.LANGUAGE_NODE + "/pageInfo/{pageInfo}")
+    fun getHomePage(@Path("pageInfo") page: Int): Flowable<String>
 
-    @GET(AvMoService.LANGUAGE_NODE + "/released/page/{page}")
-    fun getReleased(@Path("page") page: Int): Flowable<String>
+    @GET(AvMoService.LANGUAGE_NODE + "/released/pageInfo/{pageInfo}")
+    fun getReleased(@Path("pageInfo") page: Int): Flowable<String>
 
-    @GET(AvMoService.LANGUAGE_NODE + "/popular/page/{page}")
-    fun getPopular(@Path("page") page: Int): Flowable<String>
+    @GET(AvMoService.LANGUAGE_NODE + "/popular/pageInfo/{pageInfo}")
+    fun getPopular(@Path("pageInfo") page: Int): Flowable<String>
 
-    @GET(AvMoService.LANGUAGE_NODE + "/actresses/page/{page}")
-    fun getActresses(@Path("page") page: Int): Flowable<String>
+    @GET(AvMoService.LANGUAGE_NODE + "/actresses/pageInfo/{pageInfo}")
+    fun getActresses(@Path("pageInfo") page: Int): Flowable<String>
 
     @GET(AvMoService.LANGUAGE_NODE + "/genre")
     fun genre(): Flowable<String>

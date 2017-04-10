@@ -1,61 +1,41 @@
 package me.jbusdriver.ui.fragment
 
-import android.view.View
+import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-import io.reactivex.Flowable
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
-import me.jbusdriver.common.AppBaseFragment
+import kotlinx.android.synthetic.main.layout_swipe_recycle.*
+import me.jbusdriver.common.AppBaseRecycleFragment
 import me.jbusdriver.mvp.JapanMovieContract
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.presenter.JapanMoviePresenterImpl
 
 /**
- * Created by Administrator on 2017/4/9.
+ * Created by Administraor on 2017/4/9.
  */
-class JapanMovieFragment : AppBaseFragment<JapanMovieContract.JapanMoviePresenter, JapanMovieContract.JapanMovieView>(), JapanMovieContract.JapanMovieView {
+class JapanMovieFragment : AppBaseRecycleFragment<JapanMovieContract.JapanMoviePresenter, JapanMovieContract.JapanMovieView, Movie>(), JapanMovieContract.JapanMovieView {
     override fun createPresenter() = JapanMoviePresenterImpl()
 
     override val layoutId: Int = R.layout.layout_swipe_recycle
 
-    val adapter = object : BaseQuickAdapter<Movie, BaseViewHolder>(0, mutableListOf<Movie>()) {
-        override fun convert(helper: BaseViewHolder, item: Movie) {
-
+    override val swipeView: SwipeRefreshLayout  by lazy { sr_refresh }
+    override val recycleView: RecyclerView by lazy { rv_recycle }
+    override val layoutManager: RecyclerView.LayoutManager  by lazy { LinearLayoutManager(viewContext) }
+    override val adapter: BaseQuickAdapter<Movie, in BaseViewHolder> = object : BaseQuickAdapter<Movie, BaseViewHolder>(android.R.layout.simple_list_item_1) {
+        override fun convert(helper: BaseViewHolder?, item: Movie?) {
+            helper?.setText(android.R.id.text1, item?.title)
         }
     }
 
-    override fun initWidget(rootView: View) {
-        adapter.setOnLoadMoreListener({
-            mBasePresenter?.onLoadMore()
-        }, rv_recycle)
-    }
 
     /*================================================*/
 
 
-    override fun showContents(datas: List<*>?) {
-        adapter.setNewData(datas as MutableList<Movie>?)
-        adapter.loadMoreComplete()
-    }
-
-    override fun loadComplete() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun getRequestParams(page: Int): Flowable<String> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun enableRefresh(b: Boolean) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun resetList() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     companion object {
         fun newInstance() = JapanMovieFragment()
     }
+
 }

@@ -51,7 +51,9 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
             }
         } ?: run {
             if (!mFirstStart) mViewReCreate = true
-            rootViewWeakRef = WeakReference(inflater!!.inflate(layoutId, container, false))
+            inflater?.inflate(layoutId, container, false)?.let {
+                rootViewWeakRef = WeakReference(it)
+            }
         }
         if (savedInstanceState != null)
             onRestartInstance(savedInstanceState)
