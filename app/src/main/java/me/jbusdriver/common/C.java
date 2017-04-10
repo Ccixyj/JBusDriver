@@ -11,6 +11,7 @@ public class C {
     }
 
     public static class Cache {
+        public static final String BUS_URLS = "bus_urls";
         public static final String Home = "home";
     }
 }

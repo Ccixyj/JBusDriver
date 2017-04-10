@@ -12,7 +12,4 @@ interface BaseModel<in T, R> {
     }
     fun requestFromCache(t: T): Flowable<R> //默认请求
 
-    fun abortCache() {
-        TODO()
-    }
 }
