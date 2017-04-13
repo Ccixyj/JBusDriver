@@ -26,10 +26,10 @@ class AllJapanMoviePresenterImpl : AbstractRefreshLoadMorePresenterImpl<AllJapan
                     imageUrl = element.select("img").attr("src"),
                     code = element.select("date").first().text(),
                     date = element.select("date").getOrNull(1)?.text() ?: "",
+                    detail = element.attr("href"),
                     tags = element.select(".item-tag").first().children().map { it.text() }
             )
         }
-
     }
 
 }
