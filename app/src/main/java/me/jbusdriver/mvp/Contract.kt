@@ -15,7 +15,7 @@ interface MainContract {
 
 }
 
-interface JapanMovieContract{
-    interface JapanMovieView:BaseView.BaseListWithRefreshView
-    interface JapanMoviePresenter : BasePresenter.BaseRefreshLoadMorePresenter<JapanMovieView>
+interface AllJapanMovieContract {
+    interface AllJapanMovieView :BaseView.BaseListWithRefreshView
+    interface AllJapanMoviePresenter : BasePresenter.BaseRefreshLoadMorePresenter<AllJapanMovieView>
 }

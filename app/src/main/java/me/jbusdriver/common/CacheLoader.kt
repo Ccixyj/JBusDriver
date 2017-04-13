@@ -1,10 +1,13 @@
 package com.cfzx.utils
 
 import android.support.v4.util.LruCache
+import io.reactivex.Flowable
+import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.common.ACache
 import me.jbusdriver.common.AppContext
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.formatFileSize
+import java.util.concurrent.TimeUnit
 
 object CacheLoader {
     private val TAG = "CacheLoader"
@@ -36,5 +39,28 @@ object CacheLoader {
     @JvmStatic val acache: ACache  by lazy {
         ACache.get(AppContext.instace)
     }
+
+    /*============================cache====================================*/
+    fun cacheLruAndDisk(pair: Pair<String, Any>, seconds: Int = Int.MAX_VALUE) = with(AppContext.gson.toJson(pair.second)) {
+        lru.put(pair.first, this)
+        acache.put(pair.first, this, seconds)
+    }
+
+    fun cacheLru(pair: Pair<String, Any>) = lru.put(pair.first, AppContext.gson.toJson(pair.second))
+    fun cacheDisk(pair: Pair<String, Any>, seconds: Int = Int.MAX_VALUE) = acache.put(pair.first, AppContext.gson.toJson(pair.second), seconds)
+
+
+    /*============================cache to flowable====================================*/
+    fun fromLruAsync(key: String): Flowable<String> = Flowable.interval(0, 300, TimeUnit.MILLISECONDS, Schedulers.io()).flatMap {
+        lru[key]?.let { Flowable.just(it) } ?: Flowable.empty()
+    }.timeout(35, TimeUnit.SECONDS, Flowable.empty()).take(1).subscribeOn(Schedulers.io())
+
+    fun fromDiskAsync(key: String, add2Lru: Boolean = true): Flowable<String> = Flowable.interval(0, 300, TimeUnit.MILLISECONDS, Schedulers.io()).flatMap {
+        acache.getAsString(key)?.let { Flowable.just(it) } ?: Flowable.empty()
+    }.timeout(35, TimeUnit.SECONDS, Flowable.empty()).take(1).doOnNext { if (add2Lru) lru.put(key, it) }.subscribeOn(Schedulers.io())
+
+
+    fun justLru(key: String) = Flowable.just(lru[key]).filter { it != null }
+    fun justDisk(key: String, add2Lru: Boolean = true) = Flowable.just(acache.getAsString(key)).filter { it != null }
 
 }

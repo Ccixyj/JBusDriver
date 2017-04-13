@@ -9,15 +9,15 @@ import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.common.AppBaseRecycleFragment
-import me.jbusdriver.mvp.JapanMovieContract
+import me.jbusdriver.mvp.AllJapanMovieContract
 import me.jbusdriver.mvp.bean.Movie
-import me.jbusdriver.mvp.presenter.JapanMoviePresenterImpl
+import me.jbusdriver.mvp.presenter.AllJapanMoviePresenterImpl
 
 /**
  * Created by Administraor on 2017/4/9.
  */
-class JapanMovieFragment : AppBaseRecycleFragment<JapanMovieContract.JapanMoviePresenter, JapanMovieContract.JapanMovieView, Movie>(), JapanMovieContract.JapanMovieView {
-    override fun createPresenter() = JapanMoviePresenterImpl()
+class AllJapanMovieFragment : AppBaseRecycleFragment<AllJapanMovieContract.AllJapanMoviePresenter, AllJapanMovieContract.AllJapanMovieView, Movie>(), AllJapanMovieContract.AllJapanMovieView {
+    override fun createPresenter() = AllJapanMoviePresenterImpl()
 
     override val layoutId: Int = R.layout.layout_swipe_recycle
 
@@ -35,7 +35,7 @@ class JapanMovieFragment : AppBaseRecycleFragment<JapanMovieContract.JapanMovieP
 
 
     companion object {
-        fun newInstance() = JapanMovieFragment()
+        fun newInstance() = AllJapanMovieFragment()
     }
 
 }

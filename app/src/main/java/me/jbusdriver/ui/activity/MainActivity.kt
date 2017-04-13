@@ -14,7 +14,7 @@ import me.jbusdriver.common.AppBaseActivity
 import me.jbusdriver.common.KLog
 import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.presenter.MainPresenterImpl
-import me.jbusdriver.ui.fragment.JapanMovieFragment
+import me.jbusdriver.ui.fragment.AllJapanMovieFragment
 
 class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.MainView>(), NavigationView.OnNavigationItemSelectedListener, MainContract.MainView {
 
@@ -73,12 +73,12 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         val id = item.itemId
         KLog.d("onNavigationItemSelected $item ")
         val fragment = fragments.get(id) ?: (when (id) {
-            R.id.movie_ma -> JapanMovieFragment.newInstance()
-            R.id.movie_no_ma -> JapanMovieFragment.newInstance()
-            R.id.nav_slideshow -> JapanMovieFragment.newInstance()
-            R.id.nav_manage -> JapanMovieFragment.newInstance()
-            R.id.nav_share -> JapanMovieFragment.newInstance()
-            R.id.nav_send -> JapanMovieFragment.newInstance()
+            R.id.movie_ma -> AllJapanMovieFragment.newInstance()
+            R.id.movie_no_ma -> AllJapanMovieFragment.newInstance()
+            R.id.nav_slideshow -> AllJapanMovieFragment.newInstance()
+            R.id.nav_manage -> AllJapanMovieFragment.newInstance()
+            R.id.nav_share -> AllJapanMovieFragment.newInstance()
+            R.id.nav_send -> AllJapanMovieFragment.newInstance()
             else -> error("no matched fragment")
         }.apply { fragments.put(id, this) })
         //

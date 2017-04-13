@@ -3,10 +3,13 @@ package me.jbusdriver.mvp.presenter
 import com.cfzx.mvp.view.BaseView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import me.jbusdriver.common.KLog
+import me.jbusdriver.common.SchedulersCompat
 import me.jbusdriver.common.SimpleSubscriber
 import me.jbusdriver.mvp.bean.PageInfo
-import me.jbusdriver.mvp.bean.PageItem
 import me.jbusdriver.mvp.bean.hasNext
+import me.jbusdriver.mvp.model.BaseModel
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 
 /**
  * Created by Administrator on 2016/9/6 0006.
@@ -15,6 +18,9 @@ import me.jbusdriver.mvp.bean.hasNext
 abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRefreshView> : BasePresenterImpl<V>(), BasePresenter.BaseRefreshLoadMorePresenter<V> {
 
     protected var pageInfo = PageInfo()
+
+    abstract val model: BaseModel<Int, String>
+
     override fun onFirstLoad() {
         loadData4Page(1)//首次加载 可以从内存中读取
     }
@@ -22,7 +28,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
 
     override fun onLoadMore() {
         KLog.d("onLoadMore :" + hasLoadNext())
-        if (hasLoadNext()) loadData4Page(pageInfo.nextPage.page)
+        if (hasLoadNext()) loadData4Page(pageInfo.nextPage)
         else mView?.loadMoreEnd()
     }
 
@@ -32,16 +38,38 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
         loadData4Page(1)
     }
 
+    override fun loadData4Page(page: Int) {
+        (if (page == 1) model.requestFromCache(page)
+        else model.requestFor(page)).map {
+            with(Jsoup.parse(it)) {
+                pageInfo = parsePage(this)
+                stringMap(this)
+            }
+
+        }
+                .compose(SchedulersCompat.io()).subscribe(DefaultSubscriber(page))
+
+    }
+
+    fun parsePage(pageDoc: Document): PageInfo {
+        with(pageDoc) {
+            return PageInfo(select(".pagination .active > a").attr("href").split("/").lastOrNull()?.toIntOrNull() ?: 0,
+                    select(".pagination .active ~ li >a").attr("href").split("/").lastOrNull()?.toIntOrNull() ?: 0 )
+        }
+    }
+
+    abstract fun stringMap(str: Document): List<Any>
+
     /**
      * 加载列表默认实现的订阅者.
      * 实现@AbstractRefreshLoadMorePresenterImpl 可直接使用该类.
      */
-    protected open inner class DefaultSubscriber<T>(val pageIndex: Int) : SimpleSubscriber<List<T>>() {
+    protected open inner class DefaultSubscriber(val pageIndex: Int) : SimpleSubscriber<List<Any>>() {
 
         override fun onStart() {
             AndroidSchedulers.mainThread().scheduleDirect {
                 (pageIndex == 1).let {
-                   if (it) mView?.enableLoadMore(false) else mView?.enableRefresh(false)
+                    if (it) mView?.enableLoadMore(false) else mView?.enableRefresh(false)
                 }
                 if (pageIndex == 1) mView?.showLoading()
             }
@@ -57,9 +85,9 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
             (pageIndex == 1).let {
                 if (it) mView?.enableLoadMore(true) else mView?.enableRefresh(true)
             }
-            if (pageIndex != pageInfo.activePage.page) {
+            if (pageIndex != pageInfo.activePage) {
                 KLog.w("page $pageIndex is mess : $pageInfo")
-                pageInfo = pageInfo.copy(PageItem(pageIndex, pageInfo.activePage.url))
+                pageInfo = pageInfo.copy(pageIndex)
             }
 
         }
@@ -69,13 +97,13 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
             mView?.dismissLoading()
             mView?.loadMoreFail()
             mView?.showError(e)
-            if (pageIndex != pageInfo.activePage.page) {
+            if (pageIndex != pageInfo.activePage) {
                 KLog.w("page $pageIndex is mess : $pageInfo")
-                pageInfo = pageInfo.copy(PageItem(pageIndex, pageInfo.activePage.url))
+                pageInfo = pageInfo.copy(pageIndex)
             }
         }
 
-        override fun onNext(t: List<T>) {
+        override fun onNext(t: List<Any>) {
             super.onNext(t)
             if (pageIndex == 1) {
                 mView?.resetList()
