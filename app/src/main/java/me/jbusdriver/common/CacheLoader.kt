@@ -67,4 +67,21 @@ object CacheLoader {
     fun justLru(key: String) = Flowable.just(lru[key].apply { KLog.d("justLru : $key ,$this") }).filter { it != null }
     fun justDisk(key: String, add2Lru: Boolean = true) = Flowable.just(acache.getAsString(key).apply { KLog.d("justDisk : $key add lru $add2Lru,$this") }).filter { it != null }
 
+    /*===============================remove cache=====================================*/
+    fun removeCacheLike(vararg keys: String, isRegex: Boolean = false) {
+        Schedulers.computation().createWorker().schedule {
+            lru.snapshot().keys.let {
+                cacheCopyKeys ->
+                keys.forEach { removeKey ->
+                    val filterAction: (String) -> Boolean = { s -> if (isRegex) s.contains(removeKey.toRegex()) else s.contains(removeKey) }
+                    cacheCopyKeys.filter(filterAction).forEach {
+                        KLog.d("removeCacheLike : $it")
+                        cacheCopyKeys.remove(it); lru.remove(it);acache.remove(it)
+                    }
+                }
+            }
+
+        }
+    }
+
 }

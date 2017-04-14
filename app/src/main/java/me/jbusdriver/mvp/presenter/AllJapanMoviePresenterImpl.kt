@@ -34,4 +34,9 @@ class AllJapanMoviePresenterImpl : AbstractRefreshLoadMorePresenterImpl<AllJapan
         }
     }
 
+    override fun onRefresh() {
+        CacheLoader.removeCacheLike(C.Cache.Home,isRegex = false)
+        super.onRefresh()
+    }
+
 }
