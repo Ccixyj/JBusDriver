@@ -5,19 +5,33 @@
         <item
             android:id="@+id/movie_ma"
             android:icon="@drawable/ic_movie_ma_24dp"
-            android:title="有码" />
+            android:title="有碼" />
         <item
             android:id="@+id/movie_no_ma"
             android:icon="@drawable/ic_movie_no_ma_24dp"
-            android:title="无码" />
+            android:title="無碼" />
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:title="有碼類別" />
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:title="無碼類別" />
+
+        <item
+            android:icon="@drawable/ic_menu_manage"
+            android:title="有碼女優"/>
+
+        <item
+            android:icon="@drawable/ic_menu_manage"
+            android:title="無碼女優"/>
+        <item
+            android:icon="@drawable/ic_menu_manage"
+            android:title="歐美"/>
+        <item
+            android:icon="@drawable/ic_menu_manage"
+            android:title="高清"/>
     </group>
 
 

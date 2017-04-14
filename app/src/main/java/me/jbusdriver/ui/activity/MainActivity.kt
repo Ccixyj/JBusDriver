@@ -14,6 +14,7 @@ import me.jbusdriver.common.AppBaseActivity
 import me.jbusdriver.common.KLog
 import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.presenter.MainPresenterImpl
+import me.jbusdriver.ui.data.DataSourceType
 import me.jbusdriver.ui.fragment.AllJapanMovieFragment
 
 class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.MainView>(), NavigationView.OnNavigationItemSelectedListener, MainContract.MainView {
@@ -94,10 +95,5 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
     override fun createPresenter() = MainPresenterImpl()
 
     override val layoutId = R.layout.activity_main
-
-    companion object{
-
-
-    }
 
 }

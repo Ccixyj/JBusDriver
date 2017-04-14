@@ -27,7 +27,7 @@ class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContra
     override fun initUrls() {
         if (CacheLoader.lru.get(C.Cache.BUS_URLS).isNullOrBlank() && isFirstStart) {
             KLog.d("load initUrls")
-            //内存在没有地址时
+            //内存在没有地址时 ,先从disk获取缓存的,没有则从网络下载
             val urlsFromDisk = CacheLoader.justDisk(C.Cache.BUS_URLS).map { AppContext.gson.fromJson<ArrayMap<String, String>>(it) }
             val urlsFromNet = JAVBusService.INSTANCE.get(JAVBusService.annonceurl).map {
                 source ->
@@ -70,9 +70,11 @@ class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContra
                     .subscribeOn(Schedulers.io())
                     .subscribeBy({
                         KLog.d("get fast it : $it")
+                        //把数据放入内存
                         CacheLoader.lru.put(C.Cache.Home, it.second)
                     }, {
                         KLog.e("error : $it")
+                        //如果失败尝试清空缓存,这样将直接从网络获取
                         CacheLoader.acache.clear()
                     })
                     .addTo(rxManager)
