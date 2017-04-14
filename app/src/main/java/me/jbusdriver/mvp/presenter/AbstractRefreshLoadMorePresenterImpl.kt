@@ -27,7 +27,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
 
 
     override fun onLoadMore() {
-        KLog.d("onLoadMore :" + hasLoadNext())
+        KLog.d("onLoadMore :${hasLoadNext()} ; page :$pageInfo")
         if (hasLoadNext()) loadData4Page(pageInfo.nextPage)
         else mView?.loadMoreEnd()
     }
@@ -45,16 +45,14 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
                 pageInfo = parsePage(this)
                 stringMap(this)
             }
-
-        }
-                .compose(SchedulersCompat.io()).subscribe(DefaultSubscriber(page))
+        }.compose(SchedulersCompat.io()).subscribe(DefaultSubscriber(page))
 
     }
 
     fun parsePage(pageDoc: Document): PageInfo {
         with(pageDoc) {
             return PageInfo(select(".pagination .active > a").attr("href").split("/").lastOrNull()?.toIntOrNull() ?: 0,
-                    select(".pagination .active ~ li >a").attr("href").split("/").lastOrNull()?.toIntOrNull() ?: 0 )
+                    select(".pagination .active ~ li >a").attr("href").split("/").lastOrNull()?.toIntOrNull() ?: 0)
         }
     }
 
@@ -97,10 +95,11 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
             mView?.dismissLoading()
             mView?.loadMoreFail()
             mView?.showError(e)
-            if (pageIndex != pageInfo.activePage) {
-                KLog.w("page $pageIndex is mess : $pageInfo")
-                pageInfo = pageInfo.copy(pageIndex)
+            //page 重置成前一页
+            (pageIndex == 1).let {
+                if (it) mView?.enableLoadMore(true) else mView?.enableRefresh(true)
             }
+            pageInfo = PageInfo(pageIndex-1,pageIndex)
         }
 
         override fun onNext(t: List<Any>) {

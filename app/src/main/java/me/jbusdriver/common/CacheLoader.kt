@@ -41,26 +41,30 @@ object CacheLoader {
     }
 
     /*============================cache====================================*/
-    fun cacheLruAndDisk(pair: Pair<String, Any>, seconds: Int = Int.MAX_VALUE) = with(AppContext.gson.toJson(pair.second)) {
+    fun cacheLruAndDisk(pair: Pair<String, Any>, seconds: Int? = null) = with(AppContext.gson.toJson(pair.second)) {
         lru.put(pair.first, this)
-        acache.put(pair.first, this, seconds)
+        seconds?.let { acache.put(pair.first, AppContext.gson.toJson(pair.second), seconds) } ?: acache.put(pair.first, AppContext.gson.toJson(pair.second))
     }
 
     fun cacheLru(pair: Pair<String, Any>) = lru.put(pair.first, AppContext.gson.toJson(pair.second))
-    fun cacheDisk(pair: Pair<String, Any>, seconds: Int = Int.MAX_VALUE) = acache.put(pair.first, AppContext.gson.toJson(pair.second), seconds)
+    fun cacheDisk(pair: Pair<String, Any>, seconds: Int? = null) = seconds?.let { acache.put(pair.first, AppContext.gson.toJson(pair.second), seconds) } ?: acache.put(pair.first, AppContext.gson.toJson(pair.second))
 
 
     /*============================cache to flowable====================================*/
     fun fromLruAsync(key: String): Flowable<String> = Flowable.interval(0, 300, TimeUnit.MILLISECONDS, Schedulers.io()).flatMap {
-        lru[key]?.let { Flowable.just(it) } ?: Flowable.empty()
+        val v = lru[key]
+        KLog.d("fromLruAsync : $key ,$v")
+        v?.let { Flowable.just(it) } ?: Flowable.empty()
     }.timeout(35, TimeUnit.SECONDS, Flowable.empty()).take(1).subscribeOn(Schedulers.io())
 
     fun fromDiskAsync(key: String, add2Lru: Boolean = true): Flowable<String> = Flowable.interval(0, 300, TimeUnit.MILLISECONDS, Schedulers.io()).flatMap {
-        acache.getAsString(key)?.let { Flowable.just(it) } ?: Flowable.empty()
+        val v = acache.getAsString(key)
+        KLog.d("fromDiskAsync : $key ,$v")
+        v?.let { Flowable.just(it) } ?: Flowable.empty()
     }.timeout(35, TimeUnit.SECONDS, Flowable.empty()).take(1).doOnNext { if (add2Lru) lru.put(key, it) }.subscribeOn(Schedulers.io())
 
 
-    fun justLru(key: String) = Flowable.just(lru[key]).filter { it != null }
-    fun justDisk(key: String, add2Lru: Boolean = true) = Flowable.just(acache.getAsString(key)).filter { it != null }
+    fun justLru(key: String) = Flowable.just(lru[key].apply { KLog.d("justLru : $key ,$this") }).filter { it != null }
+    fun justDisk(key: String, add2Lru: Boolean = true) = Flowable.just(acache.getAsString(key).apply { KLog.d("justDisk : $key add lru $add2Lru,$this") }).filter { it != null }
 
 }
