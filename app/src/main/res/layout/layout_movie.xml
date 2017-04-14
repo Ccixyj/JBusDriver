@@ -69,12 +69,11 @@
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/tv_movie_date"
                 android:layout_below="@id/tv_movie_title"
-                android:gravity="left|end"
+                android:gravity="right"
                 android:layout_alignLeft="@id/tv_movie_title"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignStart="@id/tv_movie_title"
-                android:layout_marginBottom="8dp"
                 android:orientation="horizontal"
                 />
 
