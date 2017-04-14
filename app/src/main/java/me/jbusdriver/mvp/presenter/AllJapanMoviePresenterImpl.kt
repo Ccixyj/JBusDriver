@@ -13,8 +13,9 @@ import org.jsoup.nodes.Document
 
 class AllJapanMoviePresenterImpl : AbstractRefreshLoadMorePresenterImpl<AllJapanMovieView>(), AllJapanMovieContract.AllJapanMoviePresenter {
 
+    private val loadFromNet = { page: Int -> me.jbusdriver.http.JAVBusService.INSTANCE.getHomePage(page) }
 
-    override val model: BaseModel<Int, String> = object : AbstractBaseModel<Int, String>({ me.jbusdriver.http.JAVBusService.INSTANCE.getHomePage(it) }) {
+    override val model: BaseModel<Int, String> = object : AbstractBaseModel<Int, String>(loadFromNet) {
         override fun requestFromCache(t: Int): Flowable<String> {
             return Flowable.concat(CacheLoader.fromLruAsync(C.Cache.Home), requestFor(t)).firstOrError().toFlowable()
         }
@@ -22,7 +23,7 @@ class AllJapanMoviePresenterImpl : AbstractRefreshLoadMorePresenterImpl<AllJapan
 
 
     override fun stringMap(str: Document): List<Any> {
-        return str.select(".movie-box").map {  element ->
+        return str.select(".movie-box").map { element ->
             KLog.d(element)
             Movie(title = element.select("img").attr("title"),
                     imageUrl = element.select("img").attr("src"),
@@ -35,7 +36,7 @@ class AllJapanMoviePresenterImpl : AbstractRefreshLoadMorePresenterImpl<AllJapan
     }
 
     override fun onRefresh() {
-        CacheLoader.removeCacheLike(C.Cache.Home,isRegex = false)
+        CacheLoader.removeCacheLike(C.Cache.Home, isRegex = false)
         super.onRefresh()
     }
 

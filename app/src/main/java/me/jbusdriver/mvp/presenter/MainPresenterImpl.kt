@@ -1,57 +1,80 @@
 package me.jbusdriver.mvp.presenter
 
+import android.support.v4.util.ArrayMap
 import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
+import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import me.jbusdriver.common.C
-import me.jbusdriver.common.KLog
+import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
-import me.jbusdriver.http.JAVBusService.Companion.fastUrl
+import me.jbusdriver.http.JAVBusService.Companion.defaultFastUrl
 import me.jbusdriver.mvp.MainContract
+import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.Jsoup
 
 class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContract.MainPresenter {
 
-    val urls = mutableListOf<String>()
-
+    var urls = arrayMapof<String, String>()
 
     override fun onFirstLoad() {
         super.onFirstLoad()
-        loadFastJAVUrl()
+        initUrls()
     }
 
-    override fun loadFastJAVUrl() {
-        if (CacheLoader.lru.get(C.Cache.BUS_URLS).isNullOrBlank() && isFirstStart) {
-            KLog.d("load loadFastJAVUrl")
-            //内存在没有地址时
-            JAVBusService.INSTANCE.get(JAVBusService.annonceurl)
-                    .map { Jsoup.parse(it).select("a").map { it.attr("href") } }
 
-                    /* .doOnNext {
-                         CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to it)
-                         JAVBusService.INSTANCE = JAVBusService.createService(it.first())
-                     }*/
+    override fun initUrls() {
+        if (CacheLoader.lru.get(C.Cache.BUS_URLS).isNullOrBlank() && isFirstStart) {
+            KLog.d("load initUrls")
+            //内存在没有地址时
+            val urlsFromDisk = CacheLoader.justDisk(C.Cache.BUS_URLS).map { AppContext.gson.fromJson<ArrayMap<String, String>>(it) }
+            val urlsFromNet = JAVBusService.INSTANCE.get(JAVBusService.annonceurl).map {
+                source ->
+                arrayMapof<String, String>().apply {
+                    put(DataSourceType.CENSORED.key, Jsoup.parse(source).select("a").map { it.attr("href") }.toJsonString())
+                    /*   put(C.Key.UNCENSORED, Jsoup.parse(source).select("a").map { it.attr("href") })
+                       put(C.Key.GENRE, Jsoup.parse(source).select("a").map { it.attr("href") })
+                       put(C.Key.UNCENSORED_GENRE, Jsoup.parse(source).select("a").map { it.attr("href") })
+                       put(C.Key.ACTRESSES, Jsoup.parse(source).select("a").map { it.attr("href") })
+                       put(C.Key.UNCENSORED_ACTRESSES, Jsoup.parse(source).select("a").map { it.attr("href") })
+                       put(C.Key.XYZ, Jsoup.parse(source).select("a").map { it.attr("href") })
+                       put(C.Key.GENRE_HD, Jsoup.parse(source).select("a").map { it.attr("href") })*/
+                }
+            }
+            Flowable.concat(urlsFromDisk, urlsFromNet)
+                    .firstElement().toFlowable()
                     .flatMap {
-                        if (it.isEmpty()) Flowable.empty()
-                        else {
-                            urls.addAll(it)
-                            Flowable.merge(it.map { url ->
-                                JAVBusService.INSTANCE.get(url).map {
-                                    CacheLoader.lru.put(C.Cache.Home, it)
-                                    url
-                                }
-                            })
+                        urls = it
+                        val mapFlow = AppContext.gson.fromJson<List<String>>(it[DataSourceType.CENSORED.key] ?: "").map {
+                            Flowable.combineLatest(Flowable.just<String>(it), JAVBusService.INSTANCE.get(it),
+                                    BiFunction<String, String, Pair<String, String>> { t1, t2 -> t1 to t2 })
                         }
-                    }.firstOrError()
+                        Flowable.mergeDelayError(mapFlow)
+                    }
+                    .firstOrError()
                     .doAfterSuccess {
-                        fastUrl = it
-                        KLog.d("urls : $urls")
-                        CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to urls)
+                        val ds = DataSourceType.values().takeLast(DataSourceType.values().size - 1).toMutableList()
+                        defaultFastUrl = it.first
+                        Jsoup.parse(it.second).select(".overlay a ").forEach {
+                            box ->
+                            ds.find { box.attr("href").endsWith(it.key) }?.let {
+                                ds.remove(it)
+                                KLog.i("initUrls find $it , ${box.attr("href")}")
+                                urls.put(it.key, box.attr("href"))
+                            }
+                        }
+                        KLog.d("urls : ${it.first} , all urls : $urls")
+                        CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to urls, ACache.TIME_DAY)
                     }
                     .subscribeOn(Schedulers.io())
-                    .subscribeBy({ KLog.d("get fast it : $it") }, { KLog.e("error : $it") })
+                    .subscribeBy({
+                        KLog.d("get fast it : $it")
+                        CacheLoader.lru.put(C.Cache.Home, it.second)
+                    }, {
+                        KLog.e("error : $it")
+                        CacheLoader.acache.clear()
+                    })
                     .addTo(rxManager)
 
         }

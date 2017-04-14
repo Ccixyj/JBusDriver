@@ -76,12 +76,14 @@ class AllJapanMovieFragment : AppBaseRecycleFragment<AllJapanMovieContract.AllJa
     override fun initWidget(rootView: View) {
         super.initWidget(rootView)
         recycleView.addOnItemTouchListener(object : SimpleClickListener() {
+
+
+
             override fun onItemClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int) {
                 Toast.makeText(viewContext, "" + Integer.toString(position), Toast.LENGTH_SHORT).show()
             }
 
             override fun onItemLongClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int) {
-                Toast.makeText(viewContext, "" + Integer.toString(position), Toast.LENGTH_SHORT).show()
             }
 
             override fun onItemChildClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int) {

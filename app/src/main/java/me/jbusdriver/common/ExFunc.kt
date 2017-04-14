@@ -6,6 +6,8 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.orhanobut.logger.Logger
 import java.util.*
 
@@ -84,3 +86,11 @@ private fun inflateView(context: Context, layoutResId: Int, parent: ViewGroup?,
 
 fun Context.inflate(layoutResId: Int, parent: ViewGroup? = null, attachToRoot: Boolean = false): View =
         inflateView(this, layoutResId, parent, attachToRoot)
+
+/*gson*/
+inline fun <reified T> Gson.fromJson(json: String) = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
+//inline fun <reified T> Gson.fromJson(json: JsonElement) = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
+//inline fun <reified T> Gson.fromJson(json: Reader) = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
+//inline fun <reified T> Gson.fromJson(json: JsonReader) = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
+
+fun Any?.toJsonString() = AppContext.gson.toJson(this)

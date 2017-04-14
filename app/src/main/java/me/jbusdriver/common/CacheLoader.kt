@@ -51,21 +51,30 @@ object CacheLoader {
 
 
     /*============================cache to flowable====================================*/
-    fun fromLruAsync(key: String): Flowable<String> = Flowable.interval(0, 300, TimeUnit.MILLISECONDS, Schedulers.io()).flatMap {
+    fun fromLruAsync(key: String): Flowable<String> = Flowable.interval(0, 800, TimeUnit.MILLISECONDS, Schedulers.io()).flatMap {
         val v = lru[key]
         KLog.d("fromLruAsync : $key ,$v")
         v?.let { Flowable.just(it) } ?: Flowable.empty()
     }.timeout(35, TimeUnit.SECONDS, Flowable.empty()).take(1).subscribeOn(Schedulers.io())
 
-    fun fromDiskAsync(key: String, add2Lru: Boolean = true): Flowable<String> = Flowable.interval(0, 300, TimeUnit.MILLISECONDS, Schedulers.io()).flatMap {
+    fun fromDiskAsync(key: String, add2Lru: Boolean = true): Flowable<String> = Flowable.interval(0, 800, TimeUnit.MILLISECONDS, Schedulers.io()).flatMap {
         val v = acache.getAsString(key)
         KLog.d("fromDiskAsync : $key ,$v")
         v?.let { Flowable.just(it) } ?: Flowable.empty()
     }.timeout(35, TimeUnit.SECONDS, Flowable.empty()).take(1).doOnNext { if (add2Lru) lru.put(key, it) }.subscribeOn(Schedulers.io())
 
 
-    fun justLru(key: String) = Flowable.just(lru[key].apply { KLog.d("justLru : $key ,$this") }).filter { it != null }
-    fun justDisk(key: String, add2Lru: Boolean = true) = Flowable.just(acache.getAsString(key).apply { KLog.d("justDisk : $key add lru $add2Lru,$this") }).filter { it != null }
+    fun justLru(key: String): Flowable<String> {
+        val v = lru[key]
+        KLog.d("justLru : $key ,$v")
+        return v?.let {  Flowable.just(v)}  ?: Flowable.empty()
+    }
+
+    fun justDisk(key: String, add2Lru: Boolean = true): Flowable<String> {
+        val v = acache.getAsString(key)
+        KLog.d("justDisk : $key add lru $add2Lru,$v")
+        return v?.let {  Flowable.just(v)}  ?: Flowable.empty()
+    }
 
     /*===============================remove cache=====================================*/
     fun removeCacheLike(vararg keys: String, isRegex: Boolean = false) {

@@ -9,7 +9,7 @@ import me.jbusdriver.mvp.presenter.BasePresenter
 interface MainContract {
     interface MainView : BaseView
     interface MainPresenter : BasePresenter<MainView> {
-        fun loadFastJAVUrl()
+        fun initUrls()
     }
 
 

@@ -20,8 +20,8 @@ interface JAVBusService {
 
     companion object {
         const val annonceurl = "https://announce.javbus8.com/website.php"
-        var fastUrl = "https://www.javbus3.com"
-        var INSTANCE = createService(fastUrl)
+        var defaultFastUrl = "https://www.javbus3.com"
+        var INSTANCE = createService(defaultFastUrl)
 
         fun createService(url: String) = NetClient.getRetrofit(url).create(JAVBusService::class.java)!!
     }

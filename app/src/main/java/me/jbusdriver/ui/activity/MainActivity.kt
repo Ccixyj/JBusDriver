@@ -77,8 +77,6 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
             R.id.movie_no_ma -> AllJapanMovieFragment.newInstance()
             R.id.nav_slideshow -> AllJapanMovieFragment.newInstance()
             R.id.nav_manage -> AllJapanMovieFragment.newInstance()
-            R.id.nav_share -> AllJapanMovieFragment.newInstance()
-            R.id.nav_send -> AllJapanMovieFragment.newInstance()
             else -> error("no matched fragment")
         }.apply { fragments.put(id, this) })
         //
@@ -97,5 +95,9 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
     override val layoutId = R.layout.activity_main
 
+    companion object{
+
+
+    }
 
 }

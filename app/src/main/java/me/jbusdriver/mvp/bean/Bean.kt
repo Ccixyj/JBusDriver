@@ -1,5 +1,7 @@
 package me.jbusdriver.mvp.bean
 
+import com.chad.library.adapter.base.entity.MultiItemEntity
+
 /**
  * Created by Administrator on 2017/4/9.
  */
@@ -14,6 +16,10 @@ data class Movie(
         val imageUrl: String,
         val code: String, //番号
         val date: String, //日期
-        val detail:String,
+        val detail: String,
         val tags: List<String> = listOf()//标签
-)
+) : MultiItemEntity {
+    override fun getItemType(): Int = 0
+}
+
+
