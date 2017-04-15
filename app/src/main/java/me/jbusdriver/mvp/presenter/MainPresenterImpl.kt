@@ -29,7 +29,7 @@ class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContra
             KLog.d("load initUrls")
             //内存在没有地址时 ,先从disk获取缓存的,没有则从网络下载
             val urlsFromDisk = CacheLoader.justDisk(C.Cache.BUS_URLS).map { AppContext.gson.fromJson<ArrayMap<String, String>>(it) }
-            val urlsFromNet = JAVBusService.INSTANCE.get(JAVBusService.annonceurl).map {
+            val urlsFromNet = JAVBusService.INSTANCE.get(JAVBusService.announceUrl).map {
                 source ->
                 arrayMapof<String, String>().apply {
                     put(DataSourceType.CENSORED.key, Jsoup.parse(source).select("a").map { it.attr("href") }.toJsonString())
@@ -68,6 +68,7 @@ class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContra
                         CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to urls, ACache.TIME_DAY)
                     }
                     .subscribeOn(Schedulers.io())
+                    .retry(3)
                     .subscribeBy({
                         KLog.d("get fast it : $it")
                         //把数据放入内存

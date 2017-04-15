@@ -19,7 +19,7 @@ interface JAVBusService {
 
 
     companion object {
-        const val annonceurl = "https://announce.javbus8.com/website.php"
+        const val announceUrl = "https://announce.javbus8.com/website.php"
         var defaultFastUrl = "https://www.javbus3.com"
         var INSTANCE = createService(defaultFastUrl)
 

@@ -22,4 +22,7 @@ data class Movie(
     override fun getItemType(): Int = 0
 }
 
+val Movie.saveKey
+    inline get() = code + date
+
 
