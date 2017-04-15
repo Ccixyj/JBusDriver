@@ -24,6 +24,7 @@ import me.jbusdriver.common.dpToPx
 import me.jbusdriver.mvp.MovieListContract
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.presenter.MovieListPresenterImpl
+import me.jbusdriver.ui.data.DataSourceType
 
 
 /**
@@ -53,8 +54,8 @@ class MovieListFragment : AppBaseRecycleFragment<MovieListContract.MovieListPres
                     .setText(R.id.tv_movie_date, item.date)
                     .setText(R.id.tv_movie_code, item.code)
 
-            Glide.with(this@MovieListFragment).load(item.imageUrl).dontAnimate().placeholder(R.mipmap.ic_place_holder)
-                    .error(R.mipmap.ic_place_holder).centerCrop().into(helper.getView(R.id.iv_movie_img))
+            Glide.with(this@MovieListFragment).load(item.imageUrl).placeholder(R.drawable.ic_place_holder)
+                    .error(R.drawable.ic_place_holder).centerCrop().into(helper.getView(R.id.iv_movie_img))
 
 
             with(helper.getView<LinearLayout>(R.id.ll_movie_hot)) {
@@ -102,11 +103,11 @@ class MovieListFragment : AppBaseRecycleFragment<MovieListContract.MovieListPres
     }
 
     /*================================================*/
-    override val source: String by lazy { arguments.getString("source")  }
+    override val type by lazy { arguments.getSerializable("type") as? DataSourceType ?: DataSourceType.CENSORED }
 
     companion object {
-        fun newInstance(source: String) = MovieListFragment().apply {
-            arguments = Bundle().apply { putString("source", source) }
+        fun newInstance(type: DataSourceType) = MovieListFragment().apply {
+            arguments = Bundle().apply { putSerializable("type", type) }
         }
     }
 

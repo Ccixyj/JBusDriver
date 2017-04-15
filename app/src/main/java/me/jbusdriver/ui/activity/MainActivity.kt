@@ -1,5 +1,7 @@
 package me.jbusdriver.ui.activity
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -12,8 +14,6 @@ import android.view.MenuItem
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.AppBaseActivity
 import me.jbusdriver.common.KLog
-import me.jbusdriver.common.arrayMapof
-import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.presenter.MainPresenterImpl
 import me.jbusdriver.ui.data.DataSourceType
@@ -51,7 +51,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
         } else {
-            super.onBackPressed()
+            moveTaskToBack(false)
         }
     }
 
@@ -63,7 +63,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
+        // automatically handle clicks on the CENSORED/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         val id = item.itemId
 
@@ -81,10 +81,9 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         val id = item.itemId
         KLog.d("onNavigationItemSelected $item ")
         val fragment = fragments.get(id) ?: (when (id) {
-            R.id.movie_ma -> MovieListFragment.newInstance(urls[DataSourceType.CENSORED.key] ?: JAVBusService.defaultFastUrl)
-            R.id.movie_no_ma -> MovieListFragment.newInstance(urls[DataSourceType.UNCENSORED.key] ?: JAVBusService.defaultFastUrl)
-            R.id.nav_slideshow -> MovieListFragment.newInstance(urls[DataSourceType.GENRE.key] ?: JAVBusService.defaultFastUrl)
-            R.id.nav_manage -> MovieListFragment.newInstance(urls[DataSourceType.CENSORED.key] ?: JAVBusService.defaultFastUrl)
+            R.id.movie_ma -> MovieListFragment.newInstance(DataSourceType.CENSORED)
+            R.id.movie_no_ma -> MovieListFragment.newInstance(DataSourceType.UNCENSORED)
+
             else -> error("no matched fragment")
         }.apply { fragments.put(id, this) })
         //
@@ -103,5 +102,9 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
     override val layoutId = R.layout.activity_main
 
-    override var urls = arrayMapof<String, String>()
+    companion object {
+        fun start(current: Activity) {
+            current.startActivity(Intent(current, MainActivity::class.java))
+        }
+    }
 }

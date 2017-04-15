@@ -26,7 +26,7 @@ interface JAVBusService {
         var INSTANCE = getInstance(defaultFastUrl)
         fun getInstance(source: String): JAVBusService {
             KLog.d("instances : $JBusInstances")
-            //JBusInstances[source] 会出异常
+            //JBusInstances[type] 会出异常
             return JBusInstances.get(source) ?: createService(source).apply {
                 JBusInstances.put(source, this)
                 KLog.d("instances : $JBusInstances")

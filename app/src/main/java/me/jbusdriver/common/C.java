@@ -12,7 +12,7 @@ public class C {
         public static final String ANNOUNCEURL = "announceUrl"; //发布的网站
         public static final String BUS_URLS = "bus_urls"; //发布的网站
         public static final String USER_COLLECT = "user_collect"; //用户收藏数据
-        public static final String Home = DataSourceType.CENSORED.getKey(); //首页数据,缓存第一页
+        public static final String CENSORED = DataSourceType.CENSORED.getKey(); //首页数据,缓存第一页
 
     }
 

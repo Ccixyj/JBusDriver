@@ -1,29 +1,36 @@
 package me.jbusdriver.mvp.presenter
 
+import android.support.v4.util.ArrayMap
 import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
-import me.jbusdriver.common.C
-import me.jbusdriver.common.KLog
+import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.MovieListContract
 import me.jbusdriver.mvp.MovieListContract.MovieListView
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.model.AbstractBaseModel
 import me.jbusdriver.mvp.model.BaseModel
+import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.nodes.Document
 
 class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieListView>(), MovieListContract.MovieListPresenter {
 
-    private val service by lazy { mView?.source?.let { JAVBusService.getInstance(it) } ?: JAVBusService.INSTANCE }
+    val urls by lazy { CacheLoader.lru.get(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) } ?: arrayMapof() }
+    private val service by lazy {
+        mView?.let {
+            if (it.type != DataSourceType.CENSORED) JAVBusService.getInstance(urls.get(it.type.key) ?: JAVBusService.defaultFastUrl)
+            else JAVBusService.INSTANCE
+        } ?: JAVBusService.INSTANCE
+    }
     private val loadFromNet = { page: Int ->
         service.getHomePage(page).doOnNext {
-            if (page == 1) CacheLoader.lru.put(mView?.source ?: C.Cache.Home, it)
+            if (page == 1) CacheLoader.lru.put(mView?.type?.key ?: C.Cache.CENSORED, it)
         }
     }
 
     override val model: BaseModel<Int, String> = object : AbstractBaseModel<Int, String>(loadFromNet) {
         override fun requestFromCache(t: Int): Flowable<String> {
-            return Flowable.concat(CacheLoader.justLru(mView?.source ?: C.Cache.Home), requestFor(t)).firstOrError().toFlowable()
+            return Flowable.concat(CacheLoader.justLru(mView?.type?.key ?: C.Cache.CENSORED), requestFor(t)).firstOrError().toFlowable()
         }
     }
 
@@ -42,7 +49,7 @@ class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieListVie
     }
 
     override fun onRefresh() {
-        CacheLoader.removeCacheLike(mView?.source ?: C.Cache.Home, isRegex = false)
+        CacheLoader.removeCacheLike(mView?.type?.key ?: C.Cache.CENSORED, isRegex = false)
         super.onRefresh()
     }
 

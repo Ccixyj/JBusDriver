@@ -1,27 +1,20 @@
 package me.jbusdriver.mvp
 
-import android.support.v4.util.ArrayMap
 import com.cfzx.mvp.view.BaseView
 import me.jbusdriver.mvp.presenter.BasePresenter
+import me.jbusdriver.ui.data.DataSourceType
 
 /**
  * Created by Administrator on 2017/4/9.
  */
 interface MainContract {
-    interface MainView : BaseView{
-        var urls : ArrayMap<String, String>
-    }
-    interface MainPresenter : BasePresenter<MainView> {
-        fun initUrls()
-
-    }
-
-
+    interface MainView : BaseView
+    interface MainPresenter : BasePresenter<MainView>
 }
 
 interface MovieListContract {
     interface MovieListView : BaseView.BaseListWithRefreshView {
-        val source: String?
+        val type: DataSourceType
     }
 
     interface MovieListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<MovieListView>
