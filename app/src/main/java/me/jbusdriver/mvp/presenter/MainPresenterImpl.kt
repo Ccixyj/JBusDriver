@@ -38,19 +38,13 @@ class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContra
                         } ?: error("url is not valid")
                     }
                     .flatMap {
+                        KLog.d("announce url :$it")
                         JAVBusService.INSTANCE.get(it).addUserCase()
                     }
                     .map {
                         source ->
                         arrayMapof<String, String>().apply {
                             put(DataSourceType.CENSORED.key, Jsoup.parse(source).select("a").map { it.attr("href") }.toJsonString())
-                            /*   put(C.Key.UNCENSORED, Jsoup.parse(source).select("a").map { it.attr("href") })
-                               put(C.Key.GENRE, Jsoup.parse(source).select("a").map { it.attr("href") })
-                               put(C.Key.UNCENSORED_GENRE, Jsoup.parse(source).select("a").map { it.attr("href") })
-                               put(C.Key.ACTRESSES, Jsoup.parse(source).select("a").map { it.attr("href") })
-                               put(C.Key.UNCENSORED_ACTRESSES, Jsoup.parse(source).select("a").map { it.attr("href") })
-                               put(C.Key.XYZ, Jsoup.parse(source).select("a").map { it.attr("href") })
-                               put(C.Key.GENRE_HD, Jsoup.parse(source).select("a").map { it.attr("href") })*/
                         }
                     }
             Flowable.concat(urlsFromDisk, urlsFromNet)
@@ -90,7 +84,6 @@ class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContra
                         CacheLoader.acache.clear()
                     })
                     .addTo(rxManager)
-
         }
     }
 }
