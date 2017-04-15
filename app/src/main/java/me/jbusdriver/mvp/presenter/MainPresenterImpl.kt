@@ -18,8 +18,6 @@ import org.jsoup.Jsoup
 
 class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContract.MainPresenter {
 
-    var urls = arrayMapof<String, String>()
-
     override fun onFirstLoad() {
         super.onFirstLoad()
         initUrls()
@@ -50,7 +48,7 @@ class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContra
             Flowable.concat(urlsFromDisk, urlsFromNet)
                     .firstElement().toFlowable()
                     .flatMap {
-                        urls = it
+                        mView?.urls = it
                         val mapFlow = AppContext.gson.fromJson<List<String>>(it[DataSourceType.CENSORED.key] ?: "").map {
                             Flowable.combineLatest(Flowable.just<String>(it), JAVBusService.INSTANCE.get(it).addUserCase(),
                                     BiFunction<String, String, Pair<String, String>> { t1, t2 -> t1 to t2 })
@@ -66,11 +64,11 @@ class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContra
                             ds.find { box.attr("href").endsWith(it.key) }?.let {
                                 ds.remove(it)
                                 KLog.i("initUrls find $it , ${box.attr("href")}")
-                                urls.put(it.key, box.attr("href"))
+                                mView?.urls?.put(it.key, box.attr("href")+"/")
                             }
                         }
-                        KLog.d("urls : ${it.first} , all urls : $urls")
-                        CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to urls, ACache.TIME_DAY)
+                        KLog.d("urls : ${it.first} , all urls : ${mView?.urls}")
+                        CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to (mView?.urls ?: arrayMapof()), ACache.TIME_DAY)
                     }
                     .subscribeOn(Schedulers.io())
                     .retry(3)

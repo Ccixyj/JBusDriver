@@ -12,15 +12,17 @@ import android.view.MenuItem
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.AppBaseActivity
 import me.jbusdriver.common.KLog
+import me.jbusdriver.common.arrayMapof
+import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.presenter.MainPresenterImpl
 import me.jbusdriver.ui.data.DataSourceType
-import me.jbusdriver.ui.fragment.AllJapanMovieFragment
+import me.jbusdriver.ui.fragment.MovieListFragment
 
 class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.MainView>(), NavigationView.OnNavigationItemSelectedListener, MainContract.MainView {
 
-    val fragments = SparseArray<android.support.v4.app.Fragment>(6)
-
+    val fragments = SparseArray<android.support.v4.app.Fragment>(8)
+    val navigationView by lazy { findViewById(R.id.nav_view) as NavigationView }
     lateinit var selectMenu: MenuItem
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,9 +34,14 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         drawer.addDrawerListener(toggle)
         toggle.syncState()
         val menuId = savedInstanceState?.getInt("MenuSelectedItemId", R.id.movie_ma) ?: R.id.movie_ma
-        val navigationView = findViewById(R.id.nav_view) as NavigationView
+
         navigationView.setNavigationItemSelectedListener(this)
         selectMenu = navigationView.menu.findItem(menuId)
+
+    }
+
+    override fun onPostResume() {
+        super.onPostResume()
         navigationView.setCheckedItem(selectMenu.itemId)
         onNavigationItemSelected(selectMenu)
     }
@@ -74,14 +81,14 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         val id = item.itemId
         KLog.d("onNavigationItemSelected $item ")
         val fragment = fragments.get(id) ?: (when (id) {
-            R.id.movie_ma -> AllJapanMovieFragment.newInstance()
-            R.id.movie_no_ma -> AllJapanMovieFragment.newInstance()
-            R.id.nav_slideshow -> AllJapanMovieFragment.newInstance()
-            R.id.nav_manage -> AllJapanMovieFragment.newInstance()
+            R.id.movie_ma -> MovieListFragment.newInstance(urls[DataSourceType.CENSORED.key] ?: JAVBusService.defaultFastUrl)
+            R.id.movie_no_ma -> MovieListFragment.newInstance(urls[DataSourceType.UNCENSORED.key] ?: JAVBusService.defaultFastUrl)
+            R.id.nav_slideshow -> MovieListFragment.newInstance(urls[DataSourceType.GENRE.key] ?: JAVBusService.defaultFastUrl)
+            R.id.nav_manage -> MovieListFragment.newInstance(urls[DataSourceType.CENSORED.key] ?: JAVBusService.defaultFastUrl)
             else -> error("no matched fragment")
         }.apply { fragments.put(id, this) })
         //
-        supportFragmentManager.beginTransaction().replace(R.id.content_main,fragment,fragment::class.java.simpleName).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.content_main, fragment, fragment::class.java.simpleName).commit()
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
         drawer.closeDrawer(GravityCompat.START)
         return true
@@ -96,4 +103,5 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
     override val layoutId = R.layout.activity_main
 
+    override var urls = arrayMapof<String, String>()
 }

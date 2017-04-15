@@ -8,6 +8,7 @@ import com.orhanobut.logger.LogLevel
 import com.orhanobut.logger.Logger
 import com.umeng.analytics.MobclickAgent
 import jbusdriver.me.jbusdriver.BuildConfig
+import me.jbusdriver.http.JAVBusService
 
 /**
  * Created by Administrator on 2017/4/8.
@@ -28,7 +29,7 @@ class AppContext : Application() {
     }
 
 
-    companion object{
+    companion object {
         @JvmStatic lateinit var instace: AppContext
         @JvmStatic val gson = GsonBuilder().registerTypeAdapter(Int::class.java, JsonDeserializer<Int> { json, _, _ ->
             if (json.isJsonNull || json.asString.isEmpty()) {
@@ -40,5 +41,6 @@ class AppContext : Application() {
                 return@JsonDeserializer null
             }
         }).serializeNulls().create()
+        val JBusInstances by lazy { arrayMapof<String, JAVBusService>() }
     }
 }

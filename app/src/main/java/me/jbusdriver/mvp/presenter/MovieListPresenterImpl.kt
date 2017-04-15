@@ -4,20 +4,26 @@ import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
 import me.jbusdriver.common.C
 import me.jbusdriver.common.KLog
-import me.jbusdriver.mvp.AllJapanMovieContract
-import me.jbusdriver.mvp.AllJapanMovieContract.AllJapanMovieView
+import me.jbusdriver.http.JAVBusService
+import me.jbusdriver.mvp.MovieListContract
+import me.jbusdriver.mvp.MovieListContract.MovieListView
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.model.AbstractBaseModel
 import me.jbusdriver.mvp.model.BaseModel
 import org.jsoup.nodes.Document
 
-class AllJapanMoviePresenterImpl : AbstractRefreshLoadMorePresenterImpl<AllJapanMovieView>(), AllJapanMovieContract.AllJapanMoviePresenter {
+class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieListView>(), MovieListContract.MovieListPresenter {
 
-    private val loadFromNet = { page: Int -> me.jbusdriver.http.JAVBusService.INSTANCE.getHomePage(page) }
+    private val service by lazy { mView?.source?.let { JAVBusService.getInstance(it) } ?: JAVBusService.INSTANCE }
+    private val loadFromNet = { page: Int ->
+        service.getHomePage(page).doOnNext {
+            if (page == 1) CacheLoader.lru.put(mView?.source ?: C.Cache.Home, it)
+        }
+    }
 
     override val model: BaseModel<Int, String> = object : AbstractBaseModel<Int, String>(loadFromNet) {
         override fun requestFromCache(t: Int): Flowable<String> {
-            return Flowable.concat(CacheLoader.fromLruAsync(C.Cache.Home), requestFor(t)).firstOrError().toFlowable()
+            return Flowable.concat(CacheLoader.justLru(mView?.source ?: C.Cache.Home), requestFor(t)).firstOrError().toFlowable()
         }
     }
 
@@ -36,7 +42,7 @@ class AllJapanMoviePresenterImpl : AbstractRefreshLoadMorePresenterImpl<AllJapan
     }
 
     override fun onRefresh() {
-        CacheLoader.removeCacheLike(C.Cache.Home, isRegex = false)
+        CacheLoader.removeCacheLike(mView?.source ?: C.Cache.Home, isRegex = false)
         super.onRefresh()
     }
 

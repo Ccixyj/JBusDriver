@@ -1,6 +1,7 @@
 package me.jbusdriver.ui.fragment
 
 import android.graphics.drawable.GradientDrawable
+import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -20,16 +21,16 @@ import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.common.AppBaseRecycleFragment
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.dpToPx
-import me.jbusdriver.mvp.AllJapanMovieContract
+import me.jbusdriver.mvp.MovieListContract
 import me.jbusdriver.mvp.bean.Movie
-import me.jbusdriver.mvp.presenter.AllJapanMoviePresenterImpl
+import me.jbusdriver.mvp.presenter.MovieListPresenterImpl
 
 
 /**
  * Created by Administraor on 2017/4/9.
  */
-class AllJapanMovieFragment : AppBaseRecycleFragment<AllJapanMovieContract.AllJapanMoviePresenter, AllJapanMovieContract.AllJapanMovieView, Movie>(), AllJapanMovieContract.AllJapanMovieView {
-    override fun createPresenter() = AllJapanMoviePresenterImpl()
+class MovieListFragment : AppBaseRecycleFragment<MovieListContract.MovieListPresenter, MovieListContract.MovieListView, Movie>(), MovieListContract.MovieListView {
+    override fun createPresenter() = MovieListPresenterImpl()
 
     override val layoutId: Int = R.layout.layout_swipe_recycle
 
@@ -37,11 +38,11 @@ class AllJapanMovieFragment : AppBaseRecycleFragment<AllJapanMovieContract.AllJa
     override val recycleView: RecyclerView by lazy { rv_recycle }
     override val layoutManager: RecyclerView.LayoutManager  by lazy { LinearLayoutManager(viewContext) }
     override val adapter: BaseQuickAdapter<Movie, in BaseViewHolder> = object : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.layout_movie) {
-        val padding by lazy { this@AllJapanMovieFragment.viewContext.dpToPx(8f) }
+        val padding by lazy { this@MovieListFragment.viewContext.dpToPx(8f) }
         val colors = listOf(0xff2195f3.toInt(), 0xff4caf50.toInt(), 0xffff0030.toInt()) //蓝,绿,红
 
         val lp by lazy {
-            LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, this@AllJapanMovieFragment.viewContext.dpToPx(24f)).apply {
+            LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, this@MovieListFragment.viewContext.dpToPx(24f)).apply {
                 leftMargin = padding
                 gravity = Gravity.CENTER_VERTICAL
             }
@@ -52,7 +53,7 @@ class AllJapanMovieFragment : AppBaseRecycleFragment<AllJapanMovieContract.AllJa
                     .setText(R.id.tv_movie_date, item.date)
                     .setText(R.id.tv_movie_code, item.code)
 
-            Glide.with(this@AllJapanMovieFragment).load(item.imageUrl).dontAnimate().placeholder(R.mipmap.ic_place_holder)
+            Glide.with(this@MovieListFragment).load(item.imageUrl).dontAnimate().placeholder(R.mipmap.ic_place_holder)
                     .error(R.mipmap.ic_place_holder).centerCrop().into(helper.getView(R.id.iv_movie_img))
 
 
@@ -73,10 +74,13 @@ class AllJapanMovieFragment : AppBaseRecycleFragment<AllJapanMovieContract.AllJa
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
     override fun initWidget(rootView: View) {
         super.initWidget(rootView)
         recycleView.addOnItemTouchListener(object : SimpleClickListener() {
-
 
 
             override fun onItemClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int) {
@@ -98,10 +102,12 @@ class AllJapanMovieFragment : AppBaseRecycleFragment<AllJapanMovieContract.AllJa
     }
 
     /*================================================*/
-
+    override val source: String by lazy { arguments.getString("source")  }
 
     companion object {
-        fun newInstance() = AllJapanMovieFragment()
+        fun newInstance(source: String) = MovieListFragment().apply {
+            arguments = Bundle().apply { putString("source", source) }
+        }
     }
 
 }
