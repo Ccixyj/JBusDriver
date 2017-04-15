@@ -10,6 +10,7 @@ import retrofit2.http.Url
  */
 interface JAVBusService {
 
+
     //https://announce.javbus8.com/website.php
     @GET
     fun get(@Url url: String): Flowable<String>
@@ -19,10 +20,8 @@ interface JAVBusService {
 
 
     companion object {
-        const val announceUrl = "https://announce.javbus8.com/website.php"
         var defaultFastUrl = "https://www.javbus3.com"
         var INSTANCE = createService(defaultFastUrl)
-
         fun createService(url: String) = NetClient.getRetrofit(url).create(JAVBusService::class.java)!!
     }
 }

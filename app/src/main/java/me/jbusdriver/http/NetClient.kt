@@ -15,6 +15,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import java.io.File
 import java.io.IOException
 import java.lang.reflect.Type
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 
@@ -23,7 +24,7 @@ import java.util.concurrent.TimeUnit
  */
 object NetClient {
     private val TAG = "NetClient"
-    private const val USER_AGENT = "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 5 Build/LMY48B; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/43.0.2357.65 Mobile Safari/537.36"
+    const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36"
     // private val gsonConverterFactory = GsonConverterFactory.create(AppContext.gson)
     private val rxJavaCallAdapterFactory = RxJava2CallAdapterFactory.create()
     private val REWRITE_CACHE_CONTROL_INTERCEPTOR by lazy {
@@ -46,8 +47,8 @@ object NetClient {
                 //有网的时候读接口上的@Headers里的配置，你可以在这里进行统一的设置
                 //@Headers("Cache-Control: max-age=640000")
                 val cacheControl =
-                response.newBuilder().removeHeader("Pragma")// 清除头信息，因为服务器如果不支持，会返回一些干扰信息，不清除下面无法生效
-                        .header("Cache-Control", request.cacheControl().toString()).build()
+                        response.newBuilder().removeHeader("Pragma")// 清除头信息，因为服务器如果不支持，会返回一些干扰信息，不清除下面无法生效
+                                .header("Cache-Control", request.cacheControl().toString()).build()
             } else {
                 val maxStale = 60 * 60 * 24 * 7 //一周
                 response.newBuilder().removeHeader("Pragma").header("Cache-Control", "public, only-if-cached, max-stale=" + maxStale).build()
@@ -59,7 +60,7 @@ object NetClient {
     fun getRetrofit(baseUrl: String) = Retrofit.Builder().client(okHttpClient).baseUrl(baseUrl)
             .addConverterFactory(object : Converter.Factory() {
                 override fun responseBodyConverter(type: Type?, annotations: Array<out Annotation>?, retrofit: Retrofit?): Converter<ResponseBody, *> {
-                     return Converter<ResponseBody, String> { it.string() }
+                    return Converter<ResponseBody, String> { it.string() }
                 }
 
 
@@ -101,7 +102,18 @@ object NetClient {
                 .connectTimeout((15 * 1000).toLong(), TimeUnit.MILLISECONDS)
                 .cache(cache)
                 .addNetworkInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR)
+                .cookieJar(object : CookieJar {
+                    private val cookieStore = HashMap<HttpUrl, List<Cookie>>()
 
+                    override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
+                        cookieStore.put(url, cookies)
+                    }
+
+                    override fun loadForRequest(url: HttpUrl): List<Cookie> {
+                        val cookies = cookieStore[url]
+                        return cookies ?: ArrayList<Cookie>()
+                    }
+                })
         if (BuildConfig.DEBUG) {
             client.addInterceptor(LoggerInterceptor("OK_HTTP"))
         }

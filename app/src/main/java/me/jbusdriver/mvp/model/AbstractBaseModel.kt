@@ -1,16 +1,10 @@
 package me.jbusdriver.mvp.model
 
-import com.cfzx.mvp.usercase.UserCase
 import io.reactivex.Flowable
+import me.jbusdriver.common.addUserCase
 
-abstract class AbstractBaseModel<in T, R>(val op: (T) -> Flowable<R>) : BaseModel<T, R> {
+abstract class AbstractBaseModel<in P, R>(val op: (P) -> Flowable<R>) : BaseModel<P, R> {
 
-    override fun requestFor(t: T): Flowable<R> {
-        return object : UserCase<T, R>() {
-            override fun interActor(params: T): Flowable<R> {
-                return op.invoke(params)
-            }
-        }.request(t)
-    }
+    override fun requestFor(t: P): Flowable<R> = op.invoke(t).addUserCase()
 
 }

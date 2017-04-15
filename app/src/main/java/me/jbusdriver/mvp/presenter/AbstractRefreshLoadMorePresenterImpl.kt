@@ -2,6 +2,7 @@ package me.jbusdriver.mvp.presenter
 
 import com.cfzx.mvp.view.BaseView
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.addTo
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.SchedulersCompat
 import me.jbusdriver.common.SimpleSubscriber
@@ -45,7 +46,9 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
                 pageInfo = parsePage(this)
                 stringMap(this)
             }
-        }.compose(SchedulersCompat.io()).subscribe(DefaultSubscriber(page))
+        }.compose(SchedulersCompat.io())
+                .subscribeWith(DefaultSubscriber(page))
+                .addTo(rxManager)
 
     }
 
@@ -99,7 +102,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
             (pageIndex == 1).let {
                 if (it) mView?.enableLoadMore(true) else mView?.enableRefresh(true)
             }
-            pageInfo = PageInfo(pageIndex-1,pageIndex)
+            pageInfo = PageInfo(pageIndex - 1, pageIndex)
         }
 
         override fun onNext(t: List<Any>) {

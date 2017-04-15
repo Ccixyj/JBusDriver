@@ -9,7 +9,10 @@ import android.view.ViewGroup
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.orhanobut.logger.Logger
+import io.reactivex.Flowable
+import io.reactivex.schedulers.Schedulers
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by Administrator on 2017/4/8.
@@ -94,3 +97,9 @@ inline fun <reified T> Gson.fromJson(json: String) = this.fromJson<T>(json, obje
 //inline fun <reified T> Gson.fromJson(json: JsonReader) = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
 
 fun Any?.toJsonString() = AppContext.gson.toJson(this)
+
+/*http*/
+fun <R> Flowable<R>.addUserCase() =
+        this.timeout(30L, TimeUnit.SECONDS, Schedulers.io()) //超时
+                .subscribeOn(Schedulers.io())
+                .take(1)
