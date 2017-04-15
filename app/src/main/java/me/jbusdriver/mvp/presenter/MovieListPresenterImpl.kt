@@ -10,16 +10,14 @@ import me.jbusdriver.mvp.MovieListContract.MovieListView
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.model.AbstractBaseModel
 import me.jbusdriver.mvp.model.BaseModel
-import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.nodes.Document
 
 class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieListView>(), MovieListContract.MovieListPresenter {
 
-    val urls by lazy { CacheLoader.lru.get(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) } ?: arrayMapof() }
+    val urls by lazy { CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) } ?: arrayMapof() }
     private val service by lazy {
         mView?.let {
-            if (it.type != DataSourceType.CENSORED) JAVBusService.getInstance(urls.get(it.type.key) ?: JAVBusService.defaultFastUrl)
-            else JAVBusService.INSTANCE
+            JAVBusService.getInstance(urls.get(it.type.key) ?: JAVBusService.defaultFastUrl)
         } ?: JAVBusService.INSTANCE
     }
     private val loadFromNet = { page: Int ->
@@ -43,7 +41,7 @@ class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieListVie
                     code = element.select("date").first().text(),
                     date = element.select("date").getOrNull(1)?.text() ?: "",
                     detail = element.attr("href"),
-                    tags = element.select(".item-tag").first().children().map { it.text() }
+                    tags = element.select(".item-tag").firstOrNull()?.children()?.map { it.text() } ?: emptyList()
             )
         }
     }

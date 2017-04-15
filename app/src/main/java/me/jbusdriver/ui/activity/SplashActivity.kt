@@ -32,7 +32,7 @@ class SplashActivity : BaseActivity() {
     private fun init() {
         Observable.combineLatest<Boolean, ArrayMap<String, String>, Boolean>(RxPermissions(this).request(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                 initUrls(), BiFunction { t1, t2 -> t1 })
-                //.doOnError { CacheLoader.acache.clear() }
+                .doOnError { CacheLoader.acache.clear() }
                 .retry(3)
                 .subscribeBy(onNext = {
                     KLog.i("success")
@@ -82,17 +82,25 @@ class SplashActivity : BaseActivity() {
                     .map {
                         val ds = DataSourceType.values().takeLast(DataSourceType.values().size - 1).toMutableList()
                         JAVBusService.defaultFastUrl = it.first
-                        Jsoup.parse(it.second).select(".overlay a ").forEach {
+                        Jsoup.parse(it.second).select(".navbar-nav a").forEach {
                             box ->
                             ds.find { box.attr("href").endsWith(it.key) }?.let {
                                 ds.remove(it)
                                 urls.put(it.key, box.attr("href")?.let {
-                                    if (it.endsWith("/")) it else it +"/"
+                                    if (it.endsWith("/")) it else it + "/"
                                 })
                             }
                         }
                         urls.put(DataSourceType.CENSORED.key, it.first)
-                        KLog.i("urls : ${it.first} , all urls : $urls")
+                        urls.get(DataSourceType.XYZ.key)?.let {
+                            xyzUrl ->
+                            ds.map {
+                                if (it.key.contains("xyz")) {
+                                    urls.put(it.key, xyzUrl.removeSuffix(it.key) + it.key)
+                                }
+                            }
+                        }
+                        KLog.i("urls : ${it.first} , all urls : $urls , at last $ds")
                         CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to urls, ACache.TIME_DAY) //缓存所有的urls
                         KLog.i("get fast it : $it")
                         CacheLoader.lru.put(C.Cache.CENSORED, it.second)

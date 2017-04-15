@@ -51,7 +51,8 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
         } else {
-            moveTaskToBack(false)
+            super.onBackPressed()
+            //   moveTaskToBack(false)
         }
     }
 
@@ -80,16 +81,16 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         selectMenu = item
         val id = item.itemId
         KLog.d("onNavigationItemSelected $item ")
-        val fragment = fragments.get(id) ?: (when (id) {
+        val fragment = (when (id) {
             R.id.movie_ma -> MovieListFragment.newInstance(DataSourceType.CENSORED)
-            R.id.movie_no_ma -> MovieListFragment.newInstance(DataSourceType.UNCENSORED)
-
+            R.id.movie_uncensored -> MovieListFragment.newInstance(DataSourceType.UNCENSORED)
             else -> error("no matched fragment")
         }.apply { fragments.put(id, this) })
         //
         supportFragmentManager.beginTransaction().replace(R.id.content_main, fragment, fragment::class.java.simpleName).commit()
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
         drawer.closeDrawer(GravityCompat.START)
+        supportActionBar?.title = selectMenu.title
         return true
     }
 

@@ -1,38 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/nav_ma"
+        android:checkableBehavior="single"
+        android:menuCategory="alternative">
         <item
             android:id="@+id/movie_ma"
             android:icon="@drawable/ic_movie_ma_24dp"
             android:title="有碼" />
         <item
-            android:id="@+id/movie_no_ma"
+            android:id="@+id/movie_ma_genre"
+            android:icon="@drawable/ic_near_me_black_24dp"
+            android:title="有碼類別" />
+
+        <item
+            android:id="@+id/movie_ma_actress"
+            android:icon="@drawable/ic_insert_emoticon_black_24dp"
+            android:title="有碼女優"/>
+    </group>
+
+    <group
+        android:id="@+id/nav_uncensore"
+        android:checkableBehavior="single"
+        android:menuCategory="secondary">
+        <item
+            android:id="@+id/movie_uncensored"
             android:icon="@drawable/ic_movie_no_ma_24dp"
             android:title="無碼" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="有碼類別" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
+            android:id="@+id/movie_uncensored_genre"
+            android:icon="@drawable/ic_near_me_black_24dp"
             android:title="無碼類別" />
 
         <item
-            android:icon="@drawable/ic_menu_manage"
-            android:title="有碼女優"/>
-
-        <item
-            android:icon="@drawable/ic_menu_manage"
-            android:title="無碼女優"/>
-        <item
-            android:icon="@drawable/ic_menu_manage"
-            android:title="歐美"/>
-        <item
-            android:icon="@drawable/ic_menu_manage"
-            android:title="高清"/>
+            android:id="@+id/movie_uncensored_actress"
+            android:icon="@drawable/ic_insert_emoticon_black_24dp"
+            android:title="無有碼女優"/>
     </group>
 
+    <group
+        android:id="@+id/nav_xyz"
+        android:checkableBehavior="single" android:menuCategory="container">
+        <item
+            android:id="@+id/movie_xyz"
+            android:icon="@drawable/ic_public_black_24dp"
+            android:title="欧美" />
+        <item
+            android:id="@+id/movie_xyz_genre"
+            android:icon="@drawable/ic_near_me_black_24dp"
+            android:title="欧美類別" />
+
+        <item
+            android:id="@+id/movie_xyz_actress"
+            android:icon="@drawable/ic_insert_emoticon_black_24dp"
+            android:title="欧美演员"/>
+    </group>
+
+    <group
+        android:id="@+id/nav_other"
+        android:checkableBehavior="single" android:menuCategory="system">
+        <item
+            android:id="@+id/movie_hd"
+            android:icon="@drawable/ic_high_quality_black_24dp"
+            android:title="高清" />
+        <item
+            android:id="@+id/movie_sub"
+            android:icon="@drawable/ic_closed_caption_black_24dp"
+            android:title="字幕" />
+
+
+    </group>
 
 </menu>

@@ -20,6 +20,12 @@
         <item name="android:clickable">true</item>
         <item name="android:foreground">?attr/selectableItemBackground</item>
     </style>
+    <style name="AppTheme.Splash" parent="AppTheme.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+        <item name="android:windowActionBarOverlay">true</item>
+    </style>
+
+
     <style name="AppTheme.CardView" parent="AppTheme.Click">
         <item name="android:layout_marginBottom">@dimen/material_4dp</item>
         <item name="android:layout_marginLeft">@dimen/material_4dp</item>
