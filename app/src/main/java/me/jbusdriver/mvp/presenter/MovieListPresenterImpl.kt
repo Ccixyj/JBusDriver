@@ -3,7 +3,10 @@ package me.jbusdriver.mvp.presenter
 import android.support.v4.util.ArrayMap
 import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
-import me.jbusdriver.common.*
+import me.jbusdriver.common.AppContext
+import me.jbusdriver.common.C
+import me.jbusdriver.common.arrayMapof
+import me.jbusdriver.common.fromJson
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.MovieListContract
 import me.jbusdriver.mvp.MovieListContract.MovieListView
@@ -37,18 +40,7 @@ class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieListVie
     }
 
 
-    override fun stringMap(str: Document): List<Any> {
-        return str.select(".movie-box").map { element ->
-            KLog.d(element)
-            Movie(title = element.select("img").attr("title"),
-                    imageUrl = element.select("img").attr("src"),
-                    code = element.select("date").first().text(),
-                    date = element.select("date").getOrNull(1)?.text() ?: "",
-                    detailUrl = element.attr("href"),
-                    tags = element.select(".item-tag").firstOrNull()?.children()?.map { it.text() } ?: emptyList()
-            )
-        }
-    }
+    override fun stringMap(str: Document): List<Any> = Movie.loadFromDoc(str)
 
     override fun onRefresh() {
         CacheLoader.removeCacheLike(saveKey, isRegex = false)
