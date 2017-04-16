@@ -16,10 +16,12 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
     <style name="AppTheme.Click">
         <item name="android:clickable">true</item>
         <item name="android:foreground">?attr/selectableItemBackground</item>
     </style>
+
     <style name="AppTheme.Splash" parent="AppTheme.NoActionBar">
         <item name="android:windowBackground">@drawable/bg_splash</item>
         <item name="android:windowActionBarOverlay">true</item>

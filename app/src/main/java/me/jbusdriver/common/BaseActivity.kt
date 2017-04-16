@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.BuildConfig
 import android.support.v7.app.AppCompatActivity
+import android.view.MenuItem
 import com.umeng.analytics.MobclickAgent
 import io.reactivex.disposables.CompositeDisposable
 
@@ -59,6 +60,17 @@ open abstract class BaseActivity : AppCompatActivity() {
         super.onDestroy()
         KLog.d("onDestroy")
         destroyed = true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                return true
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     val isDestroyedCompatible: Boolean

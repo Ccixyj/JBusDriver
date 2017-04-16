@@ -34,16 +34,15 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         drawer.addDrawerListener(toggle)
         toggle.syncState()
         val menuId = savedInstanceState?.getInt("MenuSelectedItemId", R.id.movie_ma) ?: R.id.movie_ma
-
         navigationView.setNavigationItemSelectedListener(this)
         selectMenu = navigationView.menu.findItem(menuId)
-
+        navigationView.setCheckedItem(selectMenu.itemId)
+        onNavigationItemSelected(selectMenu)
     }
 
     override fun onPostResume() {
         super.onPostResume()
-        navigationView.setCheckedItem(selectMenu.itemId)
-        onNavigationItemSelected(selectMenu)
+
     }
 
     override fun onBackPressed() {

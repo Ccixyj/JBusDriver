@@ -24,6 +24,7 @@ import me.jbusdriver.common.dpToPx
 import me.jbusdriver.mvp.MovieListContract
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.presenter.MovieListPresenterImpl
+import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.data.DataSourceType
 
 
@@ -86,6 +87,7 @@ class MovieListFragment : AppBaseRecycleFragment<MovieListContract.MovieListPres
 
             override fun onItemClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int) {
                 Toast.makeText(viewContext, "" + Integer.toString(position), Toast.LENGTH_SHORT).show()
+                (adapter.data.getOrNull(position) as? Movie)?.let { MovieDetailActivity.start(activity,it) }
             }
 
             override fun onItemLongClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int) {

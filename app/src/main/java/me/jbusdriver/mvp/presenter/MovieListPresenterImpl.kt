@@ -17,7 +17,7 @@ class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieListVie
     val urls by lazy { CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) } ?: arrayMapof() }
     private val service by lazy {
         mView?.let {
-            JAVBusService.getInstance(urls.get(it.type.key) ?: JAVBusService.defaultFastUrl)
+            JAVBusService.getInstance(urls.get(it.type.key) ?: JAVBusService.defaultFastUrl).apply { JAVBusService.INSTANCE = this }
         } ?: JAVBusService.INSTANCE
     }
     private val loadFromNet = { page: Int ->
@@ -40,7 +40,7 @@ class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieListVie
                     imageUrl = element.select("img").attr("src"),
                     code = element.select("date").first().text(),
                     date = element.select("date").getOrNull(1)?.text() ?: "",
-                    detail = element.attr("href"),
+                    detailUrl = element.attr("href"),
                     tags = element.select(".item-tag").firstOrNull()?.children()?.map { it.text() } ?: emptyList()
             )
         }

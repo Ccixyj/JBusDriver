@@ -103,3 +103,6 @@ fun <R> Flowable<R>.addUserCase() =
         this.timeout(30L, TimeUnit.SECONDS, Schedulers.io()) //超时
                 .subscribeOn(Schedulers.io())
                 .take(1)
+
+
+/*webview load */
