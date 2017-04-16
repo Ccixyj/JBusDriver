@@ -2,6 +2,7 @@ package me.jbusdriver.mvp
 
 import com.cfzx.mvp.view.BaseView
 import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.mvp.bean.MovieDetail
 import me.jbusdriver.mvp.presenter.BasePresenter
 import me.jbusdriver.ui.data.DataSourceType
 
@@ -18,14 +19,18 @@ interface MovieListContract {
         val type: DataSourceType
     }
 
-    interface MovieListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<MovieListView>
+    interface MovieListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<MovieListView> {
+        fun loadAll(iaAll: Boolean)
+    }
 }
+
 interface MovieDetailContract {
-    interface MovieDetailView : BaseView{
-        val movie:Movie
+    interface MovieDetailView : BaseView {
+        val movie: Movie
+        val detailMovieFromDisk: MovieDetail?
     }
 
-    interface MovieDetailPresenter : BasePresenter<MovieDetailView>,BasePresenter.RefreshPresenter{
+    interface MovieDetailPresenter : BasePresenter<MovieDetailView>, BasePresenter.RefreshPresenter {
         fun loadDetail()
     }
 }

@@ -10,10 +10,14 @@ import me.jbusdriver.mvp.MovieListContract.MovieListView
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.model.AbstractBaseModel
 import me.jbusdriver.mvp.model.BaseModel
+import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.nodes.Document
 
 class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieListView>(), MovieListContract.MovieListPresenter {
 
+    var IsAll = false
+    val saveKey: String
+        inline get() = "${mView?.type?.key ?: DataSourceType.CENSORED.key}$IsAll"
     val urls by lazy { CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) } ?: arrayMapof() }
     private val service by lazy {
         mView?.let {
@@ -21,14 +25,14 @@ class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieListVie
         } ?: JAVBusService.INSTANCE
     }
     private val loadFromNet = { page: Int ->
-        service.getHomePage(page).doOnNext {
-            if (page == 1) CacheLoader.lru.put(mView?.type?.key ?: C.Cache.CENSORED, it)
+        service.getHomePage(page, if (IsAll) "all" else null).doOnNext {
+            if (page == 1) CacheLoader.lru.put(saveKey, it)
         }
     }
 
     override val model: BaseModel<Int, String> = object : AbstractBaseModel<Int, String>(loadFromNet) {
         override fun requestFromCache(t: Int): Flowable<String> {
-            return Flowable.concat(CacheLoader.justLru(mView?.type?.key ?: C.Cache.CENSORED), requestFor(t)).firstOrError().toFlowable()
+            return Flowable.concat(CacheLoader.justLru(saveKey), requestFor(t)).firstOrError().toFlowable()
         }
     }
 
@@ -47,8 +51,12 @@ class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieListVie
     }
 
     override fun onRefresh() {
-        CacheLoader.removeCacheLike(mView?.type?.key ?: C.Cache.CENSORED, isRegex = false)
+        CacheLoader.removeCacheLike(saveKey, isRegex = false)
         super.onRefresh()
     }
 
+    override fun loadAll(iaAll: Boolean) {
+        IsAll = iaAll
+        loadData4Page(1)
+    }
 }

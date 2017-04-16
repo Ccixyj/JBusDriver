@@ -10,13 +10,18 @@ import android.support.v7.widget.Toolbar
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import com.cfzx.utils.CacheLoader
 import io.reactivex.android.schedulers.AndroidSchedulers
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.content_movie_detail.*
 import me.jbusdriver.common.AppBaseActivity
+import me.jbusdriver.common.AppContext
 import me.jbusdriver.common.KLog
+import me.jbusdriver.common.fromJson
 import me.jbusdriver.mvp.MovieDetailContract
 import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.mvp.bean.MovieDetail
+import me.jbusdriver.mvp.bean.saveKey
 import me.jbusdriver.mvp.presenter.MovieDetailPresenterImpl
 
 
@@ -34,9 +39,8 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar.title = movie.title
-
-
-        init()
+        if (detailMovieFromDisk == null  )
+            init()
     }
 
     fun init() {
@@ -77,6 +81,11 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
     override val layoutId = R.layout.activity_movie_detail
 
     override val movie: Movie by lazy { intent.extras?.getSerializable("movie") as? Movie ?: error("need movie info") }
+    //详情不怎么变化,所以直接缓存到disk
+    override val detailMovieFromDisk: MovieDetail? by lazy {
+        CacheLoader.acache.getAsString(movie.saveKey)?.let { AppContext.gson.fromJson<MovieDetail>(it) }
+    }
+
 
     companion object {
         fun start(current: Activity, movie: Movie) {

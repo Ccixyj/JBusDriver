@@ -103,7 +103,7 @@ class SplashActivity : BaseActivity() {
                         KLog.i("urls : ${it.first} , all urls : $urls , at last $ds")
                         CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to urls, ACache.TIME_DAY) //缓存所有的urls
                         KLog.i("get fast it : $it")
-                        CacheLoader.lru.put(C.Cache.CENSORED, it.second)
+                        CacheLoader.lru.put(DataSourceType.CENSORED.key + "false", it.second) //默认有种的
                         urls
                     }.toFlowable()
             return Flowable.concat<ArrayMap<String, String>>(urlsFromDisk, urlsFromNet)

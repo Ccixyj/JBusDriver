@@ -2,6 +2,7 @@ package me.jbusdriver.http
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.text.TextUtils
 import jbusdriver.me.jbusdriver.BuildConfig
 import me.jbusdriver.common.AppContext
 import me.jbusdriver.common.KLog
@@ -39,7 +40,11 @@ object NetClient {
                 request = request.newBuilder().cacheControl(CacheControl.FORCE_CACHE).build()
             } else {
                 KLog.t(TAG).i("Has NetWork , go on")
-                request = request.newBuilder().header("User-Agent", USER_AGENT).build()
+                val builder = request.newBuilder().header("User-Agent", USER_AGENT)
+                if (!TextUtils.isEmpty(request.header("existmag")))
+                    builder.addHeader("Cookie", "existmag=all")
+
+                request = builder.build()
             }
 
             val response = chain.proceed(request)
@@ -110,8 +115,7 @@ object NetClient {
                     }
 
                     override fun loadForRequest(url: HttpUrl): List<Cookie> {
-                        val cookies = cookieStore[url]
-                        return cookies ?: ArrayList<Cookie>()
+                        return cookieStore[url] ?: ArrayList<Cookie>()
                     }
                 })
         if (BuildConfig.DEBUG) {

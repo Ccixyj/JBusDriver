@@ -1,5 +1,6 @@
 package me.jbusdriver.common
 
+import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -20,6 +21,10 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
     abstract val layoutManager: RecyclerView.LayoutManager
     abstract val adapter: BaseQuickAdapter<M, in BaseViewHolder>
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
     override fun initWidget(rootView: View) {
         recycleView.layoutManager = layoutManager
         adapter.setOnLoadMoreListener({ mBasePresenter?.onLoadMore() }, recycleView)

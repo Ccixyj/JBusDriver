@@ -4,6 +4,7 @@ import io.reactivex.Flowable
 import me.jbusdriver.common.AppContext.Companion.JBusInstances
 import me.jbusdriver.common.KLog
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Path
 import retrofit2.http.Url
 
@@ -17,8 +18,9 @@ interface JAVBusService {
     @GET
     fun get(@Url url: String): Flowable<String>
 
+
     @GET("page/{pageNum}")
-    fun getHomePage(@Path("pageNum") page: Int): Flowable<String>
+    fun getHomePage(@Path("pageNum") page: Int, @Header("existmag") existmag: String? = null): Flowable<String>
 
 
     companion object {
