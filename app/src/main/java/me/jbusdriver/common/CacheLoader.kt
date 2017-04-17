@@ -3,10 +3,7 @@ package com.cfzx.utils
 import android.support.v4.util.LruCache
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
-import me.jbusdriver.common.ACache
-import me.jbusdriver.common.AppContext
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.formatFileSize
+import me.jbusdriver.common.*
 import java.util.concurrent.TimeUnit
 
 object CacheLoader {
@@ -47,8 +44,12 @@ object CacheLoader {
     }
 
     fun cacheLru(pair: Pair<String, Any>) = lru.put(pair.first, AppContext.gson.toJson(pair.second))
-    fun cacheDisk(pair: Pair<String, Any>, seconds: Int? = null) = seconds?.let { acache.put(pair.first, AppContext.gson.toJson(pair.second), seconds) } ?: acache.put(pair.first, AppContext.gson.toJson(pair.second))
+    fun cacheDisk(pair: Pair<String, Any>, seconds: Int? = null) = seconds?.let { acache.put(pair.first, v2Str(pair.second), seconds) } ?: acache.put(pair.first, v2Str(pair.second))
 
+    private fun v2Str(obj: Any): String = when (obj) {
+        is CharSequence -> obj.toString()
+        else -> obj.toJsonString()
+    }
 
     /*============================cache to flowable====================================*/
     fun fromLruAsync(key: String): Flowable<String> = Flowable.interval(0, 800, TimeUnit.MILLISECONDS, Schedulers.io()).flatMap {
@@ -67,16 +68,19 @@ object CacheLoader {
     fun justLru(key: String): Flowable<String> {
         val v = lru[key]
         KLog.i("justLru : $key ,$v")
-        return v?.let {  Flowable.just(v)}  ?: Flowable.empty()
+        return v?.let { Flowable.just(v) } ?: Flowable.empty()
     }
 
     fun justDisk(key: String, add2Lru: Boolean = true): Flowable<String> {
         val v = acache.getAsString(key)
         KLog.i("justDisk : $key add lru $add2Lru,$v")
-        return v?.let {  Flowable.just(v)}  ?: Flowable.empty()
+        return v?.let { Flowable.just(v) } ?: Flowable.empty()
     }
 
     /*===============================remove cache=====================================*/
+    /**
+     * 只会先从lru中删除再删除disk的
+     */
     fun removeCacheLike(vararg keys: String, isRegex: Boolean = false) {
         Schedulers.computation().createWorker().schedule {
             lru.snapshot().keys.let {
@@ -89,7 +93,6 @@ object CacheLoader {
                     }
                 }
             }
-
         }
     }
 

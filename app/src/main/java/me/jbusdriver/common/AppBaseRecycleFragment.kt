@@ -25,10 +25,11 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
+
     override fun initWidget(rootView: View) {
         recycleView.layoutManager = layoutManager
         adapter.setOnLoadMoreListener({ mBasePresenter?.onLoadMore() }, recycleView)
-        swipeView?.setColorSchemeResources(R.color.colorAccent)
+        swipeView?.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimaryLight)
         swipeView?.setOnRefreshListener { mBasePresenter?.onRefresh() }
         recycleView.adapter = adapter
     }

@@ -2,19 +2,18 @@ package me.jbusdriver.mvp.presenter
 
 import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
-import me.jbusdriver.common.KLog
+import io.reactivex.rxkotlin.toSingle
+import me.jbusdriver.common.*
+import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.MovieDetailContract
-import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.bean.Magnet
+import me.jbusdriver.mvp.bean.MovieDetail
+import me.jbusdriver.mvp.bean.detailSaveKey
 import me.jbusdriver.mvp.model.AbstractBaseModel
 import me.jbusdriver.mvp.model.BaseModel
-import me.jbusdriver.ui.data.HtmlContentLoader
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
 
 class MovieDetailPresenterImpl : BasePresenterImpl<MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailPresenter {
 
@@ -22,81 +21,102 @@ class MovieDetailPresenterImpl : BasePresenterImpl<MovieDetailContract.MovieDeta
     val loadFromNet = { s: String ->
         KLog.d("request for : $s")
         mView?.let {
-            HtmlContentLoader(it.viewContext, it.movie.detailUrl).html2Flowable().subscribeOn(AndroidSchedulers.mainThread())
-                    .doOnNext { CacheLoader.cacheDisk("$s@${mView?.movie?.date}" to it) }
+            JAVBusService.INSTANCE.get(it.movie.detailUrl).map { MovieDetail.parseDetails(Jsoup.parse(it)) }
+                    .doOnNext { mView?.movie?.detailSaveKey?.let { key -> CacheLoader.cacheDisk(key to it) } }
         } ?: Flowable.empty()
-
-
     }
-    val model: BaseModel<String, String> = object : AbstractBaseModel<String, String>(loadFromNet) {
-        override fun requestFromCache(t: String): Flowable<String> {
-            return Flowable.concat(CacheLoader.justDisk("$t@${mView?.movie?.date}"), requestFor(t)).firstOrError().toFlowable()
+    val model: BaseModel<String, MovieDetail> = object : AbstractBaseModel<String, MovieDetail>(loadFromNet) {
+        override fun requestFromCache(t: String): Flowable<MovieDetail> {
+            val disk = mView?.let {
+                CacheLoader.acache.getAsString(it.movie.detailSaveKey)?.let {
+                    AppContext.gson.fromJson<MovieDetail>(it)
+                }
+            }?.toSingle()?.toFlowable() ?: Flowable.empty<MovieDetail>()
+            return Flowable.concat(disk, requestFor(t)).firstOrError().toFlowable()
         }
     }
 
     override fun onFirstLoad() {
         super.onFirstLoad()
-        KLog.d("movie : ${mView?.movie}")
-        //  loadDetail()
-        mView?.movie?.detailUrl?.let {
-            Observable.fromCallable { Jsoup.connect(it).get() }
-                    .map { parseDetails(it) }
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onNext = { mView?.showContent(it) })
-        }
+        // loadDetail()
     }
 
     override fun onRefresh() {
-        mView?.movie?.detailUrl?.let {
-            CacheLoader.removeCacheLike(it, isRegex = true)
+        mView?.movie?.detailSaveKey?.let {
+            //删除缓存和magnet缓存
+            CacheLoader.acache.remove(it)
+            CacheLoader.acache.remove(it + "_magnet")
+            //重新加载
             loadDetail()
+            // mView?.initMagnetLoad()
         }
     }
 
     override fun loadDetail() {
+        /*
+        *             Observable.fromCallable { Jsoup.connect(it).get() }
+                    .map(::parseDetails)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeBy(onNext = { mView?.showContent(it) })
+
+                    onNext = { mView?.showContent(it) }, onError = { KLog.d(it) }
+
+        * */
         mView?.movie?.detailUrl?.let {
-            model.requestFromCache(it).observeOn(AndroidSchedulers.mainThread()).subscribeBy(onNext = { mView?.showContent(it) }, onError = { KLog.d(it) }).addTo(rxManager)
+            model.requestFromCache(it).compose(SchedulersCompat.io())
+                    .compose(SchedulersCompat.io())
+                    .subscribeWith(object : SimpleSubscriber<MovieDetail>() {
+                        override fun onStart() {
+                            super.onStart()
+                            mView?.showLoading()
+                        }
+
+                        override fun onComplete() {
+                            super.onComplete()
+                            mView?.dismissLoading()
+                        }
+
+                        override fun onError(e: Throwable) {
+                            super.onError(e)
+                            mView?.dismissLoading()
+                        }
+
+                        override fun onNext(t: MovieDetail) {
+                            super.onNext(t)
+                            mView?.showContent(t)
+                        }
+                    })
+                    .addTo(rxManager)
         }
 
     }
 
-    fun parseDetails(doc: Document): MovieDetail {
-        val title = doc.select(".container h3").text()
-        val roeMovie = doc.select("[class=row movie]")
-        val cover = roeMovie.select(".bigImage").attr("href")
-        val headers = mutableListOf<Header>()
-        val headersContainer = roeMovie.select(".info")
+    override fun loadMagnets(doc: Element) {
+        Flowable.just(doc).map {
+            MovieDetail.parseMagnets(it)
+        }.compose(SchedulersCompat.io())
+                .subscribeWith(object : SimpleSubscriber<List<Magnet>>() {
+                    override fun onStart() {
+                        super.onStart()
+                        mView?.showLoading()
+                    }
 
-        headersContainer.select("p[class!=star-show]:has(span:not([class=genre])):not(:has(a))")
-                .mapTo(headers) {
-                    val split = it.text().split(":")
-                    Header(split.first(), split.getOrNull(1) ?: "", "")
-                } //解析普通信息
+                    override fun onComplete() {
+                        super.onComplete()
+                        mView?.dismissLoading()
+                    }
 
-        headersContainer.select("p[class!=star-show]:has(span:not([class=genre])):has(a)")
-                .mapTo(headers) {
-                    val split = it.text().split(":")
-                    Header(split.first(), split.getOrNull(1) ?: "", it.select("p a").attr("href"))
-                }//解析附带跳转信息
+                    override fun onError(e: Throwable) {
+                        super.onError(e)
+                        mView?.dismissLoading()
+                    }
 
-        val generes = headersContainer.select(".genre:has(a[href*=genre])").map {
-            Genre(it.text(), it.select("a").attr("href"))
-        }//解析分类
-
-
-        val actresses = doc.select("#avatar-waterfall .avatar-box").map {
-            ActressInfo(it.text(), it.select("img").attr("src"), it.attr("href"))
-        }
-
-        val samples = doc.select("#sample-waterfall .sample-box").map {
-            ImageSample(it.select("img").attr("title"), it.select("img").attr("src"), it.attr("href"))
-        }
-
-        val relatedMovies = doc.select("#related-waterfall .movie-box").map {
-            Movie(it.attr("title"), it.select("img").attr("src"), "", "", it.attr("href"))
-        }
-
-        return MovieDetail(title, cover, headers, generes, actresses, samples, relatedMovies)
+                    override fun onNext(t: List<Magnet>) {
+                        super.onNext(t)
+                        mView?.loadMagnet(t)
+                    }
+                })
+                .addTo(rxManager)
     }
 }

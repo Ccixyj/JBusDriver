@@ -15,6 +15,7 @@ data class Movie(val title: String,
                  val detailUrl: String,
                  val tags: List<String> = listOf()//标签
 ) : MultiItemEntity, Serializable {
+
     override fun getItemType(): Int = 0
 
     companion object {
@@ -33,5 +34,6 @@ data class Movie(val title: String,
     }
 }
 
-val Movie.saveKey
-    inline get() = code + date
+val Movie.detailSaveKey
+    inline get() = code + "_" + date
+

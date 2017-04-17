@@ -57,7 +57,7 @@ class SplashActivity : BaseActivity() {
             val urlsFromNet = Flowable.concat(CacheLoader.justDisk(C.Cache.ANNOUNCEURL, false), GitHub.INSTANCE.announce().addUserCase()).firstOrError().toFlowable()
                     .map {
                         AppContext.gson.fromJson<JsonObject>(it).get(C.Cache.ANNOUNCEURL)?.asString?.apply {
-                            CacheLoader.cacheDisk(C.Cache.ANNOUNCEURL to this, ACache.TIME_DAY)
+                            CacheLoader.cacheDisk(C.Cache.ANNOUNCEURL to this, C.Cache.WEEK)
                         } ?: error("url is not valid")
                     }
                     .flatMap {
@@ -101,7 +101,7 @@ class SplashActivity : BaseActivity() {
                             }
                         }
                         KLog.i("urls : ${it.first} , all urls : $urls , at last $ds")
-                        CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to urls, ACache.TIME_DAY) //缓存所有的urls
+                        CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to urls, C.Cache.WEEK) //缓存所有的urls
                         KLog.i("get fast it : $it")
                         CacheLoader.lru.put(DataSourceType.CENSORED.key + "false", it.second) //默认有种的
                         urls

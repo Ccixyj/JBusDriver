@@ -45,7 +45,7 @@ abstract class AppBaseActivity<P : BasePresenter<V>, V : BaseView> : BaseActivit
         }
     }
 
-    protected fun doStart() {
+    protected open fun doStart() {
         KLog.t(TAG).d("doStart", mFirstStart, mUniqueLoaderIdentifier)
         assert(mBasePresenter != null)
         mBasePresenter!!.onViewAttached(this as V)

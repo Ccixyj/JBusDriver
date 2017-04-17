@@ -1,15 +1,15 @@
 package me.jbusdriver.common;
 
-import me.jbusdriver.ui.data.DataSourceType;
-
 /**
  * Created by Administrator on 2017/4/9.
  */
 
 public class C {
     public static class Cache {
+        public static final int WEEK = ACache.TIME_DAY * 7; //缓存的固定时间
 
         public static final String ANNOUNCEURL = "announceUrl"; //发布的网站
+
         public static final String BUS_URLS = "bus_urls"; //发布的网站
         public static final String USER_COLLECT = "user_collect"; //用户收藏数据
     }
