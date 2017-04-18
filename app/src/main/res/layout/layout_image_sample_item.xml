@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/iv_movie_thumb"
+    android:layout_width="@dimen/material_108dp"
+    android:layout_height="@dimen/material_108dp"
+    android:scaleType="centerCrop"
+    style="@style/AppTheme.Click"
+    />
+

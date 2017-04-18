@@ -22,9 +22,8 @@
         <item name="android:foreground">?attr/selectableItemBackground</item>
     </style>
 
-    <style name="AppTheme.Splash" parent="AppTheme.NoActionBar">
-        <item name="android:windowBackground">@drawable/bg_splash</item>
-        <item name="android:windowActionBarOverlay">true</item>
+    <style name="AppTheme.TextView">
+        <item name="android:gravity">center_vertical</item>
     </style>
 
 
@@ -36,5 +35,13 @@
         <item name="cardCornerRadius">@dimen/material_3dp</item>
         <item name="cardElevation">@dimen/material_2dp</item>
     </style>
+
+    <!-- activity-->
+
+    <style name="AppTheme.Splash" parent="AppTheme.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+        <item name="android:windowActionBarOverlay">true</item>
+    </style>
+
 
 </resources>

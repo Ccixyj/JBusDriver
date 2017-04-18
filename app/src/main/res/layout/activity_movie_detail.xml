@@ -32,8 +32,9 @@
                 app:layout_collapseMode="parallax" />
 
             <View
+                android:layout_gravity="bottom"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="@dimen/material_120dp"
                 android:background="@drawable/coll_toolbar_image_gradient"
                 android:fitsSystemWindows="true" />
 
@@ -50,7 +51,10 @@
 
     <include layout="@layout/content_movie_detail" />
 
-
+    <WebView
+        android:id="@+id/webview"
+        android:layout_width="@dimen/material_0dp"
+        android:layout_height="@dimen/material_0dp"/>
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -58,6 +62,6 @@
         android:layout_margin="@dimen/fab_margin"
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        app:srcCompat="@drawable/ic_menu_refresh" />
 
 </android.support.design.widget.CoordinatorLayout>

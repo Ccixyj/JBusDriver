@@ -38,7 +38,7 @@ class MovieDetailPresenterImpl : BasePresenterImpl<MovieDetailContract.MovieDeta
 
     override fun onFirstLoad() {
         super.onFirstLoad()
-        // loadDetail()
+        loadDetail()
     }
 
     override fun onRefresh() {
@@ -48,38 +48,19 @@ class MovieDetailPresenterImpl : BasePresenterImpl<MovieDetailContract.MovieDeta
             CacheLoader.acache.remove(it + "_magnet")
             //重新加载
             loadDetail()
-            // mView?.initMagnetLoad()
+            //magnet 不要重新加载
         }
     }
 
     override fun loadDetail() {
-        /*
-        *             Observable.fromCallable { Jsoup.connect(it).get() }
-                    .map(::parseDetails)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onNext = { mView?.showContent(it) })
-
-                    onNext = { mView?.showContent(it) }, onError = { KLog.d(it) }
-
-        * */
         mView?.movie?.detailUrl?.let {
             model.requestFromCache(it).compose(SchedulersCompat.io())
                     .compose(SchedulersCompat.io())
+                    .doOnTerminate { mView?.dismissLoading() }
                     .subscribeWith(object : SimpleSubscriber<MovieDetail>() {
                         override fun onStart() {
                             super.onStart()
                             mView?.showLoading()
-                        }
-
-                        override fun onComplete() {
-                            super.onComplete()
-                            mView?.dismissLoading()
-                        }
-
-                        override fun onError(e: Throwable) {
-                            super.onError(e)
-                            mView?.dismissLoading()
                         }
 
                         override fun onNext(t: MovieDetail) {
@@ -99,17 +80,14 @@ class MovieDetailPresenterImpl : BasePresenterImpl<MovieDetailContract.MovieDeta
                 .subscribeWith(object : SimpleSubscriber<List<Magnet>>() {
                     override fun onStart() {
                         super.onStart()
-                        mView?.showLoading()
                     }
 
                     override fun onComplete() {
                         super.onComplete()
-                        mView?.dismissLoading()
                     }
 
                     override fun onError(e: Throwable) {
                         super.onError(e)
-                        mView?.dismissLoading()
                     }
 
                     override fun onNext(t: List<Magnet>) {

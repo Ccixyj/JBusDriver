@@ -28,10 +28,10 @@ data class MovieDetail(val title: String,
     companion object {
         fun parseDetails(doc: Document): MovieDetail {
             KLog.d("start parseDetails ")
-            val title = doc.select(".container h3").text()
-            val content = doc.select("[name=description]").attr("content")
             val roeMovie = doc.select("[class=row movie]")
+            val title = doc.select(".container h3").text()
             val cover = roeMovie.select(".bigImage").attr("href")
+
             val headers = mutableListOf<Header>()
             val headersContainer = roeMovie.select(".info")
 
@@ -40,6 +40,9 @@ data class MovieDetail(val title: String,
                         val split = it.text().split(":")
                         Header(split.first(), split.getOrNull(1) ?: "", "")
                     } //解析普通信息
+
+            val content = doc.select("[name=description]").attr("content")
+            headers.add(Header("描述", content, ""))
 
             headersContainer.select("p[class!=star-show]:has(span:not([class=genre])):has(a)")
                     .mapTo(headers) {
