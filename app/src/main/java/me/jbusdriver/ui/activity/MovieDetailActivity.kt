@@ -1,7 +1,6 @@
 package me.jbusdriver.ui.activity
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Paint
@@ -12,9 +11,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
-import android.util.DisplayMetrics
 import android.view.View
-import android.view.WindowManager
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -94,11 +91,11 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
     }
 
     private fun initImages() {
-        val displayMetrics = DisplayMetrics()
+        /*val displayMetrics = DisplayMetrics()
         (getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getMetrics(displayMetrics)
-        val spannCount = displayMetrics.widthPixels / dpToPx(108f)
-        rv_recycle_images.layoutManager = StaggeredGridLayoutManager(spannCount, StaggeredGridLayoutManager.VERTICAL)
-        rv_recycle_images.addItemDecoration(GridSpacingItemDecoration(spannCount, dpToPx(8f), false))
+        val spannCount = displayMetrics.widthPixels / dpToPx(138f)*/
+        rv_recycle_images.layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
+        rv_recycle_images.addItemDecoration(GridSpacingItemDecoration(3, dpToPx(8f), false))
         rv_recycle_images.adapter = imageSampleAdapter
     }
 
