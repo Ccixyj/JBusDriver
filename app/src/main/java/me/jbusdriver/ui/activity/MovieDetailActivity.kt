@@ -8,8 +8,8 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.StaggeredGridLayoutManager
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.util.DisplayMetrics
@@ -18,8 +18,10 @@ import android.view.WindowManager
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
 import com.cfzx.utils.CacheLoader
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
@@ -57,10 +59,14 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
     val imageSampleAdapter = object : BaseQuickAdapter<ImageSample, BaseViewHolder>(R.layout.layout_image_sample_item) {
         override fun convert(helper: BaseViewHolder, item: ImageSample) {
-            Glide.with(this@MovieDetailActivity).load(item.thumb)
-                    .placeholder(R.drawable.ic_place_holder)
-                    .error(R.drawable.ic_place_holder)
-                    .into(helper.getView(R.id.iv_movie_thumb))
+            helper.getView<ImageView>(R.id.iv_movie_thumb)?.let {
+                Glide.with(this@MovieDetailActivity).load(item.thumb)
+                        .placeholder(R.drawable.ic_child_care_black_24dp)
+                        .error(R.drawable.ic_child_care_black_24dp)
+                        .into(GlideDrawableImageViewTarget(it))
+
+            }
+
         }
     }
 
@@ -91,7 +97,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         val displayMetrics = DisplayMetrics()
         (getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getMetrics(displayMetrics)
         val spannCount = displayMetrics.widthPixels / dpToPx(108f)
-        rv_recycle_images.layoutManager = GridLayoutManager(this, spannCount)
+        rv_recycle_images.layoutManager = StaggeredGridLayoutManager(spannCount, StaggeredGridLayoutManager.VERTICAL)
         rv_recycle_images.addItemDecoration(GridSpacingItemDecoration(spannCount, dpToPx(8f), false))
         rv_recycle_images.adapter = imageSampleAdapter
     }
@@ -193,6 +199,10 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             })
         }
 
+        fun View.measureIfNotMeasure() {
+            if (this.measuredHeight != 0 || this.measuredWidth != 0) return
+            this.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+        }
 
     }
 
