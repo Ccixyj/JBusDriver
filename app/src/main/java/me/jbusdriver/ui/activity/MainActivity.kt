@@ -71,6 +71,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         val fragment = (when (id) {
             R.id.movie_ma -> MovieListFragment.newInstance(DataSourceType.CENSORED)
             R.id.movie_uncensored -> MovieListFragment.newInstance(DataSourceType.UNCENSORED)
+            R.id.movie_xyz -> MovieListFragment.newInstance(DataSourceType.XYZ)
             else -> error("no matched fragment")
         }.apply { fragments.put(id, this) })
         //

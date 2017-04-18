@@ -12,12 +12,8 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.cfzx.utils.CacheLoader
 import jbusdriver.me.jbusdriver.R
-import kotlinx.android.synthetic.main.activity_movie_detail.*
 import kotlinx.android.synthetic.main.content_movie_detail.*
-import me.jbusdriver.common.AppBaseActivity
-import me.jbusdriver.common.AppContext
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.fromJson
+import me.jbusdriver.common.*
 import me.jbusdriver.mvp.MovieDetailContract
 import me.jbusdriver.mvp.bean.Magnet
 import me.jbusdriver.mvp.bean.Movie
@@ -25,13 +21,10 @@ import me.jbusdriver.mvp.bean.MovieDetail
 import me.jbusdriver.mvp.bean.detailSaveKey
 import me.jbusdriver.mvp.presenter.MovieDetailPresenterImpl
 import org.jsoup.Jsoup
-import java.text.SimpleDateFormat
 
 
 class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPresenter, MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailView {
 
-
-    var detail: MovieDetail? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,21 +38,15 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar.title = movie.code + " " + movie.title
-        /*if (detailMovieFromisk == null)
-            init()*/
-        sr_refresh_detail?.setColorSchemeResources(R.color.colorPrimary,R.color.colorPrimaryDark,R.color.colorPrimaryLight)
-        sr_refresh_detail?.setOnRefreshListener { mBasePresenter?.onRefresh() }
     }
 
     override fun doStart() {
         super.doStart()
         //mBasePresenter初始化完毕后再加载
-        if (!hasMagnet) {
-            //has disk cache ?
-            CacheLoader.acache.getAsString(movie.detailSaveKey + "_magnet")?.let {
-                mBasePresenter?.loadMagnets(Jsoup.parse(it))
-            } ?: initMagnetLoad()
-        }
+        //has disk cache ?
+        CacheLoader.acache.getAsString(movie.detailSaveKey + "_magnet")?.let {
+            mBasePresenter?.loadMagnets(Jsoup.parse(it))
+        } ?: initMagnetLoad()
     }
 
     override fun initMagnetLoad() {
@@ -103,28 +90,23 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
     override val detailMovieFromDisk: MovieDetail? by lazy {
         CacheLoader.acache.getAsString(movie.detailSaveKey)?.let { AppContext.gson.fromJson<MovieDetail>(it) }
     }
-    override val hasMagnet: Boolean
-        get() = (detailMovieFromDisk?.magnets?.isNotEmpty() ?: false) && isDateBeforeNow(movie.date)
 
     override fun dismissLoading() {
         super.dismissLoading()
-        sr_refresh_detail?.post { sr_refresh_detail?.isRefreshing = false }
+        // sr_refresh_detail?.post { sr_refresh_detail?.isRefreshing = false }
     }
 
     override fun <T> showContent(data: T?) {
         if (data is MovieDetail) {
-            detail = data
             text.text = data.toString()
         }
     }
 
     override fun loadMagnet(t: List<Magnet>) {
         text.text = t.toString()
-        detail?.apply {
-            magnets.clear()
-            magnets.addAll(t)
-            CacheLoader.cacheDisk(movie.detailSaveKey to this) //重新缓存
-            CacheLoader.acache.remove(movie.detailSaveKey + "_magnet") //删除缓存
+        //如果movie含有tag说明有种子了,重新加载
+        if (movie.tags.isNotEmpty()) {
+            initMagnetLoad()
         }
     }
 
@@ -136,17 +118,6 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             })
         }
 
-        fun isDateBeforeNow(time1: String): Boolean {
-            try {//如果想比较日期则写成"yyyy-MM-dd"就可以了
-                val sdf = SimpleDateFormat("yyyy-MM-dd")
-                //将字符串形式的时间转化为Date类型的时间
-                val a = sdf.parse(time1)
-                //Date类的一个方法，如果a早于b返回true，否则返回false
-                return a.before(java.util.Date())
-            } catch(e: Exception) {
-                return false
-            }
-        }
     }
 
     inner class JavascriptHandler(val magnetKey: String) {
@@ -156,7 +127,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             Jsoup.parse(htmlContent).select("#magnet-table").first()?.let {
                 table ->
                 KLog.i("magnetKey :$magnetKey ,table : $table")
-                CacheLoader.cacheDisk(magnetKey to table.toString())
+                CacheLoader.cacheDisk(magnetKey to table.toString(), ACache.TIME_DAY)
                 mBasePresenter?.loadMagnets(table)
             }
 

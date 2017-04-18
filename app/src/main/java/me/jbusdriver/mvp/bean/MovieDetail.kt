@@ -9,6 +9,7 @@ import org.jsoup.nodes.Element
  */
 
 data class MovieDetail(val title: String,
+                       val content: String,
                        val cover: String, //封面
                        val headers: List<Header>,
         /*
@@ -21,13 +22,14 @@ data class MovieDetail(val title: String,
                        val genres: List<Genre>, //類別
                        val actress: List<ActressInfo>, //出演
                        val images: List<ImageSample>, //截圖
-                       val relatedMovies: List<Movie>, //推薦
-                       val magnets: MutableList<Magnet> = mutableListOf() //磁力链接
+                       val relatedMovies: List<Movie> //推薦
+        //  val magnets: MutableList<Magnet> = mutableListOf() //磁力链接
 ) {
     companion object {
         fun parseDetails(doc: Document): MovieDetail {
             KLog.d("start parseDetails ")
             val title = doc.select(".container h3").text()
+            val content = doc.select("[name=description]").attr("content")
             val roeMovie = doc.select("[class=row movie]")
             val cover = roeMovie.select(".bigImage").attr("href")
             val headers = mutableListOf<Header>()
@@ -61,8 +63,10 @@ data class MovieDetail(val title: String,
             val relatedMovies = doc.select("#related-waterfall .movie-box").map {
                 Movie(it.attr("title"), it.select("img").attr("src"), "", "", it.attr("href"))
             }
-            KLog.d("end parseDetails ")
-            return MovieDetail(title, cover, headers, generes, actresses, samples, relatedMovies)
+
+            return MovieDetail(title, content, cover, headers, generes, actresses, samples, relatedMovies).apply {
+                KLog.d("end parseDetails $this")
+            }
         }
 
         fun parseMagnets(doc: Element): List<Magnet> {
