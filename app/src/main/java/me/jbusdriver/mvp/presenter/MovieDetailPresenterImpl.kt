@@ -21,7 +21,8 @@ class MovieDetailPresenterImpl : BasePresenterImpl<MovieDetailContract.MovieDeta
     val loadFromNet = { s: String ->
         KLog.d("request for : $s")
         mView?.let {
-            JAVBusService.INSTANCE.get(it.movie.detailUrl).map { MovieDetail.parseDetails(Jsoup.parse(it)) }
+            view->
+            JAVBusService.INSTANCE.get(view.movie.detailUrl).map { MovieDetail.parseDetails(Jsoup.parse(it),view.movie.type) }
                     .doOnNext { mView?.movie?.detailSaveKey?.let { key -> CacheLoader.cacheDisk(key to it) } }
         } ?: Flowable.empty()
     }

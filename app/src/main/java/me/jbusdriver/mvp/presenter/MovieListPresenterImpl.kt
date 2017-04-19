@@ -40,7 +40,7 @@ class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieListVie
     }
 
 
-    override fun stringMap(str: Document): List<Any> = Movie.loadFromDoc(str)
+    override fun stringMap(str: Document): List<Any> = Movie.loadFromDoc(mView?.type ?: DataSourceType.CENSORED ,str)
 
     override fun onRefresh() {
         CacheLoader.removeCacheLike(saveKey, isRegex = false)

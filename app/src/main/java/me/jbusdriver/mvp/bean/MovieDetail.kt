@@ -1,6 +1,7 @@
 package me.jbusdriver.mvp.bean
 
 import me.jbusdriver.common.KLog
+import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
@@ -26,7 +27,7 @@ data class MovieDetail(val title: String,
         //  val magnets: MutableList<Magnet> = mutableListOf() //磁力链接
 ) {
     companion object {
-        fun parseDetails(doc: Document): MovieDetail {
+        fun parseDetails(doc: Document, type: DataSourceType): MovieDetail {
             KLog.d("start parseDetails ")
             val roeMovie = doc.select("[class=row movie]")
             val title = doc.select(".container h3").text()
@@ -64,7 +65,7 @@ data class MovieDetail(val title: String,
             }
 
             val relatedMovies = doc.select("#related-waterfall .movie-box").map {
-                Movie(it.attr("title"), it.select("img").attr("src"), "", "", it.attr("href"))
+                Movie(type,it.attr("title"), it.select("img").attr("src"), "", "", it.attr("href"))
             }
 
             return MovieDetail(title, content, cover, headers, generes, actresses, samples, relatedMovies).apply {
