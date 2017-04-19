@@ -93,7 +93,7 @@ class MovieDetailPresenterImpl : BasePresenterImpl<MovieDetailContract.MovieDeta
 
                     override fun onNext(t: List<Magnet>) {
                         super.onNext(t)
-                        mView?.loadMagnet(t)
+                        mView?.addMagnet(t)
                     }
                 })
                 .addTo(rxManager)

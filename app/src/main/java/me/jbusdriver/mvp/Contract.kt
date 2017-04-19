@@ -30,7 +30,7 @@ interface MovieDetailContract {
     interface MovieDetailView : BaseView {
         val movie: Movie
         val detailMovieFromDisk: MovieDetail?
-        fun loadMagnet(t: List<Magnet>)
+        fun addMagnet(t: List<Magnet>)
         fun initMagnetLoad()
     }
 

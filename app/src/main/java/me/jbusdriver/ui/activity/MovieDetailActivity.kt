@@ -111,6 +111,10 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         super.doStart()
         //mBasePresenter初始化完毕后再加载
         //has disk cache ?
+      //  firstLoadMagnet()
+    }
+
+    private fun firstLoadMagnet() {
         CacheLoader.acache.getAsString(movie.detailSaveKey + "_magnet")?.let {
             mBasePresenter?.loadMagnets(Jsoup.parse(it))
         } ?: initMagnetLoad()
@@ -188,8 +192,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         }
     }
 
-    override fun loadMagnet(t: List<Magnet>) {
-
+    override fun addMagnet(t: List<Magnet>) {
         //如果movie含有tag说明有种子了,重新加载
         if (movie.tags.isNotEmpty() && t.isEmpty()) {
             initMagnetLoad()
