@@ -5,6 +5,6 @@
     style="@style/AppTheme.Click"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="108dp"
-    android:maxHeight="128dp"
-    android:scaleType="centerCrop" />
+    android:minHeight="88dp"
+    android:maxHeight="136dp"
+    android:scaleType="fitXY" />

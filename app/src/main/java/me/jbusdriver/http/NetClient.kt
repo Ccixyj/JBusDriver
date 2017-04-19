@@ -28,37 +28,15 @@ object NetClient {
     const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36"
     // private val gsonConverterFactory = GsonConverterFactory.create(AppContext.gson)
     private val rxJavaCallAdapterFactory = RxJava2CallAdapterFactory.create()
-    private val REWRITE_CACHE_CONTROL_INTERCEPTOR by lazy {
+    private val EXIST_MAGNET_INTERCEPTOR by lazy {
         Interceptor { chain ->
-            //方案二：无网读缓存，有网根据过期时间重新请求
-            //http://www.jianshu.com/p/2710ed1e6b48
-            KLog.t(TAG).i("NetClient: Check network state ")
-            val netWorkConection = isNetAvailable(AppContext.Companion.instace)
+            KLog.t(TAG).i("NetClient: check is existmag ")
             var request = chain.request()
-            if (!netWorkConection) {
-                KLog.t(TAG).i("NO NetWork , FORCE_CACHE")
-                request = request.newBuilder().cacheControl(CacheControl.FORCE_CACHE).build()
-            } else {
-                KLog.t(TAG).i("Has NetWork , go on")
-                val builder = request.newBuilder().header("User-Agent", USER_AGENT)
-                if (!TextUtils.isEmpty(request.header("existmag")))
-                    builder.addHeader("Cookie", "existmag=all")
-
-                request = builder.build()
-            }
-
-            val response = chain.proceed(request)
-            if (netWorkConection) {
-                //有网的时候读接口上的@Headers里的配置，你可以在这里进行统一的设置
-                //@Headers("Cache-Control: max-age=640000")
-                val cacheControl =
-                        response.newBuilder().removeHeader("Pragma")// 清除头信息，因为服务器如果不支持，会返回一些干扰信息，不清除下面无法生效
-                                .header("Cache-Control", request.cacheControl().toString()).build()
-            } else {
-                val maxStale = 60 * 60 * 24 * 7 //一周
-                response.newBuilder().removeHeader("Pragma").header("Cache-Control", "public, only-if-cached, max-stale=" + maxStale).build()
-            }
-            response
+            val builder = request.newBuilder().header("User-Agent", USER_AGENT)
+            if (!TextUtils.isEmpty(request.header("existmag")))
+                builder.addHeader("Cookie", "existmag=all")
+            request = builder.build()
+            chain.proceed(request)
         }
     }
 
@@ -106,7 +84,7 @@ object NetClient {
                 .readTimeout((20 * 1000).toLong(), TimeUnit.MILLISECONDS)
                 .connectTimeout((15 * 1000).toLong(), TimeUnit.MILLISECONDS)
                 .cache(cache)
-                .addNetworkInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR)
+                .addNetworkInterceptor(EXIST_MAGNET_INTERCEPTOR)
                 .cookieJar(object : CookieJar {
                     private val cookieStore = HashMap<HttpUrl, List<Cookie>>()
 
