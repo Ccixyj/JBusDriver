@@ -18,45 +18,45 @@ open class BaseFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        KLog.d("onCreate")
+        KLog.t(TAG).d("onCreate")
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        KLog.d("onActivityCreated")
+        KLog.t(TAG).d("onActivityCreated")
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        KLog.d("onCreateView")
+        KLog.t(TAG).d("onCreateView")
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onStart() {
         super.onStart()
-        KLog.d("onStart")
+        KLog.t(TAG).d("onStart")
     }
 
     override fun onResume() {
         super.onResume()
-        KLog.d("onResume")
+        KLog.t(TAG).d("onResume")
     }
 
     override fun onPause() {
         super.onPause()
-        KLog.d("onPause")
+        KLog.t(TAG).d("onPause")
     }
     override fun onStop() {
         super.onStop()
-        KLog.d("onStop")
+        KLog.t(TAG).d("onStop")
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        KLog.d("onDestroyView")
+        KLog.t(TAG).d("onDestroyView")
     }
     override fun onDestroy() {
         super.onDestroy()
-        KLog.d("onDestroy")
+        KLog.t(TAG).d("onDestroy")
     }
     //region other
     val viewContext: Context = activity ?: AppContext.instace

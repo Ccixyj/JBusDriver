@@ -18,6 +18,7 @@ import me.jbusdriver.http.GitHub
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.Jsoup
+import java.util.concurrent.TimeUnit
 
 class SplashActivity : BaseActivity() {
 
@@ -33,11 +34,14 @@ class SplashActivity : BaseActivity() {
         Observable.combineLatest<Boolean, ArrayMap<String, String>, Boolean>(RxPermissions(this).request(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                 initUrls(), BiFunction { t1, t2 -> t1 })
                 .doOnError { CacheLoader.acache.clear() }
+                .takeUntil<Long> { Observable.timer(5, TimeUnit.SECONDS) }
                 .retry(3)
-                .subscribeBy(onNext = {
-                    KLog.i("success")
+                .doAfterTerminate {
                     MainActivity.start(this)
                     finish()
+                }
+                .subscribeBy(onNext = {
+                    KLog.i("success")
                 }, onError = {
                     KLog.e(it.message)
                 })
@@ -56,6 +60,7 @@ class SplashActivity : BaseActivity() {
             }
             val urlsFromNet = Flowable.concat(CacheLoader.justDisk(C.Cache.ANNOUNCEURL, false), GitHub.INSTANCE.announce().addUserCase()).firstOrError().toFlowable()
                     .map {
+                        KLog.d("announce jsonString : $it")
                         AppContext.gson.fromJson<JsonObject>(it).get(C.Cache.ANNOUNCEURL)?.asString?.apply {
                             CacheLoader.cacheDisk(C.Cache.ANNOUNCEURL to this, C.Cache.WEEK)
                         } ?: error("url is not valid")
