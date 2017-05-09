@@ -15,7 +15,7 @@ import io.reactivex.disposables.CompositeDisposable
  * 日志记录及基础方法复用
  */
 open abstract class BaseActivity : AppCompatActivity() {
-    var rxManager = CompositeDisposable()
+    protected val rxManager by lazy { CompositeDisposable() }
     protected val TAG: String by lazy { this::class.java.simpleName }
     private var destroyed = false
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,10 +46,12 @@ open abstract class BaseActivity : AppCompatActivity() {
         super.onPostResume()
         KLog.t(TAG).d("onPostResume")
     }
+
     override fun onPause() {
         super.onPause()
         KLog.t(TAG).d("onPause")
     }
+
     override fun onStop() {
         super.onStop()
         KLog.t(TAG).d("onStop")
@@ -57,6 +59,8 @@ open abstract class BaseActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        rxManager.clear()
+        rxManager.dispose()
         KLog.t(TAG).d("onDestroy")
         destroyed = true
     }
@@ -85,5 +89,5 @@ open abstract class BaseActivity : AppCompatActivity() {
         @TargetApi(17)
         get() = super.isDestroyed()
 
-     val viewContext: Context by lazy { this }
+    val viewContext: Context by lazy { this }
 }
