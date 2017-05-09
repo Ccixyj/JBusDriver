@@ -12,6 +12,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_actress.view.*
+import me.jbusdriver.common.KLog
 import me.jbusdriver.common.inflate
 import me.jbusdriver.mvp.bean.ActressInfo
 import java.util.*
@@ -25,6 +26,9 @@ class ActressListHolder(context: Context) {
         context.inflate(R.layout.layout_detail_actress).apply {
             rv_recycle_actress.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             rv_recycle_actress.adapter = actressAdapter
+            actressAdapter.setOnItemClickListener { adapter, _, position ->
+                KLog.d("item : ${adapter.data.getOrNull(position)}")
+            }
         }
     }
 

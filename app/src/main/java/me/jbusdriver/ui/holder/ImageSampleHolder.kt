@@ -8,6 +8,7 @@ import android.view.WindowManager
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
+import me.jbusdriver.ui.activity.WatchLargeImageActivity
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
@@ -33,6 +34,11 @@ class ImageSampleHolder(context: Context) {
             rv_recycle_images.layoutManager = StaggeredGridLayoutManager(spannCount, StaggeredGridLayoutManager.VERTICAL)
             rv_recycle_images.addItemDecoration(GridSpacingItemDecoration(spannCount, context.dpToPx(6f), false))
             rv_recycle_images.adapter = imageSampleAdapter
+            imageSampleAdapter.setOnItemClickListener { _, _, position ->
+                if (position < imageSampleAdapter.data.size){
+                    WatchLargeImageActivity.startShow(context, imageSampleAdapter.data.map { it.image }, position)
+                }
+            }
         }
     }
 
