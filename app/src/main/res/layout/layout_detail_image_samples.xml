@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/material_8dp"
+    android:visibility="visible">
+
+    <ImageView
+        android:id="@+id/iv_movie_images"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_image_black_24dp"
+        android:tint="@color/colorPrimary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/iv_movie_images"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/material_16dp">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_recycle_images"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tv_movie_images_none_tip"
+            style="@style/AppTheme.TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:text="没有样本图片"
+            android:textColor="@color/primaryText"
+            android:visibility="gone" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/material_1dp"
+            android:layout_marginBottom="@dimen/material_8dp"
+            android:layout_marginTop="@dimen/material_8dp"
+            android:background="@color/divider" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

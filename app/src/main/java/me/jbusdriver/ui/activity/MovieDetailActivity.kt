@@ -1,76 +1,42 @@
 package me.jbusdriver.ui.activity
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Paint
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.StaggeredGridLayoutManager
 import android.support.v7.widget.Toolbar
-import android.text.TextUtils
-import android.util.DisplayMetrics
-import android.view.View
-import android.view.WindowManager
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.ImageView
-import android.widget.TextView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
 import com.cfzx.utils.CacheLoader
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.content_movie_detail.*
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.MovieDetailContract
-import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.bean.Magnet
+import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.mvp.bean.MovieDetail
+import me.jbusdriver.mvp.bean.detailSaveKey
 import me.jbusdriver.mvp.presenter.MovieDetailPresenterImpl
-import me.jbusdriver.ui.data.GridSpacingItemDecoration
+import me.jbusdriver.ui.holder.HeaderHolder
+import me.jbusdriver.ui.holder.ImageSampleHolder
 import org.jsoup.Jsoup
 
 
 class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPresenter, MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailView {
 
-    val headAdapter = object : BaseQuickAdapter<Header, BaseViewHolder>(R.layout.layout_header_item) {
-        override fun convert(helper: BaseViewHolder, item: Header) {
-            helper.getView<TextView>(R.id.tv_head_value)?.apply {
-                if (!TextUtils.isEmpty(item.link)) {
-                    setTextColor(ResourcesCompat.getColor(this@apply.resources, R.color.colorPrimaryDark, null))
-                    paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
-                    setOnClickListener {
-                        KLog.d("text : ${this.text}")
-                    }
-                } else {
-                    setTextColor(ResourcesCompat.getColor(this@apply.resources, R.color.secondText, null))
-                    paintFlags = 0
-                    setOnClickListener(null)
-                }
-            }
-            helper.setText(R.id.tv_head_name, item.name)
-                    .setText(R.id.tv_head_value, item.value)
+
+    private val headHolder by lazy {
+        HeaderHolder(this).apply {
+            ll_movie_detail.addView(view, 0)
         }
     }
-
-    val imageSampleAdapter = object : BaseQuickAdapter<ImageSample, BaseViewHolder>(R.layout.layout_image_sample_item) {
-        override fun convert(helper: BaseViewHolder, item: ImageSample) {
-            helper.getView<ImageView>(R.id.iv_movie_thumb)?.let {
-                Glide.with(this@MovieDetailActivity).load(item.thumb)
-                        .fitCenter()
-                        .placeholder(R.drawable.ic_child_care_black_24dp)
-                        .error(R.drawable.ic_child_care_black_24dp)
-                        .into(GlideDrawableImageViewTarget(it))
-
-            }
-
+    private val sampleHolder by lazy {
+        ImageSampleHolder(this).apply {
+            ll_movie_detail.addView(view, 1)
         }
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,34 +50,19 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar.title = movie.code + " " + movie.title
 
-        initHead()
-        initImages()
+        initWidget()
     }
 
-    private fun initHead() {
-        rv_recycle_header.layoutManager = LinearLayoutManager(this)
+    private fun initWidget() {
 
-        rv_recycle_header.adapter = headAdapter
-    }
 
-    private fun initImages() {
-        val displayMetrics = DisplayMetrics()
-        (getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getMetrics(displayMetrics)
-        val spannCount = when (displayMetrics.widthPixels) {
-            in 0..1079 -> 3
-            in 1080..1920 -> 4
-            else -> 6
-        }
-        rv_recycle_images.layoutManager = StaggeredGridLayoutManager(spannCount, StaggeredGridLayoutManager.VERTICAL)
-        rv_recycle_images.addItemDecoration(GridSpacingItemDecoration(spannCount, dpToPx(6f), false))
-        rv_recycle_images.adapter = imageSampleAdapter
     }
 
     override fun doStart() {
         super.doStart()
         //mBasePresenter初始化完毕后再加载
         //has disk cache ?
-      //  firstLoadMagnet()
+        //  firstLoadMagnet()
     }
 
     private fun firstLoadMagnet() {
@@ -137,8 +88,8 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             }
 
             override fun onPageFinished(view: WebView, url: String) {
-                view.loadUrl("javascript:window.handler.getContent(document.body.innerHTML);");
-                super.onPageFinished(view, url);
+                view.loadUrl("javascript:window.handler.getContent(document.body.innerHTML);")
+                super.onPageFinished(view, url)
             }
 
             override fun onReceivedError(view: WebView, errorCode: Int,
@@ -171,24 +122,17 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         if (data is MovieDetail) {
             //Slide Up Animation
             KLog.d("date : $data")
+            //cover fixme
+            // Glide.with(this).load(data.cover).thumbnail(0.1f).into(GlideDrawableImageViewTarget(iv_movie_cover))
+
             //animation
             ll_movie_detail.y = ll_movie_detail.y + 120
             ll_movie_detail.alpha = 0f
             ll_movie_detail.animate().translationY(0f).alpha(1f).setDuration(500).start()
 
-            //header
-            if (data.headers.isEmpty()) tv_movie_head_none_tip.visibility = View.VISIBLE
-            else {
-                //load header
-                headAdapter.setNewData(data.headers)
-            }
+            headHolder.init(data.headers)
+            sampleHolder.init(data.imageSamples)
 
-            //images
-            if (data.images.isEmpty()) tv_movie_images_none_tip.visibility = View.VISIBLE
-            else {
-                //load header
-                imageSampleAdapter.setNewData(data.images)
-            }
         }
     }
 
@@ -205,11 +149,6 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             current.startActivity(Intent(current, MovieDetailActivity::class.java).apply {
                 putExtra("movie", movie)
             })
-        }
-
-        fun View.measureIfNotMeasure() {
-            if (this.measuredHeight != 0 || this.measuredWidth != 0) return
-            this.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
         }
 
     }

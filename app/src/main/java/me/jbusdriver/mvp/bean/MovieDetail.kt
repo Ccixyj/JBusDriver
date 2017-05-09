@@ -22,7 +22,7 @@ data class MovieDetail(val title: String,
         val series: Pair<String, String>, //系列*/
                        val genres: List<Genre>, //類別
                        val actress: List<ActressInfo>, //出演
-                       val images: List<ImageSample>, //截圖
+                       val imageSamples: List<ImageSample>, //截圖
                        val relatedMovies: List<Movie> //推薦
         //  val magnets: MutableList<Magnet> = mutableListOf() //磁力链接
 ) {
