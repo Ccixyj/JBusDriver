@@ -19,6 +19,7 @@ import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.MovieDetail
 import me.jbusdriver.mvp.bean.detailSaveKey
 import me.jbusdriver.mvp.presenter.MovieDetailPresenterImpl
+import me.jbusdriver.ui.holder.ActressListHolder
 import me.jbusdriver.ui.holder.HeaderHolder
 import me.jbusdriver.ui.holder.ImageSampleHolder
 import org.jsoup.Jsoup
@@ -35,6 +36,11 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
     private val sampleHolder by lazy {
         ImageSampleHolder(this).apply {
             ll_movie_detail.addView(view, 1)
+        }
+    }
+    private val actressHolder by lazy {
+        ActressListHolder(this).apply {
+            ll_movie_detail.addView(view, 2)
         }
     }
 
@@ -132,6 +138,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
             headHolder.init(data.headers)
             sampleHolder.init(data.imageSamples)
+            actressHolder.init(data.actress)
 
         }
     }

@@ -11,7 +11,7 @@
 
         <ImageView
             android:id="@+id/iv_movie_img"
-            android:layout_width="@dimen/material_80dp"
+            android:layout_width="@dimen/material_88dp"
             android:layout_height="@dimen/material_108dp"
             android:layout_margin="@dimen/material_8dp"
              />

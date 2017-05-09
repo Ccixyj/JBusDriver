@@ -40,7 +40,7 @@ class MovieListFragment : AppBaseRecycleFragment<MovieListContract.MovieListPres
     override val swipeView: SwipeRefreshLayout  by lazy { sr_refresh }
     override val recycleView: RecyclerView by lazy { rv_recycle }
     override val layoutManager: RecyclerView.LayoutManager  by lazy { LinearLayoutManager(viewContext) }
-    override val adapter: BaseQuickAdapter<Movie, in BaseViewHolder> = object : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.layout_movie) {
+    override val adapter: BaseQuickAdapter<Movie, in BaseViewHolder> = object : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.layout_movie_item) {
         val padding by lazy { this@MovieListFragment.viewContext.dpToPx(8f) }
         val colors = listOf(0xff2195f3.toInt(), 0xff4caf50.toInt(), 0xffff0030.toInt()) //蓝,绿,红
 
