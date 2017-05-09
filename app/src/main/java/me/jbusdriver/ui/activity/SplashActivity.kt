@@ -64,19 +64,9 @@ class SplashActivity : BaseActivity() {
             }
             val urlsFromNet = Flowable.concat(CacheLoader.justDisk(C.Cache.ANNOUNCEURL, false), GitHub.INSTANCE.announce().addUserCase()).firstOrError().toFlowable()
                     .map {
-                        KLog.d("announce jsonString : $it")
-                        AppContext.gson.fromJson<JsonObject>(it).get(C.Cache.ANNOUNCEURL)?.asString?.apply {
-                            CacheLoader.cacheDisk(C.Cache.ANNOUNCEURL to this, C.Cache.WEEK)
-                        } ?: error("url is not valid")
-                    }
-                    .flatMap {
-                        KLog.d("announce url :$it")
-                        JAVBusService.INSTANCE.get(it).addUserCase()
-                    }
-                    .map {
                         source ->
                         arrayMapof<String, String>().apply {
-                            put(DataSourceType.CENSORED.key, Jsoup.parse(source).select("a").map { it.attr("href") }.toJsonString())
+                            put(DataSourceType.CENSORED.key,  AppContext.gson.fromJson<JsonObject>(source)?.get("backUp")?.asJsonArray.toString())
                         }
                     }
                     .flatMap {
@@ -88,6 +78,7 @@ class SplashActivity : BaseActivity() {
                         Flowable.mergeDelayError(mapFlow)
                     }
                     .firstOrError()
+                    .doOnError { CacheLoader.acache.remove(C.Cache.ANNOUNCEURL) }
                     .map {
                         val ds = DataSourceType.values().takeLast(DataSourceType.values().size - 1).toMutableList()
                         JAVBusService.defaultFastUrl = it.first
