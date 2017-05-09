@@ -59,8 +59,7 @@ class WatchLargeImageActivity : BaseActivity() {
 
     }
 
-    inner class MyViewPagerAdapter//构造方法，参数是我们的页卡，这样比较方便。
-        : PagerAdapter() {
+    inner class MyViewPagerAdapter : PagerAdapter() {
 
         override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
             container.removeView(imageViewList[position])//删除页卡

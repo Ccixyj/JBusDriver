@@ -14,7 +14,7 @@ import io.reactivex.disposables.CompositeDisposable
  * Created by Administrator on 2016/8/11 0011.
  * 日志记录及基础方法复用
  */
-open abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity : AppCompatActivity() {
     protected val rxManager by lazy { CompositeDisposable() }
     protected val TAG: String by lazy { this::class.java.simpleName }
     private var destroyed = false
