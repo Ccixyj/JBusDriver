@@ -1,3 +1,7 @@
 {
-  "announceUrl": "https://announce.javbus8.com/website.php"
+  "backUp": [
+    "https://www.javbus2.com",
+    "https://www.javbus3.com",
+    "https://www.javbus7.com"
+  ]
 }

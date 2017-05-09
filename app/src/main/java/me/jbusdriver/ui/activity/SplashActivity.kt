@@ -2,6 +2,7 @@ package me.jbusdriver.ui.activity
 
 import android.Manifest
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.util.ArrayMap
 import com.cfzx.utils.CacheLoader
 import com.google.gson.JsonObject
@@ -18,7 +19,6 @@ import me.jbusdriver.http.GitHub
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.Jsoup
-import java.util.concurrent.TimeUnit
 
 class SplashActivity : BaseActivity() {
 
@@ -34,19 +34,23 @@ class SplashActivity : BaseActivity() {
         Observable.combineLatest<Boolean, ArrayMap<String, String>, Boolean>(RxPermissions(this).request(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                 initUrls(), BiFunction { t1, t2 -> t1 })
                 .doOnError { CacheLoader.acache.clear() }
-                .takeUntil<Long> { Observable.timer(5, TimeUnit.SECONDS) }
-                .retry(3)
-                .doAfterTerminate {
+                .retry(1)
+                .doFinally {
+                    KLog.d("doFinally")
                     MainActivity.start(this)
                     finish()
                 }
                 .subscribeBy(onNext = {
                     KLog.i("success")
                 }, onError = {
-                    KLog.e(it.message)
+                    it.printStackTrace()
                 })
                 .addTo(rxManager)
 
+        Handler().postDelayed({
+            KLog.d("clear dispose")
+            rxManager.clear()
+        }, 6000)
     }
 
     fun initUrls(): Observable<ArrayMap<String, String>> {
