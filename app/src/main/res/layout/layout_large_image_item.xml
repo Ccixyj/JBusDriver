@@ -5,12 +5,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/iv_image_large"
+    <me.jbusdriver.ui.widget.MultiTouchZoomableImageView
+        android:id="@+id/mziv_image_large"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:background="@color/cardview_dark_background"
-        tools:src="@mipmap/ic_launcher" />
+        tools:src="@mipmap/ic_launcher"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        android:layout_gravity="center"/>
 
 
     <ProgressBar

@@ -1,27 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cv_actress_bg"
     style="@style/AppTheme.CardView"
-    android:layout_width="@dimen/material_100dp"
-    android:layout_height="@dimen/material_104dp"
-    android:id="@+id/cv_actress_bg">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/iv_actress_avatar"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:src="@mipmap/ic_launcher"/>
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_actress_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/coll_toolbar_image_gradient"
-        android:layout_gravity="bottom"
-        android:minHeight="@dimen/material_24dp"
-        android:gravity="center"
-        tools:text="1234567890abcdefg"
-        android:singleLine="true"
-        android:maxLines="1"
-        android:lines="1"/>
+        <ImageView
+            android:id="@+id/iv_actress_avatar"
+            android:layout_width="@dimen/material_104dp"
+            android:layout_height="@dimen/material_100dp"
+            android:gravity="center"
+            android:scaleType="fitStart"
+            tools:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:id="@+id/tv_actress_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@drawable/coll_toolbar_image_gradient"
+            android:gravity="center"
+            android:lines="1"
+            android:maxLines="1"
+            android:minHeight="@dimen/material_24dp"
+            android:singleLine="true"
+            tools:text="1234567890abcdefg" />
+    </LinearLayout>
 </android.support.v7.widget.CardView>

@@ -29,19 +29,13 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
 
     private val headHolder by lazy {
-        HeaderHolder(this).apply {
-            ll_movie_detail.addView(view, 0)
-        }
+        HeaderHolder(this)
     }
     private val sampleHolder by lazy {
-        ImageSampleHolder(this).apply {
-            ll_movie_detail.addView(view, 1)
-        }
+        ImageSampleHolder(this)
     }
     private val actressHolder by lazy {
-        ActressListHolder(this).apply {
-            ll_movie_detail.addView(view, 2)
-        }
+        ActressListHolder(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,8 +54,9 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
     }
 
     private fun initWidget() {
-
-
+        ll_movie_detail.addView(headHolder.view)
+        ll_movie_detail.addView(sampleHolder.view)
+        ll_movie_detail.addView(actressHolder.view)
     }
 
     override fun doStart() {

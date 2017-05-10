@@ -36,11 +36,26 @@
         <item name="cardElevation">@dimen/material_2dp</item>
     </style>
 
+    <style name="DividerLine">
+        <item name="android:background">@color/divider</item>
+    </style>
+
+    <style name="DividerLine.Horizontal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1px</item>
+        <item name="android:layout_marginTop">@dimen/material_8dp</item>
+        <item name="android:layout_marginBottom">@dimen/material_8dp</item>
+    </style>
+
+
     <!-- activity-->
 
     <style name="AppTheme.Splash" parent="AppTheme.NoActionBar">
         <item name="android:windowBackground">@drawable/bg_splash</item>
         <item name="android:windowActionBarOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar.TransparentStatusBar" parent="AppTheme.NoActionBar">
     </style>
 
 

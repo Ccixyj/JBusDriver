@@ -19,7 +19,6 @@
         android:layout_height="wrap_content"
         android:layout_weight="3"
         android:maxLines="12"
-        android:lineSpacingExtra="@dimen/material_1dp"
         android:textColor="@color/secondText"
         />
 </LinearLayout>

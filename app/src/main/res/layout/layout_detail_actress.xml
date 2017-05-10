@@ -35,13 +35,7 @@
             android:textColor="@color/primaryText"
             android:visibility="gone" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/material_1dp"
-            android:layout_marginBottom="@dimen/material_8dp"
-            android:layout_marginTop="@dimen/material_8dp"
-            android:background="@color/divider" />
-
+        <View style="@style/DividerLine.Horizontal" />
     </LinearLayout>
 
 
