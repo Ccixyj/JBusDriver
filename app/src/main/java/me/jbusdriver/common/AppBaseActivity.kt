@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger
 abstract class AppBaseActivity<P : BasePresenter<V>, V : BaseView> : BaseActivity(), LoaderManager.LoaderCallbacks<P>, PresenterFactory<P> {
     /**
      * Do we need to call [.doStart] from the [.onLoadFinished] method.
-     * Will be true if presenter wasn't loaded when [.onStart] is reached
+     * Will be true if SPresenter wasn't loaded when [.onStart] is reached
      */
     private val mNeedToCallStart = AtomicBoolean(false)
     protected var mFirstStart: Boolean = false//Is this the first start of the activity (after onCreate)

@@ -20,7 +20,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
 
     /**
      * Do we need to call [.doStart] from the [.onLoadFinished] method.
-     * Will be true if presenter wasn't loaded when [.onStart] is reached
+     * Will be true if SPresenter wasn't loaded when [.onStart] is reached
      */
     private val mNeedToCallStart = AtomicBoolean(false)
     protected var mFirstStart: Boolean = false//Is this the first start of the fragment (after onCreate)
@@ -119,7 +119,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
 
     protected fun onVisible() {
         if (!isUserVisible || isLazyLoaded || mBasePresenter == null) {
-            //presenter 可能没有初始化 ,放入dostart 中执行lazy
+            //SPresenter 可能没有初始化 ,放入dostart 中执行lazy
             return
         }
         lazyLoad()

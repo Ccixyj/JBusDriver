@@ -4,6 +4,7 @@ import me.jbusdriver.common.KLog
 import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import java.io.Serializable
 
 /**
  * Created by Administrator on 2017/4/16.
@@ -65,7 +66,7 @@ data class MovieDetail(val title: String,
             }
 
             val relatedMovies = doc.select("#related-waterfall .movie-box").map {
-                Movie(type,it.attr("title"), it.select("img").attr("src"), "", "", it.attr("href"))
+                Movie(type, it.attr("title"), it.select("img").attr("src"), "", "", it.attr("href"))
             }
 
             return MovieDetail(title, content, cover, headers, generes, actresses, samples, relatedMovies).apply {
@@ -87,9 +88,8 @@ data class MovieDetail(val title: String,
 
 }
 
-interface ILink {
+interface ILink : Serializable {
     val link: String
-
 }
 
 data class Header(val name: String, val value: String, override val link: String) : ILink

@@ -14,11 +14,13 @@ import kotlinx.android.synthetic.main.layout_detail_header.view.*
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.inflate
 import me.jbusdriver.mvp.bean.Header
+import me.jbusdriver.ui.activity.MovieListActivity
+import me.jbusdriver.ui.data.DataSourceType
 
 /**
  * Created by Administrator on 2017/5/9 0009.
  */
-class HeaderHolder(context: Context) {
+class HeaderHolder(context: Context, type: DataSourceType) {
 
     val view by lazy {
         context.inflate(R.layout.layout_detail_header, null).apply {
@@ -34,7 +36,8 @@ class HeaderHolder(context: Context) {
                     setTextColor(ResourcesCompat.getColor(this@apply.resources, R.color.colorPrimaryDark, null))
                     paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
                     setOnClickListener {
-                        KLog.d("text : ${this.text}")
+                        KLog.d("text : $item")
+                        MovieListActivity.start(context, type, item)
                     }
                 } else {
                     setTextColor(ResourcesCompat.getColor(this@apply.resources, R.color.secondText, null))

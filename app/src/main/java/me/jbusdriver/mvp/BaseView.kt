@@ -3,6 +3,7 @@ package com.cfzx.mvp.view
 import android.content.Context
 import com.afollestad.materialdialogs.MaterialDialog
 import io.reactivex.Flowable
+import me.jbusdriver.common.AppContext
 
 /**
  * Created by Administrator on 2016/7/21 0021.
@@ -16,6 +17,7 @@ interface BaseView {
     val viewContext: Context
 
     fun showLoading(): Unit {
+        if (viewContext is AppContext) return
         place_holder_loading = MaterialDialog.Builder(viewContext).content("正在加载...").progress(true, 0).show()
     }
 
@@ -38,7 +40,7 @@ interface BaseView {
         //加载更多失败
         fun loadMoreFail()
 
-        fun enableRefresh(bool:Boolean)
+        fun enableRefresh(bool: Boolean)
 
 
     }
@@ -54,13 +56,12 @@ interface BaseView {
         fun getRequestParams(page: Int): Flowable<String>
 
 
-
         /**
          * 重置列表
          */
         fun resetList()
 
-        fun enableLoadMore(bool:Boolean)
+        fun enableLoadMore(bool: Boolean)
 
     }
 

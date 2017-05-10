@@ -6,7 +6,6 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.Gravity
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -20,6 +19,7 @@ import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.common.AppBaseRecycleFragment
+import me.jbusdriver.common.C
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.dpToPx
 import me.jbusdriver.mvp.MovieListContract
@@ -35,7 +35,7 @@ abstract class MovieListFragment : AppBaseRecycleFragment<MovieListContract.Movi
 
     override val layoutId: Int = R.layout.layout_swipe_recycle
 
-    override val swipeView: SwipeRefreshLayout  by lazy { sr_refresh }
+    override val swipeView: SwipeRefreshLayout?  by lazy { sr_refresh }
     override val recycleView: RecyclerView by lazy { rv_recycle }
     override val layoutManager: RecyclerView.LayoutManager  by lazy { LinearLayoutManager(viewContext) }
     override val adapter: BaseQuickAdapter<Movie, in BaseViewHolder> = object : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.layout_movie_item) {
@@ -105,6 +105,6 @@ abstract class MovieListFragment : AppBaseRecycleFragment<MovieListContract.Movi
 
 
     /*================================================*/
-    override val type by lazy { arguments.getSerializable("type") as? DataSourceType ?: DataSourceType.CENSORED }
+    override val type by lazy { arguments.getSerializable(C.BundleKey.Key_1) as? DataSourceType ?: DataSourceType.CENSORED }
 
 }

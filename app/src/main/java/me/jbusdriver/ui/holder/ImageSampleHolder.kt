@@ -16,12 +16,13 @@ import me.jbusdriver.common.dpToPx
 import me.jbusdriver.common.inflate
 import me.jbusdriver.mvp.bean.ImageSample
 import me.jbusdriver.ui.activity.WatchLargeImageActivity
+import me.jbusdriver.ui.data.DataSourceType
 import me.jbusdriver.ui.data.GridSpacingItemDecoration
 
 /**
  * Created by Administrator on 2017/5/9 0009.
  */
-class ImageSampleHolder(context: Context) {
+class ImageSampleHolder(context: Context, type: DataSourceType) {
     val view by lazy {
         context.inflate(R.layout.layout_detail_image_samples, null).apply {
             val displayMetrics = DisplayMetrics()

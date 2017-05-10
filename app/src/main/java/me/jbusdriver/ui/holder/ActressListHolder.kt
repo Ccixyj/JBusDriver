@@ -15,19 +15,25 @@ import kotlinx.android.synthetic.main.layout_detail_actress.view.*
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.inflate
 import me.jbusdriver.mvp.bean.ActressInfo
+import me.jbusdriver.ui.activity.MovieListActivity
+import me.jbusdriver.ui.data.DataSourceType
 import java.util.*
 
 /**
  * Created by Administrator on 2017/5/9 0009.
  */
-class ActressListHolder(context: Context) {
+class ActressListHolder(context: Context, type: DataSourceType) {
 
     val view by lazy {
         context.inflate(R.layout.layout_detail_actress).apply {
             rv_recycle_actress.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             rv_recycle_actress.adapter = actressAdapter
             actressAdapter.setOnItemClickListener { adapter, _, position ->
-                KLog.d("item : ${adapter.data.getOrNull(position)}")
+                actressAdapter.data.getOrNull(position)?.let {
+                    KLog.d("item : $it")
+                    MovieListActivity.start(context,type,it)
+                }
+
             }
         }
     }

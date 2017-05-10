@@ -3,6 +3,7 @@ package me.jbusdriver.ui.fragment
 import android.os.Bundle
 import android.view.MenuItem
 import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.common.C
 import me.jbusdriver.mvp.MovieListContract
 import me.jbusdriver.mvp.presenter.MovieListPresenterImpl
 import me.jbusdriver.ui.data.DataSourceType
@@ -32,7 +33,7 @@ class HomeMovieListFragment : MovieListFragment(), MovieListContract.MovieListVi
     /*================================================*/
     companion object {
         fun newInstance(type: DataSourceType) = HomeMovieListFragment().apply {
-            arguments = Bundle().apply { putSerializable("type", type) }
+            arguments = Bundle().apply { putSerializable(C.BundleKey.Key_1, type) }
         }
     }
 

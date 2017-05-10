@@ -56,13 +56,13 @@ object CacheLoader {
         val v = lru[key]
         KLog.i("fromLruAsync : $key ,$v")
         v?.let { Flowable.just(it) } ?: Flowable.empty()
-    }.timeout(35, TimeUnit.SECONDS, Flowable.empty()).take(1).subscribeOn(Schedulers.io())
+    }.timeout(6, TimeUnit.SECONDS, Flowable.empty()).take(1).subscribeOn(Schedulers.io())
 
     fun fromDiskAsync(key: String, add2Lru: Boolean = true): Flowable<String> = Flowable.interval(0, 800, TimeUnit.MILLISECONDS, Schedulers.io()).flatMap {
         val v = acache.getAsString(key)
         KLog.i("fromDiskAsync : $key ,$v")
         v?.let { Flowable.just(it) } ?: Flowable.empty()
-    }.timeout(35, TimeUnit.SECONDS, Flowable.empty()).take(1).doOnNext { if (add2Lru) lru.put(key, it) }.subscribeOn(Schedulers.io())
+    }.timeout(6, TimeUnit.SECONDS, Flowable.empty()).take(1).doOnNext { if (add2Lru) lru.put(key, it) }.subscribeOn(Schedulers.io())
 
 
     fun justLru(key: String): Flowable<String> {

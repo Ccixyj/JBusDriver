@@ -23,4 +23,9 @@ public class C {
     public static class Cookie {
         public static final String AddCookie = "AddCookie";
     }
+
+    public static class BundleKey {
+        public static final String Key_1 = "Key_1";
+        public static final String Key_2 = "Key_2";
+    }
 }

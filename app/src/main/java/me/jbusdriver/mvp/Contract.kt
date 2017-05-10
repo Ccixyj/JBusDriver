@@ -39,3 +39,9 @@ interface MovieDetailContract {
         fun loadMagnets(doc: Element)
     }
 }
+
+interface MoviePareseContract {
+    interface MovieParseView : BaseView
+    interface MovieParsePresenter : BasePresenter<MovieParseView>
+
+}

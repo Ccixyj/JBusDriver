@@ -18,7 +18,7 @@ import me.jbusdriver.mvp.bean.Magnet
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.MovieDetail
 import me.jbusdriver.mvp.bean.detailSaveKey
-import me.jbusdriver.mvp.presenter.HomeMovieDetailPresenterImpl
+import me.jbusdriver.mvp.presenter.MovieDetailPresenterImpl
 import me.jbusdriver.ui.holder.ActressListHolder
 import me.jbusdriver.ui.holder.GenresHolder
 import me.jbusdriver.ui.holder.HeaderHolder
@@ -29,10 +29,10 @@ import org.jsoup.Jsoup
 class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPresenter, MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailView {
 
 
-    private val headHolder by lazy { HeaderHolder(this) }
-    private val sampleHolder by lazy { ImageSampleHolder(this) }
-    private val actressHolder by lazy { ActressListHolder(this) }
-    private val genreHolder by lazy { GenresHolder(this) }
+    private val headHolder by lazy { HeaderHolder(this,movie.type) }
+    private val sampleHolder by lazy { ImageSampleHolder(this,movie.type) }
+    private val actressHolder by lazy { ActressListHolder(this,movie.type) }
+    private val genreHolder by lazy { GenresHolder(this,movie.type) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,9 +42,8 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         fab.setOnClickListener {
             mBasePresenter?.onRefresh()
         }
-        setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        toolbar.title = movie.code + " " + movie.title
+        supportActionBar?.title = movie.code + " " + movie.title
 
         initWidget()
     }
@@ -102,7 +101,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         super.onStart()
     }
 
-    override fun createPresenter() = HomeMovieDetailPresenterImpl()
+    override fun createPresenter() = MovieDetailPresenterImpl()
     override val layoutId = R.layout.activity_movie_detail
 
     override val movie: Movie by lazy { intent.extras?.getSerializable("movie") as? Movie ?: error("need movie info") }

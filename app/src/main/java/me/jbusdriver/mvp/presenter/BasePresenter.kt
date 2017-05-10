@@ -7,8 +7,8 @@ interface BasePresenter<V> {
 
 
     /**
-     * Called when the view is attached to the presenter. Presenters should normally not use this
-     * method since it's only used to link the view to the presenter which is done by the BasePresenter.
+     * Called when the view is attached to the SPresenter. Presenters should normally not use this
+     * method since it's only used to link the view to the SPresenter which is done by the BasePresenter.
      * after activity's or fragment's onStart
 
      * @param view the view
@@ -20,12 +20,12 @@ interface BasePresenter<V> {
      * method, until [.onStop] is called.
      * after [.onViewAttached]
 
-     * @param firstStart true if it's the first start of this presenter, only once in the presenter lifetime
+     * @param firstStart true if it's the first start of this SPresenter, only once in the SPresenter lifetime
      */
     fun onStart(firstStart: Boolean)
 
     /**
-     * do not call manually, it will call if presenter is  firstStart
+     * do not call manually, it will call if SPresenter is  firstStart
      */
     fun onFirstLoad()
 
@@ -40,14 +40,14 @@ interface BasePresenter<V> {
     fun onStop()
 
     /**
-     * Called when the view is detached from the presenter. Presenters should normally not use this
-     * method since it's only used to unlink the view from the presenter which is done by the BasePresenter.
+     * Called when the view is detached from the SPresenter. Presenters should normally not use this
+     * method since it's only used to unlink the view from the SPresenter which is done by the BasePresenter.
      */
     fun onViewDetached()
 
     /**
-     * Called when the presenter is definitely destroyed, you should use this method only to release
-     * any resource used by the presenter (cancelCurrentRequest HTTP requests, close database connection...).
+     * Called when the SPresenter is definitely destroyed, you should use this method only to release
+     * any resource used by the SPresenter (cancelCurrentRequest HTTP requests, close database connection...).
      */
     fun onPresenterDestroyed()
 
@@ -56,7 +56,7 @@ interface BasePresenter<V> {
 
 
     /**
-     * 加载更多的通用接口,presenter 继承 me.jbusdriver.mvp.presenter.AbstractRefreshLoadMorePresenterImpl，并实现view的loadComplete方法
+     * 加载更多的通用接口,SPresenter 继承 me.jbusdriver.mvp.SPresenter.AbstractRefreshLoadMorePresenterImpl，并实现view的loadComplete方法
      */
     interface LoadMorePresenter {
         /**

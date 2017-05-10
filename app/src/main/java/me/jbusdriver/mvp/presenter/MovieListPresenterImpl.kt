@@ -16,10 +16,10 @@ import me.jbusdriver.mvp.model.BaseModel
 import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.nodes.Document
 
-class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieListView>(), MovieListContract.MovieListPresenter {
+open class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieListView>(), MovieListContract.MovieListPresenter {
 
     var IsAll = false
-    val saveKey: String
+    protected val saveKey: String
         inline get() = "${mView?.type?.key ?: DataSourceType.CENSORED.key}$IsAll"
     val urls by lazy { CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) } ?: arrayMapof() }
     private val service by lazy {
@@ -40,7 +40,7 @@ class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieListVie
     }
 
 
-    override fun stringMap(str: Document): List<Any> = Movie.loadFromDoc(mView?.type ?: DataSourceType.CENSORED ,str)
+    override fun stringMap(str: Document): List<Any> = Movie.loadFromDoc(mView?.type ?: DataSourceType.CENSORED, str)
 
     override fun onRefresh() {
         CacheLoader.removeCacheLike(saveKey, isRegex = false)
