@@ -19,10 +19,7 @@ import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.MovieDetail
 import me.jbusdriver.mvp.bean.detailSaveKey
 import me.jbusdriver.mvp.presenter.MovieDetailPresenterImpl
-import me.jbusdriver.ui.holder.ActressListHolder
-import me.jbusdriver.ui.holder.GenresHolder
-import me.jbusdriver.ui.holder.HeaderHolder
-import me.jbusdriver.ui.holder.ImageSampleHolder
+import me.jbusdriver.ui.holder.*
 import org.jsoup.Jsoup
 
 
@@ -33,6 +30,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
     private val sampleHolder by lazy { ImageSampleHolder(this,movie.type) }
     private val actressHolder by lazy { ActressListHolder(this,movie.type) }
     private val genreHolder by lazy { GenresHolder(this,movie.type) }
+    private val relativeMovieHolder by lazy { RelativeMovieHolder(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +51,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         ll_movie_detail.addView(sampleHolder.view)
         ll_movie_detail.addView(actressHolder.view)
         ll_movie_detail.addView(genreHolder.view)
+        ll_movie_detail.addView(relativeMovieHolder.view)
     }
 
     override fun doStart() {
@@ -131,6 +130,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             sampleHolder.init(data.imageSamples)
             actressHolder.init(data.actress)
             genreHolder.init(data.genres)
+            relativeMovieHolder.init(data.relatedMovies)
 
         }
     }

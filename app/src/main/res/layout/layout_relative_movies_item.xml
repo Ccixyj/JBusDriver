@@ -11,7 +11,7 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/iv_actress_avatar"
+            android:id="@+id/iv_relative_movie_image"
             android:layout_width="@dimen/material_104dp"
             android:layout_height="@dimen/material_100dp"
             android:gravity="center"
@@ -19,7 +19,7 @@
             tools:src="@mipmap/ic_launcher" />
 
         <TextView
-            android:id="@+id/tv_actress_name"
+            android:id="@+id/tv_relative_movie_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
