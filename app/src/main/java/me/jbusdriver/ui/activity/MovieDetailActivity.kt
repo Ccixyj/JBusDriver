@@ -18,8 +18,9 @@ import me.jbusdriver.mvp.bean.Magnet
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.MovieDetail
 import me.jbusdriver.mvp.bean.detailSaveKey
-import me.jbusdriver.mvp.presenter.MovieDetailPresenterImpl
+import me.jbusdriver.mvp.presenter.HomeMovieDetailPresenterImpl
 import me.jbusdriver.ui.holder.ActressListHolder
+import me.jbusdriver.ui.holder.GenresHolder
 import me.jbusdriver.ui.holder.HeaderHolder
 import me.jbusdriver.ui.holder.ImageSampleHolder
 import org.jsoup.Jsoup
@@ -28,15 +29,10 @@ import org.jsoup.Jsoup
 class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPresenter, MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailView {
 
 
-    private val headHolder by lazy {
-        HeaderHolder(this)
-    }
-    private val sampleHolder by lazy {
-        ImageSampleHolder(this)
-    }
-    private val actressHolder by lazy {
-        ActressListHolder(this)
-    }
+    private val headHolder by lazy { HeaderHolder(this) }
+    private val sampleHolder by lazy { ImageSampleHolder(this) }
+    private val actressHolder by lazy { ActressListHolder(this) }
+    private val genreHolder by lazy { GenresHolder(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +53,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         ll_movie_detail.addView(headHolder.view)
         ll_movie_detail.addView(sampleHolder.view)
         ll_movie_detail.addView(actressHolder.view)
+        ll_movie_detail.addView(genreHolder.view)
     }
 
     override fun doStart() {
@@ -105,7 +102,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         super.onStart()
     }
 
-    override fun createPresenter() = MovieDetailPresenterImpl()
+    override fun createPresenter() = HomeMovieDetailPresenterImpl()
     override val layoutId = R.layout.activity_movie_detail
 
     override val movie: Movie by lazy { intent.extras?.getSerializable("movie") as? Movie ?: error("need movie info") }
@@ -134,6 +131,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             headHolder.init(data.headers)
             sampleHolder.init(data.imageSamples)
             actressHolder.init(data.actress)
+            genreHolder.init(data.genres)
 
         }
     }

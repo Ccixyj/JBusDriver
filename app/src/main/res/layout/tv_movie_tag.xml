@@ -6,6 +6,6 @@
     android:layout_above="@+id/movie_date"
     android:layout_alignParentEnd="true"
     android:layout_alignParentRight="true"
-    android:background="@drawable/bg_movie_tag"
+    android:background="@drawable/shape_solid_corner"
     android:textColor="@android:color/white"
      />

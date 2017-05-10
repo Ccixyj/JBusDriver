@@ -24,7 +24,6 @@ import me.jbusdriver.common.KLog
 import me.jbusdriver.common.dpToPx
 import me.jbusdriver.mvp.MovieListContract
 import me.jbusdriver.mvp.bean.Movie
-import me.jbusdriver.mvp.presenter.MovieListPresenterImpl
 import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.data.DataSourceType
 
@@ -32,8 +31,7 @@ import me.jbusdriver.ui.data.DataSourceType
 /**
  * Created by Administraor on 2017/4/9.
  */
-class MovieListFragment : AppBaseRecycleFragment<MovieListContract.MovieListPresenter, MovieListContract.MovieListView, Movie>(), MovieListContract.MovieListView {
-    override fun createPresenter() = MovieListPresenterImpl()
+abstract class MovieListFragment : AppBaseRecycleFragment<MovieListContract.MovieListPresenter, MovieListContract.MovieListView, Movie>(), MovieListContract.MovieListView {
 
     override val layoutId: Int = R.layout.layout_swipe_recycle
 
@@ -105,29 +103,8 @@ class MovieListFragment : AppBaseRecycleFragment<MovieListContract.MovieListPres
 
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the CENSORED/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        val id = item.itemId
-        when (id) {
-            R.id.action_show_all -> {
-                item.isChecked = !item.isChecked
-                if (item.isChecked) item.title = "已发布" else item.title = "全部电影"  /*false : 已发布的 ,true :全部*/
-                mBasePresenter?.loadAll(item.isChecked)
-            }
-        }
-
-        return super.onOptionsItemSelected(item)
-    }
 
     /*================================================*/
     override val type by lazy { arguments.getSerializable("type") as? DataSourceType ?: DataSourceType.CENSORED }
-
-    companion object {
-        fun newInstance(type: DataSourceType) = MovieListFragment().apply {
-            arguments = Bundle().apply { putSerializable("type", type) }
-        }
-    }
 
 }

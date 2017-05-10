@@ -17,7 +17,7 @@ import me.jbusdriver.common.KLog
 import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.presenter.MainPresenterImpl
 import me.jbusdriver.ui.data.DataSourceType
-import me.jbusdriver.ui.fragment.MovieListFragment
+import me.jbusdriver.ui.fragment.HomeMovieListFragment
 
 class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.MainView>(), NavigationView.OnNavigationItemSelectedListener, MainContract.MainView {
 
@@ -69,9 +69,9 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         val id = item.itemId
         KLog.d("onNavigationItemSelected $item ")
         val fragment = (when (id) {
-            R.id.movie_ma -> MovieListFragment.newInstance(DataSourceType.CENSORED)
-            R.id.movie_uncensored -> MovieListFragment.newInstance(DataSourceType.UNCENSORED)
-            R.id.movie_xyz -> MovieListFragment.newInstance(DataSourceType.XYZ)
+            R.id.movie_ma -> HomeMovieListFragment.newInstance(DataSourceType.CENSORED)
+            R.id.movie_uncensored -> HomeMovieListFragment.newInstance(DataSourceType.UNCENSORED)
+            R.id.movie_xyz -> HomeMovieListFragment.newInstance(DataSourceType.XYZ)
             else -> error("no matched fragment")
         }.apply { fragments.put(id, this) })
         //

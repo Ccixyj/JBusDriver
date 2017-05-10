@@ -47,8 +47,10 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="me.jbusdriver.ui.activity.WatchLargeImageActivity"
-            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
-            />
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+        <activity
+            android:name="me.jbusdriver.ui.activity.MovieListActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

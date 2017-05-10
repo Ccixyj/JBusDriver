@@ -15,7 +15,7 @@ import me.jbusdriver.mvp.model.BaseModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
-class MovieDetailPresenterImpl : BasePresenterImpl<MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailPresenter {
+class HomeMovieDetailPresenterImpl : BasePresenterImpl<MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailPresenter {
 
 
     val loadFromNet = { s: String ->

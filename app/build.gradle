@@ -7,7 +7,7 @@ android {
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "me.jbusdriver"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -61,7 +61,7 @@ dependencies {
     compile 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.3@aar'
 
     compile 'com.jaeger.statusbarutil:library:1.4.0'
-
+    compile 'com.xiaofeng.android:flowlayoutmanager:1.2.3.2'
     compile 'com.umeng.analytics:analytics:latest.integration'
 
 }
