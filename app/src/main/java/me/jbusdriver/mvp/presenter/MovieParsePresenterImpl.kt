@@ -6,9 +6,12 @@ import me.jbusdriver.common.KLog
 import me.jbusdriver.common.SchedulersCompat
 import me.jbusdriver.common.SimpleSubscriber
 import me.jbusdriver.mvp.MoviePareseContract
+import me.jbusdriver.mvp.bean.ActressInfo
+import me.jbusdriver.mvp.bean.IAttr
 import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.model.BaseModel
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 
 class MovieParsePresenterImpl(val link: ILink) : BasePresenterImpl<MoviePareseContract.MovieParseView>(), MoviePareseContract.MovieParsePresenter {
 
@@ -18,13 +21,16 @@ class MovieParsePresenterImpl(val link: ILink) : BasePresenterImpl<MoviePareseCo
         }
 
         override fun requestFromCache(t: Int): Flowable<String> = Flowable.concat(CacheLoader.fromLruAsync(link.link), requestFor(t))
+                .firstOrError().toFlowable()
 
     }
 
     override fun onFirstLoad() {
         super.onFirstLoad()
         KLog.d("link :$link")
-        parseModel.requestFromCache(1).compose(SchedulersCompat.io()).subscribeWith(object : SimpleSubscriber<String>() {
+        parseModel.requestFromCache(1)
+                .map { parse(link, Jsoup.parse(it)) }
+                .compose(SchedulersCompat.io()).subscribeWith(object : SimpleSubscriber<IAttr>() {
             override fun onStart() {
                 super.onStart()
             }
@@ -37,11 +43,20 @@ class MovieParsePresenterImpl(val link: ILink) : BasePresenterImpl<MoviePareseCo
                 super.onError(e)
             }
 
-            override fun onNext(t: String) {
+            override fun onNext(t: IAttr) {
                 super.onNext(t)
                 mView?.showContent(t)
             }
         })
 
+    }
+
+    fun parse(link: ILink, doc: Document): IAttr? {
+        return when (link) {
+            is ActressInfo -> {
+                ActressInfo.parseActressAttrs(doc)
+            }
+            else -> null
+        }
     }
 }

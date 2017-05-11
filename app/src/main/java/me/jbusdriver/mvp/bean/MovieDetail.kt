@@ -92,9 +92,23 @@ interface ILink : Serializable {
     val link: String
 }
 
+interface IAttr
+
+
 data class Header(val name: String, val value: String, override val link: String) : ILink
 data class Genre(val name: String, override val link: String) : ILink
-data class ActressInfo(val name: String, val avatar: String, override val link: String) : ILink
+data class ActressInfo(val name: String, val avatar: String, override val link: String) : ILink {
+    companion object {
+        fun parseActressAttrs(doc: Document): ActressAttrs {
+            val frame = doc.select(".avatar-box")
+            val photo = frame.select("img")
+            val attrs = frame.select("p").map { it.text() }
+            return ActressAttrs(photo.attr("title"), photo.attr("src"), attrs)
+        }
+    }
+}
+
 data class Magnet(val name: String, val size: String, val date: String, override val link: String, val tag: List<String> = listOf()) : ILink
 data class ImageSample(val title: String, val thumb: String, val image: String)
 
+data class ActressAttrs(val title: String, val imageUrl: String, val info: List<String>) : IAttr

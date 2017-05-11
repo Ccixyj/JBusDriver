@@ -8,6 +8,7 @@ import android.widget.Toast
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.AppBaseActivity
 import me.jbusdriver.common.C
+import me.jbusdriver.common.KLog
 import me.jbusdriver.mvp.MoviePareseContract
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.Genre
@@ -61,7 +62,7 @@ class MovieListActivity : AppBaseActivity<MoviePareseContract.MovieParsePresente
     }
 
     override fun <T> showContent(data: T?) {
-
+        KLog.d("parse res :$data")
     }
 
     companion object {

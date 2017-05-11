@@ -40,6 +40,7 @@ class SimpleMovieListPresenter(val url: String) : AbstractRefreshLoadMorePresent
         }
 
         override fun requestFromCache(t: Int): Flowable<String> = Flowable.concat(CacheLoader.justLru(url), requestFor(t))
+                .firstOrError().toFlowable()
 
     }
 
