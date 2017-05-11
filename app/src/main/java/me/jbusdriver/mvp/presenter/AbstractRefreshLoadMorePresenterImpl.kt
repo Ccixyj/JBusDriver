@@ -44,6 +44,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
         else model.requestFor(page)).map {
             with(Jsoup.parse(it)) {
                 pageInfo = parsePage(this)
+                KLog.d("parse page :$pageInfo")
                 stringMap(this)
             }
         }.compose(SchedulersCompat.io())
@@ -54,8 +55,11 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
 
     fun parsePage(pageDoc: Document): PageInfo {
         with(pageDoc) {
-            return PageInfo(select(".pagination .active > a").attr("href").split("/").lastOrNull()?.toIntOrNull() ?: 0,
-                    select(".pagination .active ~ li >a").attr("href").split("/").lastOrNull()?.toIntOrNull() ?: 0)
+            val current = select(".pagination .active > a").attr("href")
+            val next = select(".pagination .active ~ li >a").attr("href")
+            return PageInfo(current.split("/").lastOrNull()?.toIntOrNull() ?: 0,
+                    next.split("/").lastOrNull()?.toIntOrNull() ?: 0
+                    , current, next)
         }
     }
 

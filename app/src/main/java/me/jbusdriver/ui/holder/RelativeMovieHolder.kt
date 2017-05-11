@@ -36,7 +36,7 @@ class RelativeMovieHolder(context: Context) {
         }
     }
 
-    val relativeAdapter = object : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.layout_relative_movies_item) {
+    val relativeAdapter = object : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.layout_detail_relative_movies_item) {
         override fun convert(helper: BaseViewHolder, item: Movie) {
             KLog.d("relative movie :$item")
 

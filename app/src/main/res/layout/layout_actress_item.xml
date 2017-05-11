@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/AppTheme.CardView"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:foreground="?android:attr/selectableItemBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,7 +14,7 @@
         <ImageView
             android:id="@+id/iv_actress_avatar"
             android:layout_width="@dimen/material_104dp"
-            android:layout_height="@dimen/material_100dp"
+            android:layout_height="@dimen/material_104dp"
             android:gravity="center"
             android:scaleType="fitStart"
             tools:src="@mipmap/ic_launcher" />
@@ -23,11 +24,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="@drawable/coll_toolbar_image_gradient"
+            android:ellipsize="marquee"
             android:gravity="center"
             android:lines="1"
-            android:maxLines="1"
-            android:minHeight="@dimen/material_24dp"
+            android:minHeight="@dimen/material_32dp"
             android:singleLine="true"
             tools:text="1234567890abcdefg" />
     </LinearLayout>

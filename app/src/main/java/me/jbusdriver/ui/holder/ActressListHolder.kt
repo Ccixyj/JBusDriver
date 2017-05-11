@@ -40,6 +40,7 @@ class ActressListHolder(context: Context, type: DataSourceType) {
 
     val actressAdapter = object : BaseQuickAdapter<ActressInfo, BaseViewHolder>(R.layout.layout_actress_item) {
         override fun convert(helper: BaseViewHolder, item: ActressInfo) {
+            KLog.d("ActressInfo :$item")
             Glide.with(context).load(item.avatar).asBitmap().into(object : BitmapImageViewTarget(helper.getView(R.id.iv_actress_avatar)) {
                 override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
                     resource?.let {
