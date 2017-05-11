@@ -1,6 +1,5 @@
 package me.jbusdriver.ui.activity
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -27,10 +26,10 @@ import org.jsoup.Jsoup
 class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPresenter, MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailView {
 
 
-    private val headHolder by lazy { HeaderHolder(this,movie.type) }
-    private val sampleHolder by lazy { ImageSampleHolder(this,movie.type) }
-    private val actressHolder by lazy { ActressListHolder(this,movie.type) }
-    private val genreHolder by lazy { GenresHolder(this,movie.type) }
+    private val headHolder by lazy { HeaderHolder(this, movie.type) }
+    private val sampleHolder by lazy { ImageSampleHolder(this, movie.type) }
+    private val actressHolder by lazy { ActressListHolder(this, movie.type) }
+    private val genreHolder by lazy { GenresHolder(this, movie.type) }
     private val relativeMovieHolder by lazy { RelativeMovieHolder(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -104,7 +103,9 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
     override fun createPresenter() = MovieDetailPresenterImpl()
     override val layoutId = R.layout.activity_movie_detail
 
-    override val movie: Movie by lazy { intent.extras?.getSerializable("movie") as? Movie ?: error("need movie info") }
+    override val movie: Movie by lazy {
+        intent.extras?.getSerializable(C.BundleKey.Key_1) as? Movie ?: error("need movie info")
+    }
     //详情不怎么变化,所以直接缓存到disk
     override val detailMovieFromDisk: MovieDetail? by lazy {
         CacheLoader.acache.getAsString(movie.detailSaveKey)?.let { AppContext.gson.fromJson<MovieDetail>(it) }
@@ -147,7 +148,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
     companion object {
         fun start(current: Context, movie: Movie) {
             current.startActivity(Intent(current, MovieDetailActivity::class.java).apply {
-                putExtra("movie", movie)
+                putExtra(C.BundleKey.Key_1, movie)
             })
         }
 

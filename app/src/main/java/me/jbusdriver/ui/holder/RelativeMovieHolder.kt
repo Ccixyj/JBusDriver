@@ -30,7 +30,7 @@ class RelativeMovieHolder(context: Context) {
             relativeAdapter.setOnItemClickListener { adapter, _, position ->
                 relativeAdapter.data.getOrNull(position)?.let {
                     KLog.d("relative  : $it")
-                    MovieDetailActivity.start(context,it)
+                    MovieDetailActivity.start(context, it)
                 }
 
             }
@@ -39,8 +39,6 @@ class RelativeMovieHolder(context: Context) {
 
     val relativeAdapter = object : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.layout_detail_relative_movies_item) {
         override fun convert(helper: BaseViewHolder, item: Movie) {
-            KLog.d("relative movie :$item")
-
             Glide.with(context).load(item.imageUrl).asBitmap().into(object : BitmapImageViewTarget(helper.getView(R.id.iv_relative_movie_image)) {
                 override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
                     resource?.let {
@@ -70,6 +68,7 @@ class RelativeMovieHolder(context: Context) {
 
     fun init(relativeMovies: List<Movie>) {
         //actress
+        KLog.d("relate moview : $relativeMovies")
         if (relativeMovies.isEmpty()) view.tv_movie_relative_none_tip.visibility = View.VISIBLE
         else {
             //load header

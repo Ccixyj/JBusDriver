@@ -66,7 +66,8 @@ data class MovieDetail(val title: String,
             }
 
             val relatedMovies = doc.select("#related-waterfall .movie-box").map {
-                Movie(type, it.attr("title"), it.select("img").attr("src"), "", "", it.attr("href"))
+                val url = it.attr("href")
+                Movie(type, it.attr("title"), it.select("img").attr("src"), url.split("/").last(), "", url)
             }
 
             return MovieDetail(title, content, cover, headers, generes, actresses, samples, relatedMovies).apply {

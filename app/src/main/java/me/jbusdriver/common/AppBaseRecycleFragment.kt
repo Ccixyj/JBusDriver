@@ -84,8 +84,6 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
 
     override fun resetList() {
         adapter.getData().clear()
-        adapter.removeAllHeaderView()
-        adapter.removeAllFooterView()
         adapter.loadMoreComplete()
         adapter.notifyDataSetChanged()
     }

@@ -109,3 +109,7 @@ fun <R> Flowable<R>.addUserCase() =
 
 
 /*view*/
+fun View.measureIfNotMeasure() {
+    if (this.measuredHeight != 0 || this.measuredWidth != 0) return
+    this.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+}

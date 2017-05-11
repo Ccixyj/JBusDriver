@@ -10,10 +10,7 @@ import me.jbusdriver.common.AppBaseActivity
 import me.jbusdriver.common.C
 import me.jbusdriver.common.KLog
 import me.jbusdriver.mvp.MoviePareseContract
-import me.jbusdriver.mvp.bean.ActressInfo
-import me.jbusdriver.mvp.bean.Genre
-import me.jbusdriver.mvp.bean.Header
-import me.jbusdriver.mvp.bean.ILink
+import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.presenter.MovieParsePresenterImpl
 import me.jbusdriver.ui.data.DataSourceType
 import me.jbusdriver.ui.fragment.SimpleMovieListFragment
@@ -31,7 +28,7 @@ class MovieListActivity : AppBaseActivity<MoviePareseContract.MovieParsePresente
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setToolBar()
-        supportFragmentManager.beginTransaction().replace(R.id.fl_container, SimpleMovieListFragment.newInstance(type, linkData.link))
+        supportFragmentManager.beginTransaction().replace(R.id.fl_container, SimpleMovieListFragment.newInstance(type, linkData))
                 .commitAllowingStateLoss()
     }
 
@@ -62,7 +59,7 @@ class MovieListActivity : AppBaseActivity<MoviePareseContract.MovieParsePresente
     }
 
     override fun <T> showContent(data: T?) {
-        KLog.d("parse res :$data")
+
     }
 
     companion object {

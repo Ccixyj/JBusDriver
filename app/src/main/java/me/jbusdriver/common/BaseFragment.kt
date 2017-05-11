@@ -45,6 +45,7 @@ open class BaseFragment : Fragment() {
         super.onPause()
         KLog.t(TAG).d("onPause")
     }
+
     override fun onStop() {
         super.onStop()
         KLog.t(TAG).d("onStop")
@@ -54,11 +55,14 @@ open class BaseFragment : Fragment() {
         super.onDestroyView()
         KLog.t(TAG).d("onDestroyView")
     }
+
     override fun onDestroy() {
         super.onDestroy()
         KLog.t(TAG).d("onDestroy")
     }
+
     //region other
-    val viewContext: Context = activity ?: AppContext.instace
+    val viewContext: Context
+        get() = activity ?: AppContext.instace
     //endregion
 }

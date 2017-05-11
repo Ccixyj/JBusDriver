@@ -55,6 +55,7 @@ class MovieDetailPresenterImpl : BasePresenterImpl<MovieDetailContract.MovieDeta
 
     override fun loadDetail() {
         mView?.movie?.detailUrl?.let {
+            KLog.d("detailurl :$it  , movie ${mView?.movie}")
             model.requestFromCache(it).compose(SchedulersCompat.io())
                     .compose(SchedulersCompat.io())
                     .doOnTerminate { mView?.dismissLoading() }
