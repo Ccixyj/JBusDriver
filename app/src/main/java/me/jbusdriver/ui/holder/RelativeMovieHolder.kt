@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.layout_detail_relative_movies.view.*
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.inflate
 import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.ui.activity.MovieDetailActivity
 import java.util.*
 
 /**
@@ -27,10 +28,10 @@ class RelativeMovieHolder(context: Context) {
             rv_recycle_relative_movies.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             rv_recycle_relative_movies.adapter = relativeAdapter
             relativeAdapter.setOnItemClickListener { adapter, _, position ->
-                //                actressAdapter.data.getOrNull(position)?.let {
-//                    KLog.d("item : $it")
-//                    MovieListActivity.start(context,type,it)
-//                }
+                relativeAdapter.data.getOrNull(position)?.let {
+                    KLog.d("relative  : $it")
+                    MovieDetailActivity.start(context,it)
+                }
 
             }
         }

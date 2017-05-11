@@ -1,6 +1,7 @@
 package me.jbusdriver.ui.activity
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -144,7 +145,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
     /*===========================other===================================*/
     companion object {
-        fun start(current: Activity, movie: Movie) {
+        fun start(current: Context, movie: Movie) {
             current.startActivity(Intent(current, MovieDetailActivity::class.java).apply {
                 putExtra("movie", movie)
             })
