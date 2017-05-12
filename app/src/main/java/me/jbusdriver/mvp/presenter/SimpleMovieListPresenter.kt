@@ -5,6 +5,7 @@ import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import me.jbusdriver.common.KLog
+import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.MovieListContract
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.IAttr
@@ -32,18 +33,16 @@ class SimpleMovieListPresenter(val iLink: ILink) : AbstractRefreshLoadMorePresen
     }
 
     /*不需要*/
-    override val model: BaseModel<Int, String> = object : BaseModel<Int, String> {
-        override fun requestFor(t: Int) = Flowable.fromCallable {
-            (if (t == 1) iLink.link else "$host${pageInfo.nextPath}").let {
-                KLog.d("fromCallable page $pageInfo requestFor : $it")
-                Jsoup.connect(it).get().toString()
-            }
+    override val model: BaseModel<Int, Document> = object : BaseModel<Int, Document> {
+        override fun requestFor(t: Int) =
+                (if (t == 1) iLink.link else "$host${pageInfo.nextPath}").let {
+                    KLog.d("fromCallable page $pageInfo requestFor : $it")
+                    JAVBusService.INSTANCE.get(it).map { Jsoup.parse(it) }
+                }.doOnNext {
+                    if (t == 1) CacheLoader.lru.put(iLink.link, it.toString())
+                }
 
-        }.doOnNext {
-            if (t == 1) CacheLoader.lru.put(iLink.link, it)
-        }
-
-        override fun requestFromCache(t: Int): Flowable<String> = Flowable.concat(CacheLoader.justLru(iLink.link), requestFor(t))
+        override fun requestFromCache(t: Int) = Flowable.concat(CacheLoader.justLru(iLink.link).map { Jsoup.parse(it) }, requestFor(t))
                 .firstOrError().toFlowable()
     }
 

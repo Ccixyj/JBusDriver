@@ -14,6 +14,7 @@ import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.model.AbstractBaseModel
 import me.jbusdriver.mvp.model.BaseModel
 import me.jbusdriver.ui.data.DataSourceType
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
 open class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieListView>(), MovieListContract.MovieListPresenter {
@@ -28,14 +29,20 @@ open class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieLi
         } ?: JAVBusService.INSTANCE
     }
     private val loadFromNet = { page: Int ->
-        service.getHomePage(page, if (IsAll) "all" else null).doOnNext {
-            if (page == 1) CacheLoader.lru.put(saveKey, it)
+        val type = mView?.type ?: DataSourceType.CENSORED
+        val urlN = (urls.get(type.key) ?: "").let {
+            url ->
+            return@let if (page == 1) url else "$url${type.prefix}$page"
         }
+        //existmag=all
+        service.getHomePage(urlN, if (IsAll) "all" else null) .doOnNext {
+            if (page == 1) CacheLoader.lru.put(saveKey, it)
+        }.map { Jsoup.parse(it) }
     }
 
-    override val model: BaseModel<Int, String> = object : AbstractBaseModel<Int, String>(loadFromNet) {
-        override fun requestFromCache(t: Int): Flowable<String> {
-            return Flowable.concat(CacheLoader.justLru(saveKey), requestFor(t)).firstOrError().toFlowable()
+    override val model: BaseModel<Int, Document> = object : AbstractBaseModel<Int, Document>(loadFromNet) {
+        override fun requestFromCache(t: Int): Flowable<Document> {
+            return Flowable.concat(CacheLoader.justLru(saveKey).map { Jsoup.parse(it) }, requestFor(t)).firstOrError().toFlowable()
         }
     }
 

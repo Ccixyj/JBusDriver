@@ -72,6 +72,8 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
             R.id.movie_ma -> HomeMovieListFragment.newInstance(DataSourceType.CENSORED)
             R.id.movie_uncensored -> HomeMovieListFragment.newInstance(DataSourceType.UNCENSORED)
             R.id.movie_xyz -> HomeMovieListFragment.newInstance(DataSourceType.XYZ)
+            R.id.movie_hd -> HomeMovieListFragment.newInstance(DataSourceType.GENRE_HD)
+            R.id.movie_sub -> HomeMovieListFragment.newInstance(DataSourceType.Sub)
             else -> error("no matched fragment")
         }.apply { fragments.put(id, this) })
         //

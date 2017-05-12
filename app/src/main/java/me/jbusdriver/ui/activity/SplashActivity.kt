@@ -66,7 +66,7 @@ class SplashActivity : BaseActivity() {
                     .map {
                         source ->
                         arrayMapof<String, String>().apply {
-                            put(DataSourceType.CENSORED.key,  AppContext.gson.fromJson<JsonObject>(source)?.get("backUp")?.asJsonArray.toString())
+                            put(DataSourceType.CENSORED.key, AppContext.gson.fromJson<JsonObject>(source)?.get("backUp")?.asJsonArray.toString())
                         }
                     }
                     .flatMap {
@@ -84,23 +84,21 @@ class SplashActivity : BaseActivity() {
                         JAVBusService.defaultFastUrl = it.first
                         Jsoup.parse(it.second).select(".navbar-nav a").forEach {
                             box ->
-                            ds.find { box.attr("href").endsWith(it.key) }?.let {
+                            ds.find { box.text() == it.key }?.let {
                                 ds.remove(it)
-                                urls.put(it.key, box.attr("href")?.let {
-                                    if (it.endsWith("/")) it else it + "/"
-                                })
+
+                                urls.put(it.key, box.attr("href").removeSuffix("/"))
                             }
+                        }
+                        KLog.d("leave : $ds")
+                        urls.get(DataSourceType.XYZ.key)?.let {
+                            //欧美
+                            urls.put(DataSourceType.XYZ_ACTRESSES.key, "$it/${DataSourceType.XYZ_ACTRESSES.key.split("/").last()}")
+                            urls.put(DataSourceType.XYZ_GENRE.key, "$it/${DataSourceType.XYZ_GENRE.key.split("/").last()}")
                         }
                         urls.put(DataSourceType.CENSORED.key, it.first)
-                        urls.get(DataSourceType.XYZ.key)?.let {
-                            xyzUrl ->
-                            ds.map {
-                                if (it.key.contains("xyz")) {
-                                    urls.put(it.key, xyzUrl.removeSuffix(it.key) + it.key)
-                                }
-                            }
-                        }
                         KLog.i("urls : ${it.first} , all urls : $urls , at last $ds")
+
                         CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to urls, C.Cache.WEEK) //缓存所有的urls
                         KLog.i("get fast it : $it")
                         CacheLoader.lru.put(DataSourceType.CENSORED.key + "false", it.second) //默认有种的

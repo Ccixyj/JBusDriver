@@ -9,7 +9,6 @@ import me.jbusdriver.common.SimpleSubscriber
 import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.mvp.bean.hasNext
 import me.jbusdriver.mvp.model.BaseModel
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
 /**
@@ -20,7 +19,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
 
     protected var pageInfo = PageInfo()
 
-    abstract val model: BaseModel<Int, String>
+    abstract val model: BaseModel<Int, Document>
 
     override fun onFirstLoad() {
         loadData4Page(1)//首次加载 可以从内存中读取
@@ -42,7 +41,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
     override fun loadData4Page(page: Int) {
         (if (page == 1) model.requestFromCache(page)
         else model.requestFor(page)).map {
-            with(Jsoup.parse(it)) {
+            with(it) {
                 pageInfo = parsePage(this)
                 KLog.d("parse page :$pageInfo")
                 stringMap(this)
