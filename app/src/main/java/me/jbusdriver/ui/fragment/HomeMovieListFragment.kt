@@ -1,6 +1,8 @@
 package me.jbusdriver.ui.fragment
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.C
@@ -14,6 +16,11 @@ import me.jbusdriver.ui.data.DataSourceType
  */
 class HomeMovieListFragment : MovieListFragment(), MovieListContract.MovieListView {
     override fun createPresenter() = MovieListPresenterImpl()
+
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.main,menu)
+    }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the CENSORED/Up button, so long
@@ -26,7 +33,6 @@ class HomeMovieListFragment : MovieListFragment(), MovieListContract.MovieListVi
                 mBasePresenter?.loadAll(item.isChecked)
             }
         }
-
         return super.onOptionsItemSelected(item)
     }
 

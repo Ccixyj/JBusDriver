@@ -9,7 +9,6 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.Toolbar
 import android.util.SparseArray
-import android.view.Menu
 import android.view.MenuItem
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.AppBaseActivity
@@ -54,13 +53,6 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
             //   moveTaskToBack(false)
         }
     }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main, menu)
-        return true
-    }
-
 
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

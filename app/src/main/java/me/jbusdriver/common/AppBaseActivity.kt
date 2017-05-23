@@ -47,33 +47,29 @@ abstract class AppBaseActivity<P : BasePresenter<V>, V : BaseView> : BaseActivit
 
     protected open fun doStart() {
         KLog.t(TAG).d("doStart", mFirstStart, mUniqueLoaderIdentifier)
-        assert(mBasePresenter != null)
-        mBasePresenter!!.onViewAttached(this as V)
-        mBasePresenter!!.onStart(mFirstStart)
+        requireNotNull(mBasePresenter)
+        mBasePresenter?.onViewAttached(this as V)
+        mBasePresenter?.onStart(mFirstStart)
         mFirstStart = false
     }
 
     override fun onResume() {
         super.onResume()
-        if (mBasePresenter != null) mBasePresenter!!.onResume()
+        mBasePresenter?.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        if (mBasePresenter != null) mBasePresenter!!.onPause()
+        mBasePresenter?.onPause()
     }
 
     override fun onStop() {
         super.onStop()
-        if (mBasePresenter != null) {
-            mBasePresenter!!.onStop()
-        }
+        mBasePresenter?.onStop()
     }
 
     override fun onDestroy() {
-        if (mBasePresenter != null) {
-            mBasePresenter!!.onViewDetached()
-        }
+        mBasePresenter?.onViewDetached()
         super.onDestroy()
         rxManager.dispose()
 
