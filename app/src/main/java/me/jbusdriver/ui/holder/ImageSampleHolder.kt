@@ -7,8 +7,6 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.GlideDrawable
-import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
@@ -18,49 +16,47 @@ import me.jbusdriver.common.dpToPx
 import me.jbusdriver.common.inflate
 import me.jbusdriver.mvp.bean.ImageSample
 import me.jbusdriver.ui.activity.WatchLargeImageActivity
-import me.jbusdriver.ui.data.DataSourceType
 import me.jbusdriver.ui.data.GridSpacingItemDecoration
 
 /**
  * Created by Administrator on 2017/5/9 0009.
  */
-class ImageSampleHolder(context: Context, type: DataSourceType) {
+class ImageSampleHolder(context: Context): BaseHolder(context) {
     val view by lazy {
-        context.inflate(R.layout.layout_detail_image_samples, null).apply {
-            val displayMetrics = DisplayMetrics()
-            (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getMetrics(displayMetrics)
-            val spannCount = when (displayMetrics.widthPixels) {
-                in 0..1079 -> 3
-                in 1080..1920 -> 4
-                else -> 6
-            }
-            rv_recycle_images.layoutManager = GridLayoutManager(context, spannCount)
-            rv_recycle_images.addItemDecoration(GridSpacingItemDecoration(spannCount, context.dpToPx(6f), false))
-            rv_recycle_images.adapter = imageSampleAdapter
-            imageSampleAdapter.setOnItemClickListener { _, _, position ->
-                if (position < imageSampleAdapter.data.size) {
-                    WatchLargeImageActivity.startShow(context, imageSampleAdapter.data.map { it.image }, position)
+        weakRef.get()?.let {
+            it.inflate(R.layout.layout_detail_image_samples, null).apply {
+                val displayMetrics = DisplayMetrics()
+                (this.context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getMetrics(displayMetrics)
+                val spannCount = when (displayMetrics.widthPixels) {
+                    in 0..1079 -> 3
+                    in 1080..1920 -> 4
+                    else -> 6
+                }
+                rv_recycle_images.layoutManager = GridLayoutManager(it, spannCount)
+                rv_recycle_images.addItemDecoration(GridSpacingItemDecoration(spannCount, it.dpToPx(6f), false))
+                rv_recycle_images.adapter = imageSampleAdapter
+                imageSampleAdapter.setOnItemClickListener { _, v, position ->
+                    if (position < imageSampleAdapter.data.size) {
+                        WatchLargeImageActivity.startShow(v.context, imageSampleAdapter.data.map { it.image }, position)
+                    }
                 }
             }
-        }
+        } ?: error("context ref is finish")
     }
 
 
     val imageSampleAdapter = object : BaseQuickAdapter<ImageSample, BaseViewHolder>(R.layout.layout_image_sample_item) {
         override fun convert(helper: BaseViewHolder, item: ImageSample) {
-            helper.getView<ImageView>(R.id.iv_movie_thumb)?.let {
-                Glide.with(context).load(item.thumb)
-                        .fitCenter()
-                        .placeholder(R.drawable.ic_child_care_black_24dp)
-                        .error(R.drawable.ic_child_care_black_24dp)
-                        .into(object : GlideDrawableImageViewTarget(it) {
-                            override fun onResourceReady(resource: GlideDrawable?, animation: GlideAnimation<in GlideDrawable>?) {
-                                super.onResourceReady(resource, animation)
-                            }
-                        })
+            weakRef.get()?.apply {
+                helper.getView<ImageView>(R.id.iv_movie_thumb)?.let {
+                    Glide.with(this).load(item.thumb)
+                            .fitCenter()
+                            .placeholder(R.drawable.ic_child_care_black_24dp)
+                            .error(R.drawable.ic_child_care_black_24dp)
+                            .into(GlideDrawableImageViewTarget(it))
 
+                }
             }
-
         }
     }
 

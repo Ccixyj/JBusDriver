@@ -1,6 +1,5 @@
 package me.jbusdriver.mvp.presenter
 
-import android.text.TextUtils
 import com.cfzx.mvp.view.BaseView
 import io.reactivex.disposables.CompositeDisposable
 import me.jbusdriver.common.KLog
@@ -60,8 +59,10 @@ open class BasePresenterImpl<V : BaseView> : BasePresenter<V> {
 
     override fun onPresenterDestroyed() {
         KLog.t(TAG).e("$this:onPresenterDestroyed:" + this)
+        mView?.dismissLoading()
         rxManager.clear()
         rxManager.dispose()
+
     }
 
 }

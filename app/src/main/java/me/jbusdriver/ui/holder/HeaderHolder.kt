@@ -20,13 +20,15 @@ import me.jbusdriver.ui.data.DataSourceType
 /**
  * Created by Administrator on 2017/5/9 0009.
  */
-class HeaderHolder(context: Context, type: DataSourceType) {
+class HeaderHolder(context: Context, type: DataSourceType) : BaseHolder(context) {
 
     val view by lazy {
-        context.inflate(R.layout.layout_detail_header, null).apply {
-            rv_recycle_header.layoutManager = LinearLayoutManager(this.context)
-            rv_recycle_header.adapter = headAdapter
-        }
+        weakRef.get()?.let {
+            it.inflate(R.layout.layout_detail_header, null).apply {
+                rv_recycle_header.layoutManager = LinearLayoutManager(this.context)
+                rv_recycle_header.adapter = headAdapter
+            }
+        }?: error("context ref is finish")
     }
 
     val headAdapter = object : BaseQuickAdapter<Header, BaseViewHolder>(R.layout.layout_header_item) {
@@ -37,7 +39,7 @@ class HeaderHolder(context: Context, type: DataSourceType) {
                     paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
                     setOnClickListener {
                         KLog.d("text : $item")
-                        MovieListActivity.start(context, type, item)
+                        MovieListActivity.start(it.context, type, item)
                     }
                 } else {
                     setTextColor(ResourcesCompat.getColor(this@apply.resources, R.color.secondText, null))

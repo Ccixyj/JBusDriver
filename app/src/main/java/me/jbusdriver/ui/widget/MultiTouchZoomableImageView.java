@@ -81,7 +81,8 @@ public class MultiTouchZoomableImageView extends BaseZoomableImageView {
                 if (!mScaleDetector.isInProgress())
                     mGestureDetector.onTouchEvent(event);
             } else {
-                mImageGestureListener.onImageGestureSingleTapConfirmed();
+                if (mImageGestureListener != null)
+                     mImageGestureListener.onImageGestureSingleTapConfirmed();
                 return false;
             }
         } catch (Exception e) {

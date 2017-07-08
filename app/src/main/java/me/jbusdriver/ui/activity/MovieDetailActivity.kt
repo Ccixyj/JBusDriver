@@ -9,8 +9,11 @@ import android.support.v7.widget.Toolbar
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
 import com.cfzx.utils.CacheLoader
 import jbusdriver.me.jbusdriver.R
+import kotlinx.android.synthetic.main.activity_movie_detail.*
 import kotlinx.android.synthetic.main.content_movie_detail.*
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.MovieDetailContract
@@ -27,7 +30,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
 
     private val headHolder by lazy { HeaderHolder(this, movie.type) }
-    private val sampleHolder by lazy { ImageSampleHolder(this, movie.type) }
+    private val sampleHolder by lazy { ImageSampleHolder(this) }
     private val actressHolder by lazy { ActressListHolder(this, movie.type) }
     private val genreHolder by lazy { GenresHolder(this, movie.type) }
     private val relativeMovieHolder by lazy { RelativeMovieHolder(this) }
@@ -59,6 +62,15 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         //mBasePresenter初始化完毕后再加载
         //has disk cache ?
         //  firstLoadMagnet()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        headHolder.release()
+        sampleHolder.release()
+        actressHolder.release()
+        genreHolder.release()
+        relativeMovieHolder.release()
     }
 
     private fun firstLoadMagnet() {
@@ -96,10 +108,6 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         })
     }
 
-    override fun onStart() {
-        super.onStart()
-    }
-
     override fun createPresenter() = MovieDetailPresenterImpl()
     override val layoutId = R.layout.activity_movie_detail
 
@@ -121,8 +129,8 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             //Slide Up Animation
             KLog.d("date : $data")
             //cover fixme
-            // Glide.with(this).load(data.cover).thumbnail(0.1f).into(GlideDrawableImageViewTarget(iv_movie_cover))
-
+            iv_movie_cover.setOnClickListener { WatchLargeImageActivity.startShow(this, listOf(data.cover)) }
+            Glide.with(this).load(data.cover).thumbnail(0.1f).into(GlideDrawableImageViewTarget(iv_movie_cover))
             //animation
             ll_movie_detail.y = ll_movie_detail.y + 120
             ll_movie_detail.alpha = 0f

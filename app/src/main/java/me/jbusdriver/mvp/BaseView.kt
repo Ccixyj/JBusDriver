@@ -23,6 +23,7 @@ interface BaseView {
 
     fun dismissLoading(): Unit {
         place_holder_loading?.dismiss()
+        place_holder_loading = null
     }
 
     fun <T> showContent(data: T?): Unit = TODO(" no impl")

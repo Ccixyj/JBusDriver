@@ -53,7 +53,7 @@ object NetClient {
     //endregion
     private fun gzip(body: RequestBody): RequestBody {
         return object : RequestBody() {
-            override fun contentType(): MediaType {
+            override fun contentType(): MediaType? {
                 KLog.d("contentType : gzip!  ")
                 return body.contentType()
             }

@@ -18,26 +18,32 @@ import me.jbusdriver.ui.data.DataSourceType
 /**
  * Created by Administrator on 2017/5/10 0010.
  */
-class GenresHolder(context: Context, type: DataSourceType) {
+class GenresHolder(context: Context, type: DataSourceType) : BaseHolder(context) {
     val view by lazy {
-        context.inflate(R.layout.layout_detail_genres).apply {
-            rv_recycle_genres.layoutManager = FlowLayoutManager().apply { isAutoMeasureEnabled = true }
-            rv_recycle_genres.adapter = genreAdapter
-            genreAdapter.setOnItemClickListener { _, _, position ->
-                genreAdapter.data.getOrNull(position)?.let {
-                    KLog.d("genre : $it")
-                    MovieListActivity.start(context, type, it)
-
+        weakRef.get()?.let {
+            it.inflate(R.layout.layout_detail_genres).apply {
+                rv_recycle_genres.layoutManager = FlowLayoutManager().apply { isAutoMeasureEnabled = true }
+                rv_recycle_genres.adapter = genreAdapter
+                genreAdapter.setOnItemClickListener { _, _, position ->
+                    genreAdapter.data.getOrNull(position)?.let {
+                        genre->
+                        KLog.d("genre : $it")
+                        weakRef.get()?.also {
+                            MovieListActivity.start(it, type, genre)
+                        }
+                    }
                 }
             }
-        }
+            } ?: error("context ref is finish")
     }
 
     val genreAdapter = object : BaseQuickAdapter<Genre, BaseViewHolder>(R.layout.layout_genre_item) {
         override fun convert(helper: BaseViewHolder, item: Genre) {
             helper.setText(R.id.tv_movie_genre, item.name)
             (helper.getView<TextView>(R.id.tv_movie_genre).background as? GradientDrawable)?.apply {
-                setColor(context.resources.getColor(R.color.colorPrimary))
+                weakRef.get()?.let {
+                    setColor(context.resources.getColor(R.color.colorPrimary))
+                }
             }
         }
     }
