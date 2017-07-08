@@ -1,7 +1,6 @@
 package me.jbusdriver.common
 
 import android.app.Application
-import android.content.pm.PackageManager
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import com.orhanobut.logger.LogLevel
@@ -23,9 +22,8 @@ class AppContext : Application() {
                 .methodCount(3)                 // default 2
                 .logLevel(if (BuildConfig.DEBUG) LogLevel.FULL else LogLevel.NONE)        // default LogLevel.FULL
 
-        val metaData = this.packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA).metaData
-        MobclickAgent.startWithConfigure(MobclickAgent.UMAnalyticsConfig(this, metaData.getString("UMENG_APPKEY"),
-                metaData.getString("UMENG_CHANNEL"), MobclickAgent.EScenarioType.E_UM_NORMAL))
+        MobclickAgent.setDebugMode( true )
+
     }
 
 

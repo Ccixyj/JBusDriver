@@ -39,6 +39,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        MobclickAgent.onResume(this)
         KLog.t(TAG).d("onResume")
     }
 
@@ -49,6 +50,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+        MobclickAgent.onPause(this)
         KLog.t(TAG).d("onPause")
     }
 

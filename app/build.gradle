@@ -22,7 +22,7 @@ android {
     }
     productFlavors {
         gayhub {
-            manifestPlaceholders = [UMENG_KEY: "58e8ecaa7666134a5a001740q",
+            manifestPlaceholders = [UMENG_KEY: "58e8ecaa7666134a5a001740",
                                     CHANNEL  : "gayhub"]
         }
     }
