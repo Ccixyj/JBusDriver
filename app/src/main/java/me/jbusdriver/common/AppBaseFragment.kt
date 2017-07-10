@@ -57,7 +57,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
         }
         if (savedInstanceState != null)
             onRestartInstance(savedInstanceState)
-        return rootViewWeakRef!!.get()
+        return rootViewWeakRef?.get()
     }
 
     protected abstract val layoutId: Int
@@ -77,8 +77,9 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
 
     private fun doStart() {
         KLog.t(TAG).d("doStart : mFirstStart :" + mFirstStart, "mUniqueLoaderIdentifier :" + mUniqueLoaderIdentifier, "instance = " + this)
-        mBasePresenter!!.onViewAttached(this as V)
-        mBasePresenter!!.onStart(mFirstStart)
+        requireNotNull(mBasePresenter)
+        mBasePresenter?.onViewAttached(this as V)
+        mBasePresenter?.onStart(mFirstStart)
         if (mFirstStart || mViewReCreate) {
             initData()
         }
@@ -101,9 +102,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
 
     override fun onResume() {
         super.onResume()
-        if (mBasePresenter != null) {
-            mBasePresenter!!.onResume()
-        }
+        mBasePresenter?.onResume()
     }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
@@ -135,23 +134,17 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
 
     override fun onPause() {
         super.onPause()
-        if (mBasePresenter != null) {
-            mBasePresenter!!.onPause()
-        }
+        mBasePresenter?.onPause()
     }
 
     override fun onStop() {
         super.onStop()
-        if (mBasePresenter != null) {
-            mBasePresenter!!.onStop()
-        }
+        mBasePresenter?.onStop()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        if (mBasePresenter != null) {
-            mBasePresenter!!.onViewDetached()
-        }
+        mBasePresenter?.onViewDetached()
     }
 
     override fun onDestroy() {
@@ -164,7 +157,6 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
 
     override fun onDetach() {
         super.onDetach()
-
     }
 
 
