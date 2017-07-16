@@ -2,10 +2,10 @@ package me.jbusdriver.ui.holder
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.os.AsyncTask
 import android.support.v7.graphics.Palette
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -14,10 +14,8 @@ import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_relative_movies.view.*
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.SchedulersCompat
-import me.jbusdriver.common.SimpleSubscriber
-import me.jbusdriver.common.inflate
+import me.jbusdriver.CollectManager
+import me.jbusdriver.common.*
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.ui.activity.MovieDetailActivity
 import java.util.*
@@ -26,6 +24,20 @@ import java.util.*
  * Created by Administrator on 2017/5/9 0009.
  */
 class RelativeMovieHolder(context: Context) : BaseHolder(context){
+
+    val actionMap by lazy {
+        mapOf("复制名字" to { movie: Movie ->
+            weakRef.get()?.let {
+                it.copy(movie.title)
+                it.toast("已复制")
+
+            }
+        }, "收藏" to { movie: Movie ->
+            CollectManager.addToCollect(movie)
+            KLog.d(CollectManager.movie_data)
+        })
+    }
+
     val view by lazy {
         weakRef.get()?.let {
             it.inflate(R.layout.layout_detail_relative_movies).apply {
@@ -37,14 +49,26 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context){
                         MovieDetailActivity.start(v.context, it)
                     }
                 }
+                relativeAdapter.setOnItemLongClickListener { adapter, view, position ->
+                    relativeAdapter.data.getOrNull(position)?.let {
+                        movie->
+                        MaterialDialog.Builder(view.context).title(movie.title)
+                                .items(actionMap.keys)
+                                .itemsCallback { _, _, _, text ->
+                                    actionMap[text]?.invoke(movie)
+                                }
+                                .show()
+                    }
+                    return@setOnItemLongClickListener  true
+                }
             }
         }?: error("context ref is finish")
     }
 
     val relativeAdapter :BaseQuickAdapter<Movie, BaseViewHolder> by  lazy {
         object : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.layout_detail_relative_movies_item) {
-            override fun convert(helper: BaseViewHolder, item: Movie) {
-                Glide.with(helper.itemView.context).load(item.imageUrl).asBitmap().into(object : BitmapImageViewTarget(helper.getView(R.id.iv_relative_movie_image)) {
+            override fun convert(holder: BaseViewHolder, item: Movie) {
+                Glide.with(holder.itemView.context).load(item.imageUrl).asBitmap().into(object : BitmapImageViewTarget(holder.getView(R.id.iv_relative_movie_image)) {
                     override fun setResource(resource: Bitmap?) {
                         super.setResource(resource)
                         resource?.let {
@@ -58,8 +82,8 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context){
                                             val swatch = listOf(it.lightMutedSwatch, it.lightVibrantSwatch, it.vibrantSwatch, it.mutedSwatch).filterNotNull()
                                             if (!swatch.isEmpty()) {
                                                 swatch[randomNum(swatch.size)].let {
-                                                    helper.setBackgroundColor(R.id.tv_relative_movie_title, it.rgb)
-                                                    helper.setTextColor(R.id.tv_relative_movie_title, it.bodyTextColor)
+                                                    holder.setBackgroundColor(R.id.tv_relative_movie_title, it.rgb)
+                                                    holder.setTextColor(R.id.tv_relative_movie_title, it.bodyTextColor)
                                                 }
                                             }
                                         }
@@ -76,7 +100,7 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context){
                     }
                 })
                 //加载名字
-                helper.setText(R.id.tv_relative_movie_title, item.title)
+                holder.setText(R.id.tv_relative_movie_title, item.title)
             }
         }
     }

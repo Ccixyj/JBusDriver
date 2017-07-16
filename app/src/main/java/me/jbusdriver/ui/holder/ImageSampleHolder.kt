@@ -46,9 +46,9 @@ class ImageSampleHolder(context: Context): BaseHolder(context) {
 
 
     val imageSampleAdapter = object : BaseQuickAdapter<ImageSample, BaseViewHolder>(R.layout.layout_image_sample_item) {
-        override fun convert(helper: BaseViewHolder, item: ImageSample) {
+        override fun convert(holder: BaseViewHolder, item: ImageSample) {
             weakRef.get()?.apply {
-                helper.getView<ImageView>(R.id.iv_movie_thumb)?.let {
+                holder.getView<ImageView>(R.id.iv_movie_thumb)?.let {
                     Glide.with(this).load(item.thumb)
                             .fitCenter()
                             .placeholder(R.drawable.ic_child_care_black_24dp)

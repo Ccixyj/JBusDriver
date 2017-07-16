@@ -38,9 +38,9 @@ class GenresHolder(context: Context, type: DataSourceType) : BaseHolder(context)
     }
 
     val genreAdapter = object : BaseQuickAdapter<Genre, BaseViewHolder>(R.layout.layout_genre_item) {
-        override fun convert(helper: BaseViewHolder, item: Genre) {
-            helper.setText(R.id.tv_movie_genre, item.name)
-            (helper.getView<TextView>(R.id.tv_movie_genre).background as? GradientDrawable)?.apply {
+        override fun convert(holder: BaseViewHolder, item: Genre) {
+            holder.setText(R.id.tv_movie_genre, item.name)
+            (holder.getView<TextView>(R.id.tv_movie_genre).background as? GradientDrawable)?.apply {
                 weakRef.get()?.let {
                     setColor(context.resources.getColor(R.color.colorPrimary))
                 }

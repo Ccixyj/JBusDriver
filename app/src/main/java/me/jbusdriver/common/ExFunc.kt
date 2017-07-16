@@ -1,11 +1,14 @@
 package me.jbusdriver.common
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.support.v4.util.ArrayMap
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.orhanobut.logger.Logger
@@ -83,6 +86,10 @@ fun Context.pxToDp(px: Float): Int {
     return (px / this.displayMetrics.density + 0.5).toInt()
 }
 
+fun Context.toast(str: String , duration: Int = Toast.LENGTH_LONG) {
+     Toast.makeText(this,str,duration).show()
+}
+
 private fun inflateView(context: Context, layoutResId: Int, parent: ViewGroup?,
                         attachToRoot: Boolean): View =
         LayoutInflater.from(context).inflate(layoutResId, parent, attachToRoot)
@@ -112,4 +119,30 @@ fun <R> Flowable<R>.addUserCase() =
 fun View.measureIfNotMeasure() {
     if (this.measuredHeight != 0 || this.measuredWidth != 0) return
     this.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+}
+
+/**
+ * 实现文本复制功能
+ * add by wangqianzhou
+ * @param content
+ */
+fun Context.copy(content: String) {
+    // 得到剪贴板管理器
+    val cmb = this.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    cmb.primaryClip = ClipData.newPlainText(null, content)
+}
+
+/**
+ * 实现粘贴功能
+ * add by wangqianzhou
+ * @param context
+ * *
+ * @return
+ */
+fun Context.paste(): String? {
+    // 得到剪贴板管理器
+    val cmb = this.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    return cmb.primaryClip?.let {
+        if (it.itemCount > 0)  it.getItemAt(0).coerceToText(this)?.toString() else null
+    }
 }

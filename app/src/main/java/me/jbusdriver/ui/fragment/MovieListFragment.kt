@@ -49,16 +49,16 @@ abstract class MovieListFragment : AppBaseRecycleFragment<MovieListContract.Movi
             }
         }
 
-        override fun convert(helper: BaseViewHolder, item: Movie) {
-            helper.setText(R.id.tv_movie_title, item.title)
+        override fun convert(holder: BaseViewHolder, item: Movie) {
+            holder.setText(R.id.tv_movie_title, item.title)
                     .setText(R.id.tv_movie_date, item.date)
                     .setText(R.id.tv_movie_code, item.code)
 
             Glide.with(this@MovieListFragment).load(item.imageUrl).placeholder(R.drawable.ic_place_holder)
-                    .error(R.drawable.ic_place_holder).centerCrop().into(helper.getView(R.id.iv_movie_img))
+                    .error(R.drawable.ic_place_holder).centerCrop().into(holder.getView(R.id.iv_movie_img))
 
 
-            with(helper.getView<LinearLayout>(R.id.ll_movie_hot)) {
+            with(holder.getView<LinearLayout>(R.id.ll_movie_hot)) {
                 KLog.d("tags : ${item.tags}")
                 this.removeAllViews()
                 item.tags.mapIndexed { index, tag ->
