@@ -106,8 +106,8 @@ inline fun <reified T> Gson.fromJson(json: String) = this.fromJson<T>(json, obje
 fun Any?.toJsonString() = AppContext.gson.toJson(this)
 
 /*http*/
-fun <R> Flowable<R>.addUserCase() =
-        this.timeout(12L, TimeUnit.SECONDS, Schedulers.io()) //超时
+fun <R> Flowable<R>.addUserCase(sec:Int = 12) =
+        this.timeout(sec.toLong(), TimeUnit.SECONDS, Schedulers.io()) //超时
                 .subscribeOn(Schedulers.io())
                 .take(1)
 

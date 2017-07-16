@@ -9,6 +9,7 @@ import com.google.gson.JsonObject
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
@@ -37,9 +38,11 @@ class SplashActivity : BaseActivity() {
                 .retry(1)
                 .doFinally {
                     KLog.d("doFinally")
-                    toast("load url : ${JAVBusService.defaultFastUrl}")
-                    MainActivity.start(this)
-                    finish()
+                    AndroidSchedulers.mainThread().scheduleDirect {
+                        toast("load url : ${JAVBusService.defaultFastUrl}")
+                        MainActivity.start(this)
+                        finish()
+                    }
                 }
                 .subscribeBy(onNext = {
                     KLog.i("success")
@@ -73,7 +76,7 @@ class SplashActivity : BaseActivity() {
                     .flatMap {
                         urls = it
                         val mapFlow = AppContext.gson.fromJson<List<String>>(it[DataSourceType.CENSORED.key] ?: "").map {
-                            Flowable.combineLatest(Flowable.just<String>(it), JAVBusService.INSTANCE.get(it).addUserCase(),
+                            Flowable.combineLatest(Flowable.just<String>(it), JAVBusService.INSTANCE.get(it).addUserCase(15),
                                     BiFunction<String, String, Pair<String, String>> { t1, t2 -> t1 to t2 })
                         }
                         Flowable.mergeDelayError(mapFlow)
@@ -100,7 +103,7 @@ class SplashActivity : BaseActivity() {
                         urls.put(DataSourceType.CENSORED.key, it.first)
                         KLog.i("urls : ${it.first} , all urls : $urls , at last $ds")
 
-                        CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to urls, C.Cache.WEEK) //缓存所有的urls
+                        CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to urls, C.Cache.DAY*2) //缓存所有的urls
                         KLog.i("get fast it : $it")
                         CacheLoader.lru.put(DataSourceType.CENSORED.key + "false", it.second) //默认有种的
                         urls
@@ -108,7 +111,12 @@ class SplashActivity : BaseActivity() {
             return Flowable.concat<ArrayMap<String, String>>(urlsFromDisk, urlsFromNet)
                     .firstElement().toObservable()
                     .subscribeOn(Schedulers.io())
-        } else Observable.empty<ArrayMap<String, String>>()
+        } else CacheLoader.justLru(C.Cache.BUS_URLS).map {
+            AppContext.gson.fromJson<ArrayMap<String, String>>(it).apply {
+                KLog.i("map urls $this")
+            }
+        }.toObservable()
+
     }
 
 }
