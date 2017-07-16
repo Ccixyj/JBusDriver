@@ -6,6 +6,8 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.Toolbar
+import android.view.Menu
+import android.view.MenuItem
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -15,6 +17,7 @@ import com.cfzx.utils.CacheLoader
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_movie_detail.*
 import kotlinx.android.synthetic.main.content_movie_detail.*
+import me.jbusdriver.common.CollectManager
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.MovieDetailContract
 import me.jbusdriver.mvp.bean.Magnet
@@ -47,6 +50,29 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         supportActionBar?.title = movie.code + " " + movie.title
 
         initWidget()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_movie_detail, menu)
+        if (CollectManager.has(movie)) menu?.removeItem(R.id.action_add_movie_collect)
+        else menu?.removeItem(R.id.action_remove_movie_collect)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the CENSORED/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        val id = item.itemId
+        when (id) {
+            R.id.action_add_movie_collect -> {
+                CollectManager.addToCollect(movie)
+            }
+            R.id.action_remove_movie_collect -> {
+                CollectManager.removeCollect(movie)
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun initWidget() {

@@ -15,7 +15,7 @@ import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_actress.view.*
-import me.jbusdriver.CollectManager
+import me.jbusdriver.common.CollectManager
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.ui.activity.MovieListActivity
@@ -26,16 +26,17 @@ import java.util.*
  * Created by Administrator on 2017/5/9 0009.
  */
 class ActressListHolder(context: Context, type: DataSourceType) : BaseHolder(context) {
-
     val actionMap by lazy {
         mapOf("复制名字" to { act: ActressInfo ->
             weakRef.get()?.let {
                 it.copy(act.name)
                 it.toast("已复制")
-
             }
         }, "收藏" to { act: ActressInfo ->
             CollectManager.addToCollect(act)
+            KLog.d(CollectManager.actress_data)
+        }, "取消收藏" to { act: ActressInfo ->
+            CollectManager.removeCollect(act)
             KLog.d(CollectManager.actress_data)
         })
     }
@@ -56,15 +57,18 @@ class ActressListHolder(context: Context, type: DataSourceType) : BaseHolder(con
                 }
                 actressAdapter.setOnItemLongClickListener { _, view, position ->
                     actressAdapter.data.getOrNull(position)?.let {
-                        act->
+                        act ->
+                        val action = if (CollectManager.has(act)) actionMap.minus("收藏")
+                        else actionMap.minus("取消收藏")
+
                         MaterialDialog.Builder(view.context).title(act.name)
-                                .items(actionMap.keys)
+                                .items(action.keys)
                                 .itemsCallback { _, _, _, text ->
                                     actionMap[text]?.invoke(act)
                                 }
                                 .show()
                     }
-                 return@setOnItemLongClickListener  true
+                    return@setOnItemLongClickListener true
                 }
             }
         } ?: error("context ref is finish")

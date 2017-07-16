@@ -14,7 +14,7 @@ import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_relative_movies.view.*
-import me.jbusdriver.CollectManager
+import me.jbusdriver.common.CollectManager
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.ui.activity.MovieDetailActivity
@@ -23,7 +23,7 @@ import java.util.*
 /**
  * Created by Administrator on 2017/5/9 0009.
  */
-class RelativeMovieHolder(context: Context) : BaseHolder(context){
+class RelativeMovieHolder(context: Context) : BaseHolder(context) {
 
     val actionMap by lazy {
         mapOf("复制名字" to { movie: Movie ->
@@ -34,6 +34,9 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context){
             }
         }, "收藏" to { movie: Movie ->
             CollectManager.addToCollect(movie)
+            KLog.d(CollectManager.movie_data)
+        }, "取消收藏" to { movie: Movie ->
+            CollectManager.removeCollect(movie)
             KLog.d(CollectManager.movie_data)
         })
     }
@@ -51,21 +54,23 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context){
                 }
                 relativeAdapter.setOnItemLongClickListener { adapter, view, position ->
                     relativeAdapter.data.getOrNull(position)?.let {
-                        movie->
+                        movie ->
+                        val action = if (CollectManager.has(movie)) actionMap.minus("收藏")
+                        else actionMap.minus("取消收藏")
                         MaterialDialog.Builder(view.context).title(movie.title)
-                                .items(actionMap.keys)
+                                .items(action.keys)
                                 .itemsCallback { _, _, _, text ->
                                     actionMap[text]?.invoke(movie)
                                 }
                                 .show()
                     }
-                    return@setOnItemLongClickListener  true
+                    return@setOnItemLongClickListener true
                 }
             }
-        }?: error("context ref is finish")
+        } ?: error("context ref is finish")
     }
 
-    val relativeAdapter :BaseQuickAdapter<Movie, BaseViewHolder> by  lazy {
+    val relativeAdapter: BaseQuickAdapter<Movie, BaseViewHolder> by lazy {
         object : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.layout_detail_relative_movies_item) {
             override fun convert(holder: BaseViewHolder, item: Movie) {
                 Glide.with(holder.itemView.context).load(item.imageUrl).asBitmap().into(object : BitmapImageViewTarget(holder.getView(R.id.iv_relative_movie_image)) {
@@ -76,7 +81,7 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context){
                             Flowable.just(it).map {
                                 Palette.from(it).generate()
                             }.compose(SchedulersCompat.io())
-                                    .subscribeWith( object : SimpleSubscriber<Palette>(){
+                                    .subscribeWith(object : SimpleSubscriber<Palette>() {
                                         override fun onNext(it: Palette) {
                                             super.onNext(it)
                                             val swatch = listOf(it.lightMutedSwatch, it.lightVibrantSwatch, it.vibrantSwatch, it.mutedSwatch).filterNotNull()

@@ -37,6 +37,7 @@ class SplashActivity : BaseActivity() {
                 .retry(1)
                 .doFinally {
                     KLog.d("doFinally")
+                    toast("load url : ${JAVBusService.defaultFastUrl}")
                     MainActivity.start(this)
                     finish()
                 }
