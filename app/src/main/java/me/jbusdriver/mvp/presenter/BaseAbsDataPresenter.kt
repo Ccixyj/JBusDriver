@@ -3,7 +3,6 @@ package me.jbusdriver.mvp.presenter
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
-import me.jbusdriver.common.CollectManager
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.SchedulersCompat
 import me.jbusdriver.common.SimpleSubscriber
@@ -16,12 +15,16 @@ import me.jbusdriver.mvp.bean.hasNext
  */
 
 
-class CollectMovieListPresenterImpl : BasePresenterImpl<MovieListContract.MovieListView>(), MovieListContract.MovieListPresenter {
+abstract class BaseAbsDataPresenter<T> : BasePresenterImpl<MovieListContract.MovieListView>(), MovieListContract.MovieListPresenter {
 
-    private val PageSize = 5
+    private val PageSize = 20
     private var pageInfo = PageInfo()
-    private val data by lazy { CollectManager.movie_data.toMutableList() }
-    private val pageNum by lazy { (data.size / PageSize) + 1 }
+    private val listData by lazy { getData().toMutableList() }
+    private val pageNum
+        get() = (listData.size / PageSize) + 1
+
+
+    abstract fun getData():List<T>
 
     override fun loadAll(iaAll: Boolean) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -39,8 +42,8 @@ class CollectMovieListPresenterImpl : BasePresenterImpl<MovieListContract.MovieL
             KLog.d("request page : $it")
             val start = (pageInfo.activePage - 1) * PageSize
             val nextSize = start + PageSize
-            val end = if (nextSize <= data.size) nextSize else data.size
-            data.subList(start, end)
+            val end = if (nextSize <= listData.size) nextSize else listData.size
+            listData.subList(start, end)
         }.compose(SchedulersCompat.io())
                 .subscribeWith(DefaultSubscriber(page))
                 .addTo(rxManager)
@@ -55,12 +58,13 @@ class CollectMovieListPresenterImpl : BasePresenterImpl<MovieListContract.MovieL
     override fun hasLoadNext() = pageInfo.hasNext
 
     override fun onRefresh() {
-        data.clear()
-        data.addAll(CollectManager.movie_data)
+        pageInfo = PageInfo()
+        listData.clear()
+        listData.addAll(getData())
         loadData4Page(1)
     }
 
-     open inner class DefaultSubscriber(val pageIndex: Int) : SimpleSubscriber<List<Any>>() {
+    open inner class DefaultSubscriber(val pageIndex: Int) : SimpleSubscriber<List<T>>() {
 
         override fun onStart() {
             AndroidSchedulers.mainThread().scheduleDirect {
@@ -100,7 +104,7 @@ class CollectMovieListPresenterImpl : BasePresenterImpl<MovieListContract.MovieL
             pageInfo = PageInfo(pageIndex - 1, pageIndex)
         }
 
-        override fun onNext(t: List<Any>) {
+        override fun onNext(t: List<T>) {
             super.onNext(t)
             if (pageIndex == 1) {
                 mView?.resetList()

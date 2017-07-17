@@ -73,9 +73,8 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
         val ft = supportFragmentManager.beginTransaction()
         supportFragmentManager.fragments?.let {
-            for (cf in supportFragmentManager.fragments) {
-                ft.remove(cf)
-            }
+            KLog.i("remove $it")
+            it.forEach {  it?.let { ft.remove(it) } }
         }
         ft.replace(R.id.content_main, fragment, id.toString())
         ft.commitAllowingStateLoss()

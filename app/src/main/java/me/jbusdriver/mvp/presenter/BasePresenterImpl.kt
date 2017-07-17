@@ -15,6 +15,9 @@ open class BasePresenterImpl<V : BaseView> : BasePresenter<V> {
     protected val rxManager by lazy { CompositeDisposable() }
     protected val TAG: String by lazy { this.javaClass.simpleName }
 
+    init {
+        KLog.t(TAG)
+    }
 
     override fun onViewAttached(view: V) {
         KLog.t(TAG).e("$this:onViewAttached")

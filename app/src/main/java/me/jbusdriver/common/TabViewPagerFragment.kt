@@ -45,5 +45,4 @@ abstract class TabViewPagerFragment<P : BasePresenter<V>, V : BaseView> : AppBas
             override fun getPageTitle(position: Int): CharSequence = mTitles[position]
         }
     }
-
 }

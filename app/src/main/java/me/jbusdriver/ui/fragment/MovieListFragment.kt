@@ -59,7 +59,6 @@ abstract class MovieListFragment : AppBaseRecycleFragment<MovieListContract.Movi
 
 
             with(holder.getView<LinearLayout>(R.id.ll_movie_hot)) {
-                KLog.d("tags : ${item.tags}")
                 this.removeAllViews()
                 item.tags.mapIndexed { index, tag ->
                     (mLayoutInflater.inflate(R.layout.tv_movie_tag, null) as TextView).let {
