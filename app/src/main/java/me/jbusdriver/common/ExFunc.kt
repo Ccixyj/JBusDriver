@@ -8,6 +8,7 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -16,6 +17,7 @@ import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 import java.util.*
 import java.util.concurrent.TimeUnit
+
 
 /**
  * Created by Administrator on 2017/4/8.
@@ -86,8 +88,8 @@ fun Context.pxToDp(px: Float): Int {
     return (px / this.displayMetrics.density + 0.5).toInt()
 }
 
-fun Context.toast(str: String , duration: Int = Toast.LENGTH_LONG) {
-     Toast.makeText(this,str,duration).show()
+fun Context.toast(str: String, duration: Int = Toast.LENGTH_LONG) {
+    Toast.makeText(this, str, duration).show()
 }
 
 private fun inflateView(context: Context, layoutResId: Int, parent: ViewGroup?,
@@ -106,7 +108,7 @@ inline fun <reified T> Gson.fromJson(json: String) = this.fromJson<T>(json, obje
 fun Any?.toJsonString() = AppContext.gson.toJson(this)
 
 /*http*/
-fun <R> Flowable<R>.addUserCase(sec:Int = 12) =
+fun <R> Flowable<R>.addUserCase(sec: Int = 12) =
         this.timeout(sec.toLong(), TimeUnit.SECONDS, Schedulers.io()) //超时
                 .subscribeOn(Schedulers.io())
                 .take(1)
@@ -120,6 +122,14 @@ fun View.measureIfNotMeasure() {
     if (this.measuredHeight != 0 || this.measuredWidth != 0) return
     this.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
 }
+
+val Context.scressWidth: Int
+    inline get(){
+        val wm = this.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val displayMetrics = DisplayMetrics()
+        wm.defaultDisplay.getMetrics(displayMetrics)
+        return displayMetrics.widthPixels
+    }
 
 /**
  * 实现文本复制功能
@@ -143,6 +153,6 @@ fun Context.paste(): String? {
     // 得到剪贴板管理器
     val cmb = this.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     return cmb.primaryClip?.let {
-        if (it.itemCount > 0)  it.getItemAt(0).coerceToText(this)?.toString() else null
+        if (it.itemCount > 0) it.getItemAt(0).coerceToText(this)?.toString() else null
     }
 }

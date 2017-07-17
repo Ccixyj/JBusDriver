@@ -29,7 +29,7 @@ class GenresHolder(context: Context, type: DataSourceType) : BaseHolder(context)
                         genre->
                         KLog.d("genre : $it")
                         weakRef.get()?.also {
-                            MovieListActivity.start(it, type, genre)
+                            MovieListActivity.start(it, genre)
                         }
                     }
                 }

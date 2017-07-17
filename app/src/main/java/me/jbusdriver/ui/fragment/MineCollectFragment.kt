@@ -13,7 +13,7 @@ class MineCollectFragment :TabViewPagerFragment<MineCollectContract.MineCollectP
 
     override val mTitles: List<String> by lazy { listOf("movies","girls") }
 
-    override val mFragments: List<Fragment> by lazy {  listOf(MovieCollectFragment.newInstance(),MovieCollectFragment.newInstance())  }
+    override val mFragments: List<Fragment> by lazy {  listOf(MovieCollectFragment.newInstance(),ActressCollectFragment.newInstance())  }
 
     companion object {
         fun newInstance() = MineCollectFragment()

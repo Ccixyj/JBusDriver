@@ -14,7 +14,6 @@ import me.jbusdriver.mvp.bean.ActressAttrs
 import me.jbusdriver.mvp.bean.IAttr
 import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.presenter.LinkMovieListPresenterImpl
-import me.jbusdriver.ui.data.DataSourceType
 
 
 /**
@@ -23,17 +22,16 @@ import me.jbusdriver.ui.data.DataSourceType
 class LinkMovieListFragment : MovieListFragment(), MovieListContract.MovieListView {
 
 
-    val link by lazy { arguments.getSerializable(C.BundleKey.Key_2)  as? ILink ?: error("no link data ") }
+    val link by lazy { arguments.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ") }
 
 
     override fun createPresenter() = LinkMovieListPresenterImpl(link)
     /*================================================*/
 
     companion object {
-        fun newInstance(type: DataSourceType, link: ILink) = LinkMovieListFragment().apply {
+        fun newInstance( link: ILink) = LinkMovieListFragment().apply {
             arguments = Bundle().apply {
-                putSerializable(C.BundleKey.Key_1, type)
-                putSerializable(C.BundleKey.Key_2, link)
+                putSerializable(C.BundleKey.Key_1, link)
             }
         }
     }

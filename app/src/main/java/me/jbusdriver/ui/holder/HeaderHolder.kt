@@ -53,7 +53,7 @@ class HeaderHolder(context: Context, type: DataSourceType) : BaseHolder(context)
 
                     setOnClickListener {
                         KLog.d("setOnClickListener text : $item")
-                        MovieListActivity.start(it.context, type, item)
+                        MovieListActivity.start(it.context, item)
                     }
 
                 } else {

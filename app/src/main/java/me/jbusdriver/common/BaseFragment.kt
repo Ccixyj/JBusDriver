@@ -13,7 +13,7 @@ import io.reactivex.disposables.CompositeDisposable
  */
 open class BaseFragment : Fragment() {
     protected val TAG: String by lazy { this::class.java.simpleName }
-    var rxManager = CompositeDisposable()
+    val rxManager by lazy {  CompositeDisposable() }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

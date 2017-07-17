@@ -9,9 +9,11 @@ import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.AppBaseActivity
 import me.jbusdriver.common.C
 import me.jbusdriver.mvp.MovieParseContract
-import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.bean.ActressInfo
+import me.jbusdriver.mvp.bean.Genre
+import me.jbusdriver.mvp.bean.Header
+import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.presenter.MovieParsePresenterImpl
-import me.jbusdriver.ui.data.DataSourceType
 import me.jbusdriver.ui.fragment.LinkMovieListFragment
 
 class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter, MovieParseContract.MovieParseView>(), MovieParseContract.MovieParseView {
@@ -21,13 +23,12 @@ class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter
 
     override val layoutId = R.layout.activity_moive_list
 
-    val type by lazy { intent.getSerializableExtra(C.BundleKey.Key_1) as? DataSourceType ?: DataSourceType.CENSORED }
-    val linkData by lazy { intent.getSerializableExtra(C.BundleKey.Key_2) as? ILink ?: error("no link data") }
+    val linkData by lazy { intent.getSerializableExtra(C.BundleKey.Key_1) as? ILink ?: error("no link data") }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setToolBar()
-        supportFragmentManager.beginTransaction().replace(R.id.fl_container, LinkMovieListFragment.newInstance(type, linkData))
+        supportFragmentManager.beginTransaction().replace(R.id.fl_container, LinkMovieListFragment.newInstance(linkData))
                 .commitAllowingStateLoss()
     }
 
@@ -62,11 +63,10 @@ class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter
     }
 
     companion object {
-        fun start(context: Context, type: DataSourceType, it: ILink) {
+        fun start(context: Context,  it: ILink) {
             if (it.link.isNotBlank()) {
                 context.startActivity(Intent(context, MovieListActivity::class.java).apply {
-                    putExtra(C.BundleKey.Key_1, type)
-                    putExtra(C.BundleKey.Key_2, it)
+                    putExtra(C.BundleKey.Key_1, it)
                 })
             } else {
                 Toast.makeText(context, "没有可用的跳转链接", Toast.LENGTH_LONG).show()

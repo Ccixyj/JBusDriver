@@ -1,23 +1,17 @@
 package me.jbusdriver.ui.holder
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.support.v7.graphics.Palette
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.animation.GlideAnimation
-import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-import io.reactivex.Flowable
-import io.reactivex.rxkotlin.addTo
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_actress.view.*
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.ui.activity.MovieListActivity
+import me.jbusdriver.ui.adapter.ActressInfoAdapter
 import me.jbusdriver.ui.data.DataSourceType
 import java.util.*
 
@@ -50,7 +44,7 @@ class ActressListHolder(context: Context, type: DataSourceType) : BaseHolder(con
                         item ->
                         KLog.d("item : $it")
                         weakRef.get()?.let {
-                            MovieListActivity.start(it, type, item)
+                            MovieListActivity.start(it,  item)
                         }
                     }
                 }
@@ -74,48 +68,7 @@ class ActressListHolder(context: Context, type: DataSourceType) : BaseHolder(con
     }
 
     val actressAdapter: BaseQuickAdapter<ActressInfo, BaseViewHolder> by lazy {
-        object : BaseQuickAdapter<ActressInfo, BaseViewHolder>(R.layout.layout_actress_item) {
-            override fun convert(holder: BaseViewHolder, item: ActressInfo) {
-                KLog.d("ActressInfo :$item")
-                Glide.with(holder.itemView.context).load(item.avatar).asBitmap().into(object : BitmapImageViewTarget(holder.getView(R.id.iv_actress_avatar)) {
-                    override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
-                        resource?.let {
-                            Flowable.just(it).map {
-                                Palette.from(it).generate()
-                            }.compose(SchedulersCompat.io())
-                                    .subscribeWith(object : SimpleSubscriber<Palette>() {
-                                        override fun onNext(it: Palette) {
-                                            super.onNext(it)
-                                            val swatch = listOf(it.lightMutedSwatch, it.lightVibrantSwatch, it.vibrantSwatch, it.mutedSwatch).filterNotNull()
-                                            if (!swatch.isEmpty()) {
-                                                swatch[randomNum(swatch.size)].let {
-                                                    holder.setBackgroundColor(R.id.tv_actress_name, it.rgb)
-                                                    holder.setTextColor(R.id.tv_actress_name, it.bodyTextColor)
-                                                }
-                                            }
-                                        }
-                                    })
-                                    .addTo(rxManager)
-
-                            /*   Palette.from(it).generate {
-                                   val swatch = listOf(it.lightMutedSwatch, it.lightVibrantSwatch, it.vibrantSwatch, it.mutedSwatch).filterNotNull()
-                                   if (!swatch.isEmpty()) {
-                                       swatch[randomNum(swatch.size)].let {
-                                           holder.setBackgroundColor(R.id.tv_actress_name, it.rgb)
-                                           holder.setTextColor(R.id.tv_actress_name, it.bodyTextColor)
-                                       }
-                                   }
-                               }.let {
-                                   paletteReq.add(it)
-                               }*/
-                        }
-                        super.onResourceReady(resource, glideAnimation)
-                    }
-                })
-                //加载名字
-                holder.setText(R.id.tv_actress_name, item.name)
-            }
-        }
+        ActressInfoAdapter(rxManager)
     }
 
 

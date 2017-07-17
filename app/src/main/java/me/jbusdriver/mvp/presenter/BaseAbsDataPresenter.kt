@@ -1,24 +1,24 @@
 package me.jbusdriver.mvp.presenter
 
+import com.cfzx.mvp.view.BaseView
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.SchedulersCompat
 import me.jbusdriver.common.SimpleSubscriber
-import me.jbusdriver.mvp.MovieListContract
 import me.jbusdriver.mvp.bean.PageInfo
-import me.jbusdriver.mvp.bean.hasNext
+import me.jbusdriver.mvp.model.BaseModel
+import org.jsoup.nodes.Document
 
 /**
  * Created by Administrator on 2017/5/10 0010.
  */
 
 
-abstract class BaseAbsDataPresenter<T> : BasePresenterImpl<MovieListContract.MovieListView>(), MovieListContract.MovieListPresenter {
+abstract class BaseAbsDataPresenter<V:BaseView.BaseListWithRefreshView,T> : AbstractRefreshLoadMorePresenterImpl<V>() {
 
     private val PageSize = 20
-    private var pageInfo = PageInfo()
     private val listData by lazy { getData().toMutableList() }
     private val pageNum
         get() = (listData.size / PageSize) + 1
@@ -26,14 +26,6 @@ abstract class BaseAbsDataPresenter<T> : BasePresenterImpl<MovieListContract.Mov
 
     abstract fun getData():List<T>
 
-    override fun loadAll(iaAll: Boolean) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onFirstLoad() {
-        super.onFirstLoad()
-        loadData4Page(1)
-    }
 
     override fun loadData4Page(page: Int) {
         val next = if (page < pageNum) page + 1 else pageNum
@@ -50,18 +42,17 @@ abstract class BaseAbsDataPresenter<T> : BasePresenterImpl<MovieListContract.Mov
 
     }
 
-    override fun onLoadMore() {
-        if (hasLoadNext()) loadData4Page(pageInfo.nextPage)
-        else mView?.loadMoreEnd()
-    }
-
-    override fun hasLoadNext() = pageInfo.hasNext
-
     override fun onRefresh() {
         pageInfo = PageInfo()
         listData.clear()
         listData.addAll(getData())
         loadData4Page(1)
+    }
+    override val model: BaseModel<Int, Document>
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+
+    override fun stringMap(str: Document): List<Any> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     open inner class DefaultSubscriber(val pageIndex: Int) : SimpleSubscriber<List<T>>() {

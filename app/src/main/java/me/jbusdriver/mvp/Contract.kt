@@ -55,3 +55,8 @@ interface MovieCollectContract{
     interface MovieCollectView : BaseView
     interface MovieCollectPresenter : BasePresenter<MovieCollectView>
 }
+
+interface ActressCollectContract{
+    interface ActressCollectView :  BaseView.BaseListWithRefreshView
+    interface ActressCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<ActressCollectView>
+}
