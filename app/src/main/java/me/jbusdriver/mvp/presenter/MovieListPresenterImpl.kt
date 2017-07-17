@@ -3,10 +3,7 @@ package me.jbusdriver.mvp.presenter
 import android.support.v4.util.ArrayMap
 import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
-import me.jbusdriver.common.AppContext
-import me.jbusdriver.common.C
-import me.jbusdriver.common.arrayMapof
-import me.jbusdriver.common.fromJson
+import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.MovieListContract
 import me.jbusdriver.mvp.MovieListContract.MovieListView
@@ -34,6 +31,7 @@ open class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieLi
             url ->
             return@let if (page == 1) url else "$url${type.prefix}$page"
         }
+        KLog.d("load url :$urlN")
         //existmag=all
         service.getHomePage(urlN, if (IsAll) "all" else null) .doOnNext {
             if (page == 1) CacheLoader.lru.put(saveKey, it)
