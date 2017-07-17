@@ -9,7 +9,7 @@ import org.reactivestreams.Subscription
 open class SimpleSubscriber<T> : DisposableSubscriber<T>() {
 
     private val TAG: String = this.javaClass.name
-    var sub: Subscription? = null
+    private  var sub: Subscription? = null
 
     override fun onStart() {
         super.onStart()

@@ -19,9 +19,9 @@ import org.jsoup.nodes.Document
 /**
  * Created by Administrator on 2017/5/10 0010.
  */
-class SimpleMovieListPresenter(val iLink: ILink) : AbstractRefreshLoadMorePresenterImpl<MovieListContract.MovieListView>(), MovieListContract.MovieListPresenter {
+class LinkMovieListPresenterImpl(val iLink: ILink) : AbstractRefreshLoadMorePresenterImpl<MovieListContract.MovieListView>(), MovieListContract.MovieListPresenter {
 
-    val host by lazy {
+   private val host by lazy {
         Uri.parse(iLink.link).let {
             checkNotNull(it)
             "${it.scheme}://${it.host}"
@@ -65,7 +65,7 @@ class SimpleMovieListPresenter(val iLink: ILink) : AbstractRefreshLoadMorePresen
         super.onRefresh()
     }
 
-    fun parse(link: ILink, doc: Document): IAttr? {
+    private  fun parse(link: ILink, doc: Document): IAttr? {
         return when (link) {
             is ActressInfo -> {
                 ActressInfo.parseActressAttrs(doc)

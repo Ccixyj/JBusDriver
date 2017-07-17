@@ -1,6 +1,5 @@
 package me.jbusdriver.common
 
-import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentPagerAdapter
 import android.view.View
@@ -28,7 +27,7 @@ abstract class TabViewPagerFragment<P : BasePresenter<V>, V : BaseView> : AppBas
         require(mTitles.size == mFragments.size)
     }
 
-    val pagerAdapter: FragmentPagerAdapter by lazy {
+    protected val pagerAdapter: FragmentPagerAdapter by lazy {
         require(mTitles.size == mFragments.size)
         object : FragmentPagerAdapter(childFragmentManager) {
 

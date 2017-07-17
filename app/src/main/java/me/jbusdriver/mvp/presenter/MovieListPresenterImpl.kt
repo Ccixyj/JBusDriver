@@ -19,10 +19,10 @@ import org.jsoup.nodes.Document
 
 open class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieListView>(), MovieListContract.MovieListPresenter {
 
-    var IsAll = false
-    protected val saveKey: String
+    private  var IsAll = false
+    private val urls by lazy { CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) } ?: arrayMapof() }
+    private val saveKey: String
         inline get() = "${mView?.type?.key ?: DataSourceType.CENSORED.key}$IsAll"
-    val urls by lazy { CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) } ?: arrayMapof() }
     private val service by lazy {
         mView?.let {
             JAVBusService.getInstance(urls.get(it.type.key) ?: JAVBusService.defaultFastUrl).apply { JAVBusService.INSTANCE = this }

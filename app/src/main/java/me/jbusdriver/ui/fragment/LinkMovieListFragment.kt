@@ -13,24 +13,24 @@ import me.jbusdriver.mvp.MovieListContract
 import me.jbusdriver.mvp.bean.ActressAttrs
 import me.jbusdriver.mvp.bean.IAttr
 import me.jbusdriver.mvp.bean.ILink
-import me.jbusdriver.mvp.presenter.SimpleMovieListPresenter
+import me.jbusdriver.mvp.presenter.LinkMovieListPresenterImpl
 import me.jbusdriver.ui.data.DataSourceType
 
 
 /**
  * Created by Administraor on 2017/4/9.
  */
-class SimpleMovieListFragment : MovieListFragment(), MovieListContract.MovieListView {
+class LinkMovieListFragment : MovieListFragment(), MovieListContract.MovieListView {
 
 
     val link by lazy { arguments.getSerializable(C.BundleKey.Key_2)  as? ILink ?: error("no link data ") }
 
 
-    override fun createPresenter() = SimpleMovieListPresenter(link)
+    override fun createPresenter() = LinkMovieListPresenterImpl(link)
     /*================================================*/
 
     companion object {
-        fun newInstance(type: DataSourceType, link: ILink) = SimpleMovieListFragment().apply {
+        fun newInstance(type: DataSourceType, link: ILink) = LinkMovieListFragment().apply {
             arguments = Bundle().apply {
                 putSerializable(C.BundleKey.Key_1, type)
                 putSerializable(C.BundleKey.Key_2, link)
@@ -44,7 +44,7 @@ class SimpleMovieListFragment : MovieListFragment(), MovieListContract.MovieList
                 adapter.removeAllHeaderView()
                 adapter.addHeaderView(this.viewContext.inflate(R.layout.layout_actress_attr).apply {
                     //img
-                    Glide.with(this@SimpleMovieListFragment).load(data.imageUrl).into(GlideDrawableImageViewTarget(this.iv_actress_avatar))
+                    Glide.with(this@LinkMovieListFragment).load(data.imageUrl).into(GlideDrawableImageViewTarget(this.iv_actress_avatar))
                     //title
                     this.ll_attr_container.addView(generateTextView().apply {
                         textSize = 16f

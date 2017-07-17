@@ -12,12 +12,12 @@ import me.jbusdriver.mvp.MovieParseContract
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.presenter.MovieParsePresenterImpl
 import me.jbusdriver.ui.data.DataSourceType
-import me.jbusdriver.ui.fragment.SimpleMovieListFragment
+import me.jbusdriver.ui.fragment.LinkMovieListFragment
 
 class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter, MovieParseContract.MovieParseView>(), MovieParseContract.MovieParseView {
 
 
-    override fun createPresenter() = MovieParsePresenterImpl(linkData)
+    override fun createPresenter() = MovieParsePresenterImpl()
 
     override val layoutId = R.layout.activity_moive_list
 
@@ -27,7 +27,7 @@ class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setToolBar()
-        supportFragmentManager.beginTransaction().replace(R.id.fl_container, SimpleMovieListFragment.newInstance(type, linkData))
+        supportFragmentManager.beginTransaction().replace(R.id.fl_container, LinkMovieListFragment.newInstance(type, linkData))
                 .commitAllowingStateLoss()
     }
 

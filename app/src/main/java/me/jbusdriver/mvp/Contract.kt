@@ -50,3 +50,8 @@ interface MineCollectContract{
     interface MineCollectView : BaseView
     interface MineCollectPresenter : BasePresenter<MineCollectView>
 }
+
+interface MovieCollectContract{
+    interface MovieCollectView : BaseView
+    interface MovieCollectPresenter : BasePresenter<MovieCollectView>
+}

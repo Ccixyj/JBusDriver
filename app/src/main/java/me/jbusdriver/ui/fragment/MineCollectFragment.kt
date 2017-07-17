@@ -4,7 +4,6 @@ import android.support.v4.app.Fragment
 import me.jbusdriver.common.TabViewPagerFragment
 import me.jbusdriver.mvp.MineCollectContract
 import me.jbusdriver.mvp.presenter.MineCollectPresenterImpl
-import me.jbusdriver.ui.data.DataSourceType
 
 /**
  * Created by Administrator on 2017/7/17 0017.
@@ -14,9 +13,9 @@ class MineCollectFragment :TabViewPagerFragment<MineCollectContract.MineCollectP
 
     override val mTitles: List<String> by lazy { listOf("movies","girls") }
 
-    override val mFragments: List<Fragment> by lazy {  listOf(HomeMovieListFragment.newInstance(DataSourceType.CENSORED),HomeMovieListFragment.newInstance(DataSourceType.CENSORED))  }
+    override val mFragments: List<Fragment> by lazy {  listOf(MovieCollectFragment.newInstance(),MovieCollectFragment.newInstance())  }
 
     companion object {
-        fun  newInstance() =  MineCollectFragment()
+        fun newInstance() = MineCollectFragment()
     }
 }

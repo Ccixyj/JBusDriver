@@ -29,7 +29,7 @@ import me.jbusdriver.ui.data.DataSourceType
 
 
 /**
- * Created by Administraor on 2017/4/9.
+ * ilink 界面解析
  */
 abstract class MovieListFragment : AppBaseRecycleFragment<MovieListContract.MovieListPresenter, MovieListContract.MovieListView, Movie>(), MovieListContract.MovieListView {
 

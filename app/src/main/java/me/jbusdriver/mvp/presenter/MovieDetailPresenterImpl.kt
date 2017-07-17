@@ -18,7 +18,7 @@ import org.jsoup.nodes.Element
 class MovieDetailPresenterImpl : BasePresenterImpl<MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailPresenter {
 
 
-    val loadFromNet = { s: String ->
+   private val loadFromNet = { s: String ->
         KLog.d("request for : $s")
         mView?.let {
             view->

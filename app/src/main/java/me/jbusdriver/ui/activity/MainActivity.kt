@@ -70,7 +70,15 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
             R.id.movie_sub -> HomeMovieListFragment.newInstance(DataSourceType.Sub)
             else -> error("no matched fragment")
         } as Fragment
-        supportFragmentManager.beginTransaction().replace(R.id.content_main, fragment, id.toString()).commitAllowingStateLoss()
+
+        val ft = supportFragmentManager.beginTransaction()
+        supportFragmentManager.fragments?.let {
+            for (cf in supportFragmentManager.fragments) {
+                ft.remove(cf)
+            }
+        }
+        ft.replace(R.id.content_main, fragment, id.toString())
+        ft.commitAllowingStateLoss()
 
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
         drawer.closeDrawer(GravityCompat.START)

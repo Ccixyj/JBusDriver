@@ -35,7 +35,7 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
     }
 
     override fun showLoading() {
-        KLog.d("showLoading")
+        KLog.t(TAG).d("showLoading")
         swipeView?.let {
             if (!it.isRefreshing) {
                 it.post {
@@ -49,7 +49,7 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
     }
 
     override fun dismissLoading() {
-        KLog.d("dismissLoading")
+        KLog.t(TAG).d("dismissLoading")
         swipeView?.let {
             it.post { it.isRefreshing = false }
         } ?: super.dismissLoading()

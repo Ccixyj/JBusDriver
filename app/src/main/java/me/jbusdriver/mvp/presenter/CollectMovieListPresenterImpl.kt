@@ -1,74 +1,65 @@
 package me.jbusdriver.mvp.presenter
 
-import com.cfzx.mvp.view.BaseView
+import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
+import me.jbusdriver.common.CollectManager
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.SchedulersCompat
 import me.jbusdriver.common.SimpleSubscriber
+import me.jbusdriver.mvp.MovieListContract
 import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.mvp.bean.hasNext
-import me.jbusdriver.mvp.model.BaseModel
-import org.jsoup.nodes.Document
 
 /**
- * Created by Administrator on 2016/9/6 0006.
- * 通用下拉加在更多 , 上拉刷新处理 处理,可单独使用其中一部分
+ * Created by Administrator on 2017/5/10 0010.
  */
-abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRefreshView> : BasePresenterImpl<V>(), BasePresenter.BaseRefreshLoadMorePresenter<V> {
 
-    protected var pageInfo = PageInfo()
 
-    abstract val model: BaseModel<Int, Document>
+class CollectMovieListPresenterImpl : BasePresenterImpl<MovieListContract.MovieListView>(), MovieListContract.MovieListPresenter {
+
+    private val PageSize = 5
+    private var pageInfo = PageInfo()
+    private val data by lazy { CollectManager.movie_data.toMutableList() }
+    private val pageNum by lazy { (data.size / PageSize) + 1 }
+
+    override fun loadAll(iaAll: Boolean) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     override fun onFirstLoad() {
-        loadData4Page(1)//首次加载 可以从内存中读取
-    }
-
-
-    override fun onLoadMore() {
-        KLog.d("onLoadMore :${hasLoadNext()} ; page :$pageInfo")
-        if (hasLoadNext()) loadData4Page(pageInfo.nextPage)
-        else mView?.loadMoreEnd()
-    }
-
-    override fun hasLoadNext(): Boolean = pageInfo.hasNext
-
-    override fun onRefresh() {
+        super.onFirstLoad()
         loadData4Page(1)
     }
 
     override fun loadData4Page(page: Int) {
-        val request = (if (page == 1) model.requestFromCache(page)
-        else model.requestFor(page))
-        request.map {
-            with(it) {
-                pageInfo = parsePage(this)
-                KLog.d("parse page :$pageInfo")
-                stringMap(this)
-            }
+        val next = if (page < pageNum) page + 1 else pageNum
+        pageInfo = pageInfo.copy(page, next)
+        Flowable.just(pageInfo).map {
+            KLog.d("request page : $it")
+            val start = (pageInfo.activePage - 1) * PageSize
+            val nextSize = start + PageSize
+            val end = if (nextSize <= data.size) nextSize else data.size
+            data.subList(start, end)
         }.compose(SchedulersCompat.io())
                 .subscribeWith(DefaultSubscriber(page))
                 .addTo(rxManager)
 
     }
 
-    fun parsePage(pageDoc: Document): PageInfo {
-        with(pageDoc) {
-            val current = select(".pagination .active > a").attr("href")
-            val next = select(".pagination .active ~ li >a").attr("href")
-            return PageInfo(current.split("/").lastOrNull()?.toIntOrNull() ?: 0,
-                    next.split("/").lastOrNull()?.toIntOrNull() ?: 0
-                    , current, next)
-        }
+    override fun onLoadMore() {
+        if (hasLoadNext()) loadData4Page(pageInfo.nextPage)
+        else mView?.loadMoreEnd()
     }
 
-    abstract fun stringMap(str: Document): List<Any>
+    override fun hasLoadNext() = pageInfo.hasNext
 
-    /**
-     * 加载列表默认实现的订阅者.
-     * 实现@AbstractRefreshLoadMorePresenterImpl 可直接使用该类.
-     */
+    override fun onRefresh() {
+        data.clear()
+        data.addAll(CollectManager.movie_data)
+        loadData4Page(1)
+    }
+
      open inner class DefaultSubscriber(val pageIndex: Int) : SimpleSubscriber<List<Any>>() {
 
         override fun onStart() {
@@ -118,4 +109,5 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
             if (pageIndex > 1) mView?.loadMoreComplete()
         }
     }
+
 }
