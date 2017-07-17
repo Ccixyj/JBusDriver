@@ -52,6 +52,7 @@ open class BasePresenterImpl<V : BaseView> : BasePresenter<V> {
 
     override fun onViewDetached() {
         KLog.t(TAG).e("onViewDetached")
+        mView?.dismissLoading()
         rxManager.clear()
         mView = null
 
@@ -59,7 +60,6 @@ open class BasePresenterImpl<V : BaseView> : BasePresenter<V> {
 
     override fun onPresenterDestroyed() {
         KLog.t(TAG).e("$this:onPresenterDestroyed:" + this)
-        mView?.dismissLoading()
         rxManager.clear()
         rxManager.dispose()
     }

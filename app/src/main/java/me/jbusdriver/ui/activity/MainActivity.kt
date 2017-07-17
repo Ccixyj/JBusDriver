@@ -4,11 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
+import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.Toolbar
-import android.util.SparseArray
 import android.view.MenuItem
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.AppBaseActivity
@@ -17,10 +17,10 @@ import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.presenter.MainPresenterImpl
 import me.jbusdriver.ui.data.DataSourceType
 import me.jbusdriver.ui.fragment.HomeMovieListFragment
+import me.jbusdriver.ui.fragment.MineCollectFragment
 
 class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.MainView>(), NavigationView.OnNavigationItemSelectedListener, MainContract.MainView {
 
-    val fragments = SparseArray<android.support.v4.app.Fragment>(8)
     val navigationView by lazy { findViewById(R.id.nav_view) as NavigationView }
     lateinit var selectMenu: MenuItem
 
@@ -61,17 +61,17 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         selectMenu = item
         val id = item.itemId
         KLog.d("onNavigationItemSelected $item ")
-        val fragment = (when (id) {
-            R.id.mine_collect -> HomeMovieListFragment.newInstance(DataSourceType.CENSORED)
+        val fragment = when (id) {
+            R.id.mine_collect -> MineCollectFragment.newInstance()
             R.id.movie_ma -> HomeMovieListFragment.newInstance(DataSourceType.CENSORED)
             R.id.movie_uncensored -> HomeMovieListFragment.newInstance(DataSourceType.UNCENSORED)
             R.id.movie_xyz -> HomeMovieListFragment.newInstance(DataSourceType.XYZ)
             R.id.movie_hd -> HomeMovieListFragment.newInstance(DataSourceType.GENRE_HD)
             R.id.movie_sub -> HomeMovieListFragment.newInstance(DataSourceType.Sub)
             else -> error("no matched fragment")
-        }.apply { fragments.put(id, this) })
-        //
-        supportFragmentManager.beginTransaction().replace(R.id.content_main, fragment, selectMenu.itemId.toString()).commit()
+        } as Fragment
+        supportFragmentManager.beginTransaction().replace(R.id.content_main, fragment, id.toString()).commitAllowingStateLoss()
+
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
         drawer.closeDrawer(GravityCompat.START)
         supportActionBar?.title = selectMenu.title

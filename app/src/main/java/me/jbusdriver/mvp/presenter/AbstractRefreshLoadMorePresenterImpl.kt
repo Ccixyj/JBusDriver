@@ -39,8 +39,9 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
     }
 
     override fun loadData4Page(page: Int) {
-        (if (page == 1) model.requestFromCache(page)
-        else model.requestFor(page)).map {
+        val request = (if (page == 1) model.requestFromCache(page)
+        else model.requestFor(page))
+        request.map {
             with(it) {
                 pageInfo = parsePage(this)
                 KLog.d("parse page :$pageInfo")

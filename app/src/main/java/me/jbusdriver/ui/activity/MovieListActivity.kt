@@ -8,14 +8,13 @@ import android.widget.Toast
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.AppBaseActivity
 import me.jbusdriver.common.C
-import me.jbusdriver.common.KLog
-import me.jbusdriver.mvp.MoviePareseContract
+import me.jbusdriver.mvp.MovieParseContract
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.presenter.MovieParsePresenterImpl
 import me.jbusdriver.ui.data.DataSourceType
 import me.jbusdriver.ui.fragment.SimpleMovieListFragment
 
-class MovieListActivity : AppBaseActivity<MoviePareseContract.MovieParsePresenter, MoviePareseContract.MovieParseView>(), MoviePareseContract.MovieParseView {
+class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter, MovieParseContract.MovieParseView>(), MovieParseContract.MovieParseView {
 
 
     override fun createPresenter() = MovieParsePresenterImpl(linkData)

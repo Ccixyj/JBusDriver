@@ -40,8 +40,13 @@ interface MovieDetailContract {
     }
 }
 
-interface MoviePareseContract {
+interface MovieParseContract {
     interface MovieParseView : BaseView
     interface MovieParsePresenter : BasePresenter<MovieParseView>
 
+}
+
+interface MineCollectContract{
+    interface MineCollectView : BaseView
+    interface MineCollectPresenter : BasePresenter<MineCollectView>
 }

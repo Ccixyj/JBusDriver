@@ -1,10 +1,10 @@
 package me.jbusdriver.mvp.presenter
 
 import me.jbusdriver.common.KLog
-import me.jbusdriver.mvp.MoviePareseContract
+import me.jbusdriver.mvp.MovieParseContract
 import me.jbusdriver.mvp.bean.ILink
 
-class MovieParsePresenterImpl(val link: ILink) : BasePresenterImpl<MoviePareseContract.MovieParseView>(), MoviePareseContract.MovieParsePresenter {
+class MovieParsePresenterImpl(val link: ILink) : BasePresenterImpl<MovieParseContract.MovieParseView>(), MovieParseContract.MovieParsePresenter {
 
    /* val parseModel: BaseModel<Int, String> = object : BaseModel<Int, String> {
         override fun requestFor(t: Int) = Flowable.fromCallable { Jsoup.connect(link.link).get().toString() }.doOnNext {
