@@ -62,6 +62,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         val id = item.itemId
         KLog.d("onNavigationItemSelected $item ")
         val fragment = (when (id) {
+            R.id.mine_collect -> HomeMovieListFragment.newInstance(DataSourceType.CENSORED)
             R.id.movie_ma -> HomeMovieListFragment.newInstance(DataSourceType.CENSORED)
             R.id.movie_uncensored -> HomeMovieListFragment.newInstance(DataSourceType.UNCENSORED)
             R.id.movie_xyz -> HomeMovieListFragment.newInstance(DataSourceType.XYZ)

@@ -58,6 +58,8 @@ open class BaseFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        rxManager.clear()
+        rxManager.dispose()
         KLog.t(TAG).d("onDestroy")
     }
 

@@ -149,10 +149,8 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
 
     override fun onDestroy() {
         super.onDestroy()
+        rootViewWeakRef?.clear()
         rootViewWeakRef = null
-        rxManager.clear()
-        rxManager.dispose()
-
     }
 
     override fun onDetach() {

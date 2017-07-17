@@ -2,6 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group
+        android:id="@+id/mine"
+        android:checkableBehavior="single"
+        android:menuCategory="alternative">
+        <item
+            android:id="@+id/mine_collect"
+            android:icon="@drawable/ic_collections_bookmark_24dp"
+            android:title="收藏夹" />
+
+    </group>
+
+    <group
         android:id="@+id/nav_ma"
         android:checkableBehavior="single"
         android:menuCategory="alternative">

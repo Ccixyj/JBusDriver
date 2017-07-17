@@ -62,7 +62,6 @@ open class BasePresenterImpl<V : BaseView> : BasePresenter<V> {
         mView?.dismissLoading()
         rxManager.clear()
         rxManager.dispose()
-
     }
 
 }
