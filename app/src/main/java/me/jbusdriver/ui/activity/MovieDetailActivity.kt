@@ -17,7 +17,6 @@ import com.cfzx.utils.CacheLoader
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_movie_detail.*
 import kotlinx.android.synthetic.main.content_movie_detail.*
-import me.jbusdriver.common.CollectManager
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.MovieDetailContract
 import me.jbusdriver.mvp.bean.Magnet
@@ -31,6 +30,8 @@ import org.jsoup.Jsoup
 
 class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPresenter, MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailView {
 
+    private lateinit var collectMenu: MenuItem
+    private lateinit var removeCollectMenu: MenuItem
 
     private val headHolder by lazy { HeaderHolder(this, movie.type) }
     private val sampleHolder by lazy { ImageSampleHolder(this) }
@@ -52,10 +53,18 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         initWidget()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_movie_detail, menu)
-        if (CollectManager.has(movie)) menu?.removeItem(R.id.action_add_movie_collect)
-        else menu?.removeItem(R.id.action_remove_movie_collect)
+        collectMenu = menu.findItem(R.id.action_add_movie_collect)
+        removeCollectMenu = menu.findItem(R.id.action_remove_movie_collect)
+        if (CollectManager.has(movie)){
+            collectMenu.isVisible = false
+            removeCollectMenu.isVisible = true
+        }else{
+            collectMenu.isVisible = true
+            removeCollectMenu.isVisible = false
+        }
+
         return true
     }
 
@@ -66,10 +75,20 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         val id = item.itemId
         when (id) {
             R.id.action_add_movie_collect -> {
-                CollectManager.addToCollect(movie)
+                //收藏
+                KLog.d("收藏")
+                if (CollectManager.addToCollect(movie)) {
+                    collectMenu.isVisible = false
+                    removeCollectMenu.isVisible = true
+                }
             }
             R.id.action_remove_movie_collect -> {
-                CollectManager.removeCollect(movie)
+                //取消收藏
+                KLog.d("取消收藏")
+               if ( CollectManager.removeCollect(movie)){
+                   collectMenu.isVisible = true
+                   removeCollectMenu.isVisible = false
+               }
             }
         }
         return super.onOptionsItemSelected(item)

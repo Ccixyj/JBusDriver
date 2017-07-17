@@ -15,7 +15,6 @@ import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_actress.view.*
-import me.jbusdriver.common.CollectManager
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.ui.activity.MovieListActivity
@@ -34,10 +33,10 @@ class ActressListHolder(context: Context, type: DataSourceType) : BaseHolder(con
             }
         }, "收藏" to { act: ActressInfo ->
             CollectManager.addToCollect(act)
-            KLog.d(CollectManager.actress_data)
+            KLog.d("actress_data:${CollectManager.actress_data}")
         }, "取消收藏" to { act: ActressInfo ->
             CollectManager.removeCollect(act)
-            KLog.d(CollectManager.actress_data)
+            KLog.d("actress_data:${CollectManager.actress_data}")
         })
     }
 

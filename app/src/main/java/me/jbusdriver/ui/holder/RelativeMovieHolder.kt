@@ -14,7 +14,6 @@ import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_relative_movies.view.*
-import me.jbusdriver.common.CollectManager
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.ui.activity.MovieDetailActivity
@@ -34,10 +33,10 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
             }
         }, "收藏" to { movie: Movie ->
             CollectManager.addToCollect(movie)
-            KLog.d(CollectManager.movie_data)
+            KLog.d("movie_data:${CollectManager.movie_data}")
         }, "取消收藏" to { movie: Movie ->
             CollectManager.removeCollect(movie)
-            KLog.d(CollectManager.movie_data)
+            KLog.d("movie_data:${CollectManager.movie_data}")
         })
     }
 

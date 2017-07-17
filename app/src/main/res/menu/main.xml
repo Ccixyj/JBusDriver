@@ -5,9 +5,10 @@
         android:id="@+id/action_show_all"
         android:orderInCategory="100"
         android:title="全部影片"
-        app:showAsAction="always"
+        app:showAsAction="never"
         android:checkable="true"
-        android:checked="false"/>
+        android:checked="false"
+        />
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

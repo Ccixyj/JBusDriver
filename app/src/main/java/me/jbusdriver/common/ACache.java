@@ -853,7 +853,12 @@ public class ACache {
         }
 
         private static boolean hasDateInfo(byte[] data) {
-            return data != null && data.length > 15 && data[13] == '-' && indexOf(data, mSeparator) > 14;
+            if (data != null && data.length > 15 && data[13] == '-' ){
+                int index = indexOf(data, mSeparator);
+                return index > 14 && index < 27;
+
+            }
+            return false ;
         }
 
         private static String[] getDateInfoFromDate(byte[] data) {

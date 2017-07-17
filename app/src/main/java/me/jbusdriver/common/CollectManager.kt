@@ -2,7 +2,6 @@ package me.jbusdriver.common
 
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.Movie
-import java.util.*
 
 /**
  * Created by Administrator on 2017/7/16.
@@ -15,46 +14,51 @@ object CollectManager {
     private val collectCache by lazy { ACache.get(AppContext.instace, "collect") }
 
 
-    val actress_data: LinkedList<ActressInfo>
-        get() = collectCache.getAsString(Actress_Key)?.let { AppContext.gson.fromJson<LinkedList<ActressInfo>>(it) } ?: LinkedList()
+    val actress_data: MutableList<ActressInfo>
+        get() = collectCache.getAsString(Actress_Key)?.let { AppContext.gson.fromJson<MutableList<ActressInfo>>(it) } ?: mutableListOf()
 
-    val movie_data: LinkedList<Movie>
-        get() = collectCache.getAsString(Movie_Key)?.let { AppContext.gson.fromJson<LinkedList<Movie>>(it) } ?: LinkedList()
+    val movie_data: MutableList<Movie>
+        get() = collectCache.getAsString(Movie_Key)?.let { AppContext.gson.fromJson<MutableList<Movie>>(it) } ?: mutableListOf()
 
-    fun addToCollect(actressInfo: ActressInfo) {
-        actress_data.let {
+    fun addToCollect(actressInfo: ActressInfo): Boolean {
+        return actress_data.let {
             if (it.any { it == actressInfo }) {
                 AppContext.instace.toast("${actressInfo.name}已收藏")
-                return
+                return false
             }
-            it.addFirst(actressInfo)
+            it.add(0, actressInfo)
             collectCache.put(Actress_Key, AppContext.gson.toJson(it))
+            true
         }
     }
 
-    fun addToCollect(movie: Movie) {
-        movie_data.let {
+    fun addToCollect(movie: Movie): Boolean {
+        return movie_data.let {
             if (it.any { it == movie }) {
                 AppContext.instace.toast("${movie.title}已收藏")
-                return
+                return false
             }
-            it.addFirst(movie)
+            it.add(0, movie)
             collectCache.put(Movie_Key, AppContext.gson.toJson(it))
+            true
         }
     }
 
     fun has(act: ActressInfo): Boolean = actress_data.any { it.link == act.link }
     fun has(movie: Movie): Boolean = movie_data.any { it.code == movie.code }
-    fun removeCollect(act: ActressInfo) {
+    fun removeCollect(act: ActressInfo): Boolean {
         actress_data.let {
-            it.remove(act)
-            collectCache.put(Actress_Key, AppContext.gson.toJson(it))
+            val res = it.remove(act)
+            if (res) collectCache.put(Actress_Key, AppContext.gson.toJson(it))
+            return res
         }
     }
-    fun removeCollect(movie: Movie) {
-        movie_data.let{
-            it.remove(movie)
-            collectCache.put(Movie_Key, AppContext.gson.toJson(it))
+
+    fun removeCollect(movie: Movie): Boolean {
+        movie_data.let {
+            val res = it.remove(movie)
+            if (res) collectCache.put(Movie_Key, AppContext.gson.toJson(it))
+            return res
         }
     }
 }

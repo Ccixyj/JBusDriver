@@ -23,6 +23,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
     val fragments = SparseArray<android.support.v4.app.Fragment>(8)
     val navigationView by lazy { findViewById(R.id.nav_view) as NavigationView }
     lateinit var selectMenu: MenuItem
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val toolbar = findViewById(R.id.toolbar) as Toolbar
