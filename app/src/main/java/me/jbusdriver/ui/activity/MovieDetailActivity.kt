@@ -24,6 +24,7 @@ import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.MovieDetail
 import me.jbusdriver.mvp.bean.detailSaveKey
 import me.jbusdriver.mvp.presenter.MovieDetailPresenterImpl
+import me.jbusdriver.ui.data.CollectManager
 import me.jbusdriver.ui.holder.*
 import org.jsoup.Jsoup
 

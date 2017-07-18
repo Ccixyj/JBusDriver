@@ -1,5 +1,9 @@
-package me.jbusdriver.common
+package me.jbusdriver.ui.data
 
+import me.jbusdriver.common.ACache
+import me.jbusdriver.common.AppContext
+import me.jbusdriver.common.fromJson
+import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.Movie
 

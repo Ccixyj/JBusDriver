@@ -12,6 +12,7 @@ import me.jbusdriver.common.*
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.adapter.ActressInfoAdapter
+import me.jbusdriver.ui.data.CollectManager
 import me.jbusdriver.ui.data.DataSourceType
 import java.util.*
 

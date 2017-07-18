@@ -1,6 +1,6 @@
 package me.jbusdriver.mvp.presenter
 
-import me.jbusdriver.common.CollectManager
+import me.jbusdriver.ui.data.CollectManager
 import me.jbusdriver.mvp.ActressCollectContract
 import me.jbusdriver.mvp.bean.ActressInfo
 

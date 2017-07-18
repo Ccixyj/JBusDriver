@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.layout_detail_relative_movies.view.*
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.ui.activity.MovieDetailActivity
+import me.jbusdriver.ui.data.CollectManager
 import java.util.*
 
 /**
