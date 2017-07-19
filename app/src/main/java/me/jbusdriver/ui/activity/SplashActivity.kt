@@ -76,10 +76,11 @@ class SplashActivity : BaseActivity() {
                     .flatMap {
                         urls = it
                         val mapFlow = AppContext.gson.fromJson<List<String>>(it[DataSourceType.CENSORED.key] ?: "").map {
-                            Flowable.combineLatest(Flowable.just<String>(it), JAVBusService.INSTANCE.get(it).addUserCase(15),
+                            Flowable.combineLatest(Flowable.just<String>(it),
+                                    JAVBusService.INSTANCE.get(it).addUserCase(15).onErrorReturnItem(""),
                                     BiFunction<String, String, Pair<String, String>> { t1, t2 -> t1 to t2 })
                         }
-                        Flowable.mergeDelayError(mapFlow)
+                        Flowable.mergeDelayError(mapFlow).filter { it.second.isNotBlank() }
                     }
                     .firstOrError()
                     .doOnError { CacheLoader.acache.remove(C.Cache.ANNOUNCEURL) }
