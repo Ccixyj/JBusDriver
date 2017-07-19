@@ -1,11 +1,14 @@
 package me.jbusdriver.ui.data
 
+import android.os.Environment
 import me.jbusdriver.common.ACache
 import me.jbusdriver.common.AppContext
 import me.jbusdriver.common.fromJson
 import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.Movie
+import java.io.File
+
 
 /**
  * Created by Administrator on 2017/7/16.
@@ -15,7 +18,10 @@ object CollectManager {
     private const val Actress_Key = "Actress_Key"
     private const val Movie_Key = "Movie_Key"
 
-    private val collectCache by lazy { ACache.get(AppContext.instace, "collect") }
+    private val collectCache by lazy {
+        val cacheDir = if (Environment.isExternalStorageEmulated()) File(( Environment.getExternalStorageDirectory().absolutePath + File.separator + AppContext.instace.packageName + File.separator + "collect")) else (AppContext.instace.externalCacheDir ?: AppContext.instace.cacheDir)
+        ACache.get(cacheDir)
+    }
 
 
     val actress_data: MutableList<ActressInfo>
