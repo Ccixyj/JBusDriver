@@ -8,11 +8,9 @@ import android.support.v7.widget.RecyclerView
 import android.view.*
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-import com.chad.library.adapter.base.listener.SimpleClickListener
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
@@ -95,26 +93,9 @@ abstract class MovieListFragment : AppBaseRecycleFragment<MovieListContract.Movi
 
     override fun initWidget(rootView: View) {
         super.initWidget(rootView)
-        recycleView.addOnItemTouchListener(object : SimpleClickListener() {
-
-
-            override fun onItemClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int) {
-                Toast.makeText(viewContext, "" + Integer.toString(position), Toast.LENGTH_SHORT).show()
-                (adapter.data.getOrNull(position) as? Movie)?.let { MovieDetailActivity.start(activity, it) }
-            }
-
-            override fun onItemLongClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int) {
-            }
-
-            override fun onItemChildClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int) {
-                Toast.makeText(viewContext, "" + Integer.toString(position), Toast.LENGTH_SHORT).show()
-            }
-
-            override fun onItemChildLongClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int) {
-                Toast.makeText(viewContext, "" + Integer.toString(position), Toast.LENGTH_SHORT).show()
-            }
-        })
-
+        adapter.setOnItemClickListener { adapter, _, position ->
+            (adapter.data.getOrNull(position) as? Movie)?.let { MovieDetailActivity.start(activity, it) }
+        }
     }
 
 
