@@ -15,11 +15,7 @@ interface JAVBusService {
 
     //https://announce.javbus8.com/website.php
     @GET
-    fun get(@Url url: String): Flowable<String>
-
-
-    @GET()
-    fun getHomePage(@Url url: String, @Header("existmag") existmag: String? = null): Flowable<String>
+    fun get(@Url url: String, @Header("existmag") existmag: String? = null): Flowable<String>
 
 
     companion object {

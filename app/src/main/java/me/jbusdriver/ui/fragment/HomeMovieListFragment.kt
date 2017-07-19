@@ -18,23 +18,7 @@ class HomeMovieListFragment : MovieListFragment(), MovieListContract.MovieListVi
     override fun createPresenter() = MovieListPresenterImpl()
 
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.main,menu)
-    }
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the CENSORED/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        val id = item.itemId
-        when (id) {
-            R.id.action_show_all -> {
-                item.isChecked = !item.isChecked
-                if (item.isChecked) item.title = "已发布" else item.title = "全部电影"  /*false : 已发布的 ,true :全部*/
-                mBasePresenter?.loadAll(item.isChecked)
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
+
 
     /*================================================*/
     companion object {

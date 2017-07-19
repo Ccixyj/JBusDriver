@@ -7,14 +7,10 @@ import jbusdriver.me.jbusdriver.BuildConfig
 import me.jbusdriver.common.AppContext
 import me.jbusdriver.common.KLog
 import okhttp3.*
-import okio.BufferedSink
-import okio.GzipSink
-import okio.Okio
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import java.io.File
-import java.io.IOException
 import java.lang.reflect.Type
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -45,33 +41,10 @@ object NetClient {
                 override fun responseBodyConverter(type: Type?, annotations: Array<out Annotation>?, retrofit: Retrofit?): Converter<ResponseBody, *> {
                     return Converter<ResponseBody, String> { it.string() }
                 }
-
-
             })
-            .addCallAdapterFactory(rxJavaCallAdapterFactory).build()
+            .addCallAdapterFactory(rxJavaCallAdapterFactory).build()!!
 
     //endregion
-    private fun gzip(body: RequestBody): RequestBody {
-        return object : RequestBody() {
-            override fun contentType(): MediaType? {
-                KLog.d("contentType : gzip!  ")
-                return body.contentType()
-            }
-
-            @Throws(IOException::class)
-            override fun contentLength(): Long {
-                return -1
-            }
-
-            @Throws(IOException::class)
-            override fun writeTo(sink: BufferedSink) {
-                val gzipSink = Okio.buffer(GzipSink(sink))
-                body.writeTo(gzipSink)
-                gzipSink.close()
-            }
-        }
-    }
-
 
     val okHttpClient by lazy {
         //设置缓存路径

@@ -21,6 +21,8 @@ import org.jsoup.nodes.Document
  */
 class LinkMovieListPresenterImpl(val iLink: ILink) : AbstractRefreshLoadMorePresenterImpl<MovieListContract.MovieListView>(), MovieListContract.MovieListPresenter {
 
+    var IsAll = false
+
    private val host by lazy {
         Uri.parse(iLink.link).let {
             checkNotNull(it)
@@ -29,17 +31,18 @@ class LinkMovieListPresenterImpl(val iLink: ILink) : AbstractRefreshLoadMorePres
     }
 
     override fun loadAll(iaAll: Boolean) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        IsAll = iaAll
+        loadData4Page(1)
     }
 
     /*不需要*/
     override val model: BaseModel<Int, Document> = object : BaseModel<Int, Document> {
         override fun requestFor(t: Int) =
                 (if (t == 1) iLink.link else "$host${pageInfo.nextPath}").let {
-                    KLog.d("fromCallable page $pageInfo requestFor : $it")
-                    JAVBusService.INSTANCE.get(it).map { Jsoup.parse(it) }
+                    KLog.i("fromCallable page $pageInfo requestFor : $it")
+                    JAVBusService.INSTANCE.get(it , if (IsAll) "all" else null).map { Jsoup.parse(it) }
                 }.doOnNext {
-                    if (t == 1) CacheLoader.lru.put(iLink.link, it.toString())
+                    if (t == 1) CacheLoader.lru.put("${iLink.link}$IsAll", it.toString())
                 }
 
         override fun requestFromCache(t: Int) = Flowable.concat(CacheLoader.justLru(iLink.link).map { Jsoup.parse(it) }, requestFor(t))

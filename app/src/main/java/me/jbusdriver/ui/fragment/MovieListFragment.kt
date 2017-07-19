@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.Gravity
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -20,7 +18,6 @@ import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.common.AppBaseRecycleFragment
 import me.jbusdriver.common.C
-import me.jbusdriver.common.KLog
 import me.jbusdriver.common.dpToPx
 import me.jbusdriver.mvp.MovieListContract
 import me.jbusdriver.mvp.bean.Movie
@@ -76,6 +73,24 @@ abstract class MovieListFragment : AppBaseRecycleFragment<MovieListContract.Movi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.main,menu)
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the CENSORED/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        val id = item.itemId
+        when (id) {
+            R.id.action_show_all -> {
+                item.isChecked = !item.isChecked
+                if (item.isChecked) item.title = "已发布" else item.title = "全部电影"  /*false : 已发布的 ,true :全部*/
+                mBasePresenter?.loadAll(item.isChecked)
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun initWidget(rootView: View) {

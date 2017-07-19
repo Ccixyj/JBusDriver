@@ -31,9 +31,9 @@ open class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieLi
             url ->
             return@let if (page == 1) url else "$url${type.prefix}$page"
         }
-        KLog.d("load url :$urlN")
+        KLog.i("load url :$urlN")
         //existmag=all
-        service.getHomePage(urlN, if (IsAll) "all" else null) .doOnNext {
+        service.get(urlN, if (IsAll) "all" else null) .doOnNext {
             if (page == 1) CacheLoader.lru.put(saveKey, it)
         }.map { Jsoup.parse(it) }
     }

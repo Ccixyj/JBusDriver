@@ -1,5 +1,7 @@
 package me.jbusdriver.ui.fragment
 
+import android.view.Menu
+import android.view.MenuInflater
 import me.jbusdriver.mvp.MovieListContract
 import me.jbusdriver.mvp.presenter.MovieCollectPresenterImpl
 
@@ -9,6 +11,8 @@ import me.jbusdriver.mvp.presenter.MovieCollectPresenterImpl
 class MovieCollectFragment : MovieListFragment() , MovieListContract.MovieListView {
 
     override fun createPresenter() =  MovieCollectPresenterImpl()
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) = Unit
 
     companion object {
         fun newInstance() = MovieCollectFragment()
