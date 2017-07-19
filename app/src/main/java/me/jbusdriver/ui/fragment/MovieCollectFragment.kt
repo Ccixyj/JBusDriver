@@ -29,14 +29,8 @@ class MovieCollectFragment : MovieListFragment(), MovieListContract.MovieListVie
                         .itemsCallback { _, _, _, text ->
                             if (CollectManager.removeCollect(it)) {
                                 viewContext.toast("取消收藏成功")
-                                rootViewWeakRef?.get()?.let {
-                                    Snackbar.make(it, "取消收藏成功", Snackbar.LENGTH_INDEFINITE)
-                                }
                             } else {
-                                viewContext.toast("已经取消过了")
-                                rootViewWeakRef?.get()?.let {
-                                    Snackbar.make(it, "已经取消过了", Snackbar.LENGTH_INDEFINITE)
-                                }
+                                viewContext.toast("已经取消了")
                             }
                             mBasePresenter?.onRefresh()
                         }

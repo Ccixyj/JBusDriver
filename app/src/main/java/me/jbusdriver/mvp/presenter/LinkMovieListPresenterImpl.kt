@@ -1,10 +1,10 @@
 package me.jbusdriver.mvp.presenter
 
-import android.net.Uri
 import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import me.jbusdriver.common.KLog
+import me.jbusdriver.common.urlHost
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.MovieListContract
 import me.jbusdriver.mvp.bean.ActressInfo
@@ -23,12 +23,7 @@ class LinkMovieListPresenterImpl(val iLink: ILink) : AbstractRefreshLoadMorePres
 
     var IsAll = false
 
-   private val host by lazy {
-        Uri.parse(iLink.link).let {
-            checkNotNull(it)
-            "${it.scheme}://${it.host}"
-        }
-    }
+
 
     override fun loadAll(iaAll: Boolean) {
         IsAll = iaAll
@@ -38,7 +33,7 @@ class LinkMovieListPresenterImpl(val iLink: ILink) : AbstractRefreshLoadMorePres
     /*不需要*/
     override val model: BaseModel<Int, Document> = object : BaseModel<Int, Document> {
         override fun requestFor(t: Int) =
-                (if (t == 1) iLink.link else "$host${pageInfo.nextPath}").let {
+                (if (t == 1) iLink.link else "${iLink.link.urlHost}${pageInfo.nextPath}").let {
                     KLog.i("fromCallable page $pageInfo requestFor : $it")
                     JAVBusService.INSTANCE.get(it , if (IsAll) "all" else null).map { Jsoup.parse(it) }
                 }.doOnNext {

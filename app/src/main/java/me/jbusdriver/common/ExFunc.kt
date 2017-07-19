@@ -3,6 +3,7 @@ package me.jbusdriver.common
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.net.Uri
 import android.support.v4.util.ArrayMap
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
@@ -157,3 +158,11 @@ fun Context.paste(): String? {
         if (it.itemCount > 0) it.getItemAt(0).coerceToText(this)?.toString() else null
     }
 }
+
+
+//string url -> get url host
+val String.urlHost: String
+    inline get() = Uri.parse(this).let {
+        checkNotNull(it)
+        "${it.scheme}://${it.host}"
+    }

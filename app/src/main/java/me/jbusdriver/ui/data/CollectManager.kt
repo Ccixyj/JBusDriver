@@ -1,10 +1,8 @@
 package me.jbusdriver.ui.data
 
 import android.os.Environment
-import me.jbusdriver.common.ACache
-import me.jbusdriver.common.AppContext
-import me.jbusdriver.common.fromJson
-import me.jbusdriver.common.toast
+import me.jbusdriver.common.*
+import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.Movie
 import java.io.File
@@ -19,13 +17,23 @@ object CollectManager {
     private const val Movie_Key = "Movie_Key"
 
     private val collectCache by lazy {
-        val cacheDir = if (Environment.isExternalStorageEmulated()) File(( Environment.getExternalStorageDirectory().absolutePath + File.separator + AppContext.instace.packageName + File.separator + "collect")) else (AppContext.instace.externalCacheDir ?: AppContext.instace.cacheDir)
+        val cacheDir = if (Environment.isExternalStorageEmulated()) File((Environment.getExternalStorageDirectory().absolutePath + File.separator + AppContext.instace.packageName + File.separator + "collect")) else (AppContext.instace.externalCacheDir ?: AppContext.instace.cacheDir)
         ACache.get(cacheDir)
     }
 
 
     val actress_data: MutableList<ActressInfo>
         get() = collectCache.getAsString(Actress_Key)?.let { AppContext.gson.fromJson<MutableList<ActressInfo>>(it) } ?: mutableListOf()
+
+    private fun checkActressUrls(data: MutableList<ActressInfo>) {
+        val host = JAVBusService.defaultFastUrl.urlHost
+        if (data.any { it.link.urlHost != host }){
+            data.map {
+                it.copy(link = "${host}")
+            }
+        }
+    }
+
 
     val movie_data: MutableList<Movie>
         get() = collectCache.getAsString(Movie_Key)?.let { AppContext.gson.fromJson<MutableList<Movie>>(it) } ?: mutableListOf()

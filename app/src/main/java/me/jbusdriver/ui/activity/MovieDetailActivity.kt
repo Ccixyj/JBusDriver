@@ -36,7 +36,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
     private val headHolder by lazy { HeaderHolder(this, movie.type) }
     private val sampleHolder by lazy { ImageSampleHolder(this) }
-    private val actressHolder by lazy { ActressListHolder(this, movie.type) }
+    private val actressHolder by lazy { ActressListHolder(this) }
     private val genreHolder by lazy { GenresHolder(this, movie.type) }
     private val relativeMovieHolder by lazy { RelativeMovieHolder(this) }
 

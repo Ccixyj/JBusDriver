@@ -8,18 +8,20 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_actress.view.*
-import me.jbusdriver.common.*
+import me.jbusdriver.common.KLog
+import me.jbusdriver.common.copy
+import me.jbusdriver.common.inflate
+import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.adapter.ActressInfoAdapter
 import me.jbusdriver.ui.data.CollectManager
-import me.jbusdriver.ui.data.DataSourceType
 import java.util.*
 
 /**
  * Created by Administrator on 2017/5/9 0009.
  */
-class ActressListHolder(context: Context, type: DataSourceType) : BaseHolder(context) {
+class ActressListHolder(context: Context) : BaseHolder(context) {
     val actionMap by lazy {
         mapOf("复制名字" to { act: ActressInfo ->
             weakRef.get()?.let {
@@ -72,11 +74,6 @@ class ActressListHolder(context: Context, type: DataSourceType) : BaseHolder(con
         ActressInfoAdapter(rxManager)
     }
 
-
-    val random = Random()
-    private fun randomNum(number: Int): Int {
-        return Math.abs(random.nextInt() % number)
-    }
 
     fun init(actress: List<ActressInfo>) {
         //actress

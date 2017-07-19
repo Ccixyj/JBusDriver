@@ -32,8 +32,8 @@ class SplashActivity : BaseActivity() {
     }
 
     private fun init() {
-        Observable.combineLatest<Boolean, ArrayMap<String, String>, Boolean>(RxPermissions(this).request(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                initUrls(), BiFunction { t1, t2 -> t1 })
+        Observable.combineLatest<Boolean, ArrayMap<String, String>, String>(RxPermissions(this).request(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                initUrls(), BiFunction { t1, t2 -> t2.values.firstOrNull() ?: "" })
                 .doOnError { CacheLoader.acache.clear() }
                 .retry(1)
                 .doFinally {
@@ -45,7 +45,8 @@ class SplashActivity : BaseActivity() {
                     }
                 }
                 .subscribeBy(onNext = {
-                    KLog.i("success")
+                    KLog.i("success : $it")
+                    JAVBusService.defaultFastUrl = it.urlHost
                 }, onError = {
                     it.printStackTrace()
                 })
@@ -86,7 +87,6 @@ class SplashActivity : BaseActivity() {
                     .doOnError { CacheLoader.acache.remove(C.Cache.ANNOUNCEURL) }
                     .map {
                         val ds = DataSourceType.values().takeLast(DataSourceType.values().size - 1).toMutableList()
-                        JAVBusService.defaultFastUrl = it.first
                         Jsoup.parse(it.second).select(".navbar-nav a").forEach {
                             box ->
                             ds.find { box.text() == it.key }?.let {

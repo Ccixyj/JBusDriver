@@ -22,7 +22,7 @@ interface JAVBusService {
         var defaultFastUrl = "https://www.javbus3.com"
         var INSTANCE = getInstance(defaultFastUrl)
         fun getInstance(source: String): JAVBusService {
-            KLog.d("instances : $JBusInstances")
+            KLog.d("instances : $JBusInstances , defaultFastUrl : $defaultFastUrl")
             //JBusInstances[type] 会出异常
             return JBusInstances.get(source) ?: createService(source).apply {
                 JBusInstances.put(source, this)
