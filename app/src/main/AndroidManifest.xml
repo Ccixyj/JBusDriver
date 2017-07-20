@@ -8,7 +8,8 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <application
         android:name="me.jbusdriver.common.AppContext"
         android:allowBackup="true"
@@ -50,6 +51,9 @@
         <activity
             android:name="me.jbusdriver.ui.activity.MovieListActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name="me.jbusdriver.ui.activity.SearchResultActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

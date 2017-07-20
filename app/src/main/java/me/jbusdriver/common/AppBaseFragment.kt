@@ -45,6 +45,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        KLog.t(TAG).d("onCreateView : ${rootViewWeakRef?.get()}")
         rootViewWeakRef?.get()?.let {
             ((it.parent as? View) as? ViewGroup)?.also {
                 it.removeView(rootViewWeakRef?.get())
@@ -55,6 +56,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
                 rootViewWeakRef = WeakReference(it)
             }
         }
+        KLog.t(TAG).d("onCreateView ok: ${rootViewWeakRef?.get()}")
         if (savedInstanceState != null)
             onRestartInstance(savedInstanceState)
         return rootViewWeakRef?.get()

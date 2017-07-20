@@ -7,6 +7,7 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
+import android.text.TextUtils
 import android.view.*
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -16,13 +17,11 @@ import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
-import me.jbusdriver.common.AppBaseRecycleFragment
-import me.jbusdriver.common.C
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.dpToPx
+import me.jbusdriver.common.*
 import me.jbusdriver.mvp.MovieListContract
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.ui.activity.MovieDetailActivity
+import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.data.DataSourceType
 
 
@@ -84,6 +83,8 @@ abstract class MovieListFragment : AppBaseRecycleFragment<MovieListContract.Movi
            mSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                override fun onQueryTextSubmit(query: String): Boolean {
                    KLog.i("search >> $query")
+                   if(TextUtils.isEmpty(query)) viewContext.toast("关键字不能为空!")
+                   SearchResultActivity.start(viewContext,query)
                    return true
                }
 

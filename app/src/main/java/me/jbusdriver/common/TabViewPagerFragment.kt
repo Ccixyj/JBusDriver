@@ -1,7 +1,7 @@
 package me.jbusdriver.common
 
+import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentPagerAdapter
 import android.view.View
 import com.cfzx.mvp.view.BaseView
 import jbusdriver.me.jbusdriver.R
@@ -20,16 +20,19 @@ abstract class TabViewPagerFragment<P : BasePresenter<V>, V : BaseView> : AppBas
 
     override fun initWidget(rootView: View) {
         mTitles.forEach { tabLayout.addTab(tabLayout.newTab().setText(it)) }
-        vp_fragment.offscreenPageLimit = 3
+        vp_fragment.offscreenPageLimit = mTitles.size
         vp_fragment.adapter = pagerAdapter
         tabLayout.setupWithViewPager(vp_fragment)
         tabLayout.setTabsFromPagerAdapter(pagerAdapter)
         require(mTitles.size == mFragments.size)
+        if (mTitles.size >= 5){
+            tabLayout.tabMode =  TabLayout.MODE_SCROLLABLE
+        }
     }
 
-    protected val pagerAdapter: FragmentPagerAdapter by lazy {
+    protected val pagerAdapter: android.support.v4.app.FragmentStatePagerAdapter by lazy {
         require(mTitles.size == mFragments.size)
-        object : FragmentPagerAdapter(childFragmentManager) {
+        object : android.support.v4.app.FragmentStatePagerAdapter(childFragmentManager) {
 
             override fun getItem(position: Int): Fragment {
                 if (mFragments.size >= position) {
