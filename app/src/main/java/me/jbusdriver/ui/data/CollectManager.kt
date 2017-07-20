@@ -29,12 +29,14 @@ object CollectManager {
 
     }
 
-    val actress_data: MutableList<ActressInfo>
-        get() = collectCache.getAsString(Actress_Key)?.let {
+    val actress_data: MutableList<ActressInfo> by lazy {
+        collectCache.getAsString(Actress_Key)?.let {
             AppContext.gson.fromJson<MutableList<ActressInfo>>(it)?.let {
                 checkActressUrls(it)
             }
         } ?: mutableListOf()
+
+    }
 
     private fun checkActressUrls(data: MutableList<ActressInfo>): MutableList<ActressInfo> {
         return if (data.any { it.link.urlHost != host }) {
@@ -47,12 +49,14 @@ object CollectManager {
     }
 
 
-    val movie_data: MutableList<Movie>
-        get() = collectCache.getAsString(Movie_Key)?.let {
+    val movie_data: MutableList<Movie> by lazy {
+        collectCache.getAsString(Movie_Key)?.let {
             AppContext.gson.fromJson<MutableList<Movie>>(it)?.let {
                 checkMovieUrls(it)
             }
         } ?: mutableListOf()
+
+    }
 
     private fun checkMovieUrls(data: MutableList<Movie>): MutableList<Movie> {
         return if (data.any { it.detailUrl.urlHost != host }) {

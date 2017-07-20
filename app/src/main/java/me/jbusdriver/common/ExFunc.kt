@@ -165,5 +165,6 @@ fun Context.paste(): String? {
 val String.urlHost: String
     inline get() = Uri.parse(this).let {
         checkNotNull(it)
+        KLog.d("uri : ${it.scheme} : ${it.host} : ${it.path}")
         "${it.scheme}://${it.host}"
     }

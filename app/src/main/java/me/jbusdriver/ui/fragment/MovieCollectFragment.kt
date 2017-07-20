@@ -1,7 +1,6 @@
 package me.jbusdriver.ui.fragment
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.view.Menu
 import android.view.MenuInflater
 import com.afollestad.materialdialogs.MaterialDialog
@@ -21,7 +20,7 @@ class MovieCollectFragment : MovieListFragment(), MovieListContract.MovieListVie
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        adapter.setOnItemLongClickListener { _, _, position ->
+        adapter.setOnItemLongClickListener { adapter, _, position ->
             this@MovieCollectFragment.adapter.getData().getOrNull(position)?.let {
                 MaterialDialog.Builder(viewContext)
                         .title(it.title)
@@ -29,10 +28,11 @@ class MovieCollectFragment : MovieListFragment(), MovieListContract.MovieListVie
                         .itemsCallback { _, _, _, text ->
                             if (CollectManager.removeCollect(it)) {
                                 viewContext.toast("取消收藏成功")
+                                adapter.data.removeAt(position)
+                                adapter.notifyItemRemoved(position)
                             } else {
                                 viewContext.toast("已经取消了")
                             }
-                            mBasePresenter?.onRefresh()
                         }
                         .show()
             }

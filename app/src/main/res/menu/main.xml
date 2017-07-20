@@ -2,12 +2,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:imeOptions="actionSearch"
+        android:inputType="textCapWords"
+        android:orderInCategory="99"
+        android:title="搜索"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/action_show_all"
+        android:checkable="true"
+        android:checked="false"
         android:orderInCategory="100"
         android:title="全部影片"
         app:showAsAction="never"
-        android:checkable="true"
-        android:checked="false"
+
         />
     <item
         android:id="@+id/action_settings"

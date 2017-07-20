@@ -2,9 +2,11 @@ package me.jbusdriver.ui.fragment
 
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.support.v4.view.MenuItemCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.SearchView
 import android.view.*
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -16,6 +18,7 @@ import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.common.AppBaseRecycleFragment
 import me.jbusdriver.common.C
+import me.jbusdriver.common.KLog
 import me.jbusdriver.common.dpToPx
 import me.jbusdriver.mvp.MovieListContract
 import me.jbusdriver.mvp.bean.Movie
@@ -74,8 +77,24 @@ abstract class MovieListFragment : AppBaseRecycleFragment<MovieListContract.Movi
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.main,menu)
+        inflater?.inflate(R.menu.main, menu)
+
+       menu?.getItem(0)?.let {
+           val mSearchView = MenuItemCompat.getActionView(it) as SearchView
+           mSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+               override fun onQueryTextSubmit(query: String): Boolean {
+                   KLog.i("search >> $query")
+                   return true
+               }
+
+               override fun onQueryTextChange(newText: String): Boolean {
+                   return false
+               }
+           })
+        }
+
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the CENSORED/Up button, so long
@@ -86,6 +105,9 @@ abstract class MovieListFragment : AppBaseRecycleFragment<MovieListContract.Movi
                 item.isChecked = !item.isChecked
                 if (item.isChecked) item.title = "已发布" else item.title = "全部电影"  /*false : 已发布的 ,true :全部*/
                 mBasePresenter?.loadAll(item.isChecked)
+            }
+            R.id.action_search -> {
+
             }
         }
         return super.onOptionsItemSelected(item)

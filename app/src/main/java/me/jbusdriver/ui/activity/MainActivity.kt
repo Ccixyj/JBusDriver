@@ -51,6 +51,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         onNavigationItemSelected(selectMenu)
     }
 
+
     private fun initFragments() {
         val ft = supportFragmentManager.beginTransaction()
         fragments.forEach {

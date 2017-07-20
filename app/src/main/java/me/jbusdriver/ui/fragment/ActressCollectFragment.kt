@@ -52,7 +52,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 
             }
 
-            setOnItemLongClickListener { adapter, view, position ->
+            setOnItemLongClickListener { adapter, _, position ->
                 this@ActressCollectFragment.adapter.getData().getOrNull(position)?.let {
                     MaterialDialog.Builder(viewContext)
                             .title(it.name)
@@ -60,11 +60,12 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                             .itemsCallback { _, _, _, text ->
                                 if (CollectManager.removeCollect(it)) {
                                     viewContext.toast("取消收藏成功")
-
+                                    adapter.data.removeAt(position)
+                                    adapter.notifyItemRemoved(position)
                                 } else {
                                     viewContext.toast("已经取消了")
                                 }
-                                mBasePresenter?.onRefresh()
+
                             }
                             .show()
                 }
