@@ -1,5 +1,6 @@
 package me.jbusdriver.ui.data
 
+import android.net.Uri
 import android.os.Environment
 import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
@@ -15,28 +16,53 @@ object CollectManager {
 
     private const val Actress_Key = "Actress_Key"
     private const val Movie_Key = "Movie_Key"
-
+    private val host: String by lazy { JAVBusService.defaultFastUrl }
     private val collectCache by lazy {
         val cacheDir = if (Environment.isExternalStorageEmulated()) File((Environment.getExternalStorageDirectory().absolutePath + File.separator + AppContext.instace.packageName + File.separator + "collect")) else (AppContext.instace.externalCacheDir ?: AppContext.instace.cacheDir)
         ACache.get(cacheDir)
     }
 
 
-    val actress_data: MutableList<ActressInfo>
-        get() = collectCache.getAsString(Actress_Key)?.let { AppContext.gson.fromJson<MutableList<ActressInfo>>(it) } ?: mutableListOf()
+    init {
+        KLog.d("CollectManager :" + Uri.parse("https://www.javbus3.com").path)
+        KLog.d("CollectManager :" + Uri.parse("http://wx.cfzxzz.com/ucenter/entrust/entrustlist.html").path)
 
-    private fun checkActressUrls(data: MutableList<ActressInfo>) {
-        val host = JAVBusService.defaultFastUrl.urlHost
-        if (data.any { it.link.urlHost != host }){
-            data.map {
-                it.copy(link = "${host}")
+    }
+
+    val actress_data: MutableList<ActressInfo>
+        get() = collectCache.getAsString(Actress_Key)?.let {
+            AppContext.gson.fromJson<MutableList<ActressInfo>>(it)?.let {
+                checkActressUrls(it)
             }
-        }
+        } ?: mutableListOf()
+
+    private fun checkActressUrls(data: MutableList<ActressInfo>): MutableList<ActressInfo> {
+        return if (data.any { it.link.urlHost != host }) {
+            val new = data.mapTo(ArrayList(data.size)) {
+                it.copy(link = it.link.replace(it.link.urlHost, host))
+            }
+            collectCache.put(Actress_Key, AppContext.gson.toJson(new))
+            new
+        } else data
     }
 
 
     val movie_data: MutableList<Movie>
-        get() = collectCache.getAsString(Movie_Key)?.let { AppContext.gson.fromJson<MutableList<Movie>>(it) } ?: mutableListOf()
+        get() = collectCache.getAsString(Movie_Key)?.let {
+            AppContext.gson.fromJson<MutableList<Movie>>(it)?.let {
+                checkMovieUrls(it)
+            }
+        } ?: mutableListOf()
+
+    private fun checkMovieUrls(data: MutableList<Movie>): MutableList<Movie> {
+        return if (data.any { it.detailUrl.urlHost != host }) {
+            val new = data.mapTo(ArrayList(data.size)) {
+                it.copy(detailUrl = it.detailUrl.replace(it.detailUrl.urlHost, host))
+            }
+            collectCache.put(Movie_Key, AppContext.gson.toJson(new))
+            new
+        } else data
+    }
 
     fun addToCollect(actressInfo: ActressInfo): Boolean {
         return actress_data.let {

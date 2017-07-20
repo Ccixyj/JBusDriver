@@ -9,6 +9,7 @@ import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.MovieDetailContract
 import me.jbusdriver.mvp.bean.Magnet
 import me.jbusdriver.mvp.bean.MovieDetail
+import me.jbusdriver.mvp.bean.checkUrl
 import me.jbusdriver.mvp.bean.detailSaveKey
 import me.jbusdriver.mvp.model.AbstractBaseModel
 import me.jbusdriver.mvp.model.BaseModel
@@ -18,19 +19,25 @@ import org.jsoup.nodes.Element
 class MovieDetailPresenterImpl : BasePresenterImpl<MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailPresenter {
 
 
-   private val loadFromNet = { s: String ->
+    private val loadFromNet = { s: String ->
         KLog.d("request for : $s")
         mView?.let {
-            view->
-            JAVBusService.INSTANCE.get(view.movie.detailUrl).map { MovieDetail.parseDetails(Jsoup.parse(it),view.movie.type) }
+            view ->
+            JAVBusService.INSTANCE.get(view.movie.detailUrl).map { MovieDetail.parseDetails(Jsoup.parse(it), view.movie.type) }
                     .doOnNext { mView?.movie?.detailSaveKey?.let { key -> CacheLoader.cacheDisk(key to it) } }
         } ?: Flowable.empty()
     }
     val model: BaseModel<String, MovieDetail> = object : AbstractBaseModel<String, MovieDetail>(loadFromNet) {
         override fun requestFromCache(t: String): Flowable<MovieDetail> {
             val disk = mView?.let {
-                CacheLoader.acache.getAsString(it.movie.detailSaveKey)?.let {
-                    AppContext.gson.fromJson<MovieDetail>(it)
+                view ->
+                CacheLoader.acache.getAsString(view.movie.detailSaveKey)?.let {
+                    val old = AppContext.gson.fromJson<MovieDetail>(it)
+                    if (old != null) {
+                        val new = old.checkUrl(JAVBusService.defaultFastUrl)
+                        if (old != new) CacheLoader.cacheDisk(view.movie.detailSaveKey to new)
+                        new
+                    } else old
                 }
             }?.toSingle()?.toFlowable() ?: Flowable.empty<MovieDetail>()
             return Flowable.concat(disk, requestFor(t)).firstOrError().toFlowable()

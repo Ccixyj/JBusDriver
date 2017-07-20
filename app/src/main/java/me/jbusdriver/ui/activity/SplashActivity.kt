@@ -2,6 +2,7 @@ package me.jbusdriver.ui.activity
 
 import android.Manifest
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.support.v4.util.ArrayMap
 import com.cfzx.utils.CacheLoader
@@ -20,6 +21,7 @@ import me.jbusdriver.http.GitHub
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.Jsoup
+import java.io.File
 
 class SplashActivity : BaseActivity() {
 
@@ -104,7 +106,7 @@ class SplashActivity : BaseActivity() {
                         urls.put(DataSourceType.CENSORED.key, it.first)
                         KLog.i("urls : ${it.first} , all urls : $urls , at last $ds")
 
-                        CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to urls, C.Cache.DAY*2) //缓存所有的urls
+                        CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to urls, C.Cache.DAY * 2) //缓存所有的urls
                         KLog.i("get fast it : $it")
                         CacheLoader.lru.put(DataSourceType.CENSORED.key + "false", it.second) //默认有种的
                         urls
