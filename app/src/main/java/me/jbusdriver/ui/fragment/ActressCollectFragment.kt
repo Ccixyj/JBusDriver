@@ -37,9 +37,13 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 
     override fun createPresenter() = ActressCollectPresenterImpl()
 
-    override val swipeView: SwipeRefreshLayout?  by lazy { sr_refresh }
-    override val recycleView: RecyclerView by lazy { rv_recycle }
-    override val layoutManager: RecyclerView.LayoutManager  by lazy { StaggeredGridLayoutManager(span, OrientationHelper.VERTICAL) }
+    override val swipeView: SwipeRefreshLayout?
+        get() = sr_refresh
+    override val recycleView: RecyclerView
+        get() = rv_recycle
+    override val layoutManager: RecyclerView.LayoutManager
+        get() = StaggeredGridLayoutManager(span, OrientationHelper.VERTICAL)
+
     override val adapter: BaseQuickAdapter<ActressInfo, in BaseViewHolder> by lazy {
         ActressInfoAdapter(rxManager).apply {
             setOnItemClickListener { adapter, view, position ->

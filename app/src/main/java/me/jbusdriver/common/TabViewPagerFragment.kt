@@ -20,7 +20,7 @@ abstract class TabViewPagerFragment<P : BasePresenter<V>, V : BaseView> : AppBas
 
     override fun initWidget(rootView: View) {
         mTitles.forEach { tabLayout.addTab(tabLayout.newTab().setText(it)) }
-        vp_fragment.offscreenPageLimit = mTitles.size
+        vp_fragment.offscreenPageLimit = 3
         vp_fragment.adapter = pagerAdapter
         tabLayout.setupWithViewPager(vp_fragment)
         tabLayout.setTabsFromPagerAdapter(pagerAdapter)

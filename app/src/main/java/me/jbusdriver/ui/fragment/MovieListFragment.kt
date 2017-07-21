@@ -32,9 +32,9 @@ abstract class MovieListFragment : AppBaseRecycleFragment<MovieListContract.Movi
 
     override val layoutId: Int = R.layout.layout_swipe_recycle
 
-    override val swipeView: SwipeRefreshLayout?  by lazy { sr_refresh }
-    override val recycleView: RecyclerView by lazy { rv_recycle }
-    override val layoutManager: RecyclerView.LayoutManager  by lazy { LinearLayoutManager(viewContext) }
+    override val swipeView: SwipeRefreshLayout? get() = sr_refresh
+    override val recycleView: RecyclerView get() = rv_recycle
+    override val layoutManager: RecyclerView.LayoutManager get() = LinearLayoutManager(viewContext)
     override val adapter: BaseQuickAdapter<Movie, in BaseViewHolder> = object : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.layout_movie_item) {
         val padding by lazy { this@MovieListFragment.viewContext.dpToPx(8f) }
         val colors = listOf(0xff2195f3.toInt(), 0xff4caf50.toInt(), 0xffff0030.toInt()) //蓝,绿,红
@@ -78,20 +78,20 @@ abstract class MovieListFragment : AppBaseRecycleFragment<MovieListContract.Movi
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.main, menu)
 
-       menu?.getItem(0)?.let {
-           val mSearchView = MenuItemCompat.getActionView(it) as SearchView
-           mSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-               override fun onQueryTextSubmit(query: String): Boolean {
-                   KLog.i("search >> $query")
-                   if(TextUtils.isEmpty(query)) viewContext.toast("关键字不能为空!")
-                   SearchResultActivity.start(viewContext,query)
-                   return true
-               }
+        menu?.getItem(0)?.let {
+            val mSearchView = MenuItemCompat.getActionView(it) as SearchView
+            mSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    KLog.i("search >> $query")
+                    if (TextUtils.isEmpty(query)) viewContext.toast("关键字不能为空!")
+                    SearchResultActivity.start(viewContext, query)
+                    return true
+                }
 
-               override fun onQueryTextChange(newText: String): Boolean {
-                   return false
-               }
-           })
+                override fun onQueryTextChange(newText: String): Boolean {
+                    return false
+                }
+            })
         }
 
     }

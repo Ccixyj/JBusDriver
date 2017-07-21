@@ -10,16 +10,25 @@ import com.chad.library.adapter.base.BaseViewHolder
 import io.reactivex.Flowable
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.mvp.presenter.BasePresenter
+import java.util.*
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 
 /**
  * Created by Administrator on 2017/4/9.
  */
 abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePresenter<V>, V : BaseView.BaseListWithRefreshView, M> : AppBaseFragment<P, V>(), BaseView.BaseListWithRefreshView {
 
+    /**
+     * view 销毁后获取时要从view中重新获取;
+     * 重复使用fragment是不推荐lazy方式初始化.可能到时view引用的对象还是老对象.
+     */
     abstract val swipeView: SwipeRefreshLayout?
     abstract val recycleView: RecyclerView
     abstract val layoutManager: RecyclerView.LayoutManager
     abstract val adapter: BaseQuickAdapter<M, in BaseViewHolder>
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +65,7 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
     }
 
     override fun showContents(datas: List<*>?) {
+        KLog.d("showContents :$datas")
         adapter.addData(datas as MutableList<M>)
     }
 
@@ -92,3 +102,5 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
 
     }
 }
+
+
