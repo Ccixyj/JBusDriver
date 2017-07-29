@@ -21,7 +21,6 @@ class MovieLinkPresenterImpl(val link: ILink) : LinkAbsPresenterImpl<Movie>(link
                 mView?.showContent(it)
             }
         }
-
         return Movie.loadFromDoc(mView?.type ?: DataSourceType.CENSORED, str)
     }
 

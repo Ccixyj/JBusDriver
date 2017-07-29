@@ -42,7 +42,6 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
 
     override fun onRefresh() {
         CacheLoader.lru.remove(linkData.link)
-
         super.onRefresh()
     }
 

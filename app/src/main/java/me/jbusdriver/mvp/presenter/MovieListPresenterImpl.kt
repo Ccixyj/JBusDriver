@@ -22,7 +22,7 @@ open class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<LinkLis
         inline get() = "${mView?.type?.key ?: DataSourceType.CENSORED.key}$IsAll"
     private val service by lazy {
         mView?.let {
-            JAVBusService.getInstance(urls.get(it.type.key) ?: JAVBusService.defaultFastUrl).apply { JAVBusService.INSTANCE = this }
+            JAVBusService.getInstance(urls[it.type.key] ?: JAVBusService.defaultFastUrl).apply { JAVBusService.INSTANCE = this }
         } ?: JAVBusService.INSTANCE
     }
     private val loadFromNet = { page: Int ->

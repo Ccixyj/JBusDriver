@@ -21,7 +21,11 @@ class SearchResultPagesFragment : TabViewPagerFragment<MineCollectContract.MineC
 
     override val mFragments: List<Fragment> by lazy {
         SearchType.values().map {
-            LinkMovieListFragment.newInstance(SearchLink(it,searchWord))
+            if (it == SearchType.ACTRESS ){
+                ActressListFragment.newInstance(SearchLink(it,searchWord))
+            }else{
+                LinkMovieListFragment.newInstance(SearchLink(it,searchWord))
+            }
         }
     }
 

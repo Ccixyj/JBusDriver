@@ -15,7 +15,7 @@ import org.jsoup.nodes.Document
  * Created by Administrator on 2016/9/6 0006.
  * 通用下拉加在更多 , 上拉刷新处理 处理,可单独使用其中一部分
  */
-abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRefreshView , T> : BasePresenterImpl<V>(), BasePresenter.BaseRefreshLoadMorePresenter<V> {
+abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRefreshView, T> : BasePresenterImpl<V>(), BasePresenter.BaseRefreshLoadMorePresenter<V> {
 
     protected var pageInfo = PageInfo()
 
@@ -43,11 +43,9 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
         val request = (if (page == 1) model.requestFromCache(page)
         else model.requestFor(page))
         request.map {
-            with(it) {
-                pageInfo = parsePage(this)
-                KLog.d("parse page :$pageInfo")
-                stringMap(this)
-            }
+            pageInfo = parsePage(it)
+            KLog.d("parse page :$pageInfo")
+            stringMap(it)
         }.compose(SchedulersCompat.io())
                 .subscribeWith(DefaultSubscriber(page))
                 .addTo(rxManager)

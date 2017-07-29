@@ -16,6 +16,7 @@ import me.jbusdriver.common.KLog
 import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.presenter.MainPresenterImpl
 import me.jbusdriver.ui.data.DataSourceType
+import me.jbusdriver.ui.fragment.ActressListFragment
 import me.jbusdriver.ui.fragment.HomeMovieListFragment
 import me.jbusdriver.ui.fragment.MineCollectFragment
 
@@ -30,7 +31,10 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                 R.id.movie_uncensored to HomeMovieListFragment.newInstance(DataSourceType.UNCENSORED),
                 R.id.movie_xyz to HomeMovieListFragment.newInstance(DataSourceType.XYZ),
                 R.id.movie_hd to HomeMovieListFragment.newInstance(DataSourceType.GENRE_HD),
-                R.id.movie_sub to HomeMovieListFragment.newInstance(DataSourceType.Sub)
+                R.id.movie_sub to HomeMovieListFragment.newInstance(DataSourceType.Sub),
+                R.id.movie_ma_actress to ActressListFragment.newInstance(DataSourceType.ACTRESSES),
+                R.id.movie_uncensored_actress to ActressListFragment.newInstance(DataSourceType.UNCENSORED_ACTRESSES),
+                R.id.movie_xyz_actress to ActressListFragment.newInstance(DataSourceType.XYZ_ACTRESSES)
         )
     }
 

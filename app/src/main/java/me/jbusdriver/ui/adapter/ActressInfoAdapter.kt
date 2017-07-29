@@ -2,6 +2,7 @@ package me.jbusdriver.ui.adapter
 
 import android.graphics.Bitmap
 import android.support.v7.graphics.Palette
+import android.text.TextUtils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.BitmapImageViewTarget
@@ -53,9 +54,7 @@ class ActressInfoAdapter(val rxManager:CompositeDisposable) : BaseQuickAdapter<A
         //加载名字
         holder.setText(R.id.tv_actress_name, item.name)
 
-        item.tag?.let {
-            holder.setVisible(R.id.tv_actress_tag, true)
-                    .setText(R.id.tv_actress_tag,it)
-        } ?: kotlin.run{   holder.setVisible(R.id.tv_actress_tag, false) }
+        holder .setText(R.id.tv_actress_tag,item.tag)
+        holder.setVisible(R.id.tv_actress_tag, !TextUtils.isEmpty(item.tag))
     }
 }

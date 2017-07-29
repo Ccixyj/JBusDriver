@@ -1,6 +1,7 @@
 package me.jbusdriver.ui.fragment
 
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
@@ -22,6 +23,9 @@ import me.jbusdriver.ui.activity.SearchResultActivity
 class LinkMovieListFragment : MovieListFragment(), LinkListContract.LinkListView {
     val link by lazy { arguments.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ") }
     private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }
+
+    private val attrViews by lazy { mutableListOf<View>() }
+
     override fun initData() {
         if (isSearch) {
             RxBus.toFlowable(SearchWord::class.java).subscribeBy({ sea ->
@@ -51,16 +55,22 @@ class LinkMovieListFragment : MovieListFragment(), LinkListContract.LinkListView
     override fun <T> showContent(data: T?) {
         KLog.d("parse res :$data")
         if (data is IAttr) {
-            addMovieAttr(data)
+            attrViews.clear()
+            attrViews.add(getMovieAttrView(data))
         }
     }
 
+    override fun showContents(datas: List<*>?) {
+        adapter.removeAllHeaderView()
+        attrViews.forEach { adapter.addHeaderView(it) }
+        super.showContents(datas)
 
-    private fun addMovieAttr(data: IAttr) {
-        when (data) {
+    }
+
+    private fun getMovieAttrView(data: IAttr): View {
+        return when (data) {
             is ActressAttrs -> {
-                adapter.removeAllHeaderView()
-                adapter.addHeaderView(this.viewContext.inflate(R.layout.layout_actress_attr).apply {
+                this.viewContext.inflate(R.layout.layout_actress_attr).apply {
                     //img
                     Glide.with(this@LinkMovieListFragment).load(data.imageUrl).into(GlideDrawableImageViewTarget(this.iv_actress_avatar))
                     //title
@@ -73,8 +83,9 @@ class LinkMovieListFragment : MovieListFragment(), LinkListContract.LinkListView
                     data.info.forEach {
                         this.ll_attr_container.addView(generateTextView().apply { text = it })
                     }
-                })
+                }
             }
+            else -> error("current not provide for IAttr $data")
         }
     }
 
