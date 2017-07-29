@@ -18,13 +18,13 @@ import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.common.*
-import me.jbusdriver.mvp.MovieListContract
+import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.data.DataSourceType
 
-abstract class MovieListFragment : AppBaseRecycleFragment<MovieListContract.MovieListPresenter, MovieListContract.MovieListView, Movie>(), MovieListContract.MovieListView {
+abstract class MovieListFragment : AppBaseRecycleFragment<LinkListContract.LinkListPresenter, LinkListContract.LinkListView, Movie>(), LinkListContract.LinkListView {
 
     override val layoutId: Int = R.layout.layout_swipe_recycle
 

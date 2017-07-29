@@ -4,7 +4,7 @@ import me.jbusdriver.ui.data.CollectManager
 import me.jbusdriver.mvp.ActressCollectContract
 import me.jbusdriver.mvp.bean.ActressInfo
 
-class ActressCollectPresenterImpl : BaseAbsDataPresenter<ActressCollectContract.ActressCollectView,ActressInfo>(), ActressCollectContract.ActressCollectPresenter {
+class ActressCollectPresenterImpl : BaseAbsCollectPresenter<ActressCollectContract.ActressCollectView,ActressInfo>(), ActressCollectContract.ActressCollectPresenter {
 
     override fun onFirstLoad() {
     }

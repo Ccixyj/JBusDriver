@@ -2,24 +2,19 @@ package me.jbusdriver.mvp.presenter
 
 import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.urlHost
 import me.jbusdriver.http.JAVBusService
-import me.jbusdriver.mvp.MovieListContract
-import me.jbusdriver.mvp.bean.ActressInfo
-import me.jbusdriver.mvp.bean.IAttr
+import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.ILink
-import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.model.BaseModel
-import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
 /**
  * Created by Administrator on 2017/5/10 0010.
  */
-class LinkMovieListPresenterImpl(val linkData: ILink) : AbstractRefreshLoadMorePresenterImpl<MovieListContract.MovieListView>(), MovieListContract.MovieListPresenter {
+abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoadMorePresenterImpl<LinkListContract.LinkListView,T>(), LinkListContract.LinkListPresenter {
 
     private var IsAll = false
 
@@ -43,18 +38,7 @@ class LinkMovieListPresenterImpl(val linkData: ILink) : AbstractRefreshLoadMoreP
     }
 
 
-    override fun stringMap(str: Document): List<Any> {
 
-        //处理ilink
-        val iattr = parse(linkData, str)
-        iattr?.let {
-            AndroidSchedulers.mainThread().scheduleDirect {
-                mView?.showContent(it)
-            }
-        }
-
-        return Movie.loadFromDoc(mView?.type ?: DataSourceType.CENSORED, str)
-    }
 
     override fun onRefresh() {
         CacheLoader.lru.remove(linkData.link)
@@ -62,12 +46,4 @@ class LinkMovieListPresenterImpl(val linkData: ILink) : AbstractRefreshLoadMoreP
         super.onRefresh()
     }
 
-    private fun parse(link: ILink, doc: Document): IAttr? {
-        return when (link) {
-            is ActressInfo -> {
-                ActressInfo.parseActressAttrs(doc)
-            }
-            else -> null
-        }
-    }
 }

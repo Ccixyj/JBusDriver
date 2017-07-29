@@ -52,5 +52,10 @@ class ActressInfoAdapter(val rxManager:CompositeDisposable) : BaseQuickAdapter<A
         })
         //加载名字
         holder.setText(R.id.tv_actress_name, item.name)
+
+        item.tag?.let {
+            holder.setVisible(R.id.tv_actress_tag, true)
+                    .setText(R.id.tv_actress_tag,it)
+        } ?: kotlin.run{   holder.setVisible(R.id.tv_actress_tag, false) }
     }
 }

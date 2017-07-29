@@ -15,7 +15,7 @@ import org.jsoup.nodes.Document
  * Created by Administrator on 2016/9/6 0006.
  * 通用下拉加在更多 , 上拉刷新处理 处理,可单独使用其中一部分
  */
-abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRefreshView> : BasePresenterImpl<V>(), BasePresenter.BaseRefreshLoadMorePresenter<V> {
+abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRefreshView , T> : BasePresenterImpl<V>(), BasePresenter.BaseRefreshLoadMorePresenter<V> {
 
     protected var pageInfo = PageInfo()
 
@@ -64,13 +64,14 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
         }
     }
 
-    abstract fun stringMap(str: Document): List<Any>
+    abstract fun stringMap(str: Document): List<T>
 
     /**
      * 加载列表默认实现的订阅者.
      * 实现@AbstractRefreshLoadMorePresenterImpl 可直接使用该类.
      */
-     open inner class DefaultSubscriber(val pageIndex: Int) : SimpleSubscriber<List<Any>>() {
+
+    open inner class DefaultSubscriber(val pageIndex: Int) : SimpleSubscriber<List<T>>() {
 
         override fun onStart() {
             AndroidSchedulers.mainThread().scheduleDirect {
@@ -111,7 +112,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
             pageInfo = PageInfo(pageIndex - 1, pageIndex)
         }
 
-        override fun onNext(t: List<Any>) {
+        override fun onNext(t: List<T>) {
             super.onNext(t)
             if (pageIndex == 1) {
                 mView?.resetList()

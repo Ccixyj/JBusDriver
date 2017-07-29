@@ -16,12 +16,12 @@ interface MainContract {
     interface MainPresenter : BasePresenter<MainView>
 }
 
-interface MovieListContract {
-    interface MovieListView : BaseView.BaseListWithRefreshView {
+interface LinkListContract {
+    interface LinkListView : BaseView.BaseListWithRefreshView {
         val type: DataSourceType
     }
 
-    interface MovieListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<MovieListView> {
+    interface LinkListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<LinkListView> {
         fun loadAll(iaAll: Boolean)
     }
 }

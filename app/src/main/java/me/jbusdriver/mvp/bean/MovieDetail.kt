@@ -1,6 +1,5 @@
 package me.jbusdriver.mvp.bean
 
-import com.cfzx.utils.CacheLoader
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.urlHost
 import me.jbusdriver.ui.data.DataSourceType
@@ -100,13 +99,20 @@ interface IAttr
 
 data class Header(val name: String, val value: String, override val link: String) : ILink
 data class Genre(val name: String, override val link: String) : ILink
-data class ActressInfo(val name: String, val avatar: String, override val link: String) : ILink {
+data class ActressInfo(val name: String, val avatar: String, override val link: String, val tag: String? = null) : ILink {
     companion object {
         fun parseActressAttrs(doc: Document): ActressAttrs {
             val frame = doc.select(".avatar-box")
             val photo = frame.select("img")
             val attrs = frame.select("p").map { it.text() }
             return ActressAttrs(photo.attr("title"), photo.attr("src"), attrs)
+        }
+
+        fun parseActressList(doc: Document): List<ActressInfo> {
+            return doc.select(".avatar-box")?.map {
+                val img = it.select("img")
+                ActressInfo(img.attr("title"), img.attr("src"), it.attr("href"), it.select("button").text())
+            } ?: emptyList()
         }
     }
 }

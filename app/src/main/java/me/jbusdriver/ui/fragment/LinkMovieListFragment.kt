@@ -9,24 +9,23 @@ import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_actress_attr.view.*
 import me.jbusdriver.common.*
-import me.jbusdriver.mvp.MovieListContract
+import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.*
-import me.jbusdriver.mvp.presenter.LinkMovieListPresenterImpl
+import me.jbusdriver.mvp.presenter.LinkAbsPresenterImpl
+import me.jbusdriver.mvp.presenter.MovieLinkPresenterImpl
 import me.jbusdriver.ui.activity.SearchResultActivity
 
 
 /**
  * ilink 界面解析
  */
-class LinkMovieListFragment : MovieListFragment(), MovieListContract.MovieListView {
-
-
+class LinkMovieListFragment : MovieListFragment(), LinkListContract.LinkListView {
     val link by lazy { arguments.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ") }
     private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }
     override fun initData() {
         if (isSearch) {
             RxBus.toFlowable(SearchWord::class.java).subscribeBy({ sea ->
-                (mBasePresenter as? LinkMovieListPresenterImpl)?.let {
+                (mBasePresenter as? LinkAbsPresenterImpl<*>)?.let {
                     (it.linkData as SearchLink).query = sea.query
                     it.onRefresh()
                 }
@@ -35,7 +34,7 @@ class LinkMovieListFragment : MovieListFragment(), MovieListContract.MovieListVi
     }
 
     override fun gotoSearchResult(query: String) {
-        (mBasePresenter as?  LinkMovieListPresenterImpl)?.let {
+        (mBasePresenter as?  LinkAbsPresenterImpl<*>)?.let {
             if (isSearch) {
 //                it.linkData.query = query
 //                it.onRefresh()
@@ -47,7 +46,7 @@ class LinkMovieListFragment : MovieListFragment(), MovieListContract.MovieListVi
         }
     }
 
-    override fun createPresenter() = LinkMovieListPresenterImpl(link)
+    override fun createPresenter() = MovieLinkPresenterImpl(link)
 
     override fun <T> showContent(data: T?) {
         KLog.d("parse res :$data")

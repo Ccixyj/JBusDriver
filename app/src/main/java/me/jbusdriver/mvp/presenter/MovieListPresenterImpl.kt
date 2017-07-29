@@ -5,8 +5,8 @@ import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
 import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
-import me.jbusdriver.mvp.MovieListContract
-import me.jbusdriver.mvp.MovieListContract.MovieListView
+import me.jbusdriver.mvp.LinkListContract
+import me.jbusdriver.mvp.LinkListContract.LinkListView
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.model.AbstractBaseModel
 import me.jbusdriver.mvp.model.BaseModel
@@ -14,7 +14,7 @@ import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
-open class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieListView>(), MovieListContract.MovieListPresenter {
+open class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<LinkListView,Movie>(), LinkListContract.LinkListPresenter {
 
     private  var IsAll = false
     private val urls by lazy { CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) } ?: arrayMapof() }
@@ -45,7 +45,7 @@ open class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<MovieLi
     }
 
 
-    override fun stringMap(str: Document): List<Any> = Movie.loadFromDoc(mView?.type ?: DataSourceType.CENSORED, str)
+    override fun stringMap(str: Document) = Movie.loadFromDoc(mView?.type ?: DataSourceType.CENSORED, str)
 
     override fun onRefresh() {
         CacheLoader.removeCacheLike(saveKey, isRegex = false)
