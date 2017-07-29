@@ -24,10 +24,6 @@ import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.data.DataSourceType
 
-
-/**
- * ilink 界面解析
- */
 abstract class MovieListFragment : AppBaseRecycleFragment<MovieListContract.MovieListPresenter, MovieListContract.MovieListView, Movie>(), MovieListContract.MovieListView {
 
     override val layoutId: Int = R.layout.layout_swipe_recycle
@@ -77,23 +73,26 @@ abstract class MovieListFragment : AppBaseRecycleFragment<MovieListContract.Movi
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.main, menu)
+        menu?.getItem(0)?.let {
+            val mSearchView = MenuItemCompat.getActionView(it) as SearchView
+            mSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    KLog.i("search >> $query")
+                    if (TextUtils.isEmpty(query)) viewContext.toast("关键字不能为空!")
+                    gotoSearchResult(query)
 
-       menu?.getItem(0)?.let {
-           val mSearchView = MenuItemCompat.getActionView(it) as SearchView
-           mSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-               override fun onQueryTextSubmit(query: String): Boolean {
-                   KLog.i("search >> $query")
-                   if(TextUtils.isEmpty(query)) viewContext.toast("关键字不能为空!")
-                   SearchResultActivity.start(viewContext,query)
-                   return true
-               }
+                    return true
+                }
 
-               override fun onQueryTextChange(newText: String): Boolean {
-                   return false
-               }
-           })
+                override fun onQueryTextChange(newText: String): Boolean {
+                    return false
+                }
+            })
         }
 
+    }
+    protected open fun gotoSearchResult(query: String) {
+        SearchResultActivity.start(viewContext, query)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

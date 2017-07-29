@@ -127,11 +127,11 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
         isLazyLoaded = true
     }
 
-    protected fun lazyLoad() {}
+    protected open fun lazyLoad() {}
 
-    protected fun onInvisible() {}
+    protected open fun onInvisible() {}
 
-    protected fun initData() {}
+    protected open fun initData() {}
 
 
     override fun onPause() {

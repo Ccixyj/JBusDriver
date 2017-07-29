@@ -35,6 +35,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
     override fun hasLoadNext(): Boolean = pageInfo.hasNext
 
     override fun onRefresh() {
+        rxManager.clear()
         loadData4Page(1)
     }
 

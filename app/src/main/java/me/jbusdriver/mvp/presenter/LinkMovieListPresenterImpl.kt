@@ -19,11 +19,9 @@ import org.jsoup.nodes.Document
 /**
  * Created by Administrator on 2017/5/10 0010.
  */
-class LinkMovieListPresenterImpl(val iLink: ILink) : AbstractRefreshLoadMorePresenterImpl<MovieListContract.MovieListView>(), MovieListContract.MovieListPresenter {
+class LinkMovieListPresenterImpl(val linkData: ILink) : AbstractRefreshLoadMorePresenterImpl<MovieListContract.MovieListView>(), MovieListContract.MovieListPresenter {
 
-    var IsAll = false
-
-
+    private var IsAll = false
 
     override fun loadAll(iaAll: Boolean) {
         IsAll = iaAll
@@ -33,14 +31,14 @@ class LinkMovieListPresenterImpl(val iLink: ILink) : AbstractRefreshLoadMorePres
     /*不需要*/
     override val model: BaseModel<Int, Document> = object : BaseModel<Int, Document> {
         override fun requestFor(t: Int) =
-                (if (t == 1) iLink.link else "${iLink.link.urlHost}${pageInfo.nextPath}").let {
+                (if (t == 1) linkData.link else "${linkData.link.urlHost}${pageInfo.nextPath}").let {
                     KLog.i("fromCallable page $pageInfo requestFor : $it")
-                    JAVBusService.INSTANCE.get(it , if (IsAll) "all" else null).map { Jsoup.parse(it) }
+                    JAVBusService.INSTANCE.get(it, if (IsAll) "all" else null).map { Jsoup.parse(it) }
                 }.doOnNext {
-                    if (t == 1) CacheLoader.lru.put("${iLink.link}$IsAll", it.toString())
+                    if (t == 1) CacheLoader.lru.put("${linkData.link}$IsAll", it.toString())
                 }
 
-        override fun requestFromCache(t: Int) = Flowable.concat(CacheLoader.justLru(iLink.link).map { Jsoup.parse(it) }, requestFor(t))
+        override fun requestFromCache(t: Int) = Flowable.concat(CacheLoader.justLru(linkData.link).map { Jsoup.parse(it) }, requestFor(t))
                 .firstOrError().toFlowable()
     }
 
@@ -48,7 +46,7 @@ class LinkMovieListPresenterImpl(val iLink: ILink) : AbstractRefreshLoadMorePres
     override fun stringMap(str: Document): List<Any> {
 
         //处理ilink
-        val iattr = parse(iLink, str)
+        val iattr = parse(linkData, str)
         iattr?.let {
             AndroidSchedulers.mainThread().scheduleDirect {
                 mView?.showContent(it)
@@ -59,11 +57,12 @@ class LinkMovieListPresenterImpl(val iLink: ILink) : AbstractRefreshLoadMorePres
     }
 
     override fun onRefresh() {
-        CacheLoader.lru.remove(iLink.link)
+        CacheLoader.lru.remove(linkData.link)
+
         super.onRefresh()
     }
 
-    private  fun parse(link: ILink, doc: Document): IAttr? {
+    private fun parse(link: ILink, doc: Document): IAttr? {
         return when (link) {
             is ActressInfo -> {
                 ActressInfo.parseActressAttrs(doc)
