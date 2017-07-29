@@ -66,7 +66,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
 
     protected abstract fun initWidget(rootView: View)
 
-    protected fun onRestartInstance(bundle: Bundle) {}
+    protected open fun onRestartInstance(bundle: Bundle) {}
 
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {

@@ -71,8 +71,14 @@ abstract class MovieListFragment : AppBaseRecycleFragment<MovieListContract.Movi
         super.onCreate(savedInstanceState)
     }
 
+    override fun onRestartInstance(bundle: Bundle) {
+        super.onRestartInstance(bundle)
+        arguments.putBoolean(MENU_SHOW_ALL,bundle.getBoolean(MENU_SHOW_ALL,false))
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.main, menu)
+        menu?.findItem(R.id.action_show_all)?.isChecked =  arguments.getBoolean(MENU_SHOW_ALL,false)
         menu?.getItem(0)?.let {
             val mSearchView = MenuItemCompat.getActionView(it) as SearchView
             mSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -91,6 +97,7 @@ abstract class MovieListFragment : AppBaseRecycleFragment<MovieListContract.Movi
         }
 
     }
+
     protected open fun gotoSearchResult(query: String) {
         SearchResultActivity.start(viewContext, query)
     }
@@ -105,6 +112,7 @@ abstract class MovieListFragment : AppBaseRecycleFragment<MovieListContract.Movi
                 item.isChecked = !item.isChecked
                 if (item.isChecked) item.title = "已发布" else item.title = "全部电影"  /*false : 已发布的 ,true :全部*/
                 mBasePresenter?.loadAll(item.isChecked)
+                arguments.putBoolean(MENU_SHOW_ALL, item.isChecked)
             }
             R.id.action_search -> {
 
@@ -121,7 +129,17 @@ abstract class MovieListFragment : AppBaseRecycleFragment<MovieListContract.Movi
     }
 
 
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putBoolean(MENU_SHOW_ALL, arguments.getBoolean(MENU_SHOW_ALL, false))
+    }
+
     /*================================================*/
     override val type by lazy { arguments.getSerializable(C.BundleKey.Key_1) as? DataSourceType ?: DataSourceType.CENSORED }
 
+
+    companion object {
+        const val MENU_SHOW_ALL = "action_show_all"
+
+    }
 }

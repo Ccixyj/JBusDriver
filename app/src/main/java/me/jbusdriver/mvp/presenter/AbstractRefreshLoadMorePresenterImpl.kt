@@ -106,6 +106,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
             //page 重置成前一页
             (pageIndex == 1).let {
                 if (it) mView?.enableLoadMore(true) else mView?.enableRefresh(true)
+                mView?.resetList()
             }
             pageInfo = PageInfo(pageIndex - 1, pageIndex)
         }
