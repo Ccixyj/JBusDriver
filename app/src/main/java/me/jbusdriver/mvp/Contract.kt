@@ -1,6 +1,7 @@
 package me.jbusdriver.mvp
 
 import com.cfzx.mvp.view.BaseView
+import me.jbusdriver.mvp.bean.Genre
 import me.jbusdriver.mvp.bean.Magnet
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.MovieDetail
@@ -59,4 +60,19 @@ interface MovieCollectContract{
 interface ActressCollectContract{
     interface ActressCollectView :  BaseView.BaseListWithRefreshView
     interface ActressCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<ActressCollectView>
+}
+
+interface GenrePageContract {
+    interface GenrePageView :  BaseView {
+        val titleValues : MutableList<String>
+        val fragmentValues : MutableList<List<Genre>>
+    }
+    interface GenrePagePresenter : BasePresenter<GenrePageView>
+}
+
+interface GenreListContract{
+    interface GenreListView :  BaseView.BaseListWithRefreshView{
+        val data :List<Genre>
+    }
+    interface GenreListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<GenreListView>
 }

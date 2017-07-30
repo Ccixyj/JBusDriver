@@ -13,9 +13,6 @@ import me.jbusdriver.ui.data.DataSourceType
 class HomeMovieListFragment : MovieListFragment(), LinkListContract.LinkListView {
     override fun createPresenter() = MovieListPresenterImpl()
 
-
-
-
     /*================================================*/
     companion object {
         fun newInstance(type: DataSourceType) = HomeMovieListFragment().apply {

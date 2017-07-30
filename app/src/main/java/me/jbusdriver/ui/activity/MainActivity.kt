@@ -17,6 +17,7 @@ import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.presenter.MainPresenterImpl
 import me.jbusdriver.ui.data.DataSourceType
 import me.jbusdriver.ui.fragment.ActressListFragment
+import me.jbusdriver.ui.fragment.GenrePagesFragment
 import me.jbusdriver.ui.fragment.HomeMovieListFragment
 import me.jbusdriver.ui.fragment.MineCollectFragment
 
@@ -34,7 +35,10 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                 R.id.movie_sub to HomeMovieListFragment.newInstance(DataSourceType.Sub),
                 R.id.movie_ma_actress to ActressListFragment.newInstance(DataSourceType.ACTRESSES),
                 R.id.movie_uncensored_actress to ActressListFragment.newInstance(DataSourceType.UNCENSORED_ACTRESSES),
-                R.id.movie_xyz_actress to ActressListFragment.newInstance(DataSourceType.XYZ_ACTRESSES)
+                R.id.movie_xyz_actress to ActressListFragment.newInstance(DataSourceType.XYZ_ACTRESSES),
+                R.id.movie_ma_genre to GenrePagesFragment.newInstance(DataSourceType.GENRE),
+                R.id.movie_uncensored_genre to GenrePagesFragment.newInstance(DataSourceType.UNCENSORED_GENRE),
+                R.id.movie_xyz_genre to GenrePagesFragment.newInstance(DataSourceType.XYZ_GENRE)
         )
     }
 

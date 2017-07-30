@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <TextView
         android:id="@+id/tv_movie_genre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -11,9 +12,10 @@
         android:layout_margin="@dimen/material_4dp"
         android:background="@drawable/shape_solid_corner"
         android:gravity="center"
-        android:textColor="@android:color/white"
         android:minHeight="@dimen/material_32dp"
         android:minWidth="@dimen/material_32dp"
         android:paddingLeft="@dimen/material_8dp"
-        android:paddingRight="@dimen/material_8dp" />
+        android:paddingRight="@dimen/material_8dp"
+        android:textColor="@android:color/white"
+        tools:text="123456" />
 </FrameLayout>

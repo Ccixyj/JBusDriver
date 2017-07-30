@@ -19,6 +19,10 @@ abstract class TabViewPagerFragment<P : BasePresenter<V>, V : BaseView> : AppBas
     override val layoutId = R.layout.layout_mine_collect
 
     override fun initWidget(rootView: View) {
+       initForViewPager()
+    }
+
+    protected  fun initForViewPager() {
         mTitles.forEach { tabLayout.addTab(tabLayout.newTab().setText(it)) }
         vp_fragment.offscreenPageLimit = mTitles.size
         vp_fragment.adapter = pagerAdapter
