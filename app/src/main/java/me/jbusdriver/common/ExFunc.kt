@@ -134,6 +134,14 @@ val Context.scressWidth: Int
         return displayMetrics.widthPixels
     }
 
+val Context.spanCount: Int
+    inline get() = with(this.scressWidth) {
+        if (this <= 1080) 3
+        else if (this <= 1440) 4
+        else 5
+    }
+
+
 /**
  * 实现文本复制功能
  * add by wangqianzhou

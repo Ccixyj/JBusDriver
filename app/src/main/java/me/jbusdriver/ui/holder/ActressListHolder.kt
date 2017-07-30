@@ -1,11 +1,11 @@
 package me.jbusdriver.ui.holder
 
 import android.content.Context
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
+import com.xiaofeng.flowlayoutmanager.FlowLayoutManager
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_actress.view.*
 import me.jbusdriver.common.KLog
@@ -16,7 +16,6 @@ import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.adapter.ActressInfoAdapter
 import me.jbusdriver.ui.data.CollectManager
-import java.util.*
 
 /**
  * Created by Administrator on 2017/5/9 0009.
@@ -40,7 +39,7 @@ class ActressListHolder(context: Context) : BaseHolder(context) {
     val view by lazy {
         weakRef.get()?.let {
             it.inflate(R.layout.layout_detail_actress).apply {
-                rv_recycle_actress.layoutManager = LinearLayoutManager(it, LinearLayoutManager.HORIZONTAL, false)
+                rv_recycle_actress.layoutManager = FlowLayoutManager().apply { isAutoMeasureEnabled = true }
                 rv_recycle_actress.adapter = actressAdapter
                 actressAdapter.setOnItemClickListener { adapter, _, position ->
                     actressAdapter.data.getOrNull(position)?.let {

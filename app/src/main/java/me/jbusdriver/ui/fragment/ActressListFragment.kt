@@ -21,25 +21,20 @@ import me.jbusdriver.ui.data.DataSourceType
 
 class ActressListFragment : LinkListFragment<ActressInfo>() {
     val link by lazy { arguments.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ") }
-    val span by lazy {
-        with(viewContext.scressWidth) {
-            if (this < 1080) 3
-            else if (this < 1440) 4
-            else 6
-        }
-    }
-    override val layoutManager: RecyclerView.LayoutManager  by lazy { StaggeredGridLayoutManager(span, OrientationHelper.VERTICAL) }
-    override val adapter by lazy { ActressInfoAdapter(rxManager) }
-    override fun createPresenter() = ActressLinkPresenterImpl(link)
 
-    override fun initWidget(rootView: View) {
-        super.initWidget(rootView)
-        adapter.setOnItemClickListener { adapter, _, position ->
+    override val layoutManager: RecyclerView.LayoutManager  by lazy { StaggeredGridLayoutManager(viewContext.spanCount, OrientationHelper.VERTICAL) }
+    override val adapter by lazy { ActressInfoAdapter(rxManager).apply {
+        setOnItemClickListener { adapter, _, position ->
             (adapter.data.getOrNull(position) as? ActressInfo)?.let {
                 MovieListActivity.start(viewContext, it)
             }
         }
 
+    } }
+    override fun createPresenter() = ActressLinkPresenterImpl(link)
+
+    override fun initWidget(rootView: View) {
+        super.initWidget(rootView)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

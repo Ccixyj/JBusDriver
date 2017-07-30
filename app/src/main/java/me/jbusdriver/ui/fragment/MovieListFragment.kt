@@ -11,6 +11,7 @@ import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.dpToPx
 import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.ui.activity.MovieDetailActivity
 
 abstract class MovieListFragment : LinkListFragment<Movie>() {
 
@@ -47,6 +48,10 @@ abstract class MovieListFragment : LinkListFragment<Movie>() {
                 }
 
             }
+        }
+    }.apply {
+        setOnItemClickListener { adapter, _, position ->
+            (adapter.data.getOrNull(position) as? Movie)?.let { MovieDetailActivity.start(activity, it) }
         }
     }
 

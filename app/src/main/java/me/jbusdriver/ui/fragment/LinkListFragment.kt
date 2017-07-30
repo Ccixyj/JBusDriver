@@ -88,9 +88,7 @@ abstract class LinkListFragment<T> : AppBaseRecycleFragment<LinkListContract.Lin
 
     override fun initWidget(rootView: View) {
         super.initWidget(rootView)
-        adapter.setOnItemClickListener { adapter, _, position ->
-            (adapter.data.getOrNull(position) as? Movie)?.let { MovieDetailActivity.start(activity, it) }
-        }
+
     }
 
 
