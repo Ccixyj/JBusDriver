@@ -1,4 +1,4 @@
-package me.jbusdriver.common
+package me.jbusdriver.ui.fragment
 
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
@@ -6,6 +6,7 @@ import android.view.View
 import com.cfzx.mvp.view.BaseView
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_mine_collect.*
+import me.jbusdriver.common.AppBaseFragment
 import me.jbusdriver.mvp.presenter.BasePresenter
 
 /**
@@ -24,7 +25,7 @@ abstract class TabViewPagerFragment<P : BasePresenter<V>, V : BaseView> : AppBas
 
     protected  fun initForViewPager() {
         mTitles.forEach { tabLayout.addTab(tabLayout.newTab().setText(it)) }
-        vp_fragment.offscreenPageLimit = 3
+        vp_fragment.offscreenPageLimit = mTitles.size
         vp_fragment.adapter = pagerAdapter
         tabLayout.setupWithViewPager(vp_fragment)
         tabLayout.setTabsFromPagerAdapter(pagerAdapter)

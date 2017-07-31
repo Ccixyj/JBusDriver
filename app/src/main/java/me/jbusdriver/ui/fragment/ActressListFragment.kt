@@ -51,7 +51,7 @@ class ActressListFragment : LinkListFragment<ActressInfo>() {
 
         fun newInstance(type: DataSourceType) = ActressListFragment().apply {
             val urls = CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) } ?: arrayMapof()
-            val url = urls.getOrDefault(type.key, JAVBusService.defaultFastUrl + "/actresses")
+            val url = urls[type.key] ?: JAVBusService.defaultFastUrl + "/actresses"
             arguments = Bundle().apply {
                 putSerializable(C.BundleKey.Key_1, object : ILink {
                     override val link: String = url

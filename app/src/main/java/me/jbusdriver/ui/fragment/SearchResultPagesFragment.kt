@@ -2,7 +2,6 @@ package me.jbusdriver.ui.fragment
 
 import android.support.v4.app.Fragment
 import me.jbusdriver.common.C
-import me.jbusdriver.common.TabViewPagerFragment
 import me.jbusdriver.mvp.MineCollectContract
 import me.jbusdriver.mvp.bean.SearchLink
 import me.jbusdriver.mvp.presenter.MineCollectPresenterImpl

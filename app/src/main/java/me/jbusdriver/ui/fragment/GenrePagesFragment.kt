@@ -54,7 +54,7 @@ class GenrePagesFragment : TabViewPagerFragment<GenrePagePresenter, GenrePageCon
 
         fun newInstance(type: DataSourceType) = GenrePagesFragment().apply {
             val urls = CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) } ?: arrayMapof()
-            val url = urls.getOrDefault(type.key, JAVBusService.defaultFastUrl + "/genre")
+            val url = urls[type.key] ?: JAVBusService.defaultFastUrl + "/genre"
             arguments = Bundle().apply {
                 putString(C.BundleKey.Key_1, url)
             }
