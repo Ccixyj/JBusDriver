@@ -66,7 +66,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
 
     protected abstract fun initWidget(rootView: View)
 
-    protected fun onRestartInstance(bundle: Bundle) {}
+    protected open fun onRestartInstance(bundle: Bundle) {}
 
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -127,11 +127,11 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
         isLazyLoaded = true
     }
 
-    protected fun lazyLoad() {}
+    protected open fun lazyLoad() {}
 
-    protected fun onInvisible() {}
+    protected open fun onInvisible() {}
 
-    protected fun initData() {}
+    protected open fun initData() {}
 
 
     override fun onPause() {

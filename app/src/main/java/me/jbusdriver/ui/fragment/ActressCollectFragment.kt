@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.common.AppBaseRecycleFragment
 import me.jbusdriver.common.KLog
-import me.jbusdriver.common.scressWidth
+import me.jbusdriver.common.spanCount
 import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.ActressCollectContract
 import me.jbusdriver.mvp.bean.ActressInfo
@@ -27,13 +27,6 @@ import me.jbusdriver.ui.data.CollectManager
  */
 class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.ActressCollectPresenter, ActressCollectContract.ActressCollectView, ActressInfo>(), ActressCollectContract.ActressCollectView {
 
-    val span by lazy {
-        with(viewContext.scressWidth) {
-            if (this < 1080) 3
-            else if (this < 1440) 4
-            else 6
-        }
-    }
 
     override fun createPresenter() = ActressCollectPresenterImpl()
 
@@ -42,7 +35,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
     override val recycleView: RecyclerView
         get() = rv_recycle
     override val layoutManager: RecyclerView.LayoutManager
-        get() = StaggeredGridLayoutManager(span, OrientationHelper.VERTICAL)
+        get() = StaggeredGridLayoutManager(viewContext.spanCount, OrientationHelper.VERTICAL)
 
     override val adapter: BaseQuickAdapter<ActressInfo, in BaseViewHolder> by lazy {
         ActressInfoAdapter(rxManager).apply {

@@ -5,14 +5,14 @@ import android.view.Menu
 import android.view.MenuInflater
 import com.afollestad.materialdialogs.MaterialDialog
 import me.jbusdriver.common.toast
-import me.jbusdriver.mvp.MovieListContract
+import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.presenter.MovieCollectPresenterImpl
 import me.jbusdriver.ui.data.CollectManager
 
 /**
  * Created by Administrator on 2017/7/17 0017.
  */
-class MovieCollectFragment : MovieListFragment(), MovieListContract.MovieListView {
+class MovieCollectFragment : MovieListFragment(), LinkListContract.LinkListView {
 
     override fun createPresenter() = MovieCollectPresenterImpl()
 

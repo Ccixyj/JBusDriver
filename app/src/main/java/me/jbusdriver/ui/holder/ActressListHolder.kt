@@ -16,7 +16,6 @@ import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.adapter.ActressInfoAdapter
 import me.jbusdriver.ui.data.CollectManager
-import java.util.*
 
 /**
  * Created by Administrator on 2017/5/9 0009.

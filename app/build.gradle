@@ -43,7 +43,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.afollestad.material-dialogs:core:0.9.4.4'
     compile 'com.orhanobut:logger:1.15'
-    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.15'
+    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.+'
     compile group: 'org.jsoup', name: 'jsoup', version: '1.10.2'
 
     compile 'com.squareup.okhttp3:okhttp:3.8.0'

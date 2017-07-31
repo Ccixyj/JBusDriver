@@ -23,10 +23,9 @@
     </android.support.design.widget.AppBarLayout>
 
 
-    <fragment
-        android:id="@+id/fr_search_pages"
+    <FrameLayout
+        android:id="@+id/fl_search_pages"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="me.jbusdriver.ui.fragment.SearchResultPagesFragment"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 </android.support.design.widget.CoordinatorLayout>

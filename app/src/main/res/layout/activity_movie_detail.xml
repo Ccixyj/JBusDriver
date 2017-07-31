@@ -34,7 +34,7 @@
             <View
                 android:layout_gravity="bottom"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/material_120dp"
+                android:layout_height="@dimen/material_180dp"
                 android:background="@drawable/coll_toolbar_image_gradient"
                 android:fitsSystemWindows="true" />
 

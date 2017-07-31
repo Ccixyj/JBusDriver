@@ -1,46 +1,76 @@
 package me.jbusdriver.ui.fragment
 
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
+import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_actress_attr.view.*
-import me.jbusdriver.common.C
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.inflate
-import me.jbusdriver.mvp.MovieListContract
-import me.jbusdriver.mvp.bean.ActressAttrs
-import me.jbusdriver.mvp.bean.IAttr
-import me.jbusdriver.mvp.bean.ILink
-import me.jbusdriver.mvp.presenter.LinkMovieListPresenterImpl
+import me.jbusdriver.common.*
+import me.jbusdriver.mvp.LinkListContract
+import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.presenter.LinkAbsPresenterImpl
+import me.jbusdriver.mvp.presenter.MovieLinkPresenterImpl
+import me.jbusdriver.ui.activity.SearchResultActivity
 
 
 /**
- * Created by Administraor on 2017/4/9.
+ * ilink 界面解析
  */
-class LinkMovieListFragment : MovieListFragment(), MovieListContract.MovieListView {
-
-
+class LinkMovieListFragment : MovieListFragment(), LinkListContract.LinkListView {
     val link by lazy { arguments.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ") }
+    private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }
 
+    private val attrViews by lazy { mutableListOf<View>() }
 
-    override fun createPresenter() = LinkMovieListPresenterImpl(link)
-    /*================================================*/
+    override fun initData() {
+        if (isSearch) {
+            RxBus.toFlowable(SearchWord::class.java).subscribeBy({ sea ->
+                (mBasePresenter as? LinkAbsPresenterImpl<*>)?.let {
+                    (it.linkData as SearchLink).query = sea.query
+                    it.onRefresh()
+                }
+            }).addTo(rxManager)
+        }
+    }
 
-    companion object {
-        fun newInstance( link: ILink) = LinkMovieListFragment().apply {
-            arguments = Bundle().apply {
-                putSerializable(C.BundleKey.Key_1, link)
+    override fun gotoSearchResult(query: String) {
+        (mBasePresenter as?  LinkAbsPresenterImpl<*>)?.let {
+            if (isSearch) {
+//                it.linkData.query = query
+//                it.onRefresh()
+                viewContext.toast(query)
+                RxBus.post(SearchWord(query))
+            } else {
+                super.gotoSearchResult(query)
             }
         }
     }
 
-    fun addMovieAttr(data: IAttr) {
-        when (data) {
+    override fun createPresenter() = MovieLinkPresenterImpl(link)
+
+    override fun <T> showContent(data: T?) {
+        KLog.d("parse res :$data")
+        if (data is IAttr) {
+            attrViews.clear()
+            attrViews.add(getMovieAttrView(data))
+        }
+    }
+
+    override fun showContents(datas: List<*>?) {
+        adapter.removeAllHeaderView()
+        attrViews.forEach { adapter.addHeaderView(it) }
+        super.showContents(datas)
+
+    }
+
+    private fun getMovieAttrView(data: IAttr): View {
+        return when (data) {
             is ActressAttrs -> {
-                adapter.removeAllHeaderView()
-                adapter.addHeaderView(this.viewContext.inflate(R.layout.layout_actress_attr).apply {
+                this.viewContext.inflate(R.layout.layout_actress_attr).apply {
                     //img
                     Glide.with(this@LinkMovieListFragment).load(data.imageUrl).into(GlideDrawableImageViewTarget(this.iv_actress_avatar))
                     //title
@@ -53,8 +83,9 @@ class LinkMovieListFragment : MovieListFragment(), MovieListContract.MovieListVi
                     data.info.forEach {
                         this.ll_attr_container.addView(generateTextView().apply { text = it })
                     }
-                })
+                }
             }
+            else -> error("current not provide for IAttr $data")
         }
     }
 
@@ -63,11 +94,15 @@ class LinkMovieListFragment : MovieListFragment(), MovieListContract.MovieListVi
         setTextColor(resources.getColor(R.color.secondText))
     }
 
-    override fun <T> showContent(data: T?) {
-        KLog.d("parse res :$data")
-        if (data is IAttr) {
-            addMovieAttr(data)
+
+    /*================================================*/
+
+    companion object {
+        fun newInstance(link: ILink) = LinkMovieListFragment().apply {
+            arguments = Bundle().apply {
+                putSerializable(C.BundleKey.Key_1, link)
+            }
         }
     }
-
+    /*================================================*/
 }

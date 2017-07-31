@@ -1,5 +1,8 @@
 package me.jbusdriver.mvp.bean
 
+import me.jbusdriver.http.JAVBusService
+import me.jbusdriver.ui.data.SearchType
+
 /**
  * Created by Administrator on 2017/4/9.
  */
@@ -12,4 +15,9 @@ val PageInfo.hasNext
     inline get() = activePage < nextPage
 
 
+data class SearchLink(val type: SearchType, var query: String) : ILink {
 
+    override val link: String
+         get() = "${JAVBusService.defaultFastUrl}${type.urlPathFormater.format(query)}"
+
+}

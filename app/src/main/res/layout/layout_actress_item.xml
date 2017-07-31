@@ -6,6 +6,8 @@
     android:layout_height="wrap_content"
     android:foreground="?android:attr/selectableItemBackground">
 
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -31,4 +33,19 @@
             android:singleLine="true"
             tools:text="1234567890abcdefg" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_actress_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/material_24dp"
+        android:layout_gravity="right"
+        android:gravity="center"
+        android:layout_margin="@dimen/material_8dp"
+        android:paddingLeft="@dimen/material_4dp"
+        android:paddingRight="@dimen/material_4dp"
+        android:background="@drawable/bg_actress_tag"
+        android:alpha="0.9"
+        android:textColor="@color/white"
+        android:text="有吗" />
+
 </android.support.v7.widget.CardView>
