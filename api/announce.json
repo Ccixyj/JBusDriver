@@ -4,5 +4,10 @@
     "https://www.seedmm.com",
     "https://www.javbus2.com",
     "https://www.javbus.us"
-  ]
+  ],
+  "update": {
+    "versionCode": 10,
+    "versionName": "1.0.0",
+    "desc": "澳门首家赌场上线啦!!"
+  }
 }

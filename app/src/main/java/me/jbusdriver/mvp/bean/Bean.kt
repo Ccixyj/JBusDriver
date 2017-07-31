@@ -18,6 +18,8 @@ val PageInfo.hasNext
 data class SearchLink(val type: SearchType, var query: String) : ILink {
 
     override val link: String
-         get() = "${JAVBusService.defaultFastUrl}${type.urlPathFormater.format(query)}"
+        get() = "${JAVBusService.defaultFastUrl}${type.urlPathFormater.format(query)}"
 
 }
+
+data class UpdateBean(val versionCode: Int, val versionName: String, val desc: String)

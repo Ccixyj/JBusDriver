@@ -2,7 +2,6 @@ package me.jbusdriver.ui.activity
 
 import android.Manifest
 import android.os.Bundle
-import android.os.Environment
 import android.os.Handler
 import android.support.v4.util.ArrayMap
 import com.cfzx.utils.CacheLoader
@@ -21,7 +20,6 @@ import me.jbusdriver.http.GitHub
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.Jsoup
-import java.io.File
 
 class SplashActivity : BaseActivity() {
 
@@ -69,9 +67,11 @@ class SplashActivity : BaseActivity() {
                     KLog.i("map urls $this")
                 }
             }
-            val urlsFromNet = Flowable.concat(CacheLoader.justDisk(C.Cache.ANNOUNCEURL, false), GitHub.INSTANCE.announce().addUserCase()).firstOrError().toFlowable()
+            val urlsFromNet = Flowable.concat(CacheLoader.justDisk(C.Cache.ANNOUNCE_URL, false), GitHub.INSTANCE.announce().addUserCase()).firstOrError().toFlowable()
                     .map {
                         source ->
+                        //放入内存缓存,更新需要
+                        CacheLoader.cacheLru(C.Cache.ANNOUNCE_VALUE to source)
                         arrayMapof<String, String>().apply {
                             put(DataSourceType.CENSORED.key, AppContext.gson.fromJson<JsonObject>(source)?.get("backUp")?.asJsonArray.toString())
                         }
@@ -86,7 +86,7 @@ class SplashActivity : BaseActivity() {
                         Flowable.mergeDelayError(mapFlow).filter { it.second.isNotBlank() }
                     }
                     .firstOrError()
-                    .doOnError { CacheLoader.acache.remove(C.Cache.ANNOUNCEURL) }
+                    .doOnError { CacheLoader.acache.remove(C.Cache.ANNOUNCE_URL) }
                     .map {
                         val ds = DataSourceType.values().takeLast(DataSourceType.values().size - 1).toMutableList()
                         Jsoup.parse(it.second).select(".navbar-nav a").forEach {
