@@ -30,6 +30,7 @@ open class BasePresenterImpl<V : BaseView> : BasePresenter<V> {
         isFirstStart = firstStart
         KLog.t(TAG).e("onStart", firstStart)
         if (firstStart && this !is BasePresenter.LazyLoaderPresenter) {
+            //如果是LazyLoaderPresenter , 交给LazyLoaderPresenter处理
             onFirstLoad()
         }
     }

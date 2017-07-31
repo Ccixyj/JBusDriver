@@ -142,7 +142,6 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     }
 
     protected open fun lazyLoad() {
-        KLog.d("lazyLoad")
         if (mBasePresenter is BasePresenter.LazyLoaderPresenter) (mBasePresenter as? BasePresenter.LazyLoaderPresenter)?.lazyLoad()
     }
 
