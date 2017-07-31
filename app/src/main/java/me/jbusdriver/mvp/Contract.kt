@@ -67,7 +67,7 @@ interface GenrePageContract {
         val titleValues : MutableList<String>
         val fragmentValues : MutableList<List<Genre>>
     }
-    interface GenrePagePresenter : BasePresenter<GenrePageView>
+    interface GenrePagePresenter : BasePresenter<GenrePageView> , BasePresenter.LazyLoaderPresenter
 }
 
 interface GenreListContract{

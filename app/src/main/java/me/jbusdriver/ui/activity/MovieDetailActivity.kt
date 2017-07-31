@@ -8,7 +8,7 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
-import android.view.WindowManager
+import android.view.View
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -61,10 +61,10 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         menuInflater.inflate(R.menu.menu_movie_detail, menu)
         collectMenu = menu.findItem(R.id.action_add_movie_collect)
         removeCollectMenu = menu.findItem(R.id.action_remove_movie_collect)
-        if (CollectManager.has(movie)){
+        if (CollectManager.has(movie)) {
             collectMenu.isVisible = false
             removeCollectMenu.isVisible = true
-        }else{
+        } else {
             collectMenu.isVisible = true
             removeCollectMenu.isVisible = false
         }
@@ -89,10 +89,10 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             R.id.action_remove_movie_collect -> {
                 //取消收藏
                 KLog.d("取消收藏")
-               if ( CollectManager.removeCollect(movie)){
-                   collectMenu.isVisible = true
-                   removeCollectMenu.isVisible = false
-               }
+                if (CollectManager.removeCollect(movie)) {
+                    collectMenu.isVisible = true
+                    removeCollectMenu.isVisible = false
+                }
             }
         }
         return super.onOptionsItemSelected(item)
@@ -183,6 +183,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             //animation
             ll_movie_detail.y = ll_movie_detail.y + 120
             ll_movie_detail.alpha = 0f
+            ll_movie_detail.visibility = View.VISIBLE
             ll_movie_detail.animate().translationY(0f).alpha(1f).setDuration(500).start()
 
             headHolder.init(data.headers)

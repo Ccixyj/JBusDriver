@@ -98,7 +98,8 @@ class LinkMovieListFragment : MovieListFragment(), LinkListContract.LinkListView
     /*================================================*/
 
     companion object {
-        fun newInstance(link: ILink) = LinkMovieListFragment().apply {
+        fun newInstance(link: ILink, cancelLazyLoad: Boolean? = null) = LinkMovieListFragment().apply {
+            if (true == cancelLazyLoad) userVisibleHint = true
             arguments = Bundle().apply {
                 putSerializable(C.BundleKey.Key_1, link)
             }

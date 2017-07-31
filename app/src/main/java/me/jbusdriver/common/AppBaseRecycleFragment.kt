@@ -1,5 +1,6 @@
 package me.jbusdriver.common
 
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.RecyclerView
@@ -34,6 +35,10 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
     override fun initWidget(rootView: View) {
         recycleView.layoutManager = layoutManager
         adapter.setOnLoadMoreListener({ mBasePresenter?.onLoadMore() }, recycleView)
+        adapter.openLoadAnimation {
+            arrayOf(ObjectAnimator.ofFloat(it, "alpha", 0.0f, 1.0f),
+                    ObjectAnimator.ofFloat(it, "translationY", 120f, 0f))
+        }
         swipeView?.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimaryLight)
         swipeView?.setOnRefreshListener { mBasePresenter?.onRefresh() }
         recycleView.adapter = adapter
