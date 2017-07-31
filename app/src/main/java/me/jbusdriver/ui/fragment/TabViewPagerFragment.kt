@@ -2,7 +2,9 @@ package me.jbusdriver.ui.fragment
 
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentPagerAdapter
 import android.view.View
+import android.view.ViewGroup
 import com.cfzx.mvp.view.BaseView
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_mine_collect.*
@@ -35,10 +37,13 @@ abstract class TabViewPagerFragment<P : BasePresenter<V>, V : BaseView> : AppBas
         }
     }
 
-    protected val pagerAdapter: android.support.v4.app.FragmentStatePagerAdapter by lazy {
+    protected val pagerAdapter: FragmentPagerAdapter by lazy {
         require(mTitles.size == mFragments.size)
-        object : android.support.v4.app.FragmentStatePagerAdapter(childFragmentManager) {
+        object : FragmentPagerAdapter(childFragmentManager) {
 
+            override fun setPrimaryItem(container: ViewGroup?, position: Int, `object`: Any?) {
+                super.setPrimaryItem(container, position, `object`)
+            }
             override fun getItem(position: Int): Fragment {
                 if (mFragments.size >= position) {
                     return mFragments[position]

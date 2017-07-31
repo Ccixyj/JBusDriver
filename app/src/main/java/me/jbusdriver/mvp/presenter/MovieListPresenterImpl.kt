@@ -14,9 +14,9 @@ import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
-open class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<LinkListView,Movie>(), LinkListContract.LinkListPresenter {
+open class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<LinkListView, Movie>(), LinkListContract.LinkListPresenter {
 
-    private  var IsAll = false
+    private var IsAll = false
     private val urls by lazy { CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) } ?: arrayMapof() }
     private val saveKey: String
         inline get() = "${mView?.type?.key ?: DataSourceType.CENSORED.key}$IsAll"
@@ -33,7 +33,7 @@ open class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<LinkLis
         }
         KLog.i("load url :$urlN")
         //existmag=all
-        service.get(urlN, if (IsAll) "all" else null) .doOnNext {
+        service.get(urlN, if (IsAll) "all" else null).doOnNext {
             if (page == 1) CacheLoader.lru.put(saveKey, it)
         }.map { Jsoup.parse(it) }
     }
@@ -55,5 +55,9 @@ open class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<LinkLis
     override fun loadAll(iaAll: Boolean) {
         IsAll = iaAll
         loadData4Page(1)
+    }
+
+    override fun lazyLoad() {
+        onFirstLoad()
     }
 }

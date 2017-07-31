@@ -19,8 +19,6 @@ import me.jbusdriver.common.C
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.LinkListContract
-import me.jbusdriver.mvp.bean.Movie
-import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.data.DataSourceType
 
@@ -84,11 +82,6 @@ abstract class LinkListFragment<T> : AppBaseRecycleFragment<LinkListContract.Lin
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun initWidget(rootView: View) {
-        super.initWidget(rootView)
-
     }
 
 

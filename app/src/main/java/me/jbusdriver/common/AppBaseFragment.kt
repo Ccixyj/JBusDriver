@@ -107,6 +107,20 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
         mBasePresenter?.onResume()
     }
 
+    /**
+     *fragment show hide 不走setUserVisibleHint , 走onHiddenChanged方法.
+     */
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            isUserVisible = true
+            onVisible()
+        } else {
+            isUserVisible = false
+            onInvisible()
+        }
+    }
+
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if (userVisibleHint) {
@@ -127,7 +141,10 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
         isLazyLoaded = true
     }
 
-    protected open fun lazyLoad() {}
+    protected open fun lazyLoad() {
+        KLog.d("lazyLoad")
+        if (mBasePresenter is BasePresenter.LazyLoaderPresenter) (mBasePresenter as? BasePresenter.LazyLoaderPresenter)?.lazyLoad()
+    }
 
     protected open fun onInvisible() {}
 

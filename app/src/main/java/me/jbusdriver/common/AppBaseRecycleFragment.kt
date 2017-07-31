@@ -10,9 +10,6 @@ import com.chad.library.adapter.base.BaseViewHolder
 import io.reactivex.Flowable
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.mvp.presenter.BasePresenter
-import java.util.*
-import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
 
 /**
  * Created by Administrator on 2017/4/9.
@@ -27,7 +24,6 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
     abstract val recycleView: RecyclerView
     abstract val layoutManager: RecyclerView.LayoutManager
     abstract val adapter: BaseQuickAdapter<M, in BaseViewHolder>
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

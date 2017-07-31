@@ -45,4 +45,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
         super.onRefresh()
     }
 
+    override fun lazyLoad() {
+        onFirstLoad()
+    }
 }

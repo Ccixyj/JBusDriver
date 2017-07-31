@@ -22,7 +22,7 @@ interface LinkListContract {
         val type: DataSourceType
     }
 
-    interface LinkListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<LinkListView> {
+    interface LinkListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<LinkListView> , BasePresenter.LazyLoaderPresenter{
         fun loadAll(iaAll: Boolean)
     }
 }
