@@ -13,10 +13,41 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    signingConfigs {
+        release {
+            try {
+                storeFile file(KEYSTORE_FILE)
+                storePassword KEYSTORE_PASSWORD
+                keyAlias KEYSTORE_ALIAS
+                keyPassword KEY_PASSWORD
+            }
+            catch (ignored) {
+                if (System.getenv("KEYSTORE_FILE") != null) {
+                    storeFile = file(System.getenv("KEYSTORE_FILE"))
+                    storePassword = System.getenv("KEYSTORE_PWD")
+                    keyAlias = System.getenv("KEYSTORE_ALIAS")
+                    keyPassword = System.getenv("KEYSTORE_ALIAS_PWD")
+                } else {
+                    throw new InvalidUserDataException("You should define KEYSTORE_PASSWORD and KEY_PASSWORD in gradle.properties.")
+                }
+            }
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            applicationVariants.all { variant ->
+                if (variant.buildType.name == 'release') {
+                    variant.mergedFlavor.versionName = VersionName()
+                    variant.mergedFlavor.versionCode = VersionCode()
+                    renameArtifact(variant)
+                }
+
+            }
 
         }
     }
@@ -27,6 +58,56 @@ android {
         }
     }
 }
+
+
+def releaseTime() {
+    return new Date().format("yyyyMMdd_HHmmss")
+}
+
+//"HelloWord-${variant.buildType.name}-v${variant.versionName}-${variant.productFlavors[0].name}-${releaseTime()}.apk".toLowerCase())
+def renameArtifact(variant) {
+    variant.outputs.each { output ->
+        output.outputFile = new File(
+                (String) output.outputFile.parent,
+                (String) "JubsDriver[v${variant.versionName}]_(code_${variant.versionCode}).apk")
+    }
+}
+
+//使用git的Tag来自动定制Version
+def VersionCode() {
+    def cmd = 'git rev-list master --first-parent --count'//master分支
+//    def cmd = 'git tag'
+//    def code = cmd.execute().text.trim().split("\n").size()
+    def code = cmd.execute().text.trim().toInteger()
+    logger.quiet(cmd + " >>>> code = " + code)
+    return code
+}
+
+//使用git的Tag来自动定制Version
+def VersionName() {
+    def cmd = 'git tag'
+    def tags = cmd.execute().text.readLines()
+    /* if (tags.size() >= 1) {
+         def version_last = tags.last().trim() //newest
+         cmd = 'git rev-list ' + version_last + '..  --count'
+         if (tags.size() >= 2) {
+             tags.remove(tags.last())
+             def version_last_2 = tags.last().trim() //newest
+             cmd = 'git rev-list ' + version_last_2 + '..' + version_last + '  --count'
+         }
+     } else {
+         cmd = 'git rev-list  --count'
+     }*/
+    cmd = 'git rev-list  --all  --count'
+    def code = cmd.execute().text.trim().toInteger()
+
+    def versionName = tags.last().trim().replaceAll("[a-zA-Z]", "") + "build" + code
+    logger.quiet(cmd + " >>>> versionName  = " + versionName)
+
+    return versionName
+}
+
+
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')

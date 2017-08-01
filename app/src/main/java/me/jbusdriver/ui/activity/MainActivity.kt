@@ -12,9 +12,11 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.afollestad.materialdialogs.MaterialDialog
 import jbusdriver.me.jbusdriver.R
+import kotlinx.android.synthetic.main.nav_header_main.view.*
 import me.jbusdriver.common.AppBaseActivity
 import me.jbusdriver.common.BaseFragment
 import me.jbusdriver.common.KLog
+import me.jbusdriver.common.packageInfo
 import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.bean.UpdateBean
 import me.jbusdriver.mvp.presenter.MainPresenterImpl
@@ -56,6 +58,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         toggle.syncState()
         initFragments()
         val menuId = savedInstanceState?.getInt("MenuSelectedItemId", R.id.movie_ma) ?: R.id.movie_ma
+        navigationView.getHeaderView(0).tv_app_version.text = packageInfo?.versionName ?: "未知版本"
         navigationView.setNavigationItemSelectedListener(this)
         selectMenu = navigationView.menu.findItem(menuId)
         navigationView.setCheckedItem(selectMenu.itemId)
