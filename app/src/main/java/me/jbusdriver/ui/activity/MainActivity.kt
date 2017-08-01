@@ -2,7 +2,6 @@ package me.jbusdriver.ui.activity
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -13,10 +12,7 @@ import android.view.MenuItem
 import com.afollestad.materialdialogs.MaterialDialog
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.nav_header_main.view.*
-import me.jbusdriver.common.AppBaseActivity
-import me.jbusdriver.common.BaseFragment
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.packageInfo
+import me.jbusdriver.common.*
 import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.bean.UpdateBean
 import me.jbusdriver.mvp.presenter.MainPresenterImpl
@@ -58,7 +54,13 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         toggle.syncState()
         initFragments()
         val menuId = savedInstanceState?.getInt("MenuSelectedItemId", R.id.movie_ma) ?: R.id.movie_ma
-        navigationView.getHeaderView(0).tv_app_version.text = packageInfo?.versionName ?: "未知版本"
+        navigationView.getHeaderView(0).apply {
+           tv_app_version.text = packageInfo?.versionName ?: "未知版本"
+            ll_git_url.setOnClickListener {
+                browse("https://github.com/Ccixyj/JBusDriver")
+            }
+        }
+
         navigationView.setNavigationItemSelectedListener(this)
         selectMenu = navigationView.menu.findItem(menuId)
         navigationView.setCheckedItem(selectMenu.itemId)
@@ -132,10 +134,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                     .neutralColor(R.color.secondText)
                     .positiveText("更新")
                     .onPositive { _, _ ->
-                        startActivity(Intent().apply {
-                            this.action = "android.intent.action.VIEW"
-                            this.data = Uri.parse(data.url)
-                        })
+                       browse(data.url)
                     }
                     .show()
         }

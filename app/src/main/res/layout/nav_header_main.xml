@@ -13,13 +13,35 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/ll_git_url"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="JbusDriver"
-        style="@style/Base.TextAppearance.AppCompat.Title"
-         />
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/Base.TextAppearance.AppCompat.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="JbusDriver" />
+
+        <Space
+            android:layout_width="@dimen/material_16dp"
+            android:layout_height="@dimen/material_0dp" />
+
+        <ImageView
+
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:minHeight="@dimen/material_24dp"
+            android:minWidth="@dimen/material_24dp"
+            android:src="@mipmap/ic_github" />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="@dimen/material_0dp"
+        android:layout_height="@dimen/material_16dp" />
 
     <TextView
         android:id="@+id/tv_app_version"

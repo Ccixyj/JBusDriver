@@ -3,6 +3,7 @@ package me.jbusdriver.common
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageInfo
 import android.net.Uri
 import android.support.v4.util.ArrayMap
@@ -186,3 +187,10 @@ val Context.packageInfo: PackageInfo?
         e.printStackTrace()
         null
     }
+
+fun Context.browse(url:String){
+    startActivity(Intent().apply {
+        this.action = "android.intent.action.VIEW"
+        this.data = Uri.parse(url)
+    })
+}
