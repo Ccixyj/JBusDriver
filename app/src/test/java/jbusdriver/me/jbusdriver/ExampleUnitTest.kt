@@ -3,7 +3,6 @@ package jbusdriver.me.jbusdriver
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.subscribeBy
 import org.junit.Test
-import java.util.concurrent.TimeUnit
 
 
 /**
@@ -16,7 +15,7 @@ class ExampleUnitTest {
     @Test
     @Throws(Exception::class)
     fun addition_isCorrect() {
-        Flowable.concat<Int>(Flowable.empty() , Flowable.timer(1,TimeUnit.SECONDS).map { 1 } )
+        Flowable.concat<Int>(Flowable.empty() , Flowable.just(1) )
                 .firstOrError().subscribeBy(onSuccess = { println(it)})
 
     }

@@ -3,6 +3,7 @@ package me.jbusdriver.common
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.pm.PackageInfo
 import android.net.Uri
 import android.support.v4.util.ArrayMap
 import android.util.DisplayMetrics
@@ -175,4 +176,13 @@ val String.urlHost: String
         checkNotNull(it)
         KLog.d("uri : ${it.scheme} : ${it.host} : ${it.path}")
         "${it.scheme}://${it.host}"
+    }
+
+val Context.packageInfo: PackageInfo?
+    get() = try {
+        AppContext.instace.packageManager.getPackageInfo(
+                AppContext.instace.packageName, 0)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }

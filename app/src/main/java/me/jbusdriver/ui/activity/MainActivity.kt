@@ -2,6 +2,7 @@ package me.jbusdriver.ui.activity
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -9,11 +10,13 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
+import com.afollestad.materialdialogs.MaterialDialog
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.AppBaseActivity
 import me.jbusdriver.common.BaseFragment
 import me.jbusdriver.common.KLog
 import me.jbusdriver.mvp.MainContract
+import me.jbusdriver.mvp.bean.UpdateBean
 import me.jbusdriver.mvp.presenter.MainPresenterImpl
 import me.jbusdriver.ui.data.DataSourceType
 import me.jbusdriver.ui.fragment.ActressListFragment
@@ -116,6 +119,24 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
     override fun createPresenter() = MainPresenterImpl()
 
     override val layoutId = R.layout.activity_main
+
+
+    override fun <T> showContent(data: T?) {
+        if (data is UpdateBean) {
+            MaterialDialog.Builder(this).title("更新(${data.versionName})")
+                    .content(data.desc)
+                    .neutralText("下次更新")
+                    .neutralColor(R.color.secondText)
+                    .positiveText("更新")
+                    .onPositive { _, _ ->
+                        startActivity(Intent().apply {
+                            this.action = "android.intent.action.VIEW"
+                            this.data = Uri.parse(data.url)
+                        })
+                    }
+                    .show()
+        }
+    }
 
     companion object {
         fun start(current: Activity) {
