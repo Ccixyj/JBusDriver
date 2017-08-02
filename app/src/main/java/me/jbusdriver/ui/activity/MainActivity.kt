@@ -9,6 +9,7 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
+import jbusdriver.me.jbusdriver.BuildConfig
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.AppBaseActivity
 import me.jbusdriver.common.BaseFragment
@@ -81,7 +82,9 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
             drawer.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
-            //   moveTaskToBack(false)
+            if (!BuildConfig.DEBUG){
+                moveTaskToBack(false)
+            }
         }
     }
 
