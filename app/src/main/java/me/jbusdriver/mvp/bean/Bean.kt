@@ -23,3 +23,4 @@ data class SearchLink(val type: SearchType, var query: String) : ILink {
 }
 
 data class UpdateBean(val versionCode: Int, val versionName: String, val url: String, val desc: String)
+data class NoticeBean(val id: Int, val content: String? = null)

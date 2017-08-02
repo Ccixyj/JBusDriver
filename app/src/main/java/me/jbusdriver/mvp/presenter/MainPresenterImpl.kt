@@ -8,6 +8,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import me.jbusdriver.common.*
 import me.jbusdriver.http.GitHub
 import me.jbusdriver.mvp.MainContract
+import me.jbusdriver.mvp.bean.NoticeBean
 import me.jbusdriver.mvp.bean.UpdateBean
 
 
@@ -18,20 +19,21 @@ class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContra
     }
 
     private fun fetchUpdate() {
-        Flowable.concat<UpdateBean>(CacheLoader.justLru(C.Cache.ANNOUNCE_VALUE).map { AppContext.gson.fromJson<UpdateBean>(it) },
+        Flowable.concat<JsonObject>(CacheLoader.justLru(C.Cache.ANNOUNCE_VALUE).map { AppContext.gson.fromJson<JsonObject>(it) },
                 GitHub.INSTANCE.announce().addUserCase()
-                        .map { AppContext.gson.fromJson<JsonObject>(it).get("update") }
-                        .map {
-                            AppContext.gson.fromJson(it, UpdateBean::class.java)
-                        })
+                        .map { AppContext.gson.fromJson<JsonObject>(it) } //
+                        )
                 .firstOrError()
+                .map {
+                    AppContext.gson.fromJson(it.get("update"), UpdateBean::class.java) to
+                            AppContext.gson.fromJson(it.get("notice"), NoticeBean::class.java)
+                }
                 .retry(1)
                 .toFlowable()
-                .compose(SchedulersCompat.io<UpdateBean>())
+                .compose(SchedulersCompat.io<Pair<UpdateBean,NoticeBean?>>())
                 .subscribeBy(onNext = {
-                    if (mView?.viewContext?.packageInfo?.versionCode ?: -1 < it.versionCode) {
-                        mView?.showContent(it)
-                    }
+                    mView?.showContent(it)
+
                 }, onError = {
                     KLog.d("fetchUpdate error ${it.message}")
                 })
