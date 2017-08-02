@@ -34,7 +34,7 @@ class SplashActivity : BaseActivity() {
     private fun init() {
         Observable.combineLatest<Boolean, ArrayMap<String, String>, String>(RxPermissions(this).request(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                 initUrls(), BiFunction { t1, t2 -> t2.values.firstOrNull() ?: "" })
-                .doOnError { CacheLoader.acache.clear() }
+                .doOnError { CacheLoader.acache.remove(C.Cache.BUS_URLS) }
                 .retry(1)
                 .doFinally {
                     KLog.d("doFinally")
@@ -67,7 +67,7 @@ class SplashActivity : BaseActivity() {
                     KLog.i("map urls $this")
                 }
             }
-            val urlsFromNet = Flowable.concat(CacheLoader.justDisk(C.Cache.ANNOUNCE_URL, false), GitHub.INSTANCE.announce().addUserCase()).firstOrError().toFlowable()
+            val urlsFromNet = Flowable.concat(CacheLoader.justLru(C.Cache.ANNOUNCE_URL), GitHub.INSTANCE.announce().addUserCase()).firstOrError().toFlowable()
                     .map {
                         source ->
                         //放入内存缓存,更新需要

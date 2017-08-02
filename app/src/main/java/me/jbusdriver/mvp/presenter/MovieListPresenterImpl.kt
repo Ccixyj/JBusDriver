@@ -35,7 +35,10 @@ open class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<LinkLis
         //existmag=all
         service.get(urlN, if (IsAll) "all" else null).doOnNext {
             if (page == 1) CacheLoader.lru.put(saveKey, it)
-        }.map { Jsoup.parse(it) }
+        }.map { Jsoup.parse(it) }.doOnError {
+            //可能网址被封
+            CacheLoader.acache.remove(C.Cache.BUS_URLS)
+        }
     }
 
     override val model: BaseModel<Int, Document> = object : AbstractBaseModel<Int, Document>(loadFromNet) {

@@ -1,6 +1,5 @@
 package me.jbusdriver.ui.data
 
-import android.net.Uri
 import android.os.Environment
 import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
@@ -22,12 +21,6 @@ object CollectManager {
         ACache.get(cacheDir)
     }
 
-
-    init {
-        KLog.d("CollectManager :" + Uri.parse("https://www.javbus3.com").path)
-        KLog.d("CollectManager :" + Uri.parse("http://wx.cfzxzz.com/ucenter/entrust/entrustlist.html").path)
-
-    }
 
     val actress_data: MutableList<ActressInfo> by lazy {
         collectCache.getAsString(Actress_Key)?.let {
@@ -67,7 +60,7 @@ object CollectManager {
             new
         } else data
     }
-
+    /*===========添加收藏=============*/
     fun addToCollect(actressInfo: ActressInfo): Boolean {
         return actress_data.let {
             if (it.any { it == actressInfo }) {
@@ -91,9 +84,11 @@ object CollectManager {
             true
         }
     }
-
+    /*===========是否收藏了=============*/
     fun has(act: ActressInfo): Boolean = actress_data.any { it.link == act.link }
     fun has(movie: Movie): Boolean = movie_data.any { it.code == movie.code }
+
+    /*===========删除收藏=============*/
     fun removeCollect(act: ActressInfo): Boolean {
         actress_data.let {
             val res = it.remove(act)
