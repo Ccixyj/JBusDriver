@@ -2,6 +2,7 @@ package me.jbusdriver.mvp.presenter
 
 import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import me.jbusdriver.common.KLog
@@ -16,7 +17,6 @@ import org.jsoup.nodes.Document
 
 class GenrePagePresenterImpl(val url: String) : BasePresenterImpl<GenrePageContract.GenrePageView>(), GenrePageContract.GenrePagePresenter {
 
-
     val model: BaseModel<String, Document> = object : AbstractBaseModel<String, Document>({ url ->
         JAVBusService.INSTANCE.get(url).map { Jsoup.parse(it) }
     }) {
@@ -28,6 +28,7 @@ class GenrePagePresenterImpl(val url: String) : BasePresenterImpl<GenrePageContr
 
     override fun onFirstLoad() {
         super.onFirstLoad()
+        mView?.showLoading()
         model.requestFromCache(url)
                 .map {
                     val generes = it.select(".genre-box")
@@ -41,11 +42,16 @@ class GenrePagePresenterImpl(val url: String) : BasePresenterImpl<GenrePageContr
                         it.fragmentValues.addAll(list)
                     }
                     Unit
-                }.compose(SchedulersCompat.io())
+                }.doOnTerminate { AndroidSchedulers.mainThread().scheduleDirect { mView?.dismissLoading() } }
+                .compose(SchedulersCompat.io())
                 .subscribeBy(onError = {
                     KLog.d(it)
                 }, onComplete = {
                     mView?.showContent(null)
                 }).addTo(rxManager)
+    }
+
+    override fun lazyLoad() {
+        onFirstLoad()
     }
 }

@@ -10,11 +10,12 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import jbusdriver.me.jbusdriver.BuildConfig
+import com.afollestad.materialdialogs.MaterialDialog
 import jbusdriver.me.jbusdriver.R
-import me.jbusdriver.common.AppBaseActivity
-import me.jbusdriver.common.BaseFragment
-import me.jbusdriver.common.KLog
+import kotlinx.android.synthetic.main.nav_header_main.view.*
+import me.jbusdriver.common.*
 import me.jbusdriver.mvp.MainContract
+import me.jbusdriver.mvp.bean.UpdateBean
 import me.jbusdriver.mvp.presenter.MainPresenterImpl
 import me.jbusdriver.ui.data.DataSourceType
 import me.jbusdriver.ui.fragment.ActressListFragment
@@ -54,6 +55,13 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         toggle.syncState()
         initFragments()
         val menuId = savedInstanceState?.getInt("MenuSelectedItemId", R.id.movie_ma) ?: R.id.movie_ma
+        navigationView.getHeaderView(0).apply {
+           tv_app_version.text = packageInfo?.versionName ?: "未知版本"
+            ll_git_url.setOnClickListener {
+                browse("https://github.com/Ccixyj/JBusDriver")
+            }
+        }
+
         navigationView.setNavigationItemSelectedListener(this)
         selectMenu = navigationView.menu.findItem(menuId)
         navigationView.setCheckedItem(selectMenu.itemId)
@@ -119,6 +127,21 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
     override fun createPresenter() = MainPresenterImpl()
 
     override val layoutId = R.layout.activity_main
+
+
+    override fun <T> showContent(data: T?) {
+        if (data is UpdateBean) {
+            MaterialDialog.Builder(this).title("更新(${data.versionName})")
+                    .content(data.desc)
+                    .neutralText("下次更新")
+                    .neutralColor(R.color.secondText)
+                    .positiveText("更新")
+                    .onPositive { _, _ ->
+                       browse(data.url)
+                    }
+                    .show()
+        }
+    }
 
     companion object {
         fun start(current: Activity) {

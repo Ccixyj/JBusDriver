@@ -10,7 +10,6 @@ import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
@@ -44,6 +43,7 @@ abstract class LinkListFragment<T> : AppBaseRecycleFragment<LinkListContract.Lin
         menu?.findItem(R.id.action_show_all)?.isChecked = arguments?.getBoolean(MENU_SHOW_ALL, false) ?: false
         menu?.getItem(0)?.let {
             val mSearchView = MenuItemCompat.getActionView(it) as SearchView
+
             mSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String): Boolean {
                     KLog.i("search >> $query")
@@ -76,9 +76,6 @@ abstract class LinkListFragment<T> : AppBaseRecycleFragment<LinkListContract.Lin
                 if (item.isChecked) item.title = "已发布" else item.title = "全部电影"  /*false : 已发布的 ,true :全部*/
                 mBasePresenter?.loadAll(item.isChecked)
                 arguments?.putBoolean(MENU_SHOW_ALL, item.isChecked)
-            }
-            R.id.action_search -> {
-
             }
         }
         return super.onOptionsItemSelected(item)
