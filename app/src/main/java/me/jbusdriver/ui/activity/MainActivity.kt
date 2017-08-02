@@ -165,7 +165,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
     }
 
     fun showNotice(notice: Any?) {
-        if (notice != null && notice is NoticeBean && !TextUtils.isEmpty(notice.content) && sharfp.getInt(NoticeIgnoreID, -1) > notice.id) {
+        if (notice != null && notice is NoticeBean && !TextUtils.isEmpty(notice.content) && sharfp.getInt(NoticeIgnoreID, -1) < notice.id) {
             MaterialDialog.Builder(this).title("公告")
                     .content(notice.content!!)
                     .neutralText("忽略该提示")
@@ -173,7 +173,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                     .onNeutral { _, _ ->
                         sharfp.edit().putInt(NoticeIgnoreID, notice.id).apply()
                     }
-                    .negativeText("知道了")
+                    .positiveText("知道了")
                     .show()
         }
     }
