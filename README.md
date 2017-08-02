@@ -9,7 +9,7 @@
 [最新版本1.0.0](https://github.com/Ccixyj/JBusDriver/releases)
 
 ###### 如何开车
-> 推荐番号+简单磁力+mxplayer/aria2
+> 番号+简单磁力+mxplayer/aria2
 
 
 
