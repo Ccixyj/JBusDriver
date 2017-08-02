@@ -19,6 +19,18 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:minHeight="@dimen/material_24dp"
+            android:minWidth="@dimen/material_24dp"
+            android:padding="@dimen/material_2dp"
+            android:src="@mipmap/ic_github" />
+
+        <Space
+            android:layout_width="@dimen/material_8dp"
+            android:layout_height="@dimen/material_0dp" />
+
         <TextView
             style="@style/Base.TextAppearance.AppCompat.Title"
             android:layout_width="wrap_content"
@@ -26,9 +38,18 @@
             android:gravity="center"
             android:text="JbusDriver" />
 
-        <Space
-            android:layout_width="@dimen/material_16dp"
-            android:layout_height="@dimen/material_0dp" />
+
+    </LinearLayout>
+
+    <Space
+        android:layout_width="@dimen/material_0dp"
+        android:layout_height="@dimen/material_8dp" />
+
+    <LinearLayout
+        android:id="@+id/ll_click_reload"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <ImageView
 
@@ -36,12 +57,24 @@
             android:layout_height="match_parent"
             android:minHeight="@dimen/material_24dp"
             android:minWidth="@dimen/material_24dp"
-            android:src="@mipmap/ic_github" />
+            android:src="@drawable/ic_cached_black_24dp" />
+
+        <Space
+            android:layout_width="@dimen/material_8dp"
+            android:layout_height="@dimen/material_0dp" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="加载出现问题,尝试点击此处" />
+
+
     </LinearLayout>
 
     <Space
         android:layout_width="@dimen/material_0dp"
-        android:layout_height="@dimen/material_16dp" />
+        android:layout_height="@dimen/material_8dp" />
 
     <TextView
         android:id="@+id/tv_app_version"

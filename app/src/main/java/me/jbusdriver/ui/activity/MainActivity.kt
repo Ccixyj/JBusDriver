@@ -9,8 +9,9 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
-import jbusdriver.me.jbusdriver.BuildConfig
 import com.afollestad.materialdialogs.MaterialDialog
+import com.cfzx.utils.CacheLoader
+import jbusdriver.me.jbusdriver.BuildConfig
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 import me.jbusdriver.common.*
@@ -56,9 +57,15 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         initFragments()
         val menuId = savedInstanceState?.getInt("MenuSelectedItemId", R.id.movie_ma) ?: R.id.movie_ma
         navigationView.getHeaderView(0).apply {
-           tv_app_version.text = packageInfo?.versionName ?: "未知版本"
+            tv_app_version.text = packageInfo?.versionName ?: "未知版本"
             ll_git_url.setOnClickListener {
                 browse("https://github.com/Ccixyj/JBusDriver")
+            }
+            ll_click_reload.setOnClickListener {
+                CacheLoader.lru.evictAll()
+                CacheLoader.acache.remove(C.Cache.BUS_URLS)
+                SplashActivity.start(this@MainActivity)
+                finish()
             }
         }
 
@@ -90,7 +97,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
             drawer.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
-            if (!BuildConfig.DEBUG){
+            if (!BuildConfig.DEBUG) {
                 moveTaskToBack(false)
             }
         }
@@ -137,7 +144,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                     .neutralColor(R.color.secondText)
                     .positiveText("更新")
                     .onPositive { _, _ ->
-                       browse(data.url)
+                        browse(data.url)
                     }
                     .show()
         }
