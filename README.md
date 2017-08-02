@@ -5,5 +5,6 @@
 
 3.尽情使用,有相关bug,问题或者好的需求可以issues,同样欢迎pull request.
 
+# 版本
 [最新版本1.0.0](https://github.com/Ccixyj/JBusDriver/releases)
 
