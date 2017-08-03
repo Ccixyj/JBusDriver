@@ -1,6 +1,7 @@
 package me.jbusdriver.ui.activity
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
@@ -8,13 +9,16 @@ import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.Toolbar
+import android.text.TextUtils
 import android.view.MenuItem
-import jbusdriver.me.jbusdriver.BuildConfig
 import com.afollestad.materialdialogs.MaterialDialog
+import com.cfzx.utils.CacheLoader
+import jbusdriver.me.jbusdriver.BuildConfig
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.MainContract
+import me.jbusdriver.mvp.bean.NoticeBean
 import me.jbusdriver.mvp.bean.UpdateBean
 import me.jbusdriver.mvp.presenter.MainPresenterImpl
 import me.jbusdriver.ui.data.DataSourceType
@@ -44,6 +48,8 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         )
     }
 
+    private val sharfp by lazy { getSharedPreferences("config", Context.MODE_PRIVATE) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val toolbar = findViewById(R.id.toolbar) as Toolbar
@@ -56,9 +62,15 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         initFragments()
         val menuId = savedInstanceState?.getInt("MenuSelectedItemId", R.id.movie_ma) ?: R.id.movie_ma
         navigationView.getHeaderView(0).apply {
-           tv_app_version.text = packageInfo?.versionName ?: "未知版本"
+            tv_app_version.text = packageInfo?.versionName ?: "未知版本"
             ll_git_url.setOnClickListener {
                 browse("https://github.com/Ccixyj/JBusDriver")
+            }
+            ll_click_reload.setOnClickListener {
+                CacheLoader.lru.evictAll()
+                CacheLoader.acache.remove(C.Cache.BUS_URLS)
+                SplashActivity.start(this@MainActivity)
+                finish()
             }
         }
 
@@ -90,7 +102,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
             drawer.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
-            if (!BuildConfig.DEBUG){
+            if (!BuildConfig.DEBUG) {
                 moveTaskToBack(false)
             }
         }
@@ -130,20 +142,44 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
 
     override fun <T> showContent(data: T?) {
-        if (data is UpdateBean) {
-            MaterialDialog.Builder(this).title("更新(${data.versionName})")
-                    .content(data.desc)
-                    .neutralText("下次更新")
+        if (data is Pair<*, *> && data.first is UpdateBean) {
+            val bean = data.first as UpdateBean
+            if (viewContext.packageInfo?.versionCode ?: -1 < bean.versionCode) {
+                MaterialDialog.Builder(this).title("更新(${bean.versionName})")
+                        .content(bean.desc)
+                        .neutralText("下次更新")
+                        .neutralColor(R.color.secondText)
+                        .positiveText("更新")
+                        .onPositive { _, _ ->
+                            browse(bean.url)
+                        }
+                        .dismissListener {
+                            showNotice(data.second)
+                        }
+                        .show()
+            } else {
+                showNotice(data.second)
+            }
+        }
+
+    }
+
+    fun showNotice(notice: Any?) {
+        if (notice != null && notice is NoticeBean && !TextUtils.isEmpty(notice.content) && sharfp.getInt(NoticeIgnoreID, -1) < notice.id) {
+            MaterialDialog.Builder(this).title("公告")
+                    .content(notice.content!!)
+                    .neutralText("忽略该提示")
                     .neutralColor(R.color.secondText)
-                    .positiveText("更新")
-                    .onPositive { _, _ ->
-                       browse(data.url)
+                    .onNeutral { _, _ ->
+                        sharfp.edit().putInt(NoticeIgnoreID, notice.id).apply()
                     }
+                    .positiveText("知道了")
                     .show()
         }
     }
 
     companion object {
+        const val NoticeIgnoreID = "notice_ignore_id"
         fun start(current: Activity) {
             current.startActivity(Intent(current, MainActivity::class.java))
         }

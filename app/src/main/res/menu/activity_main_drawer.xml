@@ -47,7 +47,7 @@
         <item
             android:id="@+id/movie_uncensored_actress"
             android:icon="@drawable/ic_insert_emoticon_black_24dp"
-            android:title="無有碼女優"/>
+            android:title="無碼女優"/>
     </group>
 
     <group

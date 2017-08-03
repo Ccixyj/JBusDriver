@@ -1,6 +1,8 @@
 package me.jbusdriver.ui.activity
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.util.ArrayMap
@@ -119,7 +121,11 @@ class SplashActivity : BaseActivity() {
                 KLog.i("map urls $this")
             }
         }.toObservable()
-
     }
 
+    companion object {
+        fun start(context: Context) {
+            context.startActivity(Intent(context, SplashActivity::class.java))
+        }
+    }
 }
