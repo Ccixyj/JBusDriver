@@ -152,7 +152,7 @@ object CollectManager {
     /*===========删除收藏=============*/
     fun removeCollect(act: ActressInfo): Boolean {
         actress_data.let {
-            val res = it.remove(act)
+            val res = it.remove(act) || (it.find { it.link.urlPath == act.link.urlPath }?.let { da -> it.remove(da) } ?: false)
             if (res) collectCache?.put(Actress_Key, AppContext.gson.toJson(it))
             return res
         }
@@ -160,7 +160,7 @@ object CollectManager {
 
     fun removeCollect(movie: Movie): Boolean {
         movie_data.let {
-            val res = it.remove(movie)
+            val res = it.remove(movie)  || (it.find { it.code == movie.code  }?.let { da -> it.remove(da) } ?: false)
             if (res) collectCache?.put(Movie_Key, AppContext.gson.toJson(it))
             return res
         }

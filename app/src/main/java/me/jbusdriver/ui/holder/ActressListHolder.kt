@@ -41,12 +41,12 @@ class ActressListHolder(context: Context) : BaseHolder(context) {
             it.inflate(R.layout.layout_detail_actress).apply {
                 rv_recycle_actress.layoutManager = LinearLayoutManager(it, LinearLayoutManager.HORIZONTAL, false)
                 rv_recycle_actress.adapter = actressAdapter
-                actressAdapter.setOnItemClickListener { adapter, _, position ->
+                actressAdapter.setOnItemClickListener { _, _, position ->
                     actressAdapter.data.getOrNull(position)?.let {
                         item ->
                         KLog.d("item : $it")
                         weakRef.get()?.let {
-                            MovieListActivity.start(it,  item)
+                            MovieListActivity.start(it, item)
                         }
                     }
                 }
