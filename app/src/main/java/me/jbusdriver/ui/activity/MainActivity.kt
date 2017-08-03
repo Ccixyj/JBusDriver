@@ -101,9 +101,10 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
         } else {
-            super.onBackPressed()
             if (!BuildConfig.DEBUG) {
                 moveTaskToBack(false)
+            } else {
+                super.onBackPressed()
             }
         }
     }

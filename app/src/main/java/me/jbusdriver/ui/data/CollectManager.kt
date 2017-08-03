@@ -145,7 +145,7 @@ object CollectManager {
     }
 
     /*===========是否收藏了=============*/
-    fun has(act: ActressInfo): Boolean = actress_data.any { it.link == act.link }
+    fun has(act: ActressInfo): Boolean = actress_data.any { it.link.urlPath == act.link.urlPath }
 
     fun has(movie: Movie): Boolean = movie_data.any { it.code == movie.code }
 
