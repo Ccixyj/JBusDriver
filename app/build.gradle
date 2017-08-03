@@ -50,6 +50,10 @@ android {
             }
 
         }
+
+        debug {
+            signingConfig signingConfigs.release
+        }
     }
     productFlavors {
         gayhub {
