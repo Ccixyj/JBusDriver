@@ -6,11 +6,15 @@
     "https://www.javbus.us"
   ],
   "update": {
-    "versionCode": 10,
-    "versionName": "1.0.0",
-    "url": "https://github.com/Ccixyj/JBusDriver/raw/master/api/JubsDriver_v1.0.0build97.apk",
+    "versionCode": 89,
+    "versionName": "1.0.1",
+    "url": "https://github.com/Ccixyj/JBusDriver/raw/master/api/JubsDriver_v1.0.1build113.apk",
     "desc": "澳门首家赌场上线啦!!(雾
-JBusDriver正式版上线啦!!"
+JBusDriver 1.0.1 更新啦!
+1.删除多余菜单
+2.收藏电影,演员的图片链接失效问题
+3.其他功能性修复
+其他问题可以发issues"
   },
   "notice": {
     "id": 0,
