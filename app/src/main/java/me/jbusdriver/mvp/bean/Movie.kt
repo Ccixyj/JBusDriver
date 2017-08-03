@@ -32,14 +32,14 @@ data class Movie(
                 Movie(
                         type = type,
                         title = element.select("img").attr("title"),
-                        imageUrl = element.select("img").attr("src").apply {
-                            if (index == 0)  JAVBusService.defaultImageUrlHost = this.urlHost //设置一次
-                        },
+                        imageUrl = element.select("img").attr("src"),
                         code = element.select("date").first().text(),
                         date = element.select("date").getOrNull(1)?.text() ?: "",
                         detailUrl = element.attr("href"),
                         tags = element.select(".item-tag").firstOrNull()?.children()?.map { it.text() } ?: emptyList()
                 )
+            }.apply {
+                JAVBusService.defaultImageUrlHost = this.firstOrNull()?.imageUrl?.urlHost ?: ""
             }
         }
     }

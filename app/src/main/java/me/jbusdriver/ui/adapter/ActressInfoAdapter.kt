@@ -21,14 +21,16 @@ import java.util.*
 /**
  * Created by Administrator on 2017/7/17.
  */
-class ActressInfoAdapter(val rxManager:CompositeDisposable) : BaseQuickAdapter<ActressInfo, BaseViewHolder>(R.layout.layout_actress_item) {
+class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseQuickAdapter<ActressInfo, BaseViewHolder>(R.layout.layout_actress_item) {
     val random = Random()
     private fun randomNum(number: Int): Int {
         return Math.abs(random.nextInt() % number)
     }
+
     override fun convert(holder: BaseViewHolder, item: ActressInfo) {
         KLog.d("ActressInfo :$item")
-        Glide.with(holder.itemView.context).load(item.avatar).asBitmap().into(object : BitmapImageViewTarget(holder.getView(R.id.iv_actress_avatar)) {
+        Glide.with(holder.itemView.context).load(item.avatar).asBitmap()
+                .error(R.drawable.ic_nowprinting).into(object : BitmapImageViewTarget(holder.getView(R.id.iv_actress_avatar)) {
             override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
                 resource?.let {
                     Flowable.just(it).map {
@@ -54,7 +56,7 @@ class ActressInfoAdapter(val rxManager:CompositeDisposable) : BaseQuickAdapter<A
         //加载名字
         holder.setText(R.id.tv_actress_name, item.name)
 
-        holder .setText(R.id.tv_actress_tag,item.tag)
+        holder.setText(R.id.tv_actress_tag, item.tag)
         holder.setVisible(R.id.tv_actress_tag, !TextUtils.isEmpty(item.tag))
     }
 }

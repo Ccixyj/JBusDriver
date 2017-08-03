@@ -33,6 +33,6 @@ interface JAVBusService {
 
         private fun createService(url: String) = NetClient.getRetrofit(if (!url.endsWith("/")) "$url/" else url).create(JAVBusService::class.java)
 
-        var defaultImageUrlHost = "https://www.javbus3.com"
+        var defaultImageUrlHost  = ""
     }
 }

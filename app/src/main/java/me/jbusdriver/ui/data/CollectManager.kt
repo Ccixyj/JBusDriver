@@ -2,6 +2,7 @@ package me.jbusdriver.ui.data
 
 import android.os.Environment
 import android.os.StatFs
+import android.text.TextUtils
 import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.ActressInfo
@@ -86,7 +87,7 @@ object CollectManager {
 
     private fun checkActressUrls(data: MutableList<ActressInfo>): MutableList<ActressInfo> {
         val linkChange = data.any { it.link.urlHost != host }
-        val imageChange = data.any { it.avatar.urlHost != imageHost }
+        val imageChange = !TextUtils.isEmpty(imageHost) && data.any { it.avatar.urlHost != imageHost && !it.avatar.endsWith("nowprinting.gif") }
         return if (linkChange || imageChange) {
             val new = data.mapTo(ArrayList(data.size)) {
                 it.copy(link = if (linkChange) it.link.replace(it.link.urlHost, host) else it.link, avatar = if (imageChange) it.avatar.replace(it.avatar.urlHost, imageHost) else it.avatar)
@@ -108,7 +109,7 @@ object CollectManager {
 
     private fun checkMovieUrls(data: MutableList<Movie>): MutableList<Movie> {
         val detailChange = data.any { it.detailUrl.urlHost != host }
-        val imageChange = data.any { it.imageUrl.urlHost != imageHost }
+        val imageChange = !TextUtils.isEmpty(imageHost) && data.any { it.imageUrl.urlHost != imageHost }
 
         return if (detailChange || imageChange) {
             val new = data.mapTo(ArrayList(data.size)) {
@@ -134,7 +135,7 @@ object CollectManager {
 
     fun addToCollect(movie: Movie): Boolean {
         return movie_data.let {
-            if (it.any {  it.code == movie.code }) {
+            if (it.any { it.code == movie.code }) {
                 AppContext.instace.toast("${movie.title}已收藏")
                 return false
             }
@@ -160,7 +161,7 @@ object CollectManager {
 
     fun removeCollect(movie: Movie): Boolean {
         movie_data.let {
-            val res = it.remove(movie)  || (it.find { it.code == movie.code  }?.let { da -> it.remove(da) } ?: false)
+            val res = it.remove(movie) || (it.find { it.code == movie.code }?.let { da -> it.remove(da) } ?: false)
             if (res) collectCache?.put(Movie_Key, AppContext.gson.toJson(it))
             return res
         }
