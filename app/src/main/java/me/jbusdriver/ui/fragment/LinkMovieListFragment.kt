@@ -21,7 +21,7 @@ import me.jbusdriver.ui.activity.SearchResultActivity
  * ilink 界面解析
  */
 class LinkMovieListFragment : MovieListFragment(), LinkListContract.LinkListView {
-    val link by lazy { arguments.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ") }
+    private val link by lazy { arguments.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ") }
     private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }
 
     private val attrViews by lazy { mutableListOf<View>() }
