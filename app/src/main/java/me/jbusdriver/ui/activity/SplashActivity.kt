@@ -106,6 +106,12 @@ class SplashActivity : BaseActivity() {
                             urls.put(DataSourceType.XYZ_GENRE.key, "$it/${DataSourceType.XYZ_GENRE.key.split("/").last()}")
                         }
                         urls.put(DataSourceType.CENSORED.key, it.first)
+
+                        //change xyz
+                        urls[DataSourceType.XYZ_ACTRESSES.key] =  urls[DataSourceType.XYZ_ACTRESSES.key]?.replace("org" ,"xyz")
+                        urls[DataSourceType.XYZ.key] =  urls[DataSourceType.XYZ.key]?.replace("org" ,"xyz")
+                        urls[DataSourceType.XYZ_GENRE.key] =  urls[DataSourceType.XYZ_GENRE.key]?.replace("org" ,"xyz")
+
                         KLog.i("urls : ${it.first} , all urls : $urls , at last $ds")
 
                         CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to urls, C.Cache.DAY * 2) //缓存所有的urls
