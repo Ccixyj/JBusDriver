@@ -179,6 +179,12 @@ val String.urlHost: String
         "${it.scheme}://${it.host}"
     }
 
+val String.urlPath: String
+    inline get() = Uri.parse(this).let {
+        checkNotNull(it)
+        it.path
+    }
+
 val Context.packageInfo: PackageInfo?
     get() = try {
         AppContext.instace.packageManager.getPackageInfo(
