@@ -16,6 +16,7 @@ object CollectManager {
     private const val Actress_Key = "Actress_Key"
     private const val Movie_Key = "Movie_Key"
     private val host: String by lazy { JAVBusService.defaultFastUrl }
+    private val imageHost: String by lazy { JAVBusService.defaultImageUrlHost }
     private val collectCache by lazy {
         val cacheDir = if (Environment.isExternalStorageEmulated()) File((Environment.getExternalStorageDirectory().absolutePath + File.separator + AppContext.instace.packageName + File.separator + "collect")) else (AppContext.instace.externalCacheDir ?: AppContext.instace.cacheDir)
         ACache.get(cacheDir)
@@ -32,9 +33,11 @@ object CollectManager {
     }
 
     private fun checkActressUrls(data: MutableList<ActressInfo>): MutableList<ActressInfo> {
-        return if (data.any { it.link.urlHost != host }) {
+        val linkChange = data.any { it.link.urlHost != host }
+        val imageChange = data.any { it.avatar.urlHost != imageHost }
+        return if (linkChange || imageChange) {
             val new = data.mapTo(ArrayList(data.size)) {
-                it.copy(link = it.link.replace(it.link.urlHost, host))
+                it.copy(link = if (linkChange) it.link.replace(it.link.urlHost, host) else it.link, avatar = if (imageChange) it.avatar.replace(it.avatar.urlHost, imageHost) else it.avatar)
             }
             collectCache.put(Actress_Key, AppContext.gson.toJson(new))
             new
@@ -52,14 +55,18 @@ object CollectManager {
     }
 
     private fun checkMovieUrls(data: MutableList<Movie>): MutableList<Movie> {
-        return if (data.any { it.detailUrl.urlHost != host }) {
+        val detailChange = data.any { it.detailUrl.urlHost != host }
+        val imageChange = data.any { it.imageUrl.urlHost != imageHost }
+
+        return if (detailChange || imageChange) {
             val new = data.mapTo(ArrayList(data.size)) {
-                it.copy(detailUrl = it.detailUrl.replace(it.detailUrl.urlHost, host))
+                it.copy(detailUrl = if (detailChange) it.detailUrl.replace(it.detailUrl.urlHost, host) else it.detailUrl, imageUrl = if (imageChange) it.imageUrl.replace(it.imageUrl.urlHost, imageHost) else it.imageUrl)
             }
             collectCache.put(Movie_Key, AppContext.gson.toJson(new))
             new
         } else data
     }
+
     /*===========添加收藏=============*/
     fun addToCollect(actressInfo: ActressInfo): Boolean {
         return actress_data.let {
@@ -84,8 +91,10 @@ object CollectManager {
             true
         }
     }
+
     /*===========是否收藏了=============*/
     fun has(act: ActressInfo): Boolean = actress_data.any { it.link == act.link }
+
     fun has(movie: Movie): Boolean = movie_data.any { it.code == movie.code }
 
     /*===========删除收藏=============*/

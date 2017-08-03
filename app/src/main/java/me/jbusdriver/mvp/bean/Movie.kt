@@ -2,6 +2,8 @@ package me.jbusdriver.mvp.bean
 
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import me.jbusdriver.common.KLog
+import me.jbusdriver.common.urlHost
+import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.nodes.Document
 import java.io.Serializable
@@ -23,13 +25,16 @@ data class Movie(
     override fun getItemType(): Int = type.ordinal
 
     companion object {
+        //图片url host 设置
         fun loadFromDoc(type: DataSourceType, str: Document): List<Movie> {
-            return str.select(".movie-box").map { element ->
+            return str.select(".movie-box").mapIndexed { index, element ->
                 KLog.d(element)
                 Movie(
                         type = type,
                         title = element.select("img").attr("title"),
-                        imageUrl = element.select("img").attr("src"),
+                        imageUrl = element.select("img").attr("src").apply {
+                            if (index == 0)  JAVBusService.defaultImageUrlHost = this.urlHost //设置一次
+                        },
                         code = element.select("date").first().text(),
                         date = element.select("date").getOrNull(1)?.text() ?: "",
                         detailUrl = element.attr("href"),
