@@ -15,13 +15,6 @@ import java.io.File
  */
 object CollectManager {
 
-    init {
-        val pathSuffix = File.separator + "collect"
-        KLog.i(AppContext.instace.externalCacheDir.absolutePath + pathSuffix)
-        KLog.i(AppContext.instace.cacheDir.absolutePath + pathSuffix)
-        KLog.i(getAvailableExternalMemorySize().formatFileSize())
-    }
-
     private const val Actress_Key = "Actress_Key"
     private const val Movie_Key = "Movie_Key"
     private val host: String by lazy { JAVBusService.defaultFastUrl }
@@ -76,14 +69,7 @@ object CollectManager {
         }
     }
 
-    val actress_data: MutableList<ActressInfo> by lazy {
-        collectCache?.getAsString(Actress_Key)?.let {
-            AppContext.gson.fromJson<MutableList<ActressInfo>>(it)?.let {
-                checkActressUrls(it)
-            }
-        } ?: mutableListOf()
-
-    }
+    val actress_data: MutableList<ActressInfo> by lazy { mutableListOf<ActressInfo>() }
 
     private fun checkActressUrls(data: MutableList<ActressInfo>): MutableList<ActressInfo> {
         val linkChange = data.any { it.link.urlHost != host }
@@ -98,14 +84,7 @@ object CollectManager {
     }
 
 
-    val movie_data: MutableList<Movie> by lazy {
-        collectCache?.getAsString(Movie_Key)?.let {
-            AppContext.gson.fromJson<MutableList<Movie>>(it)?.let {
-                checkMovieUrls(it)
-            }
-        } ?: mutableListOf()
-
-    }
+    val movie_data: MutableList<Movie> by lazy { mutableListOf<Movie>() }
 
     private fun checkMovieUrls(data: MutableList<Movie>): MutableList<Movie> {
         val detailChange = data.any { it.detailUrl.urlHost != host }
@@ -168,5 +147,22 @@ object CollectManager {
     }
 
 
-    /* ========  =========== */
+    /* ======== refresh  =========== */
+    fun refreshActress() {
+        actress_data.clear()
+        actress_data.addAll(collectCache?.getAsString(Actress_Key)?.let {
+            AppContext.gson.fromJson<MutableList<ActressInfo>>(it)?.let {
+                checkActressUrls(it)
+            }
+        } ?: mutableListOf())
+    }
+
+    fun refreshMovie() {
+        movie_data.clear()
+        movie_data.addAll(collectCache?.getAsString(Movie_Key)?.let {
+            AppContext.gson.fromJson<MutableList<Movie>>(it)?.let {
+                checkMovieUrls(it)
+            }
+        } ?: mutableListOf())
+    }
 }
