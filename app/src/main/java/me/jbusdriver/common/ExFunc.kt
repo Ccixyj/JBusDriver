@@ -171,16 +171,17 @@ fun Context.paste(): String? {
 }
 
 
+private val urlCache by lazy { mutableMapOf<String, Uri>() }
+
 //string url -> get url host
 val String.urlHost: String
-    inline get() = Uri.parse(this).let {
+    get() = (urlCache[this] ?: Uri.parse(this).apply { urlCache[this@urlHost] = this }).let {
         checkNotNull(it)
-        KLog.d("uri : ${it.scheme} : ${it.host} : ${it.path}")
         "${it.scheme}://${it.host}"
     }
 
 val String.urlPath: String
-    inline get() = Uri.parse(this).let {
+    get() = (urlCache[this] ?: Uri.parse(this).apply { urlCache[this@urlPath] = this }).let {
         checkNotNull(it)
         it.path
     }
@@ -194,7 +195,7 @@ val Context.packageInfo: PackageInfo?
         null
     }
 
-fun Context.browse(url:String){
+fun Context.browse(url: String) {
     startActivity(Intent().apply {
         this.action = "android.intent.action.VIEW"
         this.data = Uri.parse(url)

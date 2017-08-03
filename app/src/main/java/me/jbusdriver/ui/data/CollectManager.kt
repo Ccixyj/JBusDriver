@@ -122,7 +122,7 @@ object CollectManager {
     /*===========添加收藏=============*/
     fun addToCollect(actressInfo: ActressInfo): Boolean {
         return actress_data.let {
-            if (it.any { it == actressInfo }) {
+            if (it.any { it.link.urlPath == actressInfo.link.urlPath }) {
                 AppContext.instace.toast("${actressInfo.name}已收藏")
                 return false
             }
@@ -134,7 +134,7 @@ object CollectManager {
 
     fun addToCollect(movie: Movie): Boolean {
         return movie_data.let {
-            if (it.any { it == movie }) {
+            if (it.any {  it.code == movie.code }) {
                 AppContext.instace.toast("${movie.title}已收藏")
                 return false
             }
@@ -165,4 +165,7 @@ object CollectManager {
             return res
         }
     }
+
+
+    /* ========  =========== */
 }

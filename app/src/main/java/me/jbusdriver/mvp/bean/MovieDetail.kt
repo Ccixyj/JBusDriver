@@ -115,6 +115,7 @@ data class ActressInfo(val name: String, val avatar: String, override val link: 
             } ?: emptyList()
         }
     }
+
 }
 
 data class Magnet(val name: String, val size: String, val date: String, override val link: String, val tag: List<String> = listOf()) : ILink
