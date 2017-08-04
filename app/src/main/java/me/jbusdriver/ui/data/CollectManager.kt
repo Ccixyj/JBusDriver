@@ -3,6 +3,7 @@ package me.jbusdriver.ui.data
 import android.os.Environment
 import android.os.StatFs
 import android.text.TextUtils
+import com.umeng.analytics.MobclickAgent
 import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.ActressInfo
@@ -20,44 +21,47 @@ object CollectManager {
     private val host: String by lazy { JAVBusService.defaultFastUrl }
     private val imageHost: String by lazy { JAVBusService.defaultImageUrlHost }
     private val collectCache by lazy {
-        val pathSuffix = File.separator + "collect"
-        var isSdCard = false
-        val collectDir =
-                if (Environment.isExternalStorageEmulated()) {
-                    isSdCard = true
-                    Environment.getExternalStorageDirectory().absolutePath + File.separator + AppContext.instace.packageName + pathSuffix
-                } else {
-                    (AppContext.instace.externalCacheDir.absolutePath ?: AppContext.instace.cacheDir.absolutePath) + pathSuffix
-                }
         try {
-            val target = File(collectDir)
+            val pathSuffix = File.separator + "collect" + File.separator
+            val dir: String = createDir(Environment.getExternalStorageDirectory().absolutePath + File.separator + AppContext.instace.packageName + pathSuffix)
+                    ?: createDir(AppContext.instace.filesDir.absolutePath + pathSuffix)
+                    ?: error("cant not create collect dir in anywhere")
+
             //可能存在旧的,复制到新的目录下去并删除
-            ACache.get(target).apply {
-                if (isSdCard) {
-                    if ((target.list()?.size ?: -1) > 0) return@apply
+            ACache.get(File(dir).apply {
+                if (dir.contains(Environment.getExternalStorageDirectory().absolutePath)) {
+                    if ((this.list()?.size ?: -1) > 0) return@apply
                     if (getAvailableExternalMemorySize() < MB * 100) {
                         AppContext.instace.toast("sd卡可用空间不足100M")
                     }
-                    val fileOld = File(AppContext.instace.cacheDir.absolutePath + pathSuffix)
-                    val fileOld2 = File(AppContext.instace.externalCacheDir.absolutePath + pathSuffix)
+                    val fileOld = File(AppContext.instace.filesDir.absolutePath + pathSuffix)
                     if (fileOld.exists() && (fileOld.list()?.size ?: -1) > 0) {
-                        fileOld.copyRecursively(target)
+                        fileOld.copyRecursively(this)
                         fileOld.deleteRecursively()
-                    } else if (fileOld2.exists() && (fileOld2.list()?.size ?: -1) > 0) {
-                        fileOld2.copyRecursively(target)
-                        fileOld2.deleteRecursively()
                     }
                 }
-            }
 
+            })
         } catch(e: Exception) {
+            MobclickAgent.reportError(AppContext.instace, e)
             AppContext.instace.toast("收藏目录创建失败,请检查app是否有sd卡操作权限")
-            ACache.get(AppContext.instace.cacheDir)
             null
         }
     }
 
-    fun getAvailableExternalMemorySize(): Long {
+    private fun createDir(collectDir: String): String? {
+        File(collectDir.trim()).let {
+            try {
+                if (!it.exists()) it.mkdirs()
+            } catch(e: Exception) {
+                MobclickAgent.reportError(AppContext.instace, e)
+            }
+        }
+        return collectDir
+    }
+
+
+    private fun getAvailableExternalMemorySize(): Long {
         if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
             val path = Environment.getExternalStorageDirectory()//获取SDCard根目录
             val stat = StatFs(path.path)
