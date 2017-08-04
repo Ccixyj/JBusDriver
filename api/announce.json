@@ -6,15 +6,14 @@
     "https://www.javbus.us"
   ],
   "update": {
-    "versionCode": 89,
-    "versionName": "1.0.1",
-    "url": "http://git.oschina.net/751762476/jbusfile/raw/master/JubsDriver_v1.0.1build113.apk",
-    "desc": "澳门首家赌场上线啦!!(雾
-JBusDriver 1.0.1 更新啦!
-1.删除多余菜单
-2.收藏电影,演员的图片链接失效问题
-3.其他功能性修复
-其他问题可以发issues"
+    "versionCode": 106,
+    "versionName": "1.0.2",
+    "url": "http://git.oschina.net/751762476/jbusfile/raw/master/JubsDriver_v1.0.2build131.apk",
+    "desc": "JBusDriver 1.0.2 更新啦!
+1.欧美区资源修复
+2.修复可能存在的缓存导致的崩溃
+3.关键字搜索时再次搜索,演员无法更新的bug
+老司机们有问题可以上github提issues"
   },
   "notice": {
     "id": 0,
