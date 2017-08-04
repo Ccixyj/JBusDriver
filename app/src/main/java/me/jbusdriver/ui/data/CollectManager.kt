@@ -73,32 +73,37 @@ object CollectManager {
         }
     }
 
-    val actress_data: MutableList<ActressInfo> by lazy { mutableListOf<ActressInfo>() }
+    val actress_data: MutableList<ActressInfo> by lazy { refreshActress() }
 
     private fun checkActressUrls(data: MutableList<ActressInfo>): MutableList<ActressInfo> {
+        if (host.endsWith(".xyz")) return data
         val linkChange = data.any { it.link.urlHost != host }
         val imageChange = !TextUtils.isEmpty(imageHost) && data.any { it.avatar.urlHost != imageHost && !it.avatar.endsWith("nowprinting.gif") }
         return if (linkChange || imageChange) {
             val new = data.mapTo(ArrayList(data.size)) {
-                it.copy(link = if (linkChange) it.link.replace(it.link.urlHost, host) else it.link, avatar = if (imageChange) it.avatar.replace(it.avatar.urlHost, imageHost) else it.avatar)
+                if (it.link.urlHost.endsWith(".xyz")) it //排除xyz
+                else it.copy(link = if (linkChange) it.link.replace(it.link.urlHost, host) else it.link, avatar = if (imageChange) it.avatar.replace(it.avatar.urlHost, imageHost) else it.avatar)
+
             }
-            collectCache?.put(Actress_Key, AppContext.gson.toJson(new))
+
             new
         } else data
     }
 
 
-    val movie_data: MutableList<Movie> by lazy { mutableListOf<Movie>() }
+    val movie_data: MutableList<Movie> by lazy { refreshMovie() }
 
     private fun checkMovieUrls(data: MutableList<Movie>): MutableList<Movie> {
+        if (host.endsWith(".xyz")) return data
         val detailChange = data.any { it.detailUrl.urlHost != host }
         val imageChange = !TextUtils.isEmpty(imageHost) && data.any { it.imageUrl.urlHost != imageHost }
 
         return if (detailChange || imageChange) {
             val new = data.mapTo(ArrayList(data.size)) {
-                it.copy(detailUrl = if (detailChange) it.detailUrl.replace(it.detailUrl.urlHost, host) else it.detailUrl, imageUrl = if (imageChange) it.imageUrl.replace(it.imageUrl.urlHost, imageHost) else it.imageUrl)
+                if (it.detailUrl.urlHost.endsWith(".xyz")) it
+                else it.copy(detailUrl = if (detailChange) it.detailUrl.replace(it.detailUrl.urlHost, host) else it.detailUrl, imageUrl = if (imageChange) it.imageUrl.replace(it.imageUrl.urlHost, imageHost) else it.imageUrl)
             }
-            collectCache?.put(Movie_Key, AppContext.gson.toJson(new))
+            //  collectCache?.put(Movie_Key, AppContext.gson.toJson(new))
             new
         } else data
     }
@@ -111,7 +116,7 @@ object CollectManager {
                 return false
             }
             it.add(0, actressInfo)
-            collectCache?.put(Actress_Key, AppContext.gson.toJson(it))
+            saveActress()
             true
         }
     }
@@ -123,7 +128,7 @@ object CollectManager {
                 return false
             }
             it.add(0, movie)
-            collectCache?.put(Movie_Key, AppContext.gson.toJson(it))
+            saveMovie()
             true
         }
     }
@@ -137,7 +142,7 @@ object CollectManager {
     fun removeCollect(act: ActressInfo): Boolean {
         actress_data.let {
             val res = it.remove(act) || (it.find { it.link.urlPath == act.link.urlPath }?.let { da -> it.remove(da) } ?: false)
-            if (res) collectCache?.put(Actress_Key, AppContext.gson.toJson(it))
+            if (res) saveActress()
             return res
         }
     }
@@ -145,28 +150,29 @@ object CollectManager {
     fun removeCollect(movie: Movie): Boolean {
         movie_data.let {
             val res = it.remove(movie) || (it.find { it.code == movie.code }?.let { da -> it.remove(da) } ?: false)
-            if (res) collectCache?.put(Movie_Key, AppContext.gson.toJson(it))
+            if (res) saveMovie()
             return res
         }
     }
 
 
     /* ======== refresh  =========== */
-    fun refreshActress() {
-        actress_data.clear()
-        actress_data.addAll(collectCache?.getAsString(Actress_Key)?.let {
-            AppContext.gson.fromJson<MutableList<ActressInfo>>(it)?.let {
-                checkActressUrls(it)
-            }
-        } ?: mutableListOf())
-    }
+    fun refreshActress() = collectCache?.getAsString(Actress_Key)?.let {
+        AppContext.gson.fromJson<MutableList<ActressInfo>>(it)?.let {
+            checkActressUrls(it)
+        }
+    } ?: mutableListOf()
 
-    fun refreshMovie() {
-        movie_data.clear()
-        movie_data.addAll(collectCache?.getAsString(Movie_Key)?.let {
-            AppContext.gson.fromJson<MutableList<Movie>>(it)?.let {
-                checkMovieUrls(it)
-            }
-        } ?: mutableListOf())
-    }
+    fun refreshMovie() = collectCache?.getAsString(Movie_Key)?.let {
+        AppContext.gson.fromJson<MutableList<Movie>>(it)?.let {
+            checkMovieUrls(it)
+        }
+    } ?: mutableListOf()
+
+
+    /* ======== save  =========== */
+    fun saveActress() = collectCache?.put(Actress_Key, AppContext.gson.toJson(actress_data))
+
+    fun saveMovie() = collectCache?.put(Movie_Key, AppContext.gson.toJson(movie_data))
+
 }

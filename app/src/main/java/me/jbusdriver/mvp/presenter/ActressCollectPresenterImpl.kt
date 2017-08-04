@@ -6,9 +6,6 @@ import me.jbusdriver.ui.data.CollectManager
 
 class ActressCollectPresenterImpl : BaseAbsCollectPresenter<ActressCollectContract.ActressCollectView, ActressInfo>(), ActressCollectContract.ActressCollectPresenter {
 
-    override fun getData() = let {
-        CollectManager.refreshActress()
-        CollectManager.actress_data
-    }
+    override fun getData() =   CollectManager.actress_data
 
 }

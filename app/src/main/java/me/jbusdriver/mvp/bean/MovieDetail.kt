@@ -125,7 +125,6 @@ data class ActressAttrs(val title: String, val imageUrl: String, val info: List<
 
 
 fun MovieDetail.checkUrl(host: String): MovieDetail {
-
     val nHeader = if (this.headers.any { it.link.urlHost != host }) {
         headers.map {
             it.copy(link = it.link.replace(it.link.urlHost, host))

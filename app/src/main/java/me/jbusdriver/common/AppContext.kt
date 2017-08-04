@@ -26,7 +26,6 @@ class AppContext : Application() {
 
     }
 
-
     companion object {
         @JvmStatic lateinit var instace: AppContext
         @JvmStatic val gson = GsonBuilder().registerTypeAdapter(Int::class.java, JsonDeserializer<Int> { json, _, _ ->

@@ -7,6 +7,7 @@ import me.jbusdriver.common.KLog
 import me.jbusdriver.common.SchedulersCompat
 import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.mvp.model.BaseModel
+import me.jbusdriver.ui.data.CollectManager
 import org.jsoup.nodes.Document
 
 /**
@@ -53,5 +54,11 @@ abstract class BaseAbsCollectPresenter<V:BaseView.BaseListWithRefreshView,T> : A
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+
+    override fun onPresenterDestroyed() {
+        super.onPresenterDestroyed()
+        CollectManager.saveActress()
+        CollectManager.saveMovie()
+    }
 
 }

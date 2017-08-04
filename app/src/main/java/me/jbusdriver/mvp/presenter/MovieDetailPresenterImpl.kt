@@ -13,6 +13,7 @@ import me.jbusdriver.mvp.bean.checkUrl
 import me.jbusdriver.mvp.bean.detailSaveKey
 import me.jbusdriver.mvp.model.AbstractBaseModel
 import me.jbusdriver.mvp.model.BaseModel
+import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
@@ -33,7 +34,7 @@ class MovieDetailPresenterImpl : BasePresenterImpl<MovieDetailContract.MovieDeta
                 view ->
                 CacheLoader.acache.getAsString(view.movie.detailSaveKey)?.let {
                     val old = AppContext.gson.fromJson<MovieDetail>(it)
-                    if (old != null) {
+                    if (old != null && mView?.movie?.type != DataSourceType.XYZ) {
                         val new = old.checkUrl(JAVBusService.defaultFastUrl)
                         if (old != new) CacheLoader.cacheDisk(view.movie.detailSaveKey to new)
                         new

@@ -39,7 +39,11 @@ data class Movie(
                         tags = element.select(".item-tag").firstOrNull()?.children()?.map { it.text() } ?: emptyList()
                 )
             }.apply {
-                JAVBusService.defaultImageUrlHost = this.firstOrNull()?.imageUrl?.urlHost ?: ""
+                val host = this.firstOrNull()?.imageUrl?.urlHost ?: ""
+                if (host.isNotBlank() && !host.endsWith(".xyz")) {
+                    JAVBusService.defaultImageUrlHost = host
+                }
+
             }
         }
     }

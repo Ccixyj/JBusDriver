@@ -10,10 +10,7 @@ class MovieCollectPresenterImpl : BaseAbsCollectPresenter<LinkListContract.LinkL
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getData() = let {
-        CollectManager.refreshMovie()
-        CollectManager.movie_data
-    }
+    override fun getData() =  CollectManager.movie_data
 
     override fun lazyLoad() {
       onFirstLoad()
