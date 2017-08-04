@@ -6,7 +6,7 @@
         android:icon="@drawable/ic_search_black_24dp"
         android:imeOptions="actionSearch"
         android:inputType="textCapWords"
-        android:orderInCategory="99"
+        android:orderInCategory="1"
         android:title="搜索"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="ifRoom" />

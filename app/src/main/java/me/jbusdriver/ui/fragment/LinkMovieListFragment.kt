@@ -1,6 +1,9 @@
 package me.jbusdriver.ui.fragment
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import com.bumptech.glide.Glide
@@ -15,6 +18,7 @@ import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.presenter.LinkAbsPresenterImpl
 import me.jbusdriver.mvp.presenter.MovieLinkPresenterImpl
 import me.jbusdriver.ui.activity.SearchResultActivity
+import me.jbusdriver.ui.data.CollectManager
 
 
 /**
@@ -25,6 +29,53 @@ class LinkMovieListFragment : MovieListFragment(), LinkListContract.LinkListView
     private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }
 
     private val attrViews by lazy { mutableListOf<View>() }
+
+
+    private var collectMenu: MenuItem? = null
+    private var removeCollectMenu: MenuItem? = null
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        super.onCreateOptionsMenu(menu, inflater)
+        if (link is ActressInfo) {
+            val isCollect = CollectManager.has(link as ActressInfo)
+            collectMenu = menu?.add(Menu.NONE, R.id.action_add_movie_collect, 10, "收藏")?.apply {
+                setIcon(R.drawable.ic_star_border_white_24dp)
+                setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                isVisible = !isCollect
+            }
+            removeCollectMenu = menu?.add(Menu.NONE, R.id.action_remove_movie_collect, 10, "取消收藏")?.apply {
+                setIcon(R.drawable.ic_star_white_24dp)
+                setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                isVisible = isCollect
+            }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val actress = link as?  ActressInfo
+        if (actress != null) {
+            val id = item.itemId
+            when (id) {
+                R.id.action_add_movie_collect -> {
+                    //收藏
+                    KLog.d("收藏")
+                    if (CollectManager.addToCollect(actress)) {
+                        collectMenu?.isVisible = false
+                        removeCollectMenu?.isVisible = true
+                    }
+                }
+                R.id.action_remove_movie_collect -> {
+                    //取消收藏
+                    KLog.d("取消收藏")
+                    if (CollectManager.removeCollect(actress)) {
+                        collectMenu?.isVisible = true
+                        removeCollectMenu?.isVisible = false
+                    }
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 
     override fun initData() {
         if (isSearch) {
