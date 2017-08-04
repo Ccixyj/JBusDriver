@@ -64,6 +64,20 @@ class ActressListFragment : LinkListFragment<ActressInfo>() {
         menu?.findItem(R.id.action_show_all)?.isVisible = false
     }
 
+
+    override fun gotoSearchResult(query: String) {
+        (mBasePresenter as?  LinkAbsPresenterImpl<*>)?.let {
+            if (isSearch) {
+//                it.linkData.query = query
+//                it.onRefresh()
+                viewContext.toast(query)
+                RxBus.post(SearchWord(query))
+            } else {
+                super.gotoSearchResult(query)
+            }
+        }
+    }
+
     companion object {
         fun newInstance(link: ILink) = ActressListFragment().apply {
             arguments = Bundle().apply {
