@@ -51,8 +51,8 @@ class ImageSampleHolder(context: Context): BaseHolder(context) {
                 holder.getView<ImageView>(R.id.iv_movie_thumb)?.let {
                     Glide.with(this).load(item.thumb)
                             .fitCenter()
-                            .placeholder(R.drawable.ic_laughing_man)
-                            .error(R.drawable.ic_laughing_man)
+                            .placeholder(R.drawable.ic_child_care_black_24dp)
+                            .error(R.drawable.ic_child_care_black_24dp)
                             .into(GlideDrawableImageViewTarget(it))
 
                 }

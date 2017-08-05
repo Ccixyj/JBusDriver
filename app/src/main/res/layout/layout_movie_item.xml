@@ -7,12 +7,12 @@
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/material_120dp">
 
         <ImageView
             android:id="@+id/iv_movie_img"
             android:layout_width="@dimen/material_88dp"
-            android:layout_height="@dimen/material_108dp"
+            android:layout_height="match_parent"
             android:layout_margin="@dimen/material_8dp"
              />
 
@@ -46,7 +46,6 @@
                 android:layout_toStartOf="@+id/tv_movie_date"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:paddingBottom="8dp"
                 android:textSize="12sp"
                 tools:text="abc123" />
 
@@ -59,7 +58,6 @@
                 android:layout_alignParentRight="true"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:paddingBottom="@dimen/material_8dp"
                 android:textSize="@dimen/material_12sp"
                 tools:text="2015/01/01" />
 

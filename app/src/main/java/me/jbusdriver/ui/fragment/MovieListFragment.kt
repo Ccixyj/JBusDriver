@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
@@ -31,8 +32,8 @@ abstract class MovieListFragment : LinkListFragment<Movie>() {
                     .setText(R.id.tv_movie_date, item.date)
                     .setText(R.id.tv_movie_code, item.code)
 
-            Glide.with(this@MovieListFragment).load(item.imageUrl).placeholder(R.drawable.ic_laughing_man)
-                    .error(R.drawable.ic_laughing_man).centerCrop().into(holder.getView(R.id.iv_movie_img))
+            Glide.with(this@MovieListFragment).load(item.imageUrl).placeholder(R.drawable.ic_place_holder)
+                    .error(R.drawable.ic_place_holder).centerCrop().into(GlideDrawableImageViewTarget(holder.getView(R.id.iv_movie_img)))
 
 
             with(holder.getView<LinearLayout>(R.id.ll_movie_hot)) {
