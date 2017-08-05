@@ -8,13 +8,11 @@
   "update": {
     "versionCode": 106,
     "versionName": "1.0.2",
-    "url": "http://git.oschina.net/751762476/jbusfile/raw/master/JubsDriver_v1.0.2build131.apk",
-    "desc": "JBusDriver 1.0.2 更新啦!
-1.欧美区资源修复
-2.修复可能存在的缓存导致的崩溃
-3.关键字搜索时再次搜索,演员无法更新的bug
-
-老司机们有问题可以上github提issues"
+    "url": "http://git.oschina.net/751762476/jbusfile/raw/master/JubsDriver_v1.0.3build137.apk",
+    "desc": "JBusDriver 1.0.3 已更新!
+1.修改应用图标,应该不会变了
+2.其他小bug修复
+这个版本应该是1.1版本之前的最后一个版本了"
   },
   "notice": {
     "id": 0,
