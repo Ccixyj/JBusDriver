@@ -12,7 +12,7 @@ enum class DataSourceType(val key: String, val prefix: String = "/") {
     UNCENSORED_GENRE("無碼類別"), //无码类别
     UNCENSORED_ACTRESSES("無碼女優"), //无码女优
 
-    XYZ("歐美", "page/"), //欧美
+    XYZ("歐美", "/page/"), //欧美
     XYZ_GENRE("xyz/genre"), //欧美类别
     XYZ_ACTRESSES("xyz/actresses"),
 
