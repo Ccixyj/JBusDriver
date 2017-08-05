@@ -115,6 +115,7 @@ object CollectManager {
                 AppContext.instace.toast("${actressInfo.name}已收藏")
                 return false
             }
+            actressInfo.tag = null
             it.add(0, actressInfo)
             saveActress()
             true

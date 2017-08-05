@@ -4,7 +4,7 @@
         <color android:color="@color/colorPrimary" />
     </item>
     <item
-        android:drawable="@drawable/ic_child_care_black_24dp"
+        android:drawable="@drawable/ic_laughing_man"
         android:gravity="center"
         />
 </layer-list>

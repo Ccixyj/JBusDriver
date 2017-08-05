@@ -99,7 +99,7 @@ interface IAttr
 
 data class Header(val name: String, val value: String, override val link: String) : ILink
 data class Genre(val name: String, override val link: String) : ILink
-data class ActressInfo(val name: String, val avatar: String, override val link: String, val tag: String? = null) : ILink {
+data class ActressInfo(val name: String, val avatar: String, override val link: String, var tag: String? = null) : ILink {
     companion object {
         fun parseActressAttrs(doc: Document): ActressAttrs {
             val frame = doc.select(".avatar-box")
