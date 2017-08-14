@@ -6,13 +6,12 @@
     "https://www.javbus.us"
   ],
   "update": {
-    "versionCode": 112,
-    "versionName": "1.0.3",
-    "url": "http://git.oschina.net/751762476/jbusfile/raw/master/JubsDriver_v1.0.3build137.apk",
-    "desc": "JBusDriver 1.0.3 已更新!
-1.修改应用图标,应该不会变了
-2.其他小bug修复
-这个版本应该是1.1版本之前的最后一个版本了"
+    "versionCode": 116,
+    "versionName": "1.0.4",
+    "url": "http://git.oschina.net/751762476/jbusfile/raw/master/JubsDriver_v1.0.4build141.apk",
+    "desc": "JBusDriver 1.0.4 已更新!
+1.修复加载占位图导致的图片显示问题
+"
   },
   "notice": {
     "id": 0,
