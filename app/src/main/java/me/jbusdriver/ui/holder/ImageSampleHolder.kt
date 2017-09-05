@@ -14,6 +14,7 @@ import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_image_samples.view.*
 import me.jbusdriver.common.dpToPx
 import me.jbusdriver.common.inflate
+import me.jbusdriver.common.toGlideUrl
 import me.jbusdriver.mvp.bean.ImageSample
 import me.jbusdriver.ui.activity.WatchLargeImageActivity
 import me.jbusdriver.ui.data.GridSpacingItemDecoration
@@ -49,7 +50,7 @@ class ImageSampleHolder(context: Context): BaseHolder(context) {
         override fun convert(holder: BaseViewHolder, item: ImageSample) {
             weakRef.get()?.apply {
                 holder.getView<ImageView>(R.id.iv_movie_thumb)?.let {
-                    Glide.with(this).load(item.thumb)
+                    Glide.with(this).load(item.thumb.toGlideUrl)
                             .fitCenter()
                             .placeholder(R.drawable.ic_child_care_black_24dp)
                             .error(R.drawable.ic_child_care_black_24dp)

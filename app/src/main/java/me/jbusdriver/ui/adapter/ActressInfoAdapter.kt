@@ -15,6 +15,7 @@ import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.SchedulersCompat
 import me.jbusdriver.common.SimpleSubscriber
+import me.jbusdriver.common.toGlideUrl
 import me.jbusdriver.mvp.bean.ActressInfo
 import java.util.*
 
@@ -29,7 +30,7 @@ class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseQuickAdapter<
 
     override fun convert(holder: BaseViewHolder, item: ActressInfo) {
         KLog.d("ActressInfo :$item")
-        Glide.with(holder.itemView.context).load(item.avatar).asBitmap()
+        Glide.with(holder.itemView.context).load(item.avatar.toGlideUrl).asBitmap()
                 .error(R.drawable.ic_nowprinting).into(object : BitmapImageViewTarget(holder.getView(R.id.iv_actress_avatar)) {
             override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
                 resource?.let {

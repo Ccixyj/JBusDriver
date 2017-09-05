@@ -11,6 +11,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.dpToPx
+import me.jbusdriver.common.toGlideUrl
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.ui.activity.MovieDetailActivity
 
@@ -32,7 +33,7 @@ abstract class MovieListFragment : LinkListFragment<Movie>() {
                     .setText(R.id.tv_movie_date, item.date)
                     .setText(R.id.tv_movie_code, item.code)
 
-            Glide.with(this@MovieListFragment).load(item.imageUrl).placeholder(R.drawable.ic_place_holder)
+            Glide.with(this@MovieListFragment).load(item.imageUrl.toGlideUrl).placeholder(R.drawable.ic_place_holder)
                     .error(R.drawable.ic_place_holder).centerCrop().into(GlideDrawableImageViewTarget(holder.getView(R.id.iv_movie_img)))
 
 

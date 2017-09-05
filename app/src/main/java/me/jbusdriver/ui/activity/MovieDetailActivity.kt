@@ -179,7 +179,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             KLog.d("date : $data")
             //cover fixme
             iv_movie_cover.setOnClickListener { WatchLargeImageActivity.startShow(this, listOf(data.cover)) }
-            Glide.with(this).load(data.cover).thumbnail(0.1f).into(GlideDrawableImageViewTarget(iv_movie_cover))
+            Glide.with(this).load(data.cover.toGlideUrl).thumbnail(0.1f).into(GlideDrawableImageViewTarget(iv_movie_cover))
             //animation
             ll_movie_detail.y = ll_movie_detail.y + 120
             ll_movie_detail.alpha = 0f

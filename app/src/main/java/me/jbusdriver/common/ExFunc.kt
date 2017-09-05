@@ -105,7 +105,8 @@ fun Context.inflate(layoutResId: Int, parent: ViewGroup? = null, attachToRoot: B
         inflateView(this, layoutResId, parent, attachToRoot)
 
 /*gson*/
-inline @Nullable fun <reified T> Gson.fromJson(json: String) = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
+inline @Nullable
+fun <reified T> Gson.fromJson(json: String) = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
 //inline fun <reified T> Gson.fromJson(json: JsonElement) = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
 //inline fun <reified T> Gson.fromJson(json: Reader) = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
 //inline fun <reified T> Gson.fromJson(json: JsonReader) = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
@@ -185,6 +186,11 @@ val String.urlPath: String
         checkNotNull(it)
         it.path
     }
+
+
+/*glide : url ->? custome glideurl */
+val String.toGlideUrl: GlideNoHost
+    inline get() = GlideNoHost(this)
 
 val Context.packageInfo: PackageInfo?
     get() = try {

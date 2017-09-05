@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.activity_watch_large_image.*
 import me.jbusdriver.common.BaseActivity
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.inflate
+import me.jbusdriver.common.toGlideUrl
 import me.jbusdriver.ui.widget.ImageGestureListener
 import me.jbusdriver.ui.widget.MultiTouchZoomableImageView
 import java.lang.Exception
@@ -87,7 +88,7 @@ class WatchLargeImageActivity : BaseActivity() {
             }
             KLog.d("load $position for ${vp_largeImage.currentItem} offset = $offset : $priority")
 
-            Glide.with(this@WatchLargeImageActivity).load(urls[position])
+            Glide.with(this@WatchLargeImageActivity).load(urls[position].toGlideUrl)
                     .asBitmap()
                     .crossFade()
                     .error(R.drawable.ic_image_broken)
