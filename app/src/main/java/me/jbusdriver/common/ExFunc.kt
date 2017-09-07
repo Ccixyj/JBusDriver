@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageInfo
 import android.net.Uri
 import android.support.v4.util.ArrayMap
+import android.text.format.Formatter
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +20,6 @@ import com.orhanobut.logger.Logger
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.annotations.Nullable
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 
@@ -27,49 +27,13 @@ import java.util.concurrent.TimeUnit
  * Created by Administrator on 2017/4/8.
  */
 typealias  KLog = Logger
-enum class SizeUnit {
-    Byte,
-    KB,
-    MB,
-    GB,
-    TB,
-    Auto
-}
-
 const val KB = 1024.0
 const val MB = KB * 1024
 const val GB = MB * 1024
 const val TB = GB * 1024
 
-fun Long.formatFileSize(unit: SizeUnit = SizeUnit.Auto): String {
-    if (this < 0) {
-        return "未知大小"
-    }
-    var measureType = unit
 
-    if (unit == SizeUnit.Auto) {
-        measureType = if (this < KB) {
-            SizeUnit.Byte
-        } else if (this < MB) {
-            SizeUnit.KB
-        } else if (this < GB) {
-            SizeUnit.MB
-        } else if (this < TB) {
-            SizeUnit.GB
-        } else {
-            SizeUnit.TB
-        }
-    }
-
-    when (measureType) {
-        SizeUnit.Byte -> return this.toString() + "B"
-        SizeUnit.KB -> return String.format(Locale.US, "%.2fKB", this / KB)
-        SizeUnit.MB -> return String.format(Locale.US, "%.2fMB", this / MB)
-        SizeUnit.GB -> return String.format(Locale.US, "%.2fGB", this / GB)
-        SizeUnit.TB -> return String.format(Locale.US, "%.2fPB", this / TB)
-        else -> return this.toString() + "B"
-    }
-}
+fun Long.formatFileSize(): String  =  Formatter.formatFileSize(AppContext.instace, this)
 
 /*array map*/
 

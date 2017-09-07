@@ -1,17 +1,31 @@
 package com.cfzx.utils
 
+import android.app.Activity
+import android.app.ActivityManager
 import android.support.v4.util.LruCache
+import com.umeng.analytics.MobclickAgent
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.common.*
 import java.util.concurrent.TimeUnit
 
+
 object CacheLoader {
     private val TAG = "CacheLoader"
 
     private fun initMemCache(): LruCache<String, String> {
-        val maxMemory = Runtime.getRuntime().maxMemory().toInt()
-        val cacheSize = if (maxMemory / 8 > 4 * 1024 * 1024) 4 * 1024 * 1024 else maxMemory
+        val memoryInfo = ActivityManager.MemoryInfo()
+        val myActivityManager = AppContext.instace.getSystemService(Activity.ACTIVITY_SERVICE) as ActivityManager
+        //获得系统可用内存，保存在MemoryInfo对象上
+        myActivityManager.getMemoryInfo(memoryInfo)
+        val memSize = memoryInfo.availMem.formatFileSize()
+        KLog.t(TAG).d("memoryInfo -> $memoryInfo")
+        KLog.t(TAG).d("max availMem = $memSize")
+        if (memoryInfo.lowMemory) {
+            MobclickAgent.reportError(AppContext.instace, "可能的内存不足")
+            AppContext.instace.toast("当前可用内存:$memSize,请注意释放内存")
+        }
+        val cacheSize = if (memoryInfo.availMem   > 32 * 1024 * 1024) 4 * 1024 * 1024 else 2 * 1024 * 1024
         KLog.t(TAG).d("max cacheSize = ${cacheSize.toLong().formatFileSize()}")
         return object : LruCache<String, String>(cacheSize) { //4m
             override fun entryRemoved(evicted: Boolean, key: String?, oldValue: String?, newValue: String?) {
@@ -28,12 +42,14 @@ object CacheLoader {
         }
     }
 
-    @JvmStatic val lru: LruCache<String, String> by lazy {
+    @JvmStatic
+    val lru: LruCache<String, String> by lazy {
         initMemCache()
     }
 
 
-    @JvmStatic val acache: ACache  by lazy {
+    @JvmStatic
+    val acache: ACache  by lazy {
         ACache.get(AppContext.instace)
     }
 
@@ -83,8 +99,7 @@ object CacheLoader {
      */
     fun removeCacheLike(vararg keys: String, isRegex: Boolean = false) {
         Schedulers.computation().createWorker().schedule {
-            lru.snapshot().keys.let {
-                cacheCopyKeys ->
+            lru.snapshot().keys.let { cacheCopyKeys ->
                 keys.forEach { removeKey ->
                     val filterAction: (String) -> Boolean = { s -> if (isRegex) s.contains(removeKey.toRegex()) else s.contains(removeKey) }
                     cacheCopyKeys.filter(filterAction).forEach {

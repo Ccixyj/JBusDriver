@@ -42,7 +42,7 @@ object CollectManager {
                 }
 
             })
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             MobclickAgent.reportError(AppContext.instace, e)
             AppContext.instace.toast("收藏目录创建失败,请检查app是否有sd卡操作权限")
             null
@@ -53,7 +53,7 @@ object CollectManager {
         File(collectDir.trim()).let {
             try {
                 if (!it.exists()) it.mkdirs()
-            } catch(e: Exception) {
+            } catch (e: Exception) {
                 MobclickAgent.reportError(AppContext.instace, e)
             }
         }
