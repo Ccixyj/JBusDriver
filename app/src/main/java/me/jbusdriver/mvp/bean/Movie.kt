@@ -1,5 +1,6 @@
 package me.jbusdriver.mvp.bean
 
+import android.text.TextUtils
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.urlHost
@@ -22,7 +23,7 @@ data class Movie(
 
 ) : MultiItemEntity, Serializable {
 
-    override fun getItemType(): Int = type.ordinal
+    override fun getItemType(): Int = if (isValid) -1 else 0
 
     companion object {
         //图片url host 设置
@@ -52,3 +53,5 @@ data class Movie(
 val Movie.detailSaveKey
     inline get() = code + "_" + date
 
+val Movie.isValid
+    inline get() = TextUtils.isEmpty(code) && TextUtils.isEmpty(detailUrl)

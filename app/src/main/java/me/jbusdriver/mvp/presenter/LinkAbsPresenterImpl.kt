@@ -16,7 +16,7 @@ import org.jsoup.nodes.Document
  */
 abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoadMorePresenterImpl<LinkListContract.LinkListView,T>(), LinkListContract.LinkListPresenter {
 
-    private var IsAll = false
+    protected var IsAll = false
 
     override fun loadAll(iaAll: Boolean) {
         IsAll = iaAll

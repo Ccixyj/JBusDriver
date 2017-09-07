@@ -5,8 +5,7 @@ import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
 import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
-import me.jbusdriver.mvp.LinkListContract
-import me.jbusdriver.mvp.LinkListContract.LinkListView
+import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.model.AbstractBaseModel
 import me.jbusdriver.mvp.model.BaseModel
@@ -14,9 +13,8 @@ import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
-open class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<LinkListView, Movie>(), LinkListContract.LinkListPresenter {
+open class MovieListPresenterImpl(val link: ILink)  :LinkAbsPresenterImpl<Movie>(link){
 
-    private var IsAll = false
     private val urls by lazy { CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) } ?: arrayMapof() }
     private val saveKey: String
         inline get() = "${mView?.type?.key ?: DataSourceType.CENSORED.key}$IsAll"
@@ -55,12 +53,4 @@ open class MovieListPresenterImpl : AbstractRefreshLoadMorePresenterImpl<LinkLis
         super.onRefresh()
     }
 
-    override fun loadAll(iaAll: Boolean) {
-        IsAll = iaAll
-        loadData4Page(1)
-    }
-
-    override fun lazyLoad() {
-        onFirstLoad()
-    }
 }
