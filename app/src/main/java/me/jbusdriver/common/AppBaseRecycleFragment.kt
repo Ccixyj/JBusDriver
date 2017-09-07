@@ -94,9 +94,7 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
 
 
     override fun resetList() {
-        adapter.getData().clear()
-        adapter.loadMoreComplete()
-        adapter.notifyDataSetChanged()
+        adapter.setNewData(null)
     }
 
     override fun showError(e: Throwable?) {
