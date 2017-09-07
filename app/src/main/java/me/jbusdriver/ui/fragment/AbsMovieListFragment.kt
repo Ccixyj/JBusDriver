@@ -14,23 +14,23 @@ import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.dpToPx
 import me.jbusdriver.common.toGlideUrl
 import me.jbusdriver.mvp.bean.Movie
-import me.jbusdriver.mvp.bean.isValid
+import me.jbusdriver.mvp.bean.isInValid
 import me.jbusdriver.ui.activity.MovieDetailActivity
 
-abstract class MovieListFragment : LinkListFragment<Movie>() {
+abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
 
     override val adapter: BaseQuickAdapter<Movie, in BaseViewHolder> = object : BaseMultiItemQuickAdapter<Movie, BaseViewHolder>(null) {
 
         init {
             addItemType(-1, R.layout.layout_pager_section_item)
-            addItemType(0, R.layout.layout_movie_item)
+            addItemType(0, R.layout.layout_page_line_movie_item)
         }
 
-        val padding by lazy { this@MovieListFragment.viewContext.dpToPx(8f) }
+        val padding by lazy { this@AbsMovieListFragment.viewContext.dpToPx(8f) }
         val colors = listOf(0xff2195f3.toInt(), 0xff4caf50.toInt(), 0xffff0030.toInt()) //蓝,绿,红
 
         val lp by lazy {
-            LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, this@MovieListFragment.viewContext.dpToPx(24f)).apply {
+            LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, this@AbsMovieListFragment.viewContext.dpToPx(24f)).apply {
                 leftMargin = padding
                 gravity = Gravity.CENTER_VERTICAL
             }
@@ -39,7 +39,7 @@ abstract class MovieListFragment : LinkListFragment<Movie>() {
         override fun convert(holder: BaseViewHolder, item: Movie) {
             when (item.itemType) {
                 -1 -> {
-
+                    holder.setText(R.id.tv_page_num, item.title)
                 }
 
                 0 -> {
@@ -47,7 +47,7 @@ abstract class MovieListFragment : LinkListFragment<Movie>() {
                             .setText(R.id.tv_movie_date, item.date)
                             .setText(R.id.tv_movie_code, item.code)
 
-                    Glide.with(this@MovieListFragment).load(item.imageUrl.toGlideUrl).placeholder(R.drawable.ic_place_holder)
+                    Glide.with(this@AbsMovieListFragment).load(item.imageUrl.toGlideUrl).placeholder(R.drawable.ic_place_holder)
                             .error(R.drawable.ic_place_holder).centerCrop().into(GlideDrawableImageViewTarget(holder.getView(R.id.iv_movie_img)))
 
 
@@ -71,7 +71,7 @@ abstract class MovieListFragment : LinkListFragment<Movie>() {
     }.apply {
         setOnItemClickListener { adapter, _, position ->
             (adapter.data.getOrNull(position) as? Movie)?.let {
-                if (it.isValid) {
+                if (!it.isInValid) {
                     MovieDetailActivity.start(activity, it)
                 }
             }

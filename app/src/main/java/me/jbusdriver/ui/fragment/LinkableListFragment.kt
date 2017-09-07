@@ -21,7 +21,7 @@ import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.data.DataSourceType
 
-abstract class LinkListFragment<T> : AppBaseRecycleFragment<LinkListContract.LinkListPresenter, LinkListContract.LinkListView, T>(), LinkListContract.LinkListView {
+abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract.LinkListPresenter, LinkListContract.LinkListView, T>(), LinkListContract.LinkListView {
 
     override val layoutId: Int = R.layout.layout_swipe_recycle
 

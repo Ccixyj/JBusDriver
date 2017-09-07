@@ -23,7 +23,7 @@ class SearchResultPagesFragment : TabViewPagerFragment<MineCollectContract.MineC
             if (it == SearchType.ACTRESS ){
                 ActressListFragment.newInstance(SearchLink(it,searchWord))
             }else{
-                LinkMovieListFragment.newInstance(SearchLink(it,searchWord))
+                LinkedMovieListFragment.newInstance(SearchLink(it,searchWord))
             }
         }
     }

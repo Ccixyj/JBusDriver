@@ -12,7 +12,7 @@ import me.jbusdriver.ui.data.CollectManager
 /**
  * Created by Administrator on 2017/7/17 0017.
  */
-class MovieCollectFragment : MovieListFragment(), LinkListContract.LinkListView {
+class MovieCollectFragment : AbsMovieListFragment(), LinkListContract.LinkListView {
 
     override fun createPresenter() = MovieCollectPresenterImpl()
 

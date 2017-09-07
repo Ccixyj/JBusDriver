@@ -23,7 +23,7 @@ data class Movie(
 
 ) : MultiItemEntity, Serializable {
 
-    override fun getItemType(): Int = if (isValid) -1 else 0
+    override fun getItemType(): Int = if (isInValid) -1 else 0
 
     companion object {
         //图片url host 设置
@@ -47,11 +47,13 @@ data class Movie(
 
             }
         }
+
+        fun newPageMovie(page: Int, type: DataSourceType = DataSourceType.CENSORED) = Movie(type, page.toString(), "", "", "", "")
     }
 }
 
 val Movie.detailSaveKey
     inline get() = code + "_" + date
 
-val Movie.isValid
+val Movie.isInValid
     inline get() = TextUtils.isEmpty(code) && TextUtils.isEmpty(detailUrl)

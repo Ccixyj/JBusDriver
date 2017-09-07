@@ -24,7 +24,7 @@ import me.jbusdriver.ui.data.CollectManager
 /**
  * ilink 界面解析
  */
-class LinkMovieListFragment : MovieListFragment(), LinkListContract.LinkListView {
+class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkListView {
     private val link by lazy { arguments.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ") }
     private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }
 
@@ -123,7 +123,7 @@ class LinkMovieListFragment : MovieListFragment(), LinkListContract.LinkListView
             is ActressAttrs -> {
                 this.viewContext.inflate(R.layout.layout_actress_attr).apply {
                     //img
-                    Glide.with(this@LinkMovieListFragment).load(data.imageUrl.toGlideUrl).into(GlideDrawableImageViewTarget(this.iv_actress_avatar))
+                    Glide.with(this@LinkedMovieListFragment).load(data.imageUrl.toGlideUrl).into(GlideDrawableImageViewTarget(this.iv_actress_avatar))
                     //title
                     this.ll_attr_container.addView(generateTextView().apply {
                         textSize = 16f
@@ -149,7 +149,7 @@ class LinkMovieListFragment : MovieListFragment(), LinkListContract.LinkListView
     /*================================================*/
 
     companion object {
-        fun newInstance(link: ILink, cancelLazyLoad: Boolean? = null) = LinkMovieListFragment().apply {
+        fun newInstance(link: ILink, cancelLazyLoad: Boolean? = null) = LinkedMovieListFragment().apply {
             if (true == cancelLazyLoad) userVisibleHint = true
             arguments = Bundle().apply {
                 putSerializable(C.BundleKey.Key_1, link)

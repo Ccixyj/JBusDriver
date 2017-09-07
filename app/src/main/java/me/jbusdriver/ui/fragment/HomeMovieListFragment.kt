@@ -3,15 +3,18 @@ package me.jbusdriver.ui.fragment
 import android.os.Bundle
 import me.jbusdriver.common.C
 import me.jbusdriver.mvp.LinkListContract
-import me.jbusdriver.mvp.presenter.MovieListPresenterImpl
+import me.jbusdriver.mvp.bean.ILink
+import me.jbusdriver.mvp.presenter.HomeMovieListPresenterImpl
 import me.jbusdriver.ui.data.DataSourceType
 
 
 /**
  * Created by Administraor on 2017/4/9.
  */
-class HomeMovieListFragment : MovieListFragment(), LinkListContract.LinkListView {
-    override fun createPresenter() = MovieListPresenterImpl()
+class HomeMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkListView {
+    override fun createPresenter() = HomeMovieListPresenterImpl(type, object : ILink {
+        override val link: String = ""
+    })
 
     /*================================================*/
     companion object {

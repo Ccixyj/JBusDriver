@@ -25,7 +25,7 @@ import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.adapter.ActressInfoAdapter
 import me.jbusdriver.ui.data.DataSourceType
 
-class ActressListFragment : LinkListFragment<ActressInfo>() {
+class ActressListFragment : LinkableListFragment<ActressInfo>() {
     private val link by lazy { arguments.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ") }
     private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }
 

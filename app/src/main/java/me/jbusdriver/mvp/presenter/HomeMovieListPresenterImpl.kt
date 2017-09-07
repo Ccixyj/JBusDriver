@@ -13,20 +13,16 @@ import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
-open class MovieListPresenterImpl(val link: ILink)  :LinkAbsPresenterImpl<Movie>(link){
+open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink) : LinkAbsPresenterImpl<Movie>(link) {
 
     private val urls by lazy { CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) } ?: arrayMapof() }
     private val saveKey: String
-        inline get() = "${mView?.type?.key ?: DataSourceType.CENSORED.key}$IsAll"
+        inline get() = "${type.key}$IsAll"
     private val service by lazy {
-        mView?.let {
-            JAVBusService.getInstance(urls[it.type.key] ?: JAVBusService.defaultFastUrl).apply { JAVBusService.INSTANCE = this }
-        } ?: JAVBusService.INSTANCE
+        JAVBusService.getInstance(urls[type.key] ?: JAVBusService.defaultFastUrl).apply { JAVBusService.INSTANCE = this }
     }
     private val loadFromNet = { page: Int ->
-        val type = mView?.type ?: DataSourceType.CENSORED
-        val urlN = (urls.get(type.key) ?: "").let {
-            url ->
+        val urlN = (urls.get(type.key) ?: "").let { url ->
             return@let if (page == 1) url else "$url${type.prefix}$page"
         }
         KLog.i("load url :$urlN")
@@ -40,13 +36,12 @@ open class MovieListPresenterImpl(val link: ILink)  :LinkAbsPresenterImpl<Movie>
     }
 
     override val model: BaseModel<Int, Document> = object : AbstractBaseModel<Int, Document>(loadFromNet) {
-        override fun requestFromCache(t: Int): Flowable<Document> {
-            return Flowable.concat(CacheLoader.justLru(saveKey).map { Jsoup.parse(it) }, requestFor(t)).firstOrError().toFlowable()
-        }
+        override fun requestFromCache(t: Int): Flowable<Document> =
+                Flowable.concat(CacheLoader.justLru(saveKey).map { Jsoup.parse(it) }, requestFor(t)).firstOrError().toFlowable()
     }
 
 
-    override fun stringMap(str: Document) = Movie.loadFromDoc(mView?.type ?: DataSourceType.CENSORED, str)
+    override fun stringMap(str: Document) = listOf(Movie.newPageMovie(pageInfo.activePage, type)) + Movie.loadFromDoc(mView?.type ?: DataSourceType.CENSORED, str)
 
     override fun onRefresh() {
         CacheLoader.removeCacheLike(saveKey, isRegex = false)

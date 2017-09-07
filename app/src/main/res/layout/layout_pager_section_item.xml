@@ -1,23 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="40dp"
-    android:background="#18cccccc"
-    android:orientation="vertical">
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="@dimen/material_2dp"
+            android:layout_height="@dimen/material_4dp"
+            android:layout_marginLeft="@dimen/material_6dp"
+            android:layout_marginRight="@dimen/material_6dp"
+            android:background="#80cccccc" />
+        <Space
+            android:layout_width="@dimen/material_0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+        <View
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/shape_circle" />
+        <Space
+            android:layout_width="@dimen/material_0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+        <View
+            android:layout_width="@dimen/material_2dp"
+            android:layout_height="@dimen/material_4dp"
+            android:layout_marginLeft="@dimen/material_6dp"
+            android:layout_marginRight="@dimen/material_6dp"
+            android:background="#80cccccc" />
+    </LinearLayout>
 
     <TextView
+        android:id="@+id/tv_page_num"
         style="@android:style/TextAppearance.DeviceDefault.Small"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/material_8dp"
         android:gravity="center_vertical"
+        android:paddingLeft="@dimen/material_20dp"
         android:text="First Page"
-        android:textColor="@color/secondText"
-        />
-
-    <View
-        android:layout_width="4dp"
-        android:layout_height="match_parent"
-        android:background="@color/colorPrimary" />
-
-</FrameLayout>
+        android:textColor="@color/secondText" />
+</LinearLayout>

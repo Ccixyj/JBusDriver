@@ -14,7 +14,7 @@ import me.jbusdriver.mvp.bean.Genre
 import me.jbusdriver.mvp.bean.Header
 import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.presenter.MovieParsePresenterImpl
-import me.jbusdriver.ui.fragment.LinkMovieListFragment
+import me.jbusdriver.ui.fragment.LinkedMovieListFragment
 
 class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter, MovieParseContract.MovieParseView>(), MovieParseContract.MovieParseView {
 
@@ -28,7 +28,7 @@ class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setToolBar()
-        supportFragmentManager.beginTransaction().replace(R.id.fl_container, LinkMovieListFragment.newInstance(linkData, true))
+        supportFragmentManager.beginTransaction().replace(R.id.fl_container, LinkedMovieListFragment.newInstance(linkData, true))
                 .commitAllowingStateLoss()
     }
 
