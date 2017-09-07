@@ -54,10 +54,9 @@ class WatchLargeImageActivity : BaseActivity() {
         private const val INDEX = "currentIndex"
         @JvmStatic
         fun startShow(context: Context, urls: List<String>, index: Int = -1) {
-            val intent = Intent()
+            val intent = Intent(context, WatchLargeImageActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             intent.putStringArrayListExtra(INTENT_IMAGE_URL, ArrayList(urls))
-            intent.setClass(context, WatchLargeImageActivity::class.java)
             intent.putExtra(INDEX, index)
             context.startActivity(intent)
         }

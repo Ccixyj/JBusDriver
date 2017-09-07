@@ -178,7 +178,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             //Slide Up Animation
             KLog.d("date : $data")
             //cover fixme
-            iv_movie_cover.setOnClickListener { WatchLargeImageActivity.startShow(this, listOf(data.cover)) }
+            iv_movie_cover.setOnClickListener { WatchLargeImageActivity.startShow(this, listOf(data.cover) + data.imageSamples.map { it.image }) }
             Glide.with(this).load(data.cover.toGlideUrl).thumbnail(0.1f).into(GlideDrawableImageViewTarget(iv_movie_cover))
             //animation
             ll_movie_detail.y = ll_movie_detail.y + 120
@@ -216,8 +216,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         @JavascriptInterface
         open fun getContent(htmlContent: String) {
             //save disk for ever
-            Jsoup.parse(htmlContent).select("#magnet-table").first()?.let {
-                table ->
+            Jsoup.parse(htmlContent).select("#magnet-table").first()?.let { table ->
                 KLog.i("magnetKey :$magnetKey ,table : $table")
                 CacheLoader.cacheDisk(magnetKey to table.toString(), ACache.TIME_DAY)
                 mBasePresenter?.loadMagnets(table)
