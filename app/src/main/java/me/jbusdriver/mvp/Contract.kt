@@ -20,9 +20,10 @@ interface MainContract {
 interface LinkListContract {
     interface LinkListView : BaseView.BaseListWithRefreshView {
         val type: DataSourceType
+        val pageMode: Boolean
     }
 
-    interface LinkListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<LinkListView> , BasePresenter.LazyLoaderPresenter{
+    interface LinkListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<LinkListView>, BasePresenter.LazyLoaderPresenter {
         fun loadAll(iaAll: Boolean)
     }
 }
@@ -47,32 +48,34 @@ interface MovieParseContract {
 
 }
 
-interface MineCollectContract{
+interface MineCollectContract {
     interface MineCollectView : BaseView
     interface MineCollectPresenter : BasePresenter<MineCollectView>
 }
 
-interface MovieCollectContract{
+interface MovieCollectContract {
     interface MovieCollectView : BaseView
     interface MovieCollectPresenter : BasePresenter<MovieCollectView>
 }
 
-interface ActressCollectContract{
-    interface ActressCollectView :  BaseView.BaseListWithRefreshView
+interface ActressCollectContract {
+    interface ActressCollectView : BaseView.BaseListWithRefreshView
     interface ActressCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<ActressCollectView>
 }
 
 interface GenrePageContract {
-    interface GenrePageView :  BaseView {
-        val titleValues : MutableList<String>
-        val fragmentValues : MutableList<List<Genre>>
+    interface GenrePageView : BaseView {
+        val titleValues: MutableList<String>
+        val fragmentValues: MutableList<List<Genre>>
     }
-    interface GenrePagePresenter : BasePresenter<GenrePageView> , BasePresenter.LazyLoaderPresenter
+
+    interface GenrePagePresenter : BasePresenter<GenrePageView>, BasePresenter.LazyLoaderPresenter
 }
 
-interface GenreListContract{
-    interface GenreListView :  BaseView.BaseListWithRefreshView{
-        val data :List<Genre>
+interface GenreListContract {
+    interface GenreListView : BaseView.BaseListWithRefreshView {
+        val data: List<Genre>
     }
+
     interface GenreListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<GenreListView>
 }

@@ -6,6 +6,7 @@
 
 
     <View
+        android:id="@+id/v_line"
         android:layout_marginLeft="@dimen/material_6dp"
         android:layout_marginRight="@dimen/material_6dp"
         android:layout_width="@dimen/material_2dp"

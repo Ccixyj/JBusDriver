@@ -68,6 +68,7 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
     override fun showContents(datas: List<*>?) {
         KLog.d("showContents :$datas")
         adapter.addData(datas as MutableList<M>)
+        //Diffutils
     }
 
     override fun loadMoreComplete() {

@@ -55,5 +55,5 @@ data class Movie(
 val Movie.detailSaveKey
     inline get() = code + "_" + date
 
-val Movie.isInValid
+private val Movie.isInValid
     inline get() = TextUtils.isEmpty(code) && TextUtils.isEmpty(detailUrl)

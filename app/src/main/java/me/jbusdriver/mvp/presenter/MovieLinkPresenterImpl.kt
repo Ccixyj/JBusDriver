@@ -21,7 +21,14 @@ class MovieLinkPresenterImpl(val link: ILink) : LinkAbsPresenterImpl<Movie>(link
                 mView?.showContent(it)
             }
         }
-        return listOf(Movie.newPageMovie(pageInfo.activePage, mView?.type ?: DataSourceType.CENSORED)) + Movie.loadFromDoc(mView?.type ?: DataSourceType.CENSORED, str)
+        return Movie.loadFromDoc(mView?.type ?: DataSourceType.CENSORED, str).let {
+            if (mView?.pageMode == false) {
+                it
+            } else {
+                dataPageCache.put(pageInfo.activePage, it)
+                listOf(Movie.newPageMovie(pageInfo.activePage, mView?.type ?: DataSourceType.CENSORED)) + it
+            }
+        }
     }
 
     private fun parse(link: ILink, doc: Document): IAttr? {

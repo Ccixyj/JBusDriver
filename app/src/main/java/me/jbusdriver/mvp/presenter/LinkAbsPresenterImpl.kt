@@ -17,6 +17,7 @@ import org.jsoup.nodes.Document
 abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoadMorePresenterImpl<LinkListContract.LinkListView,T>(), LinkListContract.LinkListPresenter {
 
     protected var IsAll = false
+    protected val dataPageCache  by lazy { sortedMapOf<Int,List<T>>() }
 
     override fun loadAll(iaAll: Boolean) {
         IsAll = iaAll

@@ -78,6 +78,9 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
         }
     }
 
+    override val pageMode: Boolean = false
+
+
     companion object {
         fun newInstance(link: ILink) = ActressListFragment().apply {
             arguments = Bundle().apply {

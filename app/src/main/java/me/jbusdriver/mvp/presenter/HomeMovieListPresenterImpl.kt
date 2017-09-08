@@ -41,7 +41,15 @@ open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink)
     }
 
 
-    override fun stringMap(str: Document) = listOf(Movie.newPageMovie(pageInfo.activePage, type)) + Movie.loadFromDoc(mView?.type ?: DataSourceType.CENSORED, str)
+    override fun stringMap(str: Document) = Movie.loadFromDoc(mView?.type ?: DataSourceType.CENSORED, str).let {
+        if (mView?.pageMode == false) {
+            it
+        } else {
+            dataPageCache.put(pageInfo.activePage, it)
+            listOf(Movie.newPageMovie(pageInfo.activePage, mView?.type ?: DataSourceType.CENSORED)) + it
+        }
+    }
+
 
     override fun onRefresh() {
         CacheLoader.removeCacheLike(saveKey, isRegex = false)
