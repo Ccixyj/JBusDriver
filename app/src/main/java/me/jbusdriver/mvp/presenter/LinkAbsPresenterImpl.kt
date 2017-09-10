@@ -2,7 +2,6 @@ package me.jbusdriver.mvp.presenter
 
 import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
-import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.RxBus
@@ -23,7 +22,15 @@ import org.jsoup.nodes.Document
 abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoadMorePresenterImpl<LinkListContract.LinkListView, T>(), LinkListContract.LinkListPresenter {
 
     protected var IsAll = false
-    protected val dataPageCache by lazy { sortedMapOf<Int, Int>() }
+    private val dataPageCache by lazy { sortedMapOf<Int, Int>() }
+    val pageModeDisposable = RxBus.toFlowable(Configuration.PageChangeEvent::class.java)
+            .subscribeBy(onNext = {
+                KLog.d("PageChangeEvent $it")
+                onRefresh()
+                //清空dataPageCache
+                dataPageCache.clear()
+            })
+
 
     override fun loadAll(iaAll: Boolean) {
         IsAll = iaAll
@@ -57,18 +64,10 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
 
     override fun onFirstLoad() {
         super.onFirstLoad()
-        RxBus.toFlowable(Configuration.PageChangeEvent::class.java)
-                .subscribeBy(onNext = {
-                    KLog.d("PageChangeEvent $it")
-                    onRefresh()
-                    //清空dataPageCache
-                    if (it.mode == Configuration.PageMode.Normal) dataPageCache.clear()
-
-                }).addTo(rxManager)
     }
 
     override fun jumpToPage(page: Int) {
-        KLog.d("jumpToPage $page")
+        KLog.i("jumpToPage $page in ${dataPageCache.keys}")
         if (page >= 1) {
             if (dataPageCache.containsKey(page)) {
                 //已经加载直接跳页
@@ -101,6 +100,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
         }
     }
 
+    @Synchronized
     private fun getJumpIndex(page: Int): Int {
         var jumpIndex = 0
         if (dataPageCache.size > 0) {
@@ -112,10 +112,11 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
             }
             val pages = dataPageCache.firstKey()..dataPageCache.lastKey()
             if (page in pages) {
+                val pre = if (!dataPageCache.keys.contains(page) && pageInfo.activePage > page) -1 else 0
                 dataPageCache.forEach {
                     if (page > it.key) jumpIndex += it.value + 1
                 }
-                return jumpIndex
+                return jumpIndex + pre
             }
         }
         return jumpIndex
@@ -123,4 +124,8 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
 
     override fun pageInfo(): PageInfo = pageInfo
 
+    override fun onPresenterDestroyed() {
+        super.onPresenterDestroyed()
+        pageModeDisposable.dispose()
+    }
 }

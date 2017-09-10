@@ -113,8 +113,8 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
 
     private fun showPageDialog(info: PageInfo) {
         MaterialDialog.Builder(viewContext).title("跳转:").items(info.pages.map {
-            "${if (it > info.activePage) "后跳至" else "前跳至"} 第 $it 页"
-        }).itemsCallback { dialog, itemView, position, text ->
+            "${if (it > info.activePage) "后跳至" else if (it == info.activePage) "当前" else "前跳至"} 第 $it 页"
+        }).itemsCallback { _, _, position, _ ->
             info.pages.getOrNull(position)?.let {
                 mBasePresenter?.jumpToPage(it)
                 adapter.notifyLoadMoreToLoading()
