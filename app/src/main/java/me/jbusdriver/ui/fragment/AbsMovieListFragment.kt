@@ -1,6 +1,7 @@
 package me.jbusdriver.ui.fragment
 
 import android.graphics.drawable.GradientDrawable
+import android.text.InputType
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.dpToPx
 import me.jbusdriver.common.toGlideUrl
+import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.ui.activity.MovieDetailActivity
@@ -119,6 +121,35 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                 mBasePresenter?.jumpToPage(it)
                 adapter.notifyLoadMoreToLoading()
             }
+        }.neutralText("输入页码").onNeutral { dialog, _ ->
+            showEditDialog()
+            dialog.dismiss()
+        }.show()
+    }
+
+    private fun showEditDialog() {
+        MaterialDialog.Builder(viewContext).title("输入页码:")
+                .input("输入跳转页码", null, false, { dialog, input ->
+                    KLog.d("page $input")
+                    input.toString().toIntOrNull()?.let {
+                        if (it < 1) {
+                            viewContext.toast("必须输入大于0的整数!")
+                            return@input
+                        }
+                        mBasePresenter?.jumpToPage(it)
+                        dialog.dismiss()
+                    } ?: let {
+                        //
+                        viewContext.toast("必须输入数字!")
+                    }
+                })
+                .autoDismiss(false)
+                .inputType(InputType.TYPE_CLASS_NUMBER)
+                .neutralText("选择页码").onNeutral { dialog, _ ->
+            mBasePresenter?.pageInfo()?.let {
+                if (it.pages.isNotEmpty()) showPageDialog(it)
+            }
+            dialog.dismiss()
         }.show()
     }
 

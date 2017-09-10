@@ -1,7 +1,10 @@
 package me.jbusdriver.mvp.presenter
 
+import android.text.TextUtils
 import com.cfzx.mvp.view.BaseView
+import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Function
 import io.reactivex.rxkotlin.addTo
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.SchedulersCompat
@@ -9,7 +12,9 @@ import me.jbusdriver.common.SimpleSubscriber
 import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.mvp.bean.hasNext
 import me.jbusdriver.mvp.model.BaseModel
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import retrofit2.HttpException
 
 /**
  * Created by Administrator on 2016/9/6 0006.
@@ -45,24 +50,33 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
     override fun loadData4Page(page: Int) {
         val request = (if (page == 1) model.requestFromCache(page)
         else model.requestFor(page))
-        request.map {
-            pageInfo = parsePage(it)
-            KLog.d("parse page :$pageInfo")
-            stringMap(it)
+        request.onErrorResumeNext(Function {
+            return@Function when {
+                (it is HttpException && it.code() == 404)   -> Flowable.just(Jsoup.parse(""))
+                else -> throw  it
+            }
+        }).map { doc ->
+            parsePage(doc)?.let {
+                pageInfo = it
+                stringMap(doc)
+            } ?: listOf()
         }.compose(SchedulersCompat.io())
-                .subscribeWith(DefaultSubscriber(page))
+                .subscribeWith(ListDefaultSubscriber(page))
                 .addTo(rxManager)
 
     }
 
-    fun parsePage(pageDoc: Document): PageInfo {
+    fun parsePage(pageDoc: Document): PageInfo? {
         with(pageDoc) {
             val current = select(".pagination .active > a").attr("href")
+            if (TextUtils.isEmpty(current)) {
+                return null
+            }
+
             val next = select(".pagination .active ~ li >a").let {
                 if (it.isEmpty()) current
                 else it.attr("href")
             }
-
             val pages = select(".pagination a:not([id])").mapNotNull { it.attr("href").split("/").lastOrNull()?.toIntOrNull() }
             return PageInfo(current.split("/").lastOrNull()?.toIntOrNull() ?: 0,
                     next.split("/").lastOrNull()?.toIntOrNull() ?: 0
@@ -82,7 +96,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
         if (pageInfo.activePage > 1) mView?.loadMoreComplete()
     }
 
-    open inner class DefaultSubscriber(val pageIndex: Int) : SimpleSubscriber<List<T>>() {
+    open inner class ListDefaultSubscriber(open val pageIndex: Int) : SimpleSubscriber<List<T>>() {
 
         override fun onStart() {
             AndroidSchedulers.mainThread().scheduleDirect {
@@ -105,7 +119,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
             }
             if (pageIndex != pageInfo.activePage) {
                 KLog.w("page $pageIndex is mess : $pageInfo")
-                pageInfo = pageInfo.copy(pageIndex)
+                pageInfo = pageInfo.copy(activePage = pageIndex)
             }
 
         }
