@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
@@ -16,7 +17,10 @@ import me.jbusdriver.common.KLog
 import me.jbusdriver.common.dpToPx
 import me.jbusdriver.common.toGlideUrl
 import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.ui.activity.MovieDetailActivity
+import me.jbusdriver.ui.data.Configuration
+
 
 abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
 
@@ -45,7 +49,15 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                     }
 
                     0 -> {
-                        holder.setGone(R.id.v_line, pageMode)
+                        when (pageMode) {
+                            Configuration.PageMode.Page -> {
+                                holder.setGone(R.id.v_line, true)
+                            }
+                            Configuration.PageMode.Normal -> {
+                                holder.setGone(R.id.v_line, false)
+                            }
+                        }
+
 
                         holder.setText(R.id.tv_movie_title, item.title)
                                 .setText(R.id.tv_movie_date, item.date)
@@ -80,10 +92,16 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                 (adapter.data.getOrNull(position) as? Movie)?.let {
                     when (it.itemType) {
                         -1 -> {
-                            KLog.d("change page")
+                            KLog.d("change page view")
+                            mBasePresenter?.pageInfo()?.let {
+                                if (it.pages.isNotEmpty()) showPageDialog(it)
+                            }
                         }
                         0 -> {
 //                        MovieDetailActivity.start(activity, it)
+                        }
+                        else -> {
+
                         }
                     }
                 }
@@ -92,5 +110,29 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
 
         }
     }
-    override val pageMode: Boolean = false
+
+    private fun showPageDialog(info: PageInfo) {
+        MaterialDialog.Builder(viewContext).title("跳转:").items(info.pages.map {
+            "${if (it > info.activePage) "后跳至" else "前跳至"} 第 $it 页"
+        }).itemsCallback { dialog, itemView, position, text ->
+            info.pages.getOrNull(position)?.let {
+                mBasePresenter?.jumpToPage(it)
+                adapter.notifyLoadMoreToLoading()
+            }
+        }.show()
+    }
+
+
+    override val pageMode: Int
+        get() = Configuration.pageMode
+
+    override fun insertDatas(pos: Int, datas: List<*>) {
+        KLog.d("insertDatas to $pos : $datas")
+        adapter.addData(pos, datas as List<Movie>)
+    }
+
+    override fun moveTo(pos: Int) {
+        KLog.d("move to $pos")
+        layoutManager.scrollToPosition(adapter.getHeaderLayoutCount() + pos)
+    }
 }

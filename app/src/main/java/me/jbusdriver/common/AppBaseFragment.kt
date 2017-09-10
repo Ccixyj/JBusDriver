@@ -132,13 +132,15 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
         }
     }
 
-    protected fun onVisible() {
+    protected open fun onVisible() {
+        KLog.t(TAG).d("onVisible")
         if (!isUserVisible || isLazyLoaded || mBasePresenter == null) {
             //SPresenter 可能没有初始化 ,放入dostart 中执行lazy
-            return
+
+        }else{
+            lazyLoad()
+            isLazyLoaded = true
         }
-        lazyLoad()
-        isLazyLoaded = true
     }
 
     protected open fun lazyLoad() {

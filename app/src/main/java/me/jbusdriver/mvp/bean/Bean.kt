@@ -9,7 +9,8 @@ import me.jbusdriver.ui.data.SearchType
 
 data class PageInfo(val activePage: Int = 0, val nextPage: Int = 0,
                     val activePath: String = "",
-                    val nextPath: String = "")
+                    val nextPath: String = "",
+                    val pages: List<Int> = listOf())
 
 val PageInfo.hasNext
     inline get() = activePage < nextPage

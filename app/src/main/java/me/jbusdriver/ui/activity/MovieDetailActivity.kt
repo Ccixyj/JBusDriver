@@ -214,7 +214,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
     inner class JavascriptHandler(val magnetKey: String) {
         @JavascriptInterface
-        open fun getContent(htmlContent: String) {
+        fun getContent(htmlContent: String) {
             //save disk for ever
             Jsoup.parse(htmlContent).select("#magnet-table").first()?.let { table ->
                 KLog.i("magnetKey :$magnetKey ,table : $table")

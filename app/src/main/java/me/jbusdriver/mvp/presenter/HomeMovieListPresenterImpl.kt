@@ -9,6 +9,7 @@ import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.model.AbstractBaseModel
 import me.jbusdriver.mvp.model.BaseModel
+import me.jbusdriver.ui.data.Configuration
 import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -42,11 +43,11 @@ open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink)
 
 
     override fun stringMap(str: Document) = Movie.loadFromDoc(mView?.type ?: DataSourceType.CENSORED, str).let {
-        if (mView?.pageMode == false) {
-            it
-        } else {
-            dataPageCache.put(pageInfo.activePage, it)
-            listOf(Movie.newPageMovie(pageInfo.activePage, mView?.type ?: DataSourceType.CENSORED)) + it
+        when (mView?.pageMode) {
+            Configuration.PageMode.Page -> {
+                listOf(Movie.newPageMovie(pageInfo.activePage, mView?.type ?: DataSourceType.CENSORED)) + it
+            }
+            else -> it
         }
     }
 

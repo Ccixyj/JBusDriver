@@ -23,6 +23,7 @@ import me.jbusdriver.mvp.presenter.LinkAbsPresenterImpl
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.adapter.ActressInfoAdapter
+import me.jbusdriver.ui.data.Configuration
 import me.jbusdriver.ui.data.DataSourceType
 
 class ActressListFragment : LinkableListFragment<ActressInfo>() {
@@ -78,7 +79,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
         }
     }
 
-    override val pageMode: Boolean = false
+    override val pageMode: Int = Configuration.PageMode.Normal
 
 
     companion object {
@@ -98,6 +99,14 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
             }
         }
 
+    }
+
+    override fun insertDatas(pos: Int, datas: List<*>) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun moveTo(pos: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
 }

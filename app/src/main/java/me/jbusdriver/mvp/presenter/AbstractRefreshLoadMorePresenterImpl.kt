@@ -29,7 +29,10 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
     override fun onLoadMore() {
         KLog.d("onLoadMore :${hasLoadNext()} ; page :$pageInfo")
         if (hasLoadNext()) loadData4Page(pageInfo.nextPage)
-        else mView?.loadMoreEnd()
+        else if (pageInfo.nextPage == pageInfo.activePage && pageInfo.activePage > 0) mView?.loadMoreEnd()
+        else {
+            //
+        }
     }
 
     override fun hasLoadNext(): Boolean = pageInfo.hasNext
@@ -55,10 +58,15 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
     fun parsePage(pageDoc: Document): PageInfo {
         with(pageDoc) {
             val current = select(".pagination .active > a").attr("href")
-            val next = select(".pagination .active ~ li >a").attr("href")
+            val next = select(".pagination .active ~ li >a").let {
+                if (it.isEmpty()) current
+                else it.attr("href")
+            }
+
+            val pages = select(".pagination a:not([id])").mapNotNull { it.attr("href").split("/").lastOrNull()?.toIntOrNull() }
             return PageInfo(current.split("/").lastOrNull()?.toIntOrNull() ?: 0,
                     next.split("/").lastOrNull()?.toIntOrNull() ?: 0
-                    , current, next)
+                    , current, next, pages)
         }
     }
 
@@ -68,6 +76,11 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
      * 加载列表默认实现的订阅者.
      * 实现@AbstractRefreshLoadMorePresenterImpl 可直接使用该类.
      */
+
+    protected open fun doAddData(t: List<T>) {
+        mView?.showContents(t)
+        if (pageInfo.activePage > 1) mView?.loadMoreComplete()
+    }
 
     open inner class DefaultSubscriber(val pageIndex: Int) : SimpleSubscriber<List<T>>() {
 
@@ -115,8 +128,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
             if (pageIndex == 1) {
                 mView?.resetList()
             }
-            mView?.showContents(t)
-            if (pageIndex > 1) mView?.loadMoreComplete()
+            doAddData(t)
         }
     }
 }
