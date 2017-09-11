@@ -1,10 +1,7 @@
 package me.jbusdriver.mvp
 
 import com.cfzx.mvp.view.BaseView
-import me.jbusdriver.mvp.bean.Genre
-import me.jbusdriver.mvp.bean.Magnet
-import me.jbusdriver.mvp.bean.Movie
-import me.jbusdriver.mvp.bean.MovieDetail
+import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.presenter.BasePresenter
 import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.nodes.Element
@@ -20,11 +17,15 @@ interface MainContract {
 interface LinkListContract {
     interface LinkListView : BaseView.BaseListWithRefreshView {
         val type: DataSourceType
-        val pageMode: Boolean
+        val pageMode: Int
+        fun  insertDatas(pos: Int, datas: List<*>)
+        fun  moveTo(pos: Int)
     }
 
     interface LinkListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<LinkListView>, BasePresenter.LazyLoaderPresenter {
         fun loadAll(iaAll: Boolean)
+        fun jumpToPage(page: Int)
+        fun pageInfo(): PageInfo
     }
 }
 

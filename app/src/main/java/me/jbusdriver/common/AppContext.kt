@@ -22,13 +22,13 @@ class AppContext : Application() {
                 .methodCount(3)                 // default 2
                 .logLevel(if (BuildConfig.DEBUG) LogLevel.FULL else LogLevel.NONE)        // default LogLevel.FULL
 
-        MobclickAgent.setDebugMode( true )
-
+        MobclickAgent.setDebugMode(BuildConfig.DEBUG)
     }
 
     companion object {
         @JvmStatic lateinit var instace: AppContext
-        @JvmStatic val gson = GsonBuilder().registerTypeAdapter(Int::class.java, JsonDeserializer<Int> { json, _, _ ->
+        @JvmStatic
+        val gson = GsonBuilder().registerTypeAdapter(Int::class.java, JsonDeserializer<Int> { json, _, _ ->
             if (json.isJsonNull || json.asString.isEmpty()) {
                 return@JsonDeserializer null
             }

@@ -19,23 +19,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:minHeight="@dimen/material_24dp"
-            android:minWidth="@dimen/material_24dp"
-            android:padding="@dimen/material_2dp"
-            android:src="@mipmap/ic_github" />
-
-        <Space
-            android:layout_width="@dimen/material_8dp"
-            android:layout_height="@dimen/material_0dp" />
-
         <TextView
+            android:drawableLeft="@mipmap/ic_github"
+            android:drawableTint="@color/colorAccent"
+            android:drawablePadding="@dimen/material_4dp"
             style="@style/Base.TextAppearance.AppCompat.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:text="JbusDriver" />
 
 
@@ -51,20 +42,12 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <ImageView
-
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:minHeight="@dimen/material_24dp"
-            android:minWidth="@dimen/material_24dp"
-            android:src="@drawable/ic_cached_black_24dp" />
-
-        <Space
-            android:layout_width="@dimen/material_8dp"
-            android:layout_height="@dimen/material_0dp" />
-
 
         <TextView
+            android:drawableLeft="@drawable/ic_refresh_black_24dp"
+            android:drawableTint="@color/colorAccent"
+            android:drawablePadding="@dimen/material_4dp"
+            android:gravity="center_vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="加载出现问题,尝试点击此处" />
@@ -76,10 +59,36 @@
         android:layout_width="@dimen/material_0dp"
         android:layout_height="@dimen/material_8dp" />
 
-    <TextView
-        android:id="@+id/tv_app_version"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="android.studio@android.com" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
+        <TextView
+            android:id="@+id/tv_app_setting"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设置"
+            android:gravity="center_vertical"
+            android:drawablePadding="@dimen/material_4dp"
+            android:drawableTint="@color/colorAccent"
+            android:drawableLeft="@drawable/ic_settings_black_24dp"/>
+
+        <Space
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/material_0dp" />
+
+        <TextView
+            android:id="@+id/tv_app_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="android.studio@android.com" />
+
+        <Space
+            android:layout_width="@dimen/material_16dp"
+            android:layout_height="@dimen/material_0dp" />
+
+    </LinearLayout>
 </LinearLayout>

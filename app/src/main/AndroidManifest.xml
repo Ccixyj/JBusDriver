@@ -52,8 +52,12 @@
         <activity
             android:name="me.jbusdriver.ui.activity.MovieListActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name="me.jbusdriver.ui.activity.SearchResultActivity"
+        <activity
+            android:name="me.jbusdriver.ui.activity.SearchResultActivity"
             android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="me.jbusdriver.ui.activity.SettingActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 

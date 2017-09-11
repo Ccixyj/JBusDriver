@@ -54,6 +54,7 @@ open class BaseFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         KLog.t(TAG).d("onDestroyView")
+        rxManager.clear()
     }
 
     override fun onDestroy() {

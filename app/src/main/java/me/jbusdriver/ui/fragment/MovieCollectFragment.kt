@@ -8,6 +8,7 @@ import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.presenter.MovieCollectPresenterImpl
 import me.jbusdriver.ui.data.CollectManager
+import me.jbusdriver.ui.data.Configuration
 
 /**
  * Created by Administrator on 2017/7/17 0017.
@@ -39,6 +40,8 @@ class MovieCollectFragment : AbsMovieListFragment(), LinkListContract.LinkListVi
             true
         }
     }
+
+    override val pageMode: Int = Configuration.PageMode.Normal
 
     companion object {
         fun newInstance() = MovieCollectFragment()

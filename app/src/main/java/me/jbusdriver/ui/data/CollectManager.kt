@@ -157,7 +157,7 @@ object CollectManager {
     }
 
 
-    /* ======== refresh  =========== */
+    /* ======== needRefresh  =========== */
     fun refreshActress() = collectCache?.getAsString(Actress_Key)?.let {
         AppContext.gson.fromJson<MutableList<ActressInfo>>(it)?.let {
             checkActressUrls(it)

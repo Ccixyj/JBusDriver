@@ -72,6 +72,12 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                 SplashActivity.start(this@MainActivity)
                 finish()
             }
+
+            tv_app_setting.setOnClickListener {
+                KLog.d("tv_app_setting")
+                SettingActivity.start(this@MainActivity)
+                drawer.closeDrawer(GravityCompat.START)
+            }
         }
 
         navigationView.setNavigationItemSelectedListener(this)
@@ -83,8 +89,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
     private fun initFragments() {
         val ft = supportFragmentManager.beginTransaction()
-        fragments.forEach {
-            (k, v) ->
+        fragments.forEach { (k, v) ->
             ft.add(R.id.content_main, v, k.toString()).hide(v)
         }
         ft.commit()

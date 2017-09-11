@@ -1,11 +1,10 @@
 package me.jbusdriver.common
 
 import io.reactivex.Flowable
-import io.reactivex.processors.FlowableProcessor
 import io.reactivex.processors.PublishProcessor
 
 object RxBus  {
-    private val mBus: FlowableProcessor<Any> = PublishProcessor.create<Any>().toSerialized()
+    private val mBus = PublishProcessor.create<Any>().toSerialized()
 
 
     fun post(obj: Any) {

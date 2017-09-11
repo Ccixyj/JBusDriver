@@ -1,11 +1,13 @@
 package me.jbusdriver.ui.fragment
 
 import android.graphics.drawable.GradientDrawable
+import android.text.InputType
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
@@ -15,8 +17,12 @@ import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.dpToPx
 import me.jbusdriver.common.toGlideUrl
+import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.ui.activity.MovieDetailActivity
+import me.jbusdriver.ui.data.Configuration
+
 
 abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
 
@@ -45,7 +51,15 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                     }
 
                     0 -> {
-                        holder.setGone(R.id.v_line, pageMode)
+                        when (pageMode) {
+                            Configuration.PageMode.Page -> {
+                                holder.setGone(R.id.v_line, true)
+                            }
+                            Configuration.PageMode.Normal -> {
+                                holder.setGone(R.id.v_line, false)
+                            }
+                        }
+
 
                         holder.setText(R.id.tv_movie_title, item.title)
                                 .setText(R.id.tv_movie_date, item.date)
@@ -80,10 +94,16 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                 (adapter.data.getOrNull(position) as? Movie)?.let {
                     when (it.itemType) {
                         -1 -> {
-                            KLog.d("change page")
+                            KLog.d("change page view")
+                            mBasePresenter?.pageInfo()?.let {
+                                if (it.pages.isNotEmpty()) showPageDialog(it)
+                            }
                         }
                         0 -> {
 //                        MovieDetailActivity.start(activity, it)
+                        }
+                        else -> {
+
                         }
                     }
                 }
@@ -92,5 +112,58 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
 
         }
     }
-    override val pageMode: Boolean = false
+
+    private fun showPageDialog(info: PageInfo) {
+        MaterialDialog.Builder(viewContext).title("跳转:").items(info.pages.map {
+            "${if (it > info.activePage) "后跳至" else if (it == info.activePage) "当前" else "前跳至"} 第 $it 页"
+        }).itemsCallback { _, _, position, _ ->
+            info.pages.getOrNull(position)?.let {
+                mBasePresenter?.jumpToPage(it)
+                adapter.notifyLoadMoreToLoading()
+            }
+        }.neutralText("输入页码").onNeutral { dialog, _ ->
+            showEditDialog()
+            dialog.dismiss()
+        }.show()
+    }
+
+    private fun showEditDialog() {
+        MaterialDialog.Builder(viewContext).title("输入页码:")
+                .input("输入跳转页码", null, false, { dialog, input ->
+                    KLog.d("page $input")
+                    input.toString().toIntOrNull()?.let {
+                        if (it < 1) {
+                            viewContext.toast("必须输入大于0的整数!")
+                            return@input
+                        }
+                        mBasePresenter?.jumpToPage(it)
+                        dialog.dismiss()
+                    } ?: let {
+                        //
+                        viewContext.toast("必须输入数字!")
+                    }
+                })
+                .autoDismiss(false)
+                .inputType(InputType.TYPE_CLASS_NUMBER)
+                .neutralText("选择页码").onNeutral { dialog, _ ->
+            mBasePresenter?.pageInfo()?.let {
+                if (it.pages.isNotEmpty()) showPageDialog(it)
+            }
+            dialog.dismiss()
+        }.show()
+    }
+
+
+    override val pageMode: Int
+        get() = Configuration.pageMode
+
+    override fun insertDatas(pos: Int, datas: List<*>) {
+        KLog.d("insertDatas to $pos : $datas")
+        adapter.addData(pos, datas as List<Movie>)
+    }
+
+    override fun moveTo(pos: Int) {
+        KLog.d("move to $pos")
+        layoutManager.scrollToPosition(adapter.getHeaderLayoutCount() + pos)
+    }
 }

@@ -36,7 +36,7 @@ abstract class BaseAbsCollectPresenter<V:BaseView.BaseListWithRefreshView,T> : A
             val end = if (nextSize <= listData.size) nextSize else listData.size
             listData.subList(start, end)
         }.compose(SchedulersCompat.io())
-                .subscribeWith(DefaultSubscriber(page))
+                .subscribeWith(ListDefaultSubscriber(page))
                 .addTo(rxManager)
 
     }

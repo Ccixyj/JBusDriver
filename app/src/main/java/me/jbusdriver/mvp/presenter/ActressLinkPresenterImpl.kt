@@ -9,9 +9,7 @@ import org.jsoup.nodes.Document
  */
 class ActressLinkPresenterImpl(val link: ILink) : LinkAbsPresenterImpl<ActressInfo>(link) {
 
-    override fun stringMap(str: Document): List<ActressInfo> {
-        return ActressInfo.parseActressList(str)
-    }
+    override fun stringMap(str: Document) = ActressInfo.parseActressList(str)
 
 
 }

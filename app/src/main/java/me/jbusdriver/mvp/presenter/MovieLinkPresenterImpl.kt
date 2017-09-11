@@ -5,6 +5,7 @@ import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.IAttr
 import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.ui.data.Configuration
 import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.nodes.Document
 
@@ -22,12 +23,13 @@ class MovieLinkPresenterImpl(val link: ILink) : LinkAbsPresenterImpl<Movie>(link
             }
         }
         return Movie.loadFromDoc(mView?.type ?: DataSourceType.CENSORED, str).let {
-            if (mView?.pageMode == false) {
-                it
-            } else {
-                dataPageCache.put(pageInfo.activePage, it)
-                listOf(Movie.newPageMovie(pageInfo.activePage, mView?.type ?: DataSourceType.CENSORED)) + it
+            when (mView?.pageMode) {
+                Configuration.PageMode.Page -> {
+                    listOf(Movie.newPageMovie(pageInfo.activePage, mView?.type ?: DataSourceType.CENSORED)) + it
+                }
+                else -> it
             }
+
         }
     }
 
