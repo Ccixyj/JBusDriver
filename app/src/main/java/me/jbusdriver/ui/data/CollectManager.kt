@@ -165,8 +165,20 @@ object CollectManager {
     } ?: mutableListOf()
 
     fun refreshMovie() = collectCache?.getAsString(Movie_Key)?.let {
-        AppContext.gson.fromJson<MutableList<Movie>>(it)?.let {
-            checkMovieUrls(it)
+        try {
+            AppContext.gson.fromJson<MutableList<Movie>>(it)?.let {
+                checkMovieUrls(it)
+            }
+        } catch (e: Exception) {
+            //json序列化失败
+            collectCache?.file(Movie_Key)?.let {
+                val bak = File(it.parent, "${Movie_Key.hashCode()}.BAK")
+                it.copyTo(bak, true)
+                KLog.d("收藏电影的数据格式错误,已转存至${bak.absolutePath}")
+                AppContext.instace.toast("收藏电影的数据格式错误,已转存至${bak.absolutePath}")
+            }
+
+            mutableListOf<Movie>()
         }
     } ?: mutableListOf()
 

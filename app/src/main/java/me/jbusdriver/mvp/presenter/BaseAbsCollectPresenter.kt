@@ -28,7 +28,7 @@ abstract class BaseAbsCollectPresenter<V:BaseView.BaseListWithRefreshView,T> : A
 
     override fun loadData4Page(page: Int) {
         val next = if (page < pageNum) page + 1 else pageNum
-        pageInfo = pageInfo.copy(page, next)
+        pageInfo = pageInfo.copy(activePage = page, nextPage = next)
         Flowable.just(pageInfo).map {
             KLog.d("request page : $it")
             val start = (pageInfo.activePage - 1) * PageSize
