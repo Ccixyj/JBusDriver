@@ -18,14 +18,15 @@ interface LinkListContract {
     interface LinkListView : BaseView.BaseListWithRefreshView {
         val type: DataSourceType
         val pageMode: Int
-        fun  insertDatas(pos: Int, datas: List<*>)
-        fun  moveTo(pos: Int)
+        fun insertDatas(pos: Int, datas: List<*>)
+        fun moveTo(pos: Int)
     }
 
     interface LinkListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<LinkListView>, BasePresenter.LazyLoaderPresenter {
         fun loadAll(iaAll: Boolean)
         fun jumpToPage(page: Int)
         fun pageInfo(): PageInfo
+        fun isPageGap(currentPage : Int):Boolean
     }
 }
 

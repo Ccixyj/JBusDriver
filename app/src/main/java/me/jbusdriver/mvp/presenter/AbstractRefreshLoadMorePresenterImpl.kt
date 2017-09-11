@@ -9,10 +9,10 @@ import io.reactivex.rxkotlin.addTo
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.SchedulersCompat
 import me.jbusdriver.common.SimpleSubscriber
+import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.mvp.bean.hasNext
 import me.jbusdriver.mvp.model.BaseModel
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import retrofit2.HttpException
 
@@ -34,9 +34,9 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
     override fun onLoadMore() {
         KLog.d("onLoadMore :${hasLoadNext()} ; page :$pageInfo")
         if (hasLoadNext()) loadData4Page(pageInfo.nextPage)
-        else if (pageInfo.nextPage == pageInfo.activePage && pageInfo.activePage > 0) mView?.loadMoreEnd()
+        else if (pageInfo.nextPage == pageInfo.activePage && pageInfo.pages.isNotEmpty() && pageInfo.activePage <= pageInfo.pages.last()) mView?.loadMoreEnd()
         else {
-            //
+
         }
     }
 
@@ -50,17 +50,27 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
     override fun loadData4Page(page: Int) {
         val request = (if (page == 1) model.requestFromCache(page)
         else model.requestFor(page))
-        request.onErrorResumeNext(Function {
-            return@Function when {
-                (it is HttpException && it.code() == 404)   -> Flowable.just(Jsoup.parse(""))
-                else -> throw  it
-            }
-        }).map { doc ->
+        request.map { doc ->
             parsePage(doc)?.let {
                 pageInfo = it
-                stringMap(doc)
-            } ?: listOf()
-        }.compose(SchedulersCompat.io())
+            }
+            stringMap(doc)
+        }.onErrorResumeNext(Function {
+            return@Function when {
+                (it is HttpException && it.code() == 404) -> {
+                    AndroidSchedulers.mainThread().scheduleDirect {
+                        mView?.viewContext?.toast("第${pageInfo.activePage}页没有数据")
+//                        if (pageInfo.nextPage < pageInfo.activePage && pageInfo.pages.isNotEmpty()) {
+//                            pageInfo = pageInfo.copy(activePage = pageInfo.nextPage - 1, nextPage = pageInfo.nextPage)
+//                        }
+                    }
+
+
+                    Flowable.just(mutableListOf())
+                }
+                else -> throw  it
+            }
+        }).compose(SchedulersCompat.io())
                 .subscribeWith(ListDefaultSubscriber(page))
                 .addTo(rxManager)
 
@@ -119,7 +129,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
             }
             if (pageIndex != pageInfo.activePage) {
                 KLog.w("page $pageIndex is mess : $pageInfo")
-                pageInfo = pageInfo.copy(activePage = pageIndex)
+//                pageInfo = pageInfo.copy(activePage = pageIndex)
             }
 
         }

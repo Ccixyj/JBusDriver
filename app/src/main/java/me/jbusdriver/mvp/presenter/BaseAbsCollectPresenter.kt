@@ -15,7 +15,7 @@ import org.jsoup.nodes.Document
  */
 
 
-abstract class BaseAbsCollectPresenter<V:BaseView.BaseListWithRefreshView,T> : AbstractRefreshLoadMorePresenterImpl<V,T>() {
+abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T> : AbstractRefreshLoadMorePresenterImpl<V, T>() {
 
     private val PageSize = 20
     private val listData by lazy { getData().toMutableList() }
@@ -23,7 +23,7 @@ abstract class BaseAbsCollectPresenter<V:BaseView.BaseListWithRefreshView,T> : A
         get() = (listData.size / PageSize) + 1
 
 
-    abstract fun getData():List<T>
+    abstract fun getData(): List<T>
 
 
     override fun loadData4Page(page: Int) {
@@ -47,6 +47,7 @@ abstract class BaseAbsCollectPresenter<V:BaseView.BaseListWithRefreshView,T> : A
         listData.addAll(getData())
         loadData4Page(1)
     }
+
     override val model: BaseModel<Int, Document>
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 

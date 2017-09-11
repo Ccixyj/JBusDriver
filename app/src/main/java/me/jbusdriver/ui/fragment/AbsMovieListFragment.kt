@@ -48,6 +48,13 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                 when (item.itemType) {
                     -1 -> {
                         holder.setText(R.id.tv_page_num, item.title)
+                        val currentPage = item.title.toIntOrNull()
+                        if (currentPage != null) {
+                            holder.setGone(R.id.tv_load_prev, mBasePresenter?.isPageGap(currentPage) ?: true)
+                            holder.getView<View>(R.id.tv_load_prev)?.setOnClickListener {
+                                mBasePresenter?.jumpToPage(currentPage - 1)
+                            }
+                        }
                     }
 
                     0 -> {
@@ -82,7 +89,7 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                             }
 
                         }
-                        holder.getView<View>(R.id.card_movie_item).setOnClickListener {
+                        holder.getView<View>(R.id.card_movie_item)?.setOnClickListener {
                             MovieDetailActivity.start(activity, item)
                         }
 
@@ -157,6 +164,7 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
 
     override val pageMode: Int
         get() = Configuration.pageMode
+
 
     override fun insertDatas(pos: Int, datas: List<*>) {
         KLog.d("insertDatas to $pos : $datas")

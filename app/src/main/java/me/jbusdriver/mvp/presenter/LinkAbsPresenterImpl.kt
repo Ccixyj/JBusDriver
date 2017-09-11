@@ -1,13 +1,12 @@
 package me.jbusdriver.mvp.presenter
 
-import com.afollestad.materialdialogs.MaterialDialog
 import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Function
-import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import me.jbusdriver.common.*
+import me.jbusdriver.common.KLog
+import me.jbusdriver.common.RxBus
+import me.jbusdriver.common.urlHost
+import me.jbusdriver.common.urlPath
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.ILink
@@ -17,7 +16,6 @@ import me.jbusdriver.mvp.model.BaseModel
 import me.jbusdriver.ui.data.Configuration
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import retrofit2.HttpException
 
 /**
  * Created by Administrator on 2017/5/10 0010.
@@ -29,6 +27,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
     private val pageModeDisposable = RxBus.toFlowable(PageChangeEvent::class.java)
             .subscribeBy(onNext = {
                 KLog.d("PageChangeEvent $it")
+
                 onRefresh()
                 //清空dataPageCache
                 dataPageCache.clear()
@@ -78,22 +77,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
             } else {
                 mView?.moveTo(getJumpIndex(page))
                 pageInfo = pageInfo.copy(page)
-
-                val request = (if (page == 1) model.requestFromCache(page)
-                else model.requestFor(page))
-                request.onErrorResumeNext(Function {
-                    return@Function when {
-                        (it is HttpException && it.code() == 404) -> Flowable.just(Jsoup.parse(""))
-                        else -> throw  it
-                    }
-                }).map { doc ->
-                    parsePage(doc)?.let {
-                        pageInfo = it
-                        stringMap(doc)
-                    } ?: listOf()
-                }.compose(SchedulersCompat.io())
-                        .subscribeWith(JumpSubscriber(page))
-                        .addTo(rxManager)
+                loadData4Page(page)
             }
         } else {
             KLog.w("can't jump to page $page")
@@ -101,6 +85,39 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
     }
 
 
+    override fun isPageGap(currentPage: Int): Boolean {
+        return Configuration.pageMode == Configuration.PageMode.Page && currentPage > 2 &&
+                !dataPageCache.containsKey(currentPage - 1)
+    }
+
+    override fun doAddData(t: List<T>) {
+        when (mView?.pageMode) {
+            Configuration.PageMode.Page -> {
+                //需要判断数据
+
+                if (dataPageCache.size > 0 && pageInfo.activePage < dataPageCache.lastKey()) {
+                    //当前页属于插入页面
+                    mView?.insertDatas(getJumpIndex(pageInfo.activePage), t)
+                } else {
+                    super.doAddData(t)
+                }
+                if (t.isNotEmpty()) {
+                    dataPageCache.put(pageInfo.activePage, t.size - 1)//page item In list
+                } else {
+                    //超过最大页数重置
+                    mView?.loadMoreEnd()
+                    if (pageInfo.nextPage < pageInfo.activePage && pageInfo.pages.isNotEmpty()) {
+                        pageInfo = pageInfo.copy(activePage = pageInfo.nextPage - 1, nextPage = pageInfo.nextPage)
+                    }
+                    KLog.d("reset page $pageInfo")
+                }
+
+            }
+            else -> {
+                super.doAddData(t)
+            }
+        }
+    }
 
     @Synchronized
     private fun getJumpIndex(page: Int): Int {
@@ -129,56 +146,5 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
     override fun onPresenterDestroyed() {
         super.onPresenterDestroyed()
         pageModeDisposable.dispose()
-    }
-
-    override fun doAddData(t: List<T>) {
-        dataPageCache.put(pageInfo.activePage, t.size - 1)//page item In list
-        super.doAddData(t)
-    }
-
-    inner class JumpSubscriber(override val pageIndex: Int) : ListDefaultSubscriber(pageIndex) {
-
-        var loading: MaterialDialog? = null
-
-        override fun onStart() {
-            AndroidSchedulers.mainThread().scheduleDirect {
-                loading = mView?.viewContext?.let { MaterialDialog.Builder(it).progress(true, 0).content("正在加载...").show() }
-            }
-        }
-
-        override fun onComplete() {
-            loading?.dismiss()
-            if (pageIndex != pageInfo.activePage) {
-                KLog.w("page $pageIndex is mess : $pageInfo")
-                pageInfo = pageInfo.copy(activePage = pageIndex)
-            }
-        }
-
-        override fun onError(e: Throwable) {
-            pageInfo = PageInfo(pageIndex - 1, pageIndex)
-            mView?.viewContext?.toast("加载第${pageIndex}页失败")
-        }
-
-        override fun onNext(t: List<T>) {
-            if (t.isNotEmpty()){
-                when (mView?.pageMode) {
-                    Configuration.PageMode.Page -> {
-                        //需要判断数据
-                        if (dataPageCache.size > 0 && pageInfo.activePage < dataPageCache.lastKey()) {
-                            //当前页属于插入页面
-                            mView?.insertDatas(getJumpIndex(pageInfo.activePage), t)
-                        } else {
-                            mView?.showContents(t)
-                            if (pageInfo.activePage > 1) mView?.loadMoreComplete()
-                        }
-                        dataPageCache.put(pageInfo.activePage, t.size - 1)//page item In list
-                    }
-                    else -> {
-                        mView?.showContents(t)
-                        if (pageInfo.activePage > 1) mView?.loadMoreComplete()
-                    }
-                }
-            } else mView?.viewContext?.toast("没有数据")
-        }
     }
 }
