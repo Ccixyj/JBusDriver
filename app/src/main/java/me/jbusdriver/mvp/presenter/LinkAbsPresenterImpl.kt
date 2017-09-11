@@ -85,7 +85,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
     }
 
 
-    override fun isPageGap(currentPage: Int): Boolean {
+    override fun isPrevPageLoaded(currentPage: Int): Boolean {
         return Configuration.pageMode == Configuration.PageMode.Page && currentPage > 2 &&
                 !dataPageCache.containsKey(currentPage - 1)
     }

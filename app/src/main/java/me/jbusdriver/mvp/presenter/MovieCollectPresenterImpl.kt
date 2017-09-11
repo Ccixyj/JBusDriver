@@ -20,7 +20,7 @@ class MovieCollectPresenterImpl : BaseAbsCollectPresenter<LinkListContract.LinkL
     }
 
 
-    override fun isPageGap(currentPage: Int): Boolean {
+    override fun isPrevPageLoaded(currentPage: Int): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
     override fun getData() = CollectManager.movie_data

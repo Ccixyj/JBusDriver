@@ -26,7 +26,7 @@ interface LinkListContract {
         fun loadAll(iaAll: Boolean)
         fun jumpToPage(page: Int)
         fun pageInfo(): PageInfo
-        fun isPageGap(currentPage : Int):Boolean
+        fun isPrevPageLoaded(currentPage : Int):Boolean
     }
 }
 

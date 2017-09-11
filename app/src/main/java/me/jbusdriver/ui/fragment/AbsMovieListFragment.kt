@@ -50,7 +50,7 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                         holder.setText(R.id.tv_page_num, item.title)
                         val currentPage = item.title.toIntOrNull()
                         if (currentPage != null) {
-                            holder.setGone(R.id.tv_load_prev, mBasePresenter?.isPageGap(currentPage) ?: true)
+                            holder.setGone(R.id.tv_load_prev, mBasePresenter?.isPrevPageLoaded(currentPage) ?: true)
                             holder.getView<View>(R.id.tv_load_prev)?.setOnClickListener {
                                 mBasePresenter?.jumpToPage(currentPage - 1)
                             }
