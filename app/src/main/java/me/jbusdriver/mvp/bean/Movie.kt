@@ -48,7 +48,7 @@ data class Movie(
             }
         }
 
-        fun newPageMovie(page: Int, type: DataSourceType = DataSourceType.CENSORED) = Movie(type, page.toString(), "", "", "", "")
+        fun newPageMovie(page: Int, pages: List<Int>, type: DataSourceType = DataSourceType.CENSORED) = Movie(type, page.toString(), pages.joinToString("#"), "", "", "")
     }
 }
 

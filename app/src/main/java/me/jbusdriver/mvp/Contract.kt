@@ -25,7 +25,6 @@ interface LinkListContract {
     interface LinkListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<LinkListView>, BasePresenter.LazyLoaderPresenter {
         fun loadAll(iaAll: Boolean)
         fun jumpToPage(page: Int)
-        fun pageInfo(): PageInfo
         fun isPrevPageLoaded(currentPage : Int):Boolean
     }
 }

@@ -103,12 +103,8 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                     when (it.itemType) {
                         -1 -> {
                             KLog.d("change page view")
-                            mBasePresenter?.pageInfo()?.let {
-                                if (it.pages.isNotEmpty()) showPageDialog(it)
-                            }
-                        }
-                        0 -> {
-//                        MovieDetailActivity.start(activity, it)
+                            val pages = it.imageUrl.split("#").mapNotNull { it.toIntOrNull() }
+                            if (pages.isNotEmpty()) showPageDialog(PageInfo(activePage = it.title.toInt(), pages = pages))
                         }
                         else -> {
 
@@ -123,19 +119,19 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
 
     private fun showPageDialog(info: PageInfo) {
         MaterialDialog.Builder(viewContext).title("跳转:").items(info.pages.map {
-            "${if (it > info.activePage) "后跳至" else if (it == info.activePage) "当前" else "前跳至"} 第 $it 页"
+            "${if (it > info.activePage) " 👇 跳至" else if (it == info.activePage) " 👉 当前" else " 👆 跳至"} 第 $it 页"
         }).itemsCallback { _, _, position, _ ->
             info.pages.getOrNull(position)?.let {
                 mBasePresenter?.jumpToPage(it)
                 adapter.notifyLoadMoreToLoading()
             }
         }.neutralText("输入页码").onNeutral { dialog, _ ->
-            showEditDialog()
+            showEditDialog(info)
             dialog.dismiss()
         }.show()
     }
 
-    private fun showEditDialog() {
+    private fun showEditDialog(info: PageInfo) {
         MaterialDialog.Builder(viewContext).title("输入页码:")
                 .input("输入跳转页码", null, false, { dialog, input ->
                     KLog.d("page $input")
@@ -147,16 +143,13 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                         mBasePresenter?.jumpToPage(it)
                         dialog.dismiss()
                     } ?: let {
-                        //
                         viewContext.toast("必须输入数字!")
                     }
                 })
                 .autoDismiss(false)
                 .inputType(InputType.TYPE_CLASS_NUMBER)
                 .neutralText("选择页码").onNeutral { dialog, _ ->
-            mBasePresenter?.pageInfo()?.let {
-                if (it.pages.isNotEmpty()) showPageDialog(it)
-            }
+            showPageDialog(info)
             dialog.dismiss()
         }.show()
     }
@@ -167,12 +160,10 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
 
 
     override fun insertDatas(pos: Int, datas: List<*>) {
-        KLog.d("insertDatas to $pos : $datas")
         adapter.addData(pos, datas as List<Movie>)
     }
 
     override fun moveTo(pos: Int) {
-        KLog.d("move to $pos")
         layoutManager.scrollToPosition(adapter.getHeaderLayoutCount() + pos)
     }
 }

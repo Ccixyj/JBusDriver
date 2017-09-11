@@ -11,11 +11,11 @@ import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.bean.PageChangeEvent
-import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.mvp.model.BaseModel
 import me.jbusdriver.ui.data.Configuration
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import java.util.concurrent.ConcurrentSkipListMap
 
 /**
  * Created by Administrator on 2017/5/10 0010.
@@ -23,7 +23,7 @@ import org.jsoup.nodes.Document
 abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoadMorePresenterImpl<LinkListContract.LinkListView, T>(), LinkListContract.LinkListPresenter {
 
     protected var IsAll = false
-    private val dataPageCache by lazy { sortedMapOf<Int, Int>() }
+    private val dataPageCache by lazy { ConcurrentSkipListMap<Int, Int>() }
     private val pageModeDisposable = RxBus.toFlowable(PageChangeEvent::class.java)
             .subscribeBy(onNext = {
                 KLog.d("PageChangeEvent $it")
@@ -69,7 +69,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
     }
 
     override fun jumpToPage(page: Int) {
-        KLog.i("jumpToPage $page in ${dataPageCache.keys}")
+        KLog.i("jumpToPage $page in $dataPageCache")
         if (page >= 1) {
             if (dataPageCache.containsKey(page)) {
                 //已经加载直接跳页
@@ -91,35 +91,38 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
     }
 
     override fun doAddData(t: List<T>) {
-        when (mView?.pageMode) {
-            Configuration.PageMode.Page -> {
-                //需要判断数据
 
-                if (dataPageCache.size > 0 && pageInfo.activePage < dataPageCache.lastKey()) {
-                    //当前页属于插入页面
-                    mView?.insertDatas(getJumpIndex(pageInfo.activePage), t)
-                } else {
+        synchronized(pageInfo) {
+            when (mView?.pageMode) {
+                Configuration.PageMode.Page -> {
+                    //需要判断数据
+                    if (dataPageCache.keys.contains(pageInfo.activePage)) return
+                    if (dataPageCache.size > 0 && pageInfo.activePage < dataPageCache.lastKey()) {
+                        //当前页属于插入页面
+                        mView?.insertDatas(getJumpIndex(pageInfo.activePage), t)
+                    } else {
+                        super.doAddData(t)
+                    }
+
+                    if (t.isNotEmpty()) {
+                        dataPageCache.put(pageInfo.activePage, t.size - 1)//page item In list
+                    } else {
+                        //超过最大页数重置
+                        mView?.loadMoreEnd()
+                        if (pageInfo.nextPage < pageInfo.activePage && pageInfo.pages.isNotEmpty()) {
+                            pageInfo = pageInfo.copy(activePage = pageInfo.nextPage - 1, nextPage = pageInfo.nextPage)
+                        }
+                        KLog.d("reset page $pageInfo")
+                    }
+                    KLog.i("doAddData page Ino $dataPageCache $pageInfo $t")
+                }
+                else -> {
                     super.doAddData(t)
                 }
-                if (t.isNotEmpty()) {
-                    dataPageCache.put(pageInfo.activePage, t.size - 1)//page item In list
-                } else {
-                    //超过最大页数重置
-                    mView?.loadMoreEnd()
-                    if (pageInfo.nextPage < pageInfo.activePage && pageInfo.pages.isNotEmpty()) {
-                        pageInfo = pageInfo.copy(activePage = pageInfo.nextPage - 1, nextPage = pageInfo.nextPage)
-                    }
-                    KLog.d("reset page $pageInfo")
-                }
-
-            }
-            else -> {
-                super.doAddData(t)
             }
         }
     }
 
-    @Synchronized
     private fun getJumpIndex(page: Int): Int {
         var jumpIndex = 0
         if (dataPageCache.size > 0) {
@@ -141,7 +144,6 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
         return jumpIndex
     }
 
-    override fun pageInfo(): PageInfo = pageInfo
 
     override fun onPresenterDestroyed() {
         super.onPresenterDestroyed()

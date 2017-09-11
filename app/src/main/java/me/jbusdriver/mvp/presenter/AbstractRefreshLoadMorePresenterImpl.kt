@@ -23,6 +23,7 @@ import retrofit2.HttpException
 abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRefreshView, T> : BasePresenterImpl<V>(), BasePresenter.BaseRefreshLoadMorePresenter<V> {
 
     protected var pageInfo = PageInfo()
+    protected var lastPage: Int = Int.MAX_VALUE
 
     abstract val model: BaseModel<Int, Document>
 
@@ -32,7 +33,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
 
 
     override fun onLoadMore() {
-        KLog.d("onLoadMore :${hasLoadNext()} ; page :$pageInfo")
+        KLog.i("onLoadMore :${hasLoadNext()} ; page :$pageInfo")
         if (hasLoadNext()) loadData4Page(pageInfo.nextPage)
         else if (pageInfo.nextPage == pageInfo.activePage && pageInfo.pages.isNotEmpty() && pageInfo.activePage <= pageInfo.pages.last()) mView?.loadMoreEnd()
         else {
@@ -52,6 +53,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
         else model.requestFor(page))
         request.map { doc ->
             parsePage(doc)?.let {
+                KLog.i("parse page $it")
                 pageInfo = it
             }
             stringMap(doc)
@@ -88,6 +90,10 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
                 else it.attr("href")
             }
             val pages = select(".pagination a:not([id])").mapNotNull { it.attr("href").split("/").lastOrNull()?.toIntOrNull() }
+
+            if (current == next && next.toInt() == pages.last()) {
+                lastPage = pages.last()
+            }
             return PageInfo(current.split("/").lastOrNull()?.toIntOrNull() ?: 0,
                     next.split("/").lastOrNull()?.toIntOrNull() ?: 0
                     , current, next, pages)
