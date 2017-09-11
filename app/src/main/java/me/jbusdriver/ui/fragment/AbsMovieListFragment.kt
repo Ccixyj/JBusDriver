@@ -86,6 +86,7 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                             MovieDetailActivity.start(activity, item)
                         }
 
+                        holder.addOnLongClickListener(R.id.card_movie_item)
                     }
                 }
             }

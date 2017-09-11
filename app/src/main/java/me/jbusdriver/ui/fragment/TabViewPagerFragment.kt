@@ -37,7 +37,7 @@ abstract class TabViewPagerFragment<P : BasePresenter<V>, V : BaseView> : AppBas
         }
     }
 
-    protected val pagerAdapter: FragmentPagerAdapter by lazy {
+    protected  val pagerAdapter: FragmentPagerAdapter by lazy {
         require(mTitles.size == mFragments.size)
         object : FragmentPagerAdapter(childFragmentManager) {
 

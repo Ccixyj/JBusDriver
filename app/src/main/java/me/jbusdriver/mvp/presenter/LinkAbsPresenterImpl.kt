@@ -11,6 +11,7 @@ import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.ILink
+import me.jbusdriver.mvp.bean.PageChangeEvent
 import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.mvp.model.BaseModel
 import me.jbusdriver.ui.data.Configuration
@@ -25,7 +26,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
 
     protected var IsAll = false
     private val dataPageCache by lazy { sortedMapOf<Int, Int>() }
-    private val pageModeDisposable = RxBus.toFlowable(Configuration.PageChangeEvent::class.java)
+    private val pageModeDisposable = RxBus.toFlowable(PageChangeEvent::class.java)
             .subscribeBy(onNext = {
                 KLog.d("PageChangeEvent $it")
                 onRefresh()

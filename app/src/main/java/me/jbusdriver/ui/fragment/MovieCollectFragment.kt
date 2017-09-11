@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import com.afollestad.materialdialogs.MaterialDialog
+import me.jbusdriver.common.KLog
 import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.presenter.MovieCollectPresenterImpl
@@ -21,7 +22,8 @@ class MovieCollectFragment : AbsMovieListFragment(), LinkListContract.LinkListVi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        adapter.setOnItemLongClickListener { adapter, _, position ->
+        adapter.setOnItemChildLongClickListener { adapter, view, position ->
+            KLog.d("setOnItemChildLongClickListener $position")
             this@MovieCollectFragment.adapter.getData().getOrNull(position)?.let {
                 MaterialDialog.Builder(viewContext)
                         .title(it.title)
@@ -37,8 +39,10 @@ class MovieCollectFragment : AbsMovieListFragment(), LinkListContract.LinkListVi
                         }
                         .show()
             }
-            true
+
+            return@setOnItemChildLongClickListener true
         }
+
     }
 
     override val pageMode: Int = Configuration.PageMode.Normal

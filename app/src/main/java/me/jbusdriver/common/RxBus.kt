@@ -8,6 +8,7 @@ object RxBus  {
 
 
     fun post(obj: Any) {
+        KLog.d("post event $obj")
         mBus.onNext(obj)
     }
 

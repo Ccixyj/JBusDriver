@@ -7,6 +7,7 @@ import com.umeng.analytics.MobclickAgent
 import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.ActressInfo
+import me.jbusdriver.mvp.bean.CollectErrorEvent
 import me.jbusdriver.mvp.bean.Movie
 import java.io.File
 
@@ -16,8 +17,8 @@ import java.io.File
  */
 object CollectManager {
 
-    private const val Actress_Key = "Actress_Key"
-    private const val Movie_Key = "Movie_Key"
+    const val Actress_Key = "Actress_Key"
+    const val Movie_Key = "Movie_Key"
     private val host: String by lazy { JAVBusService.defaultFastUrl }
     private val imageHost: String by lazy { JAVBusService.defaultImageUrlHost }
     private val collectCache by lazy {
@@ -159,8 +160,13 @@ object CollectManager {
 
     /* ======== needRefresh  =========== */
     fun refreshActress() = collectCache?.getAsString(Actress_Key)?.let {
-        AppContext.gson.fromJson<MutableList<ActressInfo>>(it)?.let {
-            checkActressUrls(it)
+        try {
+            AppContext.gson.fromJson<MutableList<ActressInfo>>(it)?.let {
+                checkActressUrls(it)
+            }
+        } catch (e: Exception) {
+            backUp(Actress_Key)
+            mutableListOf<ActressInfo>()
         }
     } ?: mutableListOf()
 
@@ -170,14 +176,7 @@ object CollectManager {
                 checkMovieUrls(it)
             }
         } catch (e: Exception) {
-            //json序列化失败
-            collectCache?.file(Movie_Key)?.let {
-                val bak = File(it.parent, "${Movie_Key.hashCode()}.BAK")
-                it.copyTo(bak, true)
-                KLog.d("收藏电影的数据格式错误,已转存至${bak.absolutePath}")
-                AppContext.instace.toast("收藏电影的数据格式错误,已转存至${bak.absolutePath}")
-            }
-
+            backUp(Movie_Key)
             mutableListOf<Movie>()
         }
     } ?: mutableListOf()
@@ -188,4 +187,20 @@ object CollectManager {
 
     fun saveMovie() = collectCache?.put(Movie_Key, AppContext.gson.toJson(movie_data))
 
+    /*back up*/
+
+    fun backUp(key: String): Boolean {
+        return CollectManager.collectCache?.file(key)?.let {
+            val bak = File(it.parent, "${key.hashCode()}.BAK")
+            try {
+                it.copyTo(bak, true)
+                val name = if (key == CollectManager.Movie_Key) "电影" else "演员"
+                RxBus.post(CollectErrorEvent(key, "收藏${name}的数据格式错误,已转存至${bak.absolutePath}"))
+                true
+            } catch (e: Exception) {
+                false
+            }
+        } ?: false
+
+    }
 }

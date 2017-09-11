@@ -5,6 +5,7 @@ import com.google.gson.JsonObject
 import me.jbusdriver.common.AppContext
 import me.jbusdriver.common.RxBus
 import me.jbusdriver.common.fromJson
+import me.jbusdriver.mvp.bean.PageChangeEvent
 import kotlin.properties.Delegates
 
 /**
@@ -42,9 +43,7 @@ object Configuration {
         }
     }
 
-    /*value invoke*/
-    data class PageChangeEvent(val mode: Int)
-    /*add listener*/
+
 
 
     //endregion
