@@ -18,40 +18,27 @@ import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.MainContract
+import me.jbusdriver.mvp.bean.MenuOp
 import me.jbusdriver.mvp.bean.NoticeBean
 import me.jbusdriver.mvp.bean.UpdateBean
 import me.jbusdriver.mvp.presenter.MainPresenterImpl
-import me.jbusdriver.ui.data.DataSourceType
-import me.jbusdriver.ui.fragment.ActressListFragment
-import me.jbusdriver.ui.fragment.GenrePagesFragment
-import me.jbusdriver.ui.fragment.HomeMovieListFragment
-import me.jbusdriver.ui.fragment.MineCollectFragment
 
 class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.MainView>(), NavigationView.OnNavigationItemSelectedListener, MainContract.MainView {
 
     private val navigationView by lazy { findViewById(R.id.nav_view) as NavigationView }
     private lateinit var selectMenu: MenuItem
-    private val fragments: Map<Int, BaseFragment> by lazy {
-        mapOf(
-                R.id.mine_collect to MineCollectFragment.newInstance() as BaseFragment,
-                R.id.movie_ma to HomeMovieListFragment.newInstance(DataSourceType.CENSORED),
-                R.id.movie_uncensored to HomeMovieListFragment.newInstance(DataSourceType.UNCENSORED),
-                R.id.movie_xyz to HomeMovieListFragment.newInstance(DataSourceType.XYZ),
-                R.id.movie_hd to HomeMovieListFragment.newInstance(DataSourceType.GENRE_HD),
-                R.id.movie_sub to HomeMovieListFragment.newInstance(DataSourceType.Sub),
-                R.id.movie_ma_actress to ActressListFragment.newInstance(DataSourceType.ACTRESSES),
-                R.id.movie_uncensored_actress to ActressListFragment.newInstance(DataSourceType.UNCENSORED_ACTRESSES),
-                R.id.movie_xyz_actress to ActressListFragment.newInstance(DataSourceType.XYZ_ACTRESSES),
-                R.id.movie_ma_genre to GenrePagesFragment.newInstance(DataSourceType.GENRE),
-                R.id.movie_uncensored_genre to GenrePagesFragment.newInstance(DataSourceType.UNCENSORED_GENRE),
-                R.id.movie_xyz_genre to GenrePagesFragment.newInstance(DataSourceType.XYZ_GENRE)
-        )
-    }
-
     private val sharfp by lazy { getSharedPreferences("config", Context.MODE_PRIVATE) }
+    private val fragments by lazy { hashMapOf<Int, BaseFragment>() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initNavigationView()
+        initFragments(savedInstanceState)
+
+    }
+
+
+    private fun initNavigationView() {
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
@@ -59,8 +46,8 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer.addDrawerListener(toggle)
         toggle.syncState()
-        initFragments()
-        val menuId = savedInstanceState?.getInt("MenuSelectedItemId", R.id.movie_ma) ?: R.id.movie_ma
+
+
         navigationView.getHeaderView(0).apply {
             tv_app_version.text = packageInfo?.versionName ?: "未知版本"
             ll_git_url.setOnClickListener {
@@ -79,22 +66,37 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                 drawer.closeDrawer(GravityCompat.START)
             }
         }
-
         navigationView.setNavigationItemSelectedListener(this)
+
+    }
+
+
+    private fun initFragments(savedInstanceState: Bundle?) {
+        fragments.clear()
+        MenuOp.Ops.forEach {
+            if (it.isHow) {
+                fragments.put(it.id, it.initializer.invoke())
+            }
+            navigationView.menu.findItem(it.id).isVisible = it.isHow
+        }
+        val ft = supportFragmentManager.beginTransaction()
+        supportFragmentManager.fragments?.forEach {
+            ft.remove(it)
+        }
+        fragments.onEach { (k, v) ->
+            ft.add(R.id.content_main, v, k.toString()).hide(v)
+        }
+        ft.commit()
+        setNavSelected(savedInstanceState)
+    }
+
+    private fun setNavSelected(savedInstanceState: Bundle?) {
+        val id = (MenuOp.Ops - MenuOp.mine).firstOrNull()?.id ?: MenuOp.Ops.firstOrNull()?.id ?: error("至少配置一项菜单!!!!")
+        val menuId = savedInstanceState?.getInt("MenuSelectedItemId", id) ?: id
         selectMenu = navigationView.menu.findItem(menuId)
         navigationView.setCheckedItem(selectMenu.itemId)
         onNavigationItemSelected(selectMenu)
     }
-
-
-    private fun initFragments() {
-        val ft = supportFragmentManager.beginTransaction()
-        fragments.forEach { (k, v) ->
-            ft.add(R.id.content_main, v, k.toString()).hide(v)
-        }
-        ft.commit()
-    }
-
 
     override fun onPostResume() {
         super.onPostResume()

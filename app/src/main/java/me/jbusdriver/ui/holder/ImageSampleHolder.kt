@@ -17,7 +17,7 @@ import me.jbusdriver.common.inflate
 import me.jbusdriver.common.toGlideUrl
 import me.jbusdriver.mvp.bean.ImageSample
 import me.jbusdriver.ui.activity.WatchLargeImageActivity
-import me.jbusdriver.ui.data.GridSpacingItemDecoration
+import me.jbusdriver.ui.adapter.GridSpacingItemDecoration
 
 /**
  * Created by Administrator on 2017/5/9 0009.

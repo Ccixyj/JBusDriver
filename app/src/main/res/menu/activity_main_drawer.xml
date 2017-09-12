@@ -8,7 +8,14 @@
         <item
             android:id="@+id/mine_collect"
             android:icon="@drawable/ic_collections_bookmark_24dp"
-            android:title="收藏夹" />
+            android:title="收藏夹"
+            android:visible="false"/>
+
+        <item
+            android:id="@+id/mine_history"
+            android:icon="@drawable/ic_history_black_24dp"
+            android:title="最近"
+            android:visible="false"/>
 
     </group>
 
@@ -19,16 +26,19 @@
         <item
             android:id="@+id/movie_ma"
             android:icon="@drawable/ic_movie_ma_24dp"
-            android:title="有碼" />
+            android:title="有碼"
+            android:visible="false"/>
         <item
             android:id="@+id/movie_ma_genre"
             android:icon="@drawable/ic_near_me_black_24dp"
-            android:title="有碼類別" />
+            android:title="有碼類別"
+            android:visible="false"/>
 
         <item
             android:id="@+id/movie_ma_actress"
             android:icon="@drawable/ic_insert_emoticon_black_24dp"
-            android:title="有碼女優"/>
+            android:title="有碼女優"
+            android:visible="false"/>
     </group>
 
     <group
@@ -38,47 +48,57 @@
         <item
             android:id="@+id/movie_uncensored"
             android:icon="@drawable/ic_movie_no_ma_24dp"
-            android:title="無碼" />
+            android:title="無碼"
+            android:visible="false"/>
         <item
             android:id="@+id/movie_uncensored_genre"
             android:icon="@drawable/ic_near_me_black_24dp"
-            android:title="無碼類別" />
+            android:title="無碼類別"
+            android:visible="false"/>
 
         <item
             android:id="@+id/movie_uncensored_actress"
             android:icon="@drawable/ic_insert_emoticon_black_24dp"
-            android:title="無碼女優"/>
+            android:title="無碼女優"
+            android:visible="false"/>
     </group>
 
     <group
         android:id="@+id/nav_xyz"
-        android:checkableBehavior="single" android:menuCategory="container">
+        android:checkableBehavior="single"
+        android:menuCategory="container">
         <item
             android:id="@+id/movie_xyz"
             android:icon="@drawable/ic_public_black_24dp"
-            android:title="欧美" />
+            android:title="欧美"
+            android:visible="false"/>
         <item
             android:id="@+id/movie_xyz_genre"
             android:icon="@drawable/ic_near_me_black_24dp"
-            android:title="欧美類別" />
+            android:title="欧美類別"
+            android:visible="false"/>
 
         <item
             android:id="@+id/movie_xyz_actress"
             android:icon="@drawable/ic_insert_emoticon_black_24dp"
-            android:title="欧美演员"/>
+            android:title="欧美演员"
+            android:visible="false"/>
     </group>
 
     <group
         android:id="@+id/nav_other"
-        android:checkableBehavior="single" android:menuCategory="system">
+        android:checkableBehavior="single"
+        android:menuCategory="system">
         <item
             android:id="@+id/movie_hd"
             android:icon="@drawable/ic_high_quality_black_24dp"
-            android:title="高清" />
+            android:title="高清"
+            android:visible="false"/>
         <item
             android:id="@+id/movie_sub"
             android:icon="@drawable/ic_closed_caption_black_24dp"
-            android:title="字幕" />
+            android:title="字幕"
+            android:visible="false"/>
 
 
     </group>

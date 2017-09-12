@@ -51,7 +51,7 @@
 
     <TextView
         android:id="@+id/tv_page_num"
-        style="@android:style/TextAppearance.DeviceDefault.Small"
+        style="@android:style/TextAppearance.DeviceDefault.Medium"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"

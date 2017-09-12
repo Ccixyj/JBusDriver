@@ -10,7 +10,7 @@ import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.bean.PageChangeEvent
 import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.mvp.model.BaseModel
-import me.jbusdriver.ui.data.Configuration
+import me.jbusdriver.ui.data.AppConfiguration
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.util.concurrent.ConcurrentSkipListMap
@@ -90,7 +90,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
 
 
     override fun isPrevPageLoaded(currentPage: Int): Boolean {
-        return Configuration.pageMode == Configuration.PageMode.Page && currentPage > 2 &&
+        return AppConfiguration.pageMode == AppConfiguration.PageMode.Page && currentPage > 2 &&
                 !dataPageCache.containsKey(currentPage - 1)
     }
 
@@ -115,7 +115,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
 
         synchronized(pageInfo) {
             when (mView?.pageMode) {
-                Configuration.PageMode.Page -> {
+                AppConfiguration.PageMode.Page -> {
                     //需要判断数据
                     if (dataPageCache.keys.contains(pageInfo.activePage)) {
                         mView?.loadMoreComplete() //直接加载完成

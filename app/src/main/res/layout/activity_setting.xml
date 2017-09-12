@@ -99,4 +99,30 @@
 
         </LinearLayout>
     </android.support.v7.widget.CardView>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/material_8dp" />
+
+    <android.support.v7.widget.CardView
+        style="@style/AppTheme.CardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        app:contentPadding="@dimen/material_8dp">
+
+        <TextView
+            style="@style/TextAppearance.AppCompat.Notification.Info"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/material_24dp"
+            android:gravity="center_vertical"
+            android:text="抽屉菜单配置项目:" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_menu_op"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/material_24dp" />
+    </android.support.v7.widget.CardView>
+
 </LinearLayout>

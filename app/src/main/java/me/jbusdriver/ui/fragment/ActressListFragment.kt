@@ -23,7 +23,7 @@ import me.jbusdriver.mvp.presenter.LinkAbsPresenterImpl
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.adapter.ActressInfoAdapter
-import me.jbusdriver.ui.data.Configuration
+import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.DataSourceType
 
 class ActressListFragment : LinkableListFragment<ActressInfo>() {
@@ -79,7 +79,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
         }
     }
 
-    override val pageMode: Int = Configuration.PageMode.Normal
+    override val pageMode: Int = AppConfiguration.PageMode.Normal
 
 
     companion object {

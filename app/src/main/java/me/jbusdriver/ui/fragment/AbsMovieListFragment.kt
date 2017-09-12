@@ -21,7 +21,7 @@ import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.ui.activity.MovieDetailActivity
-import me.jbusdriver.ui.data.Configuration
+import me.jbusdriver.ui.data.AppConfiguration
 
 
 abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
@@ -59,10 +59,10 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
 
                     0 -> {
                         when (pageMode) {
-                            Configuration.PageMode.Page -> {
+                            AppConfiguration.PageMode.Page -> {
                                 holder.setGone(R.id.v_line, true)
                             }
-                            Configuration.PageMode.Normal -> {
+                            AppConfiguration.PageMode.Normal -> {
                                 holder.setGone(R.id.v_line, false)
                             }
                         }
@@ -156,7 +156,7 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
 
 
     override val pageMode: Int
-        get() = Configuration.pageMode
+        get() = AppConfiguration.pageMode
 
 
     override fun insertDatas(pos: Int, datas: List<*>) {

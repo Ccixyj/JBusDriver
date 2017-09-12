@@ -1,5 +1,8 @@
 package me.jbusdriver.ui.data
 
+import android.support.annotation.IdRes
+import me.jbusdriver.common.BaseFragment
+
 /**
  * Created by Administrator on 2017/4/14 0014.
  */

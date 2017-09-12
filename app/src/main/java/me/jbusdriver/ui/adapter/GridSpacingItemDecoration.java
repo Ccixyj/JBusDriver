@@ -1,4 +1,4 @@
-package me.jbusdriver.ui.data;
+package me.jbusdriver.ui.adapter;
 
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
