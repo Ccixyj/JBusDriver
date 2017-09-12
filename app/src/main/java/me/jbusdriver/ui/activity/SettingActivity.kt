@@ -40,8 +40,8 @@ class SettingActivity : BaseActivity() {
         }
 
         //menu op
-        val data: List<MultiItemEntity> = listOf(
-                MenuOpHead("个人").apply { MenuOp.mine.forEach { addSubItem(it) } },
+        val data: List<MultiItemEntity> = arrayListOf(
+                MenuOpHead("个人").apply { MenuOp.mine.forEach { addSubItem(it) };isExpanded = true },
                 MenuOpHead("有碼").apply { MenuOp.nav_ma.forEach { addSubItem(it) } },
                 MenuOpHead("無碼").apply { MenuOp.nav_uncensore.forEach { addSubItem(it) } },
                 MenuOpHead("欧美").apply { MenuOp.nav_xyz.forEach { addSubItem(it) } },
@@ -52,7 +52,7 @@ class SettingActivity : BaseActivity() {
         rv_menu_op.layoutManager = GridLayoutManager(viewContext, viewContext.spanCount).apply {
             spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int) =
-                        if (adapter.getItemViewType(position) == Expand_Type_Head) 1 else spanCount
+                        if (adapter.getItemViewType(position) == Expand_Type_Head) spanCount else 1
             }
         }
     }
