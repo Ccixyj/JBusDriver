@@ -170,7 +170,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
     }
 
-    fun showNotice(notice: Any?) {
+    private fun showNotice(notice: Any?) {
         if (notice != null && notice is NoticeBean && !TextUtils.isEmpty(notice.content) && notice.id > 0 && sharfp.getInt(NoticeIgnoreID, -1) < notice.id) {
             MaterialDialog.Builder(this).title("公告")
                     .content(notice.content!!)

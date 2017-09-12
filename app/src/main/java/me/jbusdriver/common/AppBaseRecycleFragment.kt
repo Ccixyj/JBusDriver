@@ -75,8 +75,9 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
         adapter.loadMoreComplete()
     }
 
-    override fun loadMoreEnd() {
+    override fun loadMoreEnd(clickable: Boolean) {
         adapter.loadMoreEnd()
+        adapter.enableLoadMoreEndClick(clickable)
     }
 
     override fun loadMoreFail() {

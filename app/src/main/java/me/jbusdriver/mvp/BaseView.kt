@@ -36,7 +36,7 @@ interface BaseView {
         fun loadMoreComplete()
 
         //加载更多完毕
-        fun loadMoreEnd()
+        fun loadMoreEnd(clickable:Boolean = false)
 
         //加载更多失败
         fun loadMoreFail()

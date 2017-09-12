@@ -118,26 +118,24 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
 
     }
 
-    private fun getMovieAttrView(data: IAttr): View {
-        return when (data) {
-            is ActressAttrs -> {
-                this.viewContext.inflate(R.layout.layout_actress_attr).apply {
-                    //img
-                    Glide.with(this@LinkedMovieListFragment).load(data.imageUrl.toGlideUrl).into(GlideDrawableImageViewTarget(this.iv_actress_avatar))
-                    //title
-                    this.ll_attr_container.addView(generateTextView().apply {
-                        textSize = 16f
-                        setTextColor(resources.getColor(R.color.primaryText))
-                        text = data.title
-                    })
+    private fun getMovieAttrView(data: IAttr): View = when (data) {
+        is ActressAttrs -> {
+            this.viewContext.inflate(R.layout.layout_actress_attr).apply {
+                //img
+                Glide.with(this@LinkedMovieListFragment).load(data.imageUrl.toGlideUrl).into(GlideDrawableImageViewTarget(this.iv_actress_avatar))
+                //title
+                this.ll_attr_container.addView(generateTextView().apply {
+                    textSize = 16f
+                    setTextColor(resources.getColor(R.color.primaryText))
+                    text = data.title
+                })
 
-                    data.info.forEach {
-                        this.ll_attr_container.addView(generateTextView().apply { text = it })
-                    }
+                data.info.forEach {
+                    this.ll_attr_container.addView(generateTextView().apply { text = it })
                 }
             }
-            else -> error("current not provide for IAttr $data")
         }
+        else -> error("current not provide for IAttr $data")
     }
 
     private fun generateTextView() = TextView(this.viewContext).apply {
