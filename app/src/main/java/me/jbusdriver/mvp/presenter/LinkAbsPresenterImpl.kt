@@ -3,14 +3,12 @@ package me.jbusdriver.mvp.presenter
 import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.subscribeBy
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.RxBus
-import me.jbusdriver.common.urlHost
-import me.jbusdriver.common.urlPath
+import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.bean.PageChangeEvent
+import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.mvp.model.BaseModel
 import me.jbusdriver.ui.data.Configuration
 import org.jsoup.Jsoup
@@ -71,6 +69,12 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
     override fun jumpToPage(page: Int) {
         KLog.i("jumpToPage $page in $dataPageCache")
         if (page >= 1) {
+
+            if (page > lastPage) {
+                mView?.viewContext?.toast("当前最多${lastPage}页")
+                return
+            }
+
             if (dataPageCache.containsKey(page)) {
                 //已经加载直接跳页
                 mView?.moveTo(getJumpIndex(page))
@@ -90,13 +94,34 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
                 !dataPageCache.containsKey(currentPage - 1)
     }
 
+    override fun onLoadMore() {
+        //跳转后pageinfo可能不是线性的了,所以需要根据dataPageCache来判断
+        if (dataPageCache.lastKey() >= pageInfo.nextPage) {
+            //加载过比他大的页面
+            //直接完成
+            pageInfo = PageInfo(dataPageCache.lastKey(), dataPageCache.lastKey() + 1)
+            mView?.loadMoreComplete()
+            if (pageInfo.nextPage >= lastPage) {
+                //加载完毕
+                mView?.loadMoreEnd()
+            }
+            return
+        }
+
+        super.onLoadMore()
+    }
+
     override fun doAddData(t: List<T>) {
 
         synchronized(pageInfo) {
             when (mView?.pageMode) {
                 Configuration.PageMode.Page -> {
                     //需要判断数据
-                    if (dataPageCache.keys.contains(pageInfo.activePage)) return
+                    if (dataPageCache.keys.contains(pageInfo.activePage)) {
+                        mView?.loadMoreComplete() //直接加载完成
+                        if (pageInfo.activePage >= lastPage) mView?.loadMoreEnd()
+                        return
+                    }
                     if (dataPageCache.size > 0 && pageInfo.activePage < dataPageCache.lastKey()) {
                         //当前页属于插入页面
                         mView?.insertDatas(getJumpIndex(pageInfo.activePage), t)
@@ -107,12 +132,8 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
                     if (t.isNotEmpty()) {
                         dataPageCache.put(pageInfo.activePage, t.size - 1)//page item In list
                     } else {
-                        //超过最大页数重置
-                        mView?.loadMoreEnd()
-                        if (pageInfo.nextPage < pageInfo.activePage && pageInfo.pages.isNotEmpty()) {
-                            pageInfo = pageInfo.copy(activePage = pageInfo.nextPage - 1, nextPage = pageInfo.nextPage)
-                        }
-                        KLog.d("reset page $pageInfo")
+                        //超过最大页数, 可以点击加载原本的下一页
+                        mView?.loadMoreEnd(true)
                     }
                     KLog.i("doAddData page Ino $dataPageCache $pageInfo $t")
                 }

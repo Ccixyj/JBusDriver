@@ -35,8 +35,10 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
     override fun onLoadMore() {
         KLog.i("onLoadMore :${hasLoadNext()} ; page :$pageInfo")
         if (hasLoadNext()) loadData4Page(pageInfo.nextPage)
-        else if (pageInfo.nextPage == pageInfo.activePage && pageInfo.pages.isNotEmpty() && pageInfo.activePage <= pageInfo.pages.last()) mView?.loadMoreEnd()
-        else {
+        else if (pageInfo.nextPage == pageInfo.activePage && pageInfo.pages.isNotEmpty() && pageInfo.activePage <= pageInfo.pages.last()) {
+            lastPage = pageInfo.activePage
+            mView?.loadMoreEnd()
+        } else {
 
         }
     }
@@ -62,12 +64,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
                 (it is HttpException && it.code() == 404) -> {
                     AndroidSchedulers.mainThread().scheduleDirect {
                         mView?.viewContext?.toast("第${pageInfo.activePage}页没有数据")
-//                        if (pageInfo.nextPage < pageInfo.activePage && pageInfo.pages.isNotEmpty()) {
-//                            pageInfo = pageInfo.copy(activePage = pageInfo.nextPage - 1, nextPage = pageInfo.nextPage)
-//                        }
                     }
-
-
                     Flowable.just(mutableListOf())
                 }
                 else -> throw  it
@@ -78,7 +75,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
 
     }
 
-    fun parsePage(pageDoc: Document): PageInfo? {
+    private fun parsePage(pageDoc: Document): PageInfo? {
         with(pageDoc) {
             val current = select(".pagination .active > a").attr("href")
             if (TextUtils.isEmpty(current)) {
@@ -91,12 +88,14 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
             }
             val pages = select(".pagination a:not([id])").mapNotNull { it.attr("href").split("/").lastOrNull()?.toIntOrNull() }
 
-            if (current == next && next.toInt() == pages.last()) {
-                lastPage = pages.last()
-            }
+
             return PageInfo(current.split("/").lastOrNull()?.toIntOrNull() ?: 0,
                     next.split("/").lastOrNull()?.toIntOrNull() ?: 0
-                    , current, next, pages)
+                    , current, next, pages).apply {
+                if (activePage == nextPage && activePage == pages.last()) {
+                    lastPage = pages.last()
+                }
+            }
         }
     }
 
@@ -127,7 +126,11 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
         override fun onComplete() {
             super.onComplete()
             if (!hasLoadNext()) {
-                mView?.loadMoreEnd() //判断是否加载完毕
+                if (pageInfo.activePage == lastPage) {
+                    mView?.loadMoreEnd(false) //判断是否加载完毕
+                } else {
+                    mView?.loadMoreEnd(true)
+                }
             }
             mView?.dismissLoading()
             (pageIndex == 1).let {
