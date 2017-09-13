@@ -166,4 +166,6 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
     override fun moveTo(pos: Int) {
         layoutManager.scrollToPosition(adapter.getHeaderLayoutCount() + pos)
     }
+
+    override fun toString(): String = "$type :" + super.toString()
 }

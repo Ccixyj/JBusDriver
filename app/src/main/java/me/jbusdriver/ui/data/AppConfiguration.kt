@@ -1,11 +1,12 @@
 package me.jbusdriver.ui.data
 
 import android.content.Context
-import jbusdriver.me.jbusdriver.R
+import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.common.AppContext
 import me.jbusdriver.common.RxBus
 import me.jbusdriver.common.fromJson
 import me.jbusdriver.common.toJsonString
+import me.jbusdriver.mvp.bean.MenuChangeEvent
 import me.jbusdriver.mvp.bean.PageChangeEvent
 import kotlin.properties.Delegates
 
@@ -17,7 +18,7 @@ import kotlin.properties.Delegates
 object AppConfiguration {
 
     private fun getSp(key: String) = AppContext.instace.getSharedPreferences("config", Context.MODE_PRIVATE).getString(key, null)
-    private fun saveSp(key: String, value: String) = AppContext.instace.getSharedPreferences("config", Context.MODE_PRIVATE).edit().putString(key, value).apply()
+    private fun saveSp(key: String, value: String) = Schedulers.io().scheduleDirect { AppContext.instace.getSharedPreferences("config", Context.MODE_PRIVATE).edit().putString(key, value).apply() }
 
     //region pageMode value
     object PageMode {
@@ -42,12 +43,18 @@ object AppConfiguration {
     //endregion
     private const val MenuConfigS: String = "MenuConfig"
 
-    var menuConfig: Map<Int, Boolean> by Delegates.observable(AppContext.gson.fromJson<Map<Int, Boolean>>(
-            getSp(MenuConfigS) ?: mapOf(R.id.mine_history to false).toJsonString().apply {
-                saveSp(MenuConfigS, this)
-            })) { _, old, new ->
-        saveSp(MenuConfigS, new.toJsonString())
+    val menuConfig: MutableMap<String, Boolean> by lazy {
+        AppContext.gson.fromJson<MutableMap<String, Boolean>>(
+                getSp(MenuConfigS) ?: hashMapOf("最近" to false).toJsonString().apply {
+                    saveSp(MenuConfigS, this)
+                })
     }
 
+    fun saveSaveMenuConfig(menuOpValue: MutableMap<String, Boolean>) {
+        menuConfig.clear()
+        menuConfig.putAll(menuOpValue)
+        saveSp(MenuConfigS, menuConfig.toJsonString())
+        RxBus.post(MenuChangeEvent())
+    }
 }
 

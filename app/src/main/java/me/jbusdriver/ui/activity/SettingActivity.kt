@@ -8,7 +8,9 @@ import android.support.v7.widget.Toolbar
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_setting.*
+import kotlinx.android.synthetic.main.layout_menu_op_item.view.*
 import me.jbusdriver.common.BaseActivity
+import me.jbusdriver.common.KLog
 import me.jbusdriver.common.spanCount
 import me.jbusdriver.mvp.bean.MenuOp
 import me.jbusdriver.mvp.bean.MenuOpHead
@@ -19,6 +21,7 @@ import me.jbusdriver.ui.data.AppConfiguration
 class SettingActivity : BaseActivity() {
 
     private var pageModeHolder = AppConfiguration.pageMode
+    private val menuOpValue by lazy { AppConfiguration.menuConfig.toMutableMap() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +44,7 @@ class SettingActivity : BaseActivity() {
 
         //menu op
         val data: List<MultiItemEntity> = arrayListOf(
-                MenuOpHead("个人").apply { MenuOp.mine.forEach { addSubItem(it) };isExpanded = true },
+                MenuOpHead("个人").apply { MenuOp.mine.forEach { addSubItem(it) } },
                 MenuOpHead("有碼").apply { MenuOp.nav_ma.forEach { addSubItem(it) } },
                 MenuOpHead("無碼").apply { MenuOp.nav_uncensore.forEach { addSubItem(it) } },
                 MenuOpHead("欧美").apply { MenuOp.nav_xyz.forEach { addSubItem(it) } },
@@ -54,6 +57,28 @@ class SettingActivity : BaseActivity() {
                 override fun getSpanSize(position: Int) =
                         if (adapter.getItemViewType(position) == Expand_Type_Head) spanCount else 1
             }
+        }
+        //有选项选中就展开
+        val expandItems = data.filterIndexed { index, multiItemEntity ->
+            multiItemEntity is MenuOpHead && multiItemEntity.subItems.any { it.isHow }
+        }
+        expandItems.forEach {
+            adapter.expand(data.indexOf(it))
+        }
+        adapter.setOnItemClickListener { adapter, view, position ->
+            KLog.d("MenuOpAdapter : setOnItemClickListener ${data[position]}")
+
+            (adapter.data.getOrNull(position) as? MenuOp)?.let {
+                view.cb_nav_menu?.let { cb ->
+                    //添加设置
+                    synchronized(cb) {
+                        cb.isChecked = !cb.isChecked
+                        menuOpValue.put(it.name, cb.isChecked)
+                        KLog.d("menuConfig ${menuOpValue.filter { it.value }}")
+                    }
+                }
+            }
+
         }
     }
 
@@ -81,6 +106,7 @@ class SettingActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         AppConfiguration.pageMode = pageModeHolder
+        if (!AppConfiguration.menuConfig.equals(menuOpValue)) AppConfiguration.saveSaveMenuConfig(menuOpValue) //必须调用equals
     }
 
     companion object {

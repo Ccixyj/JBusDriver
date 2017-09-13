@@ -6,8 +6,10 @@ package me.jbusdriver.mvp.bean
 
 data class SearchWord(val query: String)
 
-data class CollectErrorEvent(val key: String,val msg:String)
+data class CollectErrorEvent(val key: String, val msg: String)
 
 
 //config
 data class PageChangeEvent(val mode: Int)
+
+class MenuChangeEvent

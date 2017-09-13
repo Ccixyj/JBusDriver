@@ -13,20 +13,25 @@ import android.text.TextUtils
 import android.view.MenuItem
 import com.afollestad.materialdialogs.MaterialDialog
 import com.cfzx.utils.CacheLoader
+import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.BuildConfig
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.MainContract
+import me.jbusdriver.mvp.bean.MenuChangeEvent
 import me.jbusdriver.mvp.bean.MenuOp
 import me.jbusdriver.mvp.bean.NoticeBean
 import me.jbusdriver.mvp.bean.UpdateBean
 import me.jbusdriver.mvp.presenter.MainPresenterImpl
+import me.jbusdriver.ui.data.AppConfiguration
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.MainView>(), NavigationView.OnNavigationItemSelectedListener, MainContract.MainView {
 
     private val navigationView by lazy { findViewById(R.id.nav_view) as NavigationView }
-    private lateinit var selectMenu: MenuItem
+    private var selectMenu: MenuItem? = null
     private val sharfp by lazy { getSharedPreferences("config", Context.MODE_PRIVATE) }
     private val fragments by lazy { hashMapOf<Int, BaseFragment>() }
 
@@ -34,6 +39,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         super.onCreate(savedInstanceState)
         initNavigationView()
         initFragments(savedInstanceState)
+        bindRx()
 
     }
 
@@ -72,17 +78,20 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
 
     private fun initFragments(savedInstanceState: Bundle?) {
+        KLog.d("init menuConfig : ${AppConfiguration.menuConfig.filter { it.value }}")
+        val ft = supportFragmentManager.beginTransaction()
+        fragments.forEach {
+            ft.remove(it.value)
+        }
         fragments.clear()
         MenuOp.Ops.forEach {
             if (it.isHow) {
+                KLog.d("menuConfig $it : show : ${it.isHow}")
                 fragments.put(it.id, it.initializer.invoke())
             }
             navigationView.menu.findItem(it.id).isVisible = it.isHow
         }
-        val ft = supportFragmentManager.beginTransaction()
-        supportFragmentManager.fragments?.forEach {
-            ft.remove(it)
-        }
+
         fragments.onEach { (k, v) ->
             ft.add(R.id.content_main, v, k.toString()).hide(v)
         }
@@ -91,11 +100,27 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
     }
 
     private fun setNavSelected(savedInstanceState: Bundle?) {
-        val id = (MenuOp.Ops - MenuOp.mine).firstOrNull()?.id ?: MenuOp.Ops.firstOrNull()?.id ?: error("至少配置一项菜单!!!!")
+        val id = (MenuOp.Ops - MenuOp.mine).find { it.isHow }?.id ?: MenuOp.Ops.find { it.isHow }?.id ?: let {
+            toast("至少配置一项菜单!!!!")
+            return
+        }
         val menuId = savedInstanceState?.getInt("MenuSelectedItemId", id) ?: id
         selectMenu = navigationView.menu.findItem(menuId)
-        navigationView.setCheckedItem(selectMenu.itemId)
-        onNavigationItemSelected(selectMenu)
+        selectMenu?.let {
+            navigationView.setCheckedItem(it.itemId)
+            onNavigationItemSelected(it)
+        }
+
+    }
+
+    private fun bindRx() {
+        RxBus.toFlowable(MenuChangeEvent::class.java)
+                .delay(300,TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成
+                .compose(SchedulersCompat.computation())
+                .subscribeBy({
+                    initFragments(null)
+                })
+                .addTo(rxManager)
     }
 
     override fun onPostResume() {
@@ -124,7 +149,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         KLog.d("onNavigationItemSelected $item ")
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
         drawer.closeDrawer(GravityCompat.START)
-        supportActionBar?.title = selectMenu.title
+        supportActionBar?.title = selectMenu?.title
         return true
     }
 
@@ -132,7 +157,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         val replace = fragments[itemId] ?: error("no match fragment for menu $itemId")
 
         val ft = supportFragmentManager.beginTransaction()
-        supportFragmentManager.findFragmentByTag(selectMenu.itemId.toString())?.let {
+        supportFragmentManager.findFragmentByTag(selectMenu?.itemId.toString())?.let {
             ft.hide(it)
         }
         ft.show(replace)
@@ -140,7 +165,9 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putInt("MenuSelectedItemId", selectMenu.itemId)
+        selectMenu?.let {
+            outState.putInt("MenuSelectedItemId", it.itemId)
+        }
         super.onSaveInstanceState(outState)
     }
 
