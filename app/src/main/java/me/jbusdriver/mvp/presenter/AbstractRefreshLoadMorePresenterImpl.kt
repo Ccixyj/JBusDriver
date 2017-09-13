@@ -15,6 +15,7 @@ import me.jbusdriver.mvp.bean.hasNext
 import me.jbusdriver.mvp.model.BaseModel
 import org.jsoup.nodes.Document
 import retrofit2.HttpException
+import java.util.concurrent.TimeoutException
 
 /**
  * Created by Administrator on 2016/9/6 0006.
@@ -64,6 +65,13 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
                 (it is HttpException && it.code() == 404) -> {
                     AndroidSchedulers.mainThread().scheduleDirect {
                         mView?.viewContext?.toast("第${pageInfo.activePage}页没有数据")
+                    }
+                    pageInfo = pageInfo.copy(activePage =  pageInfo.nextPage -1 )//重置前一页pageInfo
+                    Flowable.just(mutableListOf())
+                }
+                it is TimeoutException -> {
+                    AndroidSchedulers.mainThread().scheduleDirect {
+                        mView?.viewContext?.toast("第${pageInfo.activePage}页请求超时,请过会再次尝试")
                     }
                     Flowable.just(mutableListOf())
                 }

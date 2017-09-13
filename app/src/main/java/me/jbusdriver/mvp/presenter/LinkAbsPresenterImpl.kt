@@ -132,7 +132,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
                     if (t.isNotEmpty()) {
                         dataPageCache.put(pageInfo.activePage, t.size - 1)//page item In list
                     } else {
-                        //超过最大页数, 可以点击加载原本的下一页
+                        //超过最大页数时 ,可以点击加载原本的下一页 ; 或者请求超时,点击重新加载
                         mView?.loadMoreEnd(true)
                     }
                     KLog.i("doAddData page Ino $dataPageCache $pageInfo $t")
