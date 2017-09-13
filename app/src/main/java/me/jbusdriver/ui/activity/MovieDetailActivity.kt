@@ -129,11 +129,11 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
     }
 
     override fun initMagnetLoad() {
-        KLog.d("load url : ${movie.detailUrl}")
+        KLog.d("load url : ${movie.link}")
         val mWebView = findViewById(R.id.webview) as WebView
         mWebView.settings.javaScriptEnabled = true
         mWebView.addJavascriptInterface(JavascriptHandler(movie.detailSaveKey + "_magnet"), "handler")
-        mWebView.loadUrl(movie.detailUrl)
+        mWebView.loadUrl(movie.link)
         mWebView.setWebViewClient(object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)

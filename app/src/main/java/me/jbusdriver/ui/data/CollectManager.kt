@@ -3,11 +3,14 @@ package me.jbusdriver.ui.data
 import android.os.Environment
 import android.os.StatFs
 import android.text.TextUtils
+import com.google.gson.reflect.TypeToken
 import com.umeng.analytics.MobclickAgent
+import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.CollectErrorEvent
+import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.bean.Movie
 import java.io.File
 
@@ -17,8 +20,6 @@ import java.io.File
  */
 object CollectManager {
 
-    const val Actress_Key = "Actress_Key"
-    const val Movie_Key = "Movie_Key"
     private val host: String by lazy { JAVBusService.defaultFastUrl }
     private val imageHost: String by lazy { JAVBusService.defaultImageUrlHost }
     private val collectCache by lazy {
@@ -63,138 +64,150 @@ object CollectManager {
 
 
     private fun getAvailableExternalMemorySize(): Long {
-        if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
+        return if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
             val path = Environment.getExternalStorageDirectory()//获取SDCard根目录
             val stat = StatFs(path.path)
             val blockSize = stat.blockSize.toLong()
             val availableBlocks = stat.availableBlocks.toLong()
-            return availableBlocks * blockSize
+            availableBlocks * blockSize
         } else {
-            return -1
+            -1
         }
     }
 
-    val actress_data: MutableList<ActressInfo> by lazy { refreshActress() }
+    /*===========数据=============*/
+    val movieCache by lazy { getCollectData<Movie>() }
+    val actressCache by lazy { getCollectData<ActressInfo>() }
 
-    private fun checkActressUrls(data: MutableList<ActressInfo>): MutableList<ActressInfo> {
-        if (host.endsWith(".xyz")) return data
-        val linkChange = data.any { it.link.urlHost != host }
-        val imageChange = !TextUtils.isEmpty(imageHost) && data.any { it.avatar.urlHost != imageHost && !it.avatar.endsWith("nowprinting.gif") }
-        return if (linkChange || imageChange) {
-            val new = data.mapTo(ArrayList(data.size)) {
-                if (it.link.urlHost.endsWith(".xyz")) it //排除xyz
-                else it.copy(link = if (linkChange) it.link.replace(it.link.urlHost, host) else it.link, avatar = if (imageChange) it.avatar.replace(it.avatar.urlHost, imageHost) else it.avatar)
-
-            }
-
-            new
-        } else data
-    }
-
-
-    val movie_data: MutableList<Movie> by lazy { refreshMovie() }
-
-    private fun checkMovieUrls(data: MutableList<Movie>): MutableList<Movie> {
-        if (host.endsWith(".xyz")) return data
-        val detailChange = data.any { it.detailUrl.urlHost != host }
-        val imageChange = !TextUtils.isEmpty(imageHost) && data.any { it.imageUrl.urlHost != imageHost }
-
-        return if (detailChange || imageChange) {
-            val new = data.mapTo(ArrayList(data.size)) {
-                if (it.detailUrl.urlHost.endsWith(".xyz")) it
-                else it.copy(detailUrl = if (detailChange) it.detailUrl.replace(it.detailUrl.urlHost, host) else it.detailUrl, imageUrl = if (imageChange) it.imageUrl.replace(it.imageUrl.urlHost, imageHost) else it.imageUrl)
-            }
-            //  collectCache?.put(Movie_Key, AppContext.gson.toJson(new))
-            new
-        } else data
-    }
 
     /*===========添加收藏=============*/
-    fun addToCollect(actressInfo: ActressInfo): Boolean {
-        return actress_data.let {
-            if (it.any { it.link.urlPath == actressInfo.link.urlPath }) {
-                AppContext.instace.toast("${actressInfo.name}已收藏")
-                return false
-            }
-            actressInfo.tag = null
-            it.add(0, actressInfo)
-            saveActress()
-            true
-        }
-    }
+    fun addToCollect(actressInfo: ActressInfo) = addTo(actressInfo)
 
-    fun addToCollect(movie: Movie): Boolean {
-        return movie_data.let {
-            if (it.any { it.code == movie.code }) {
-                AppContext.instace.toast("${movie.title}已收藏")
-                return false
-            }
-            it.add(0, movie)
-            saveMovie()
-            true
-        }
-    }
+    fun addToCollect(movie: Movie): Boolean = addTo(movie)
 
     /*===========是否收藏了=============*/
-    fun has(act: ActressInfo): Boolean = actress_data.any { it.link.urlPath == act.link.urlPath }
+    fun has(act: ActressInfo) = getCollectData<ActressInfo>().has(act)
 
-    fun has(movie: Movie): Boolean = movie_data.any { it.code == movie.code }
+    fun has(movie: Movie): Boolean = getCollectData<ActressInfo>().has(movie)
 
     /*===========删除收藏=============*/
-    fun removeCollect(act: ActressInfo): Boolean {
-        actress_data.let {
-            val res = it.remove(act) || (it.find { it.link.urlPath == act.link.urlPath }?.let { da -> it.remove(da) } ?: false)
-            if (res) saveActress()
-            return res
-        }
-    }
+    fun removeCollect(act: ActressInfo) = remove(act)
 
-    fun removeCollect(movie: Movie): Boolean {
-        movie_data.let {
-            val res = it.remove(movie) || (it.find { it.code == movie.code }?.let { da -> it.remove(da) } ?: false)
-            if (res) saveMovie()
-            return res
-        }
-    }
-
-
-    /* ======== needRefresh  =========== */
-    fun refreshActress() = collectCache?.getAsString(Actress_Key)?.let {
-        try {
-            AppContext.gson.fromJson<MutableList<ActressInfo>>(it)?.let {
-                checkActressUrls(it)
-            }
-        } catch (e: Exception) {
-            backUp(Actress_Key)
-            mutableListOf<ActressInfo>()
-        }
-    } ?: mutableListOf()
-
-    fun refreshMovie() = collectCache?.getAsString(Movie_Key)?.let {
-        try {
-            AppContext.gson.fromJson<MutableList<Movie>>(it)?.let {
-                checkMovieUrls(it)
-            }
-        } catch (e: Exception) {
-            backUp(Movie_Key)
-            mutableListOf<Movie>()
-        }
-    } ?: mutableListOf()
-
+    fun removeCollect(movie: Movie): Boolean = remove(movie)
 
     /* ======== save  =========== */
-    fun saveActress() = collectCache?.put(Actress_Key, AppContext.gson.toJson(actress_data))
+    fun saveActress() = save<ActressInfo>()
 
-    fun saveMovie() = collectCache?.put(Movie_Key, AppContext.gson.toJson(movie_data))
+    fun saveMovie() = save<Movie>()
 
-    /*back up*/
 
-    fun backUp(key: String): Boolean {
+    /*泛型*/
+
+
+    private val _CollectHolder by lazy { HashMap<String, MutableList<*>>() }
+
+    private inline fun <reified T : ILink> getCollectData(): MutableList<T> = _CollectHolder.getOrPut(T::class.java.name) {
+        refreshData<T>()
+    } as MutableList<T>
+
+    private inline fun <reified T : ILink> addTo(data: T): Boolean {
+        val dataList = getCollectData<T>()
+        return if (dataList.has(data)) {
+            val first = dataList.first()
+            when (first) {
+                is ActressInfo -> {
+                    AppContext.instace.toast("${first.name}已收藏")
+                    first.tag = null
+                    return false
+                }
+                is Movie -> {
+                    data as Movie
+                    AppContext.instace.toast("${first.title}已收藏")
+                    return false
+                }
+            }
+            false
+        } else {
+            getCollectData<T>().add(0, data)
+            save<T>()
+            true
+        }
+
+
+    }
+
+    private fun <T : ILink> List<T>.has(data: T): Boolean = this.any {
+        it.link.urlPath == data.link.urlPath
+    }
+
+    private inline fun <reified T : ILink> remove(data: T): Boolean = getCollectData<T>().let {
+        val res = it.remove(data) || (if (it.has(data)) it.remove(data) else false)
+        if (res) save<T>()
+        return res
+    }
+
+
+    private inline fun <reified T : ILink> refreshData(): MutableList<T> {
+        val key = T::class.java.name
+        return collectCache?.getAsString(T::class.java.name)?.let {
+            try {
+                AppContext.gson.fromJson<Array<T>>(it, TypeToken.getArray(T::class.java).type).toMutableList()
+            } catch (e: Exception) {
+                KLog.w("refreshData $e")
+                backUp(key)
+                mutableListOf<T>()
+            }
+        } ?: mutableListOf()
+
+    }
+
+    //自定义检查
+    private fun <T : ILink> checkUrls(data: MutableList<T>): MutableList<T> {
+        if (host.endsWith(".xyz")) return data
+        if (data.isEmpty()) return data
+        return when (data.first()) {
+            is ActressInfo -> {
+                data as MutableList<ActressInfo>
+                val linkChange = data.any { it.link.urlHost != host }
+                val imageChange = !TextUtils.isEmpty(imageHost) && data.any { it.avatar.urlHost != imageHost && !it.avatar.endsWith("nowprinting.gif") }
+                return if (linkChange || imageChange) {
+                    val new = data.mapTo(ArrayList(data.size)) {
+                        if (it.link.urlHost.endsWith(".xyz")) it //排除xyz
+                        else it.copy(link = if (linkChange) it.link.replace(it.link.urlHost, host) else it.link, avatar = if (imageChange) it.avatar.replace(it.avatar.urlHost, imageHost) else it.avatar)
+                    }
+                    new as MutableList<T>
+                } else data
+            }
+            is Movie -> {
+                data as MutableList<Movie>
+                if (host.endsWith(".xyz")) return data
+                val detailChange = data.any { it.link.urlHost != host }
+                val imageChange = !TextUtils.isEmpty(imageHost) && data.any { it.imageUrl.urlHost != imageHost }
+
+                return if (detailChange || imageChange) {
+                    val new = data.mapTo(ArrayList(data.size)) {
+                        if (it.link.urlHost.endsWith(".xyz")) it
+                        else it.copy(link = if (detailChange) it.link.replace(it.link.urlHost, host) else it.link, imageUrl = if (imageChange) it.imageUrl.replace(it.imageUrl.urlHost, imageHost) else it.imageUrl)
+                    }
+                    //  collectCache?.put(Movie_Key, AppContext.gson.toJson(new))
+                    new as MutableList<T>
+                } else data
+            }
+            else -> data
+        }
+    }
+
+    private inline fun <reified T : ILink> save() = Schedulers.io().scheduleDirect {
+        val key = T::class.java.name
+        collectCache?.put(key, getCollectData<T>().toJsonString())
+    }
+
+    private fun backUp(key: String): Boolean {
         return CollectManager.collectCache?.file(key)?.let {
             val bak = File(it.parent, "${key.hashCode()}.BAK")
             try {
                 it.copyTo(bak, true)
-                val name = if (key == CollectManager.Movie_Key) "电影" else "演员"
+                val name = if (key == Movie::class.java.name) "电影" else if (key == ActressInfo::class.java.name) "演员" else "链接"
                 RxBus.post(CollectErrorEvent(key, "收藏${name}的数据格式错误,已转存至${bak.absolutePath}"))
                 true
             } catch (e: Exception) {
@@ -203,4 +216,5 @@ object CollectManager {
         } ?: false
 
     }
+
 }

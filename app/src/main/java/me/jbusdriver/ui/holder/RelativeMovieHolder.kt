@@ -34,10 +34,10 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
             }
         }, "收藏" to { movie: Movie ->
             CollectManager.addToCollect(movie)
-            KLog.d("movie_data:${CollectManager.movie_data}")
+            KLog.d("movie_data:${CollectManager.movieCache}")
         }, "取消收藏" to { movie: Movie ->
             CollectManager.removeCollect(movie)
-            KLog.d("movie_data:${CollectManager.movie_data}")
+            KLog.d("movie_data:${CollectManager.movieCache}")
         })
     }
 
