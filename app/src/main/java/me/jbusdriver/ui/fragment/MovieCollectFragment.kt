@@ -8,8 +8,8 @@ import me.jbusdriver.common.KLog
 import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.presenter.MovieCollectPresenterImpl
-import me.jbusdriver.ui.data.CollectManager
 import me.jbusdriver.ui.data.AppConfiguration
+import me.jbusdriver.ui.data.collect.MovieCollector
 
 /**
  * Created by Administrator on 2017/7/17 0017.
@@ -29,7 +29,7 @@ class MovieCollectFragment : AbsMovieListFragment(), LinkListContract.LinkListVi
                         .title(it.title)
                         .items(listOf("取消收藏"))
                         .itemsCallback { _, _, _, text ->
-                            if (CollectManager.removeCollect(it)) {
+                            if (MovieCollector.removeCollect(it)) {
                                 viewContext.toast("取消收藏成功")
                                 adapter.data.removeAt(position)
                                 adapter.notifyItemRemoved(position)

@@ -18,7 +18,7 @@ import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.presenter.LinkAbsPresenterImpl
 import me.jbusdriver.mvp.presenter.MovieLinkPresenterImpl
 import me.jbusdriver.ui.activity.SearchResultActivity
-import me.jbusdriver.ui.data.CollectManager
+import me.jbusdriver.ui.data.collect.ActressCollector
 
 
 /**
@@ -36,7 +36,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
         if (link is ActressInfo) {
-            val isCollect = CollectManager.has(link as ActressInfo)
+            val isCollect = ActressCollector.has(link as ActressInfo)
             collectMenu = menu?.add(Menu.NONE, R.id.action_add_movie_collect, 10, "收藏")?.apply {
                 setIcon(R.drawable.ic_star_border_white_24dp)
                 setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -58,7 +58,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
                 R.id.action_add_movie_collect -> {
                     //收藏
                     KLog.d("收藏")
-                    if (CollectManager.addToCollect(actress)) {
+                    if (ActressCollector.addToCollect(actress)) {
                         collectMenu?.isVisible = false
                         removeCollectMenu?.isVisible = true
                     }
@@ -66,7 +66,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
                 R.id.action_remove_movie_collect -> {
                     //取消收藏
                     KLog.d("取消收藏")
-                    if (CollectManager.removeCollect(actress)) {
+                    if (ActressCollector.removeCollect(actress)) {
                         collectMenu?.isVisible = true
                         removeCollectMenu?.isVisible = false
                     }

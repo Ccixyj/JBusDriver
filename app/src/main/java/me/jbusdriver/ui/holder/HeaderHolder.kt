@@ -18,8 +18,8 @@ import me.jbusdriver.common.inflate
 import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.bean.Header
 import me.jbusdriver.ui.activity.MovieListActivity
-import me.jbusdriver.ui.data.CollectManager
 import me.jbusdriver.ui.data.DataSourceType
+import me.jbusdriver.ui.data.collect.LinkCollector
 
 /**
  * Created by Administrator on 2017/5/9 0009.
@@ -34,11 +34,11 @@ class HeaderHolder(context: Context, type: DataSourceType) : BaseHolder(context)
 
             }
         }, "收藏" to { header ->
-            CollectManager.addToCollect(header)
-            KLog.d("link data ${CollectManager.linkCache}")
+            LinkCollector.addToCollect(header)
+            KLog.d("link data ${LinkCollector.dataList}")
         }, "取消收藏" to { header ->
-            CollectManager.removeCollect(header)
-            KLog.d("link data ${CollectManager.linkCache}")
+            LinkCollector.removeCollect(header)
+            KLog.d("link data ${LinkCollector.dataList}")
         })
     }
 
@@ -71,7 +71,7 @@ class HeaderHolder(context: Context, type: DataSourceType) : BaseHolder(context)
                 //长按操作
                 setOnLongClickListener {
                     KLog.d("setOnLongClickListener text : $item")
-                    val action = if (CollectManager.has(item)) actionMap.minus("收藏")
+                    val action = if (LinkCollector.has(item)) actionMap.minus("收藏")
                     else actionMap.minus("取消收藏")
 
                     MaterialDialog.Builder(holder.itemView.context).title(item.name).content(item.value)

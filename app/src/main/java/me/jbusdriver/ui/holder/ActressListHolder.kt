@@ -15,7 +15,7 @@ import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.adapter.ActressInfoAdapter
-import me.jbusdriver.ui.data.CollectManager
+import me.jbusdriver.ui.data.collect.ActressCollector
 
 /**
  * Created by Administrator on 2017/5/9 0009.
@@ -28,11 +28,11 @@ class ActressListHolder(context: Context) : BaseHolder(context) {
                 it.toast("已复制")
             }
         }, "收藏" to { act: ActressInfo ->
-            CollectManager.addToCollect(act)
-            KLog.d("actress_data:${CollectManager.actressCache}")
+            ActressCollector.addToCollect(act)
+            KLog.d("actress_data:${ActressCollector.dataList}")
         }, "取消收藏" to { act: ActressInfo ->
-            CollectManager.removeCollect(act)
-            KLog.d("actress_data:${CollectManager.movieCache}")
+            ActressCollector.removeCollect(act)
+            KLog.d("actress_data:${ActressCollector.dataList}")
         })
     }
 
@@ -53,7 +53,7 @@ class ActressListHolder(context: Context) : BaseHolder(context) {
                 actressAdapter.setOnItemLongClickListener { _, view, position ->
                     actressAdapter.data.getOrNull(position)?.let {
                         act ->
-                        val action = if (CollectManager.has(act)) actionMap.minus("收藏")
+                        val action = if (ActressCollector.has(act)) actionMap.minus("收藏")
                         else actionMap.minus("取消收藏")
 
                         MaterialDialog.Builder(view.context).title(act.name)

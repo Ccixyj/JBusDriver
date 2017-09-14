@@ -2,6 +2,7 @@ package me.jbusdriver.ui.holder
 
 import android.content.Context
 import android.support.v7.widget.GridLayoutManager
+import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.view.View
 import android.view.WindowManager
@@ -38,7 +39,7 @@ class ImageSampleHolder(context: Context): BaseHolder(context) {
                 rv_recycle_images.adapter = imageSampleAdapter
                 imageSampleAdapter.setOnItemClickListener { _, v, position ->
                     if (position < imageSampleAdapter.data.size) {
-                        WatchLargeImageActivity.startShow(v.context, imageSampleAdapter.data.map { it.image }, position)
+                        WatchLargeImageActivity.startShow(v.context, imageSampleAdapter.data.map { if (TextUtils.isEmpty(it.image)) it.thumb  else it.image }, position)
                     }
                 }
             }

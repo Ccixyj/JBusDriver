@@ -7,7 +7,7 @@ import me.jbusdriver.common.KLog
 import me.jbusdriver.common.SchedulersCompat
 import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.mvp.model.BaseModel
-import me.jbusdriver.ui.data.CollectManager
+import me.jbusdriver.ui.data.collect.ICollect
 import org.jsoup.nodes.Document
 
 /**
@@ -17,13 +17,12 @@ import org.jsoup.nodes.Document
 
 abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T> : AbstractRefreshLoadMorePresenterImpl<V, T>() {
 
+
     private val PageSize = 20
-    private val listData by lazy { getData().toMutableList() }
+    private val listData by lazy { collector.dataList.toMutableList() }
     private val pageNum
         get() = (listData.size / PageSize) + 1
-
-
-    abstract fun getData(): List<T>
+    abstract val collector: ICollect<T>
 
 
     override fun loadData4Page(page: Int) {
@@ -44,7 +43,7 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T> 
     override fun onRefresh() {
         pageInfo = PageInfo()
         listData.clear()
-        listData.addAll(getData())
+        listData.addAll(collector.dataList)
         loadData4Page(1)
     }
 
@@ -58,8 +57,7 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T> 
 
     override fun onPresenterDestroyed() {
         super.onPresenterDestroyed()
-        CollectManager.saveActress()
-        CollectManager.saveMovie()
+        collector.save()
     }
 
 }

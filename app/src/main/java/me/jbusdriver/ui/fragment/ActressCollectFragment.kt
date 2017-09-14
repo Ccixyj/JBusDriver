@@ -20,7 +20,7 @@ import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.presenter.ActressCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.adapter.ActressInfoAdapter
-import me.jbusdriver.ui.data.CollectManager
+import me.jbusdriver.ui.data.collect.ActressCollector
 
 /**
  * Created by Administrator on 2017/7/17 0017.
@@ -53,7 +53,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                             .title(it.name)
                             .items(listOf("取消收藏"))
                             .itemsCallback { _, _, _, text ->
-                                if (CollectManager.removeCollect(it)) {
+                                if (ActressCollector.removeCollect(it)) {
                                     viewContext.toast("取消收藏成功")
                                     adapter.data.removeAt(position)
                                     adapter.notifyItemRemoved(position)

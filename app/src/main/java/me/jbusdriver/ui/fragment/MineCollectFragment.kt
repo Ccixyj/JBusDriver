@@ -15,7 +15,9 @@ import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.MineCollectContract
 import me.jbusdriver.mvp.bean.CollectErrorEvent
 import me.jbusdriver.mvp.presenter.MineCollectPresenterImpl
-import me.jbusdriver.ui.data.CollectManager
+import me.jbusdriver.ui.data.collect.ActressCollector
+import me.jbusdriver.ui.data.collect.LinkCollector
+import me.jbusdriver.ui.data.collect.MovieCollector
 
 /**
  * Created by Administrator on 2017/7/17 0017.
@@ -47,7 +49,7 @@ class MineCollectFragment : TabViewPagerFragment<MineCollectContract.MineCollect
             menu.isVisible = false
             //if (key == CollectType.Movie_Key) "电影" else if (key == CollectType.Actress_Key) "演员" else "链接"
             val key = vp_fragment.currentItem.let {
-                if (it == 0) CollectManager.CollectType.Movie_Key else if (it == 1) CollectManager.CollectType.Actress_Key else CollectManager.CollectType.Link_Key
+                if (it == 0) MovieCollector.key else if (it == 1) ActressCollector.key else LinkCollector.key
             }
             events.get(key)?.let { msg ->
                 menu.isVisible = true

@@ -2,10 +2,9 @@ package me.jbusdriver.mvp.presenter
 
 import me.jbusdriver.mvp.LinkCollectContract
 import me.jbusdriver.mvp.bean.ILink
-import me.jbusdriver.ui.data.CollectManager
+import me.jbusdriver.ui.data.collect.LinkCollector
 
 class LinkCollectPresenterImpl : BaseAbsCollectPresenter<LinkCollectContract.LinkCollectView, ILink>(), LinkCollectContract.LinkCollectPresenter {
 
-    override fun getData() = CollectManager.linkCache
-
+    override val collector by lazy { LinkCollector }
 }

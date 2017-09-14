@@ -23,7 +23,7 @@ import me.jbusdriver.common.*
 import me.jbusdriver.mvp.MovieDetailContract
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.presenter.MovieDetailPresenterImpl
-import me.jbusdriver.ui.data.CollectManager
+import me.jbusdriver.ui.data.collect.MovieCollector
 import me.jbusdriver.ui.holder.*
 import org.jsoup.Jsoup
 
@@ -38,6 +38,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
     private val actressHolder by lazy { ActressListHolder(this) }
     private val genreHolder by lazy { GenresHolder(this, movie.type) }
     private val relativeMovieHolder by lazy { RelativeMovieHolder(this) }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +59,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         menuInflater.inflate(R.menu.menu_movie_detail, menu)
         collectMenu = menu.findItem(R.id.action_add_movie_collect)
         removeCollectMenu = menu.findItem(R.id.action_remove_movie_collect)
-        if (CollectManager.has(movie)) {
+        if (MovieCollector.has(movie)) {
             collectMenu.isVisible = false
             removeCollectMenu.isVisible = true
         } else {
@@ -78,7 +79,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             R.id.action_add_movie_collect -> {
                 //收藏
                 KLog.d("收藏")
-                if (CollectManager.addToCollect(movie)) {
+                if (MovieCollector.addToCollect(movie)) {
                     collectMenu.isVisible = false
                     removeCollectMenu.isVisible = true
                 }
@@ -86,7 +87,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             R.id.action_remove_movie_collect -> {
                 //取消收藏
                 KLog.d("取消收藏")
-                if (CollectManager.removeCollect(movie)) {
+                if (MovieCollector.removeCollect(movie)) {
                     collectMenu.isVisible = true
                     removeCollectMenu.isVisible = false
                 }

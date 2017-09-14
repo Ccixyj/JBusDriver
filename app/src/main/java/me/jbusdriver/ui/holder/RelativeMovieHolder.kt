@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.layout_detail_relative_movies.view.*
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.ui.activity.MovieDetailActivity
-import me.jbusdriver.ui.data.CollectManager
+import me.jbusdriver.ui.data.collect.MovieCollector
 import java.util.*
 
 /**
@@ -25,7 +25,7 @@ import java.util.*
  */
 class RelativeMovieHolder(context: Context) : BaseHolder(context) {
 
-    val actionMap by lazy {
+    private val actionMap by lazy {
         mapOf("复制名字" to { movie: Movie ->
             weakRef.get()?.let {
                 it.copy(movie.title)
@@ -33,11 +33,11 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
 
             }
         }, "收藏" to { movie: Movie ->
-            CollectManager.addToCollect(movie)
-            KLog.d("movie_data:${CollectManager.movieCache}")
+            MovieCollector.addToCollect(movie)
+            KLog.d("movie_data:${MovieCollector.dataList}")
         }, "取消收藏" to { movie: Movie ->
-            CollectManager.removeCollect(movie)
-            KLog.d("movie_data:${CollectManager.movieCache}")
+            MovieCollector.removeCollect(movie)
+            KLog.d("movie_data:${MovieCollector.dataList}")
         })
     }
 
@@ -53,9 +53,8 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
                     }
                 }
                 relativeAdapter.setOnItemLongClickListener { adapter, view, position ->
-                    relativeAdapter.data.getOrNull(position)?.let {
-                        movie ->
-                        val action = if (CollectManager.has(movie)) actionMap.minus("收藏")
+                    relativeAdapter.data.getOrNull(position)?.let { movie ->
+                        val action = if (MovieCollector.has(movie)) actionMap.minus("收藏")
                         else actionMap.minus("取消收藏")
                         MaterialDialog.Builder(view.context).title(movie.title)
                                 .items(action.keys)
@@ -70,7 +69,7 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
         } ?: error("context ref is finish")
     }
 
-    val relativeAdapter: BaseQuickAdapter<Movie, BaseViewHolder> by lazy {
+    private val relativeAdapter: BaseQuickAdapter<Movie, BaseViewHolder> by lazy {
         object : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.layout_detail_relative_movies_item) {
             override fun convert(holder: BaseViewHolder, item: Movie) {
                 Glide.with(holder.itemView.context).load(item.imageUrl.toGlideUrl).asBitmap().into(object : BitmapImageViewTarget(holder.getView(R.id.iv_relative_movie_image)) {
@@ -111,10 +110,8 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
     }
 
 
-    val random = Random()
-    private fun randomNum(number: Int): Int {
-        return Math.abs(random.nextInt() % number)
-    }
+    private val random = Random()
+    private fun randomNum(number: Int) = Math.abs(random.nextInt() % number)
 
     fun init(relativeMovies: List<Movie>) {
         //actress

@@ -13,7 +13,7 @@ import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.bean.Genre
 import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.ui.activity.MovieListActivity
-import me.jbusdriver.ui.data.CollectManager
+import me.jbusdriver.ui.data.collect.LinkCollector
 
 /**
  * Created by Administrator on 2017/7/30.
@@ -25,11 +25,11 @@ open class GenreAdapter : BaseQuickAdapter<Genre, BaseViewHolder>(R.layout.layou
             AppContext.instace.copy(genre.name)
             AppContext.instace.toast("已复制")
         }, "收藏" to { header ->
-            CollectManager.addToCollect(header)
-            KLog.d("link data ${CollectManager.linkCache}")
+            LinkCollector.addToCollect(header)
+            KLog.d("link data ${LinkCollector.dataList}")
         }, "取消收藏" to { header ->
-            CollectManager.removeCollect(header)
-            KLog.d("link data ${CollectManager.linkCache}")
+            LinkCollector.removeCollect(header)
+            KLog.d("link data ${LinkCollector.dataList}")
         })
     }
 
@@ -52,7 +52,7 @@ open class GenreAdapter : BaseQuickAdapter<Genre, BaseViewHolder>(R.layout.layou
 
         setOnItemLongClickListener { adapter, _, position ->
             (adapter.data.getOrNull(position) as? Genre)?.let { item ->
-                val action = if (CollectManager.has(item as ILink)) actionMap.minus("收藏")
+                val action = if (LinkCollector.has(item as ILink)) actionMap.minus("收藏")
                 else actionMap.minus("取消收藏")
 
                 MaterialDialog.Builder(this.mContext).content(item.name)
