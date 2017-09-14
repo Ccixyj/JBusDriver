@@ -66,14 +66,14 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
             return@Function when {
                 (it is HttpException && it.code() == 404) -> {
                     AndroidSchedulers.mainThread().scheduleDirect {
-                        mView?.viewContext?.toast("第${pageInfo.activePage}页没有数据")
+                        mView?.viewContext?.toast("第${page}页没有数据")
                     }
                     pageInfo = pageInfo.copy(activePage = pageInfo.nextPage - 1)//重置前一页pageInfo
                     Flowable.just(mutableListOf())
                 }
                 it is TimeoutException -> {
                     AndroidSchedulers.mainThread().scheduleDirect {
-                        mView?.viewContext?.toast("第${pageInfo.activePage}页请求超时,请过会再次尝试")
+                        mView?.viewContext?.toast("第${page}页请求超时,请过会再次尝试")
                     }
                     Flowable.just(mutableListOf())
                 }
