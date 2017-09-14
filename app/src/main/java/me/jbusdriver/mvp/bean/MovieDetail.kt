@@ -1,5 +1,6 @@
 package me.jbusdriver.mvp.bean
 
+import android.text.TextUtils
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.urlHost
 import me.jbusdriver.ui.data.DataSourceType
@@ -62,7 +63,9 @@ data class MovieDetail(val title: String,
             }
 
             val samples = doc.select("#sample-waterfall .sample-box").map {
-                ImageSample(it.select("img").attr("title"), it.select("img").attr("src"), it.attr("href"))
+                val thumb = it.select("img").attr("src")
+                val image = it.attr("href")
+                ImageSample(it.select("img").attr("title"), thumb, if (TextUtils.isEmpty(image)) thumb else image)
             }
 
             val relatedMovies = doc.select("#related-waterfall .movie-box").map {
@@ -88,7 +91,6 @@ data class MovieDetail(val title: String,
     }
 
 }
-
 
 
 interface IAttr

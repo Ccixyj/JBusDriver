@@ -13,10 +13,9 @@ import me.jbusdriver.common.AppContext
 import me.jbusdriver.common.RxBus
 import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.MineCollectContract
-import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.CollectErrorEvent
-import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.presenter.MineCollectPresenterImpl
+import me.jbusdriver.ui.data.CollectManager
 
 /**
  * Created by Administrator on 2017/7/17 0017.
@@ -46,9 +45,11 @@ class MineCollectFragment : TabViewPagerFragment<MineCollectContract.MineCollect
         inflater?.inflate(R.menu.menu_collect, menu)
         menu?.findItem(R.id.action_collect_info)?.let { menu ->
             menu.isVisible = false
-            val key = if (vp_fragment.currentItem == 0) Movie::class.java.name else ActressInfo::class.java.name
-            events.get(key)?.let {
-                msg->
+            //if (key == CollectType.Movie_Key) "电影" else if (key == CollectType.Actress_Key) "演员" else "链接"
+            val key = vp_fragment.currentItem.let {
+                if (it == 0) CollectManager.CollectType.Movie_Key else if (it == 1) CollectManager.CollectType.Actress_Key else CollectManager.CollectType.Link_Key
+            }
+            events.get(key)?.let { msg ->
                 menu.isVisible = true
                 menu.setOnMenuItemClickListener {
                     MaterialDialog.Builder(viewContext).content(msg).positiveText("确定").show()

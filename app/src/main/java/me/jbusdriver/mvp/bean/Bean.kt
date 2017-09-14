@@ -102,3 +102,6 @@ data class MenuOpHead(val name: String) : AbstractExpandableItem<MenuOp>(), Mult
     override fun getItemType(): Int = Expand_Type_Head
     override fun getLevel() = 0
 }
+
+/*历史记录项*/
+data class HistoryBean(val name: String, override val link: String, val image: String? = null) :  ILink

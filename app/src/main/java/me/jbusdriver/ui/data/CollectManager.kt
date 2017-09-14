@@ -18,7 +18,22 @@ import java.io.File
 /**
  * Created by Administrator on 2017/7/16.
  */
+
+
 object CollectManager {
+
+    object CollectType {
+        const val Actress_Key = "Actress_Key"
+        const val Movie_Key = "Movie_Key"
+        const val Link_Key = "Link_Key"
+    }
+
+    private val keyMap by lazy {
+        arrayMapof(
+                ActressInfo::class.java.name to CollectType.Actress_Key,
+                Movie::class.java.name to CollectType.Movie_Key
+        )
+    }
 
     private val host: String by lazy { JAVBusService.defaultFastUrl }
     private val imageHost: String by lazy { JAVBusService.defaultImageUrlHost }
@@ -76,8 +91,8 @@ object CollectManager {
     }
 
     /*===========数据=============*/
-    val movieCache by lazy { getCollectData<Movie>() }
-    val actressCache by lazy { getCollectData<ActressInfo>() }
+    val movieCache get() = (_CollectHolder[CollectType.Movie_Key] as? MutableList<Movie>) ?: getCollectData()
+    val actressCache get() = (_CollectHolder[CollectType.Actress_Key]  as? MutableList<ActressInfo>) ?: getCollectData()
 
 
     /*===========添加收藏=============*/
@@ -106,9 +121,14 @@ object CollectManager {
 
     private val _CollectHolder by lazy { HashMap<String, MutableList<*>>() }
 
-    private inline fun <reified T : ILink> getCollectData(): MutableList<T> = _CollectHolder.getOrPut(T::class.java.name) {
-        refreshData<T>()
-    } as MutableList<T>
+    private inline fun <reified T : ILink> getCollectData(): MutableList<T> {
+        val key = keyMap.get(T::class.java.name) ?: CollectType.Link_Key
+        val data = _CollectHolder.getOrPut(key) {
+            refreshData<T>() //初始化
+        } as MutableList<T>
+        KLog.d("getCollectData key $key $data $_CollectHolder")
+        return data
+    }
 
     private inline fun <reified T : ILink> addTo(data: T): Boolean {
         val dataList = getCollectData<T>()
@@ -148,12 +168,18 @@ object CollectManager {
 
 
     private inline fun <reified T : ILink> refreshData(): MutableList<T> {
-        val key = T::class.java.name
-        return collectCache?.getAsString(T::class.java.name)?.let {
+        val key = keyMap.get(T::class.java.name) ?: CollectType.Link_Key
+
+        return collectCache?.getAsString(key)?.let {
             try {
-                AppContext.gson.fromJson<Array<T>>(it, TypeToken.getArray(T::class.java).type).toMutableList()
+                AppContext.gson.fromJson<Array<T>>(it, TypeToken.getArray(T::class.java).type).toMutableList().let {
+                    return   checkUrls(it).apply {
+                        KLog.d("refreshData key $key $this")
+                    }
+                }
             } catch (e: Exception) {
-                KLog.w("refreshData $e")
+
+                KLog.w("refreshData key $e")
                 backUp(key)
                 mutableListOf<T>()
             }
@@ -198,16 +224,17 @@ object CollectManager {
     }
 
     private inline fun <reified T : ILink> save() = Schedulers.io().scheduleDirect {
-        val key = T::class.java.name
+        val key = keyMap.get(T::class.java.name) ?: CollectType.Link_Key
         collectCache?.put(key, getCollectData<T>().toJsonString())
     }
 
     private fun backUp(key: String): Boolean {
+        KLog.d("back up key $key")
         return CollectManager.collectCache?.file(key)?.let {
             val bak = File(it.parent, "${key.hashCode()}.BAK")
             try {
                 it.copyTo(bak, true)
-                val name = if (key == Movie::class.java.name) "电影" else if (key == ActressInfo::class.java.name) "演员" else "链接"
+                val name = if (key == CollectType.Movie_Key) "电影" else if (key == CollectType.Actress_Key) "演员" else "链接"
                 RxBus.post(CollectErrorEvent(key, "收藏${name}的数据格式错误,已转存至${bak.absolutePath}"))
                 true
             } catch (e: Exception) {

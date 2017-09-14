@@ -2,6 +2,7 @@ package me.jbusdriver.mvp.bean
 
 import android.text.TextUtils
 import com.chad.library.adapter.base.entity.MultiItemEntity
+import com.google.gson.annotations.SerializedName
 import me.jbusdriver.common.urlHost
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.DataSourceType
@@ -16,7 +17,7 @@ data class Movie(
         val imageUrl: String,
         val code: String, //番号
         val date: String, //日期
-        override val link: String,
+        @SerializedName("detailUrl") override val link: String,
         val tags: List<String> = listOf()//标签,
 
 ) : MultiItemEntity, ILink {
