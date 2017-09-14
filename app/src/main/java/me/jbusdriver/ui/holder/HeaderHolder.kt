@@ -44,7 +44,7 @@ class HeaderHolder(context: Context, type: DataSourceType) : BaseHolder(context)
         } ?: error("context ref is finish")
     }
 
-    val headAdapter = object : BaseQuickAdapter<Header, BaseViewHolder>(R.layout.layout_header_item) {
+    private val headAdapter = object : BaseQuickAdapter<Header, BaseViewHolder>(R.layout.layout_header_item) {
         override fun convert(holder: BaseViewHolder, item: Header) {
             holder.getView<TextView>(R.id.tv_head_value)?.apply {
                 if (!TextUtils.isEmpty(item.link)) {

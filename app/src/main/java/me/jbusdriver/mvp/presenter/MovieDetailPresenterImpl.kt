@@ -24,7 +24,7 @@ class MovieDetailPresenterImpl : BasePresenterImpl<MovieDetailContract.MovieDeta
         KLog.d("request for : $s")
         mView?.let {
             view ->
-            JAVBusService.INSTANCE.get(view.movie.detailUrl).map { MovieDetail.parseDetails(Jsoup.parse(it), view.movie.type) }
+            JAVBusService.INSTANCE.get(view.movie.link).map { MovieDetail.parseDetails(Jsoup.parse(it), view.movie.type) }
                     .doOnNext { mView?.movie?.detailSaveKey?.let { key -> CacheLoader.cacheDisk(key to it) } }
         } ?: Flowable.empty()
     }
@@ -62,7 +62,7 @@ class MovieDetailPresenterImpl : BasePresenterImpl<MovieDetailContract.MovieDeta
     }
 
     override fun loadDetail() {
-        mView?.movie?.detailUrl?.let {
+        mView?.movie?.link?.let {
             KLog.d("detailurl :$it  , movie ${mView?.movie}")
             model.requestFromCache(it).compose(SchedulersCompat.io())
                     .compose(SchedulersCompat.io())

@@ -15,11 +15,14 @@ import me.jbusdriver.ui.fragment.ActressListFragment
 import me.jbusdriver.ui.fragment.GenrePagesFragment
 import me.jbusdriver.ui.fragment.HomeMovieListFragment
 import me.jbusdriver.ui.fragment.MineCollectFragment
+import java.io.Serializable
 
 /**
  * Created by Administrator on 2017/4/9.
  */
-
+interface ILink : Serializable {
+    val link: String
+}
 data class PageInfo(val activePage: Int = 0, val nextPage: Int = 0,
                     val activePath: String = "",
                     val nextPath: String = "",

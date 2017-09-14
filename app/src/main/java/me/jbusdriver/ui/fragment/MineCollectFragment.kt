@@ -13,9 +13,10 @@ import me.jbusdriver.common.AppContext
 import me.jbusdriver.common.RxBus
 import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.MineCollectContract
+import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.CollectErrorEvent
+import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.presenter.MineCollectPresenterImpl
-import me.jbusdriver.ui.data.CollectManager
 
 /**
  * Created by Administrator on 2017/7/17 0017.
@@ -28,7 +29,7 @@ class MineCollectFragment : TabViewPagerFragment<MineCollectContract.MineCollect
     override val mFragments: List<Fragment> by lazy { listOf(MovieCollectFragment.newInstance(), ActressCollectFragment.newInstance()) }
 
 
-    val events by lazy { hashMapOf<String, String>() }
+    private val events by lazy { hashMapOf<String, String>() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +46,7 @@ class MineCollectFragment : TabViewPagerFragment<MineCollectContract.MineCollect
         inflater?.inflate(R.menu.menu_collect, menu)
         menu?.findItem(R.id.action_collect_info)?.let { menu ->
             menu.isVisible = false
-            val key = if (vp_fragment.currentItem == 0) CollectManager.Movie_Key else CollectManager.Actress_Key
+            val key = if (vp_fragment.currentItem == 0) Movie::class.java.name else ActressInfo::class.java.name
             events.get(key)?.let {
                 msg->
                 menu.isVisible = true

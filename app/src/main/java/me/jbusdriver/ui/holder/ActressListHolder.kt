@@ -29,10 +29,10 @@ class ActressListHolder(context: Context) : BaseHolder(context) {
             }
         }, "收藏" to { act: ActressInfo ->
             CollectManager.addToCollect(act)
-            KLog.d("actress_data:${CollectManager.actress_data}")
+            KLog.d("actress_data:${CollectManager.actressCache}")
         }, "取消收藏" to { act: ActressInfo ->
             CollectManager.removeCollect(act)
-            KLog.d("actress_data:${CollectManager.actress_data}")
+            KLog.d("actress_data:${CollectManager.movieCache}")
         })
     }
 

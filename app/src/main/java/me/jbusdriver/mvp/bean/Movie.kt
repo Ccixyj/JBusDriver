@@ -2,12 +2,10 @@ package me.jbusdriver.mvp.bean
 
 import android.text.TextUtils
 import com.chad.library.adapter.base.entity.MultiItemEntity
-import me.jbusdriver.common.KLog
 import me.jbusdriver.common.urlHost
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.nodes.Document
-import java.io.Serializable
 
 /**
  * Created by Administrator on 2017/4/16.
@@ -18,10 +16,10 @@ data class Movie(
         val imageUrl: String,
         val code: String, //番号
         val date: String, //日期
-        val detailUrl: String,
+        override val link: String,
         val tags: List<String> = listOf()//标签,
 
-) : MultiItemEntity, Serializable {
+) : MultiItemEntity, ILink {
 
     override fun getItemType(): Int = if (isInValid) -1 else 0
 
@@ -35,7 +33,7 @@ data class Movie(
                         imageUrl = element.select("img").attr("src"),
                         code = element.select("date").first().text(),
                         date = element.select("date").getOrNull(1)?.text() ?: "",
-                        detailUrl = element.attr("href"),
+                        link = element.attr("href"),
                         tags = element.select(".item-tag").firstOrNull()?.children()?.map { it.text() } ?: emptyList()
                 )
             }.apply {
@@ -55,4 +53,4 @@ val Movie.detailSaveKey
     inline get() = code + "_" + date
 
 private val Movie.isInValid
-    inline get() = TextUtils.isEmpty(code) && TextUtils.isEmpty(detailUrl)
+    inline get() = TextUtils.isEmpty(code) && TextUtils.isEmpty(link)

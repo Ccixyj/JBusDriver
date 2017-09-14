@@ -5,7 +5,6 @@ import me.jbusdriver.common.urlHost
 import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import java.io.Serializable
 
 /**
  * Created by Administrator on 2017/4/16.
@@ -90,9 +89,7 @@ data class MovieDetail(val title: String,
 
 }
 
-interface ILink : Serializable {
-    val link: String
-}
+
 
 interface IAttr
 
@@ -100,6 +97,7 @@ interface IAttr
 data class Header(val name: String, val value: String, override val link: String) : ILink
 data class Genre(val name: String, override val link: String) : ILink
 data class ActressInfo(val name: String, val avatar: String, override val link: String, var tag: String? = null) : ILink {
+
     companion object {
         fun parseActressAttrs(doc: Document): ActressAttrs {
             val frame = doc.select(".avatar-box")
@@ -140,9 +138,9 @@ fun MovieDetail.checkUrl(host: String): MovieDetail {
             it.copy(link = it.link.replace(it.link.urlHost, host))
         }
     } else return this
-    val nRelatedMovies = if (this.relatedMovies.any { it.detailUrl.urlHost != host }) {
+    val nRelatedMovies = if (this.relatedMovies.any { it.link.urlHost != host }) {
         relatedMovies.map {
-            it.copy(detailUrl = it.detailUrl.replace(it.detailUrl.urlHost, host))
+            it.copy(link = it.link.replace(it.link.urlHost, host))
         }
     } else return this
     return this.copy(headers = nHeader, genres = nGenres, actress = nActress, relatedMovies = nRelatedMovies)
