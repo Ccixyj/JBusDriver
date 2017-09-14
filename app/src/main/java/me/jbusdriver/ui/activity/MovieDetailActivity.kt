@@ -21,10 +21,7 @@ import kotlinx.android.synthetic.main.activity_movie_detail.*
 import kotlinx.android.synthetic.main.content_movie_detail.*
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.MovieDetailContract
-import me.jbusdriver.mvp.bean.Magnet
-import me.jbusdriver.mvp.bean.Movie
-import me.jbusdriver.mvp.bean.MovieDetail
-import me.jbusdriver.mvp.bean.detailSaveKey
+import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.presenter.MovieDetailPresenterImpl
 import me.jbusdriver.ui.data.CollectManager
 import me.jbusdriver.ui.holder.*
@@ -51,7 +48,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             mBasePresenter?.onRefresh()
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = movie.code + " " + movie.title
+        supportActionBar?.title = movie.des
 
         StatusBarUtil.setTransparent(this)
         initWidget()

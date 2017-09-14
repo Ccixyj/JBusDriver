@@ -23,10 +23,8 @@ import java.util.*
  * Created by Administrator on 2017/7/17.
  */
 class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseQuickAdapter<ActressInfo, BaseViewHolder>(R.layout.layout_actress_item) {
-    val random = Random()
-    private fun randomNum(number: Int): Int {
-        return Math.abs(random.nextInt() % number)
-    }
+    private val random = Random()
+    private fun randomNum(number: Int) = Math.abs(random.nextInt() % number)
 
     override fun convert(holder: BaseViewHolder, item: ActressInfo) {
         KLog.d("ActressInfo :$item")

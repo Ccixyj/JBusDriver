@@ -1,7 +1,10 @@
 package me.jbusdriver.mvp
 
 import com.cfzx.mvp.view.BaseView
-import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.bean.Genre
+import me.jbusdriver.mvp.bean.Magnet
+import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.mvp.bean.MovieDetail
 import me.jbusdriver.mvp.presenter.BasePresenter
 import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.nodes.Element
@@ -62,6 +65,11 @@ interface MovieCollectContract {
 interface ActressCollectContract {
     interface ActressCollectView : BaseView.BaseListWithRefreshView
     interface ActressCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<ActressCollectView>
+}
+
+interface LinkCollectContract {
+    interface LinkCollectView : BaseView.BaseListWithRefreshView
+    interface LinkCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<LinkCollectView>
 }
 
 interface GenrePageContract {

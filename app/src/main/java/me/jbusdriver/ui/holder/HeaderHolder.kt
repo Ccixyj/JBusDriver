@@ -18,6 +18,7 @@ import me.jbusdriver.common.inflate
 import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.bean.Header
 import me.jbusdriver.ui.activity.MovieListActivity
+import me.jbusdriver.ui.data.CollectManager
 import me.jbusdriver.ui.data.DataSourceType
 
 /**
@@ -32,6 +33,12 @@ class HeaderHolder(context: Context, type: DataSourceType) : BaseHolder(context)
                 it.toast("已复制")
 
             }
+        }, "收藏" to { header ->
+            CollectManager.addToCollect(header)
+            KLog.d("link data ${CollectManager.linkCache}")
+        }, "取消收藏" to { header ->
+            CollectManager.removeCollect(header)
+            KLog.d("link data ${CollectManager.linkCache}")
         })
     }
 
@@ -64,12 +71,16 @@ class HeaderHolder(context: Context, type: DataSourceType) : BaseHolder(context)
                 //长按操作
                 setOnLongClickListener {
                     KLog.d("setOnLongClickListener text : $item")
+                    val action = if (CollectManager.has(item)) actionMap.minus("收藏")
+                    else actionMap.minus("取消收藏")
+
                     MaterialDialog.Builder(holder.itemView.context).title(item.name).content(item.value)
-                            .items(actionMap.keys)
+                            .items(action.keys)
                             .itemsCallback { _, _, _, text ->
-                                actionMap[text]?.invoke(item)
+                                action[text]?.invoke(item)
                             }.show()
                     return@setOnLongClickListener true
+
                 }
             }
             holder.setText(R.id.tv_head_name, item.name)

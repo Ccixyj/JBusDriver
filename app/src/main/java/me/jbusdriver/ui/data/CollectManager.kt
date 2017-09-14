@@ -3,16 +3,15 @@ package me.jbusdriver.ui.data
 import android.os.Environment
 import android.os.StatFs
 import android.text.TextUtils
+import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import com.umeng.analytics.MobclickAgent
 import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
-import me.jbusdriver.mvp.bean.ActressInfo
-import me.jbusdriver.mvp.bean.CollectErrorEvent
-import me.jbusdriver.mvp.bean.ILink
-import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.mvp.bean.*
 import java.io.File
+import java.lang.reflect.Type
 
 
 /**
@@ -35,6 +34,9 @@ object CollectManager {
         )
     }
 
+    private val exGson by lazy {
+        GsonBuilder().registerTypeAdapter(ILink::class.java, ILinkAdapter).create()
+    }
     private val host: String by lazy { JAVBusService.defaultFastUrl }
     private val imageHost: String by lazy { JAVBusService.defaultImageUrlHost }
     private val collectCache by lazy {
@@ -93,6 +95,7 @@ object CollectManager {
     /*===========数据=============*/
     val movieCache get() = (_CollectHolder[CollectType.Movie_Key] as? MutableList<Movie>) ?: getCollectData()
     val actressCache get() = (_CollectHolder[CollectType.Actress_Key]  as? MutableList<ActressInfo>) ?: getCollectData()
+    val linkCache get() = (_CollectHolder[CollectType.Link_Key]  as? MutableList<ILink>) ?: getCollectData()
 
 
     /*===========添加收藏=============*/
@@ -100,15 +103,21 @@ object CollectManager {
 
     fun addToCollect(movie: Movie): Boolean = addTo(movie)
 
+    fun addToCollect(link: ILink): Boolean = addTo(link)
+
     /*===========是否收藏了=============*/
     fun has(act: ActressInfo) = getCollectData<ActressInfo>().has(act)
 
     fun has(movie: Movie): Boolean = getCollectData<ActressInfo>().has(movie)
 
+    fun has(link: ILink): Boolean = getCollectData<ILink>().has(link)
+
     /*===========删除收藏=============*/
     fun removeCollect(act: ActressInfo) = remove(act)
 
     fun removeCollect(movie: Movie): Boolean = remove(movie)
+
+    fun removeCollect(link: ILink): Boolean = remove(link)
 
     /* ======== save  =========== */
     fun saveActress() = save<ActressInfo>()
@@ -123,11 +132,10 @@ object CollectManager {
 
     private inline fun <reified T : ILink> getCollectData(): MutableList<T> {
         val key = keyMap.get(T::class.java.name) ?: CollectType.Link_Key
-        val data = _CollectHolder.getOrPut(key) {
+        return _CollectHolder.getOrPut(key) {
             refreshData<T>() //初始化
         } as MutableList<T>
-        KLog.d("getCollectData key $key $data $_CollectHolder")
-        return data
+
     }
 
     private inline fun <reified T : ILink> addTo(data: T): Boolean {
@@ -145,8 +153,12 @@ object CollectManager {
                     AppContext.instace.toast("${first.title}已收藏")
                     return false
                 }
+
+                else -> {
+                    AppContext.instace.toast("${first.des}已收藏")
+                    return false
+                }
             }
-            false
         } else {
             getCollectData<T>().add(0, data)
             save<T>()
@@ -172,10 +184,8 @@ object CollectManager {
 
         return collectCache?.getAsString(key)?.let {
             try {
-                AppContext.gson.fromJson<Array<T>>(it, TypeToken.getArray(T::class.java).type).toMutableList().let {
-                    return   checkUrls(it).apply {
-                        KLog.d("refreshData key $key $this")
-                    }
+                exGson.fromJson<Array<T>>(it, TypeToken.getArray(T::class.java).type).toMutableList().let {
+                    return checkUrls(it)
                 }
             } catch (e: Exception) {
 
@@ -194,6 +204,7 @@ object CollectManager {
         return when (data.first()) {
             is ActressInfo -> {
                 data as MutableList<ActressInfo>
+                if (host.endsWith(".xyz")) return data
                 val linkChange = data.any { it.link.urlHost != host }
                 val imageChange = !TextUtils.isEmpty(imageHost) && data.any { it.avatar.urlHost != imageHost && !it.avatar.endsWith("nowprinting.gif") }
                 return if (linkChange || imageChange) {
@@ -225,7 +236,7 @@ object CollectManager {
 
     private inline fun <reified T : ILink> save() = Schedulers.io().scheduleDirect {
         val key = keyMap.get(T::class.java.name) ?: CollectType.Link_Key
-        collectCache?.put(key, getCollectData<T>().toJsonString())
+        collectCache?.put(key, exGson.toJson(getCollectData<T>()))
     }
 
     private fun backUp(key: String): Boolean {
@@ -242,6 +253,36 @@ object CollectManager {
             }
         } ?: false
 
+    }
+
+    private object ILinkAdapter : JsonSerializer<ILink>, JsonDeserializer<ILink> {
+        private const val CLASSNAME = "LINK_CLASS"
+        private const val INSTANCE = "LINK_INSTANCE"
+
+        override fun serialize(src: ILink, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
+            KLog.d("ILinkAdapter  serialize  $typeOfSrc $src ")
+            val retValue = JsonObject()
+            val className = src.javaClass.name
+            retValue.addProperty(CLASSNAME, className)
+            val elem = context.serialize(src)
+            retValue.add(INSTANCE, elem)
+            return retValue
+        }
+
+        override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ILink {
+            KLog.d("ILinkAdapter  deserialize $typeOfT $json ")
+            val jsonObject = json.asJsonObject
+            val className = jsonObject.get(CLASSNAME)?.asString ?: throw error("$json cant not find property $CLASSNAME")
+
+            try {
+                return context.deserialize(jsonObject.get(INSTANCE), Class.forName(className))
+            } catch (e: ClassNotFoundException) {
+                e.printStackTrace()
+                throw JsonParseException(e.message)
+            }
+
+
+        }
     }
 
 }

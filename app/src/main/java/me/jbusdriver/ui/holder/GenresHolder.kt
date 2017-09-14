@@ -5,10 +5,8 @@ import android.view.View
 import com.xiaofeng.flowlayoutmanager.FlowLayoutManager
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_genres.view.*
-import me.jbusdriver.common.KLog
 import me.jbusdriver.common.inflate
 import me.jbusdriver.mvp.bean.Genre
-import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.adapter.GenreAdapter
 import me.jbusdriver.ui.data.DataSourceType
 
@@ -25,7 +23,7 @@ class GenresHolder(context: Context, type: DataSourceType) : BaseHolder(context)
         } ?: error("context ref is finish")
     }
 
-    val genreAdapter = GenreAdapter()
+    private val genreAdapter = GenreAdapter()
 
     fun init(genres: List<Genre>) {
         //actress

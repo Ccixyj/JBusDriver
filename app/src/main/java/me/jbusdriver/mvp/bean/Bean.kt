@@ -23,6 +23,17 @@ import java.io.Serializable
 interface ILink : Serializable {
     val link: String
 }
+
+val ILink.des: String
+    inline get() = when (this) {
+        is Header -> "${this.name} ${this.value}"
+        is Genre -> "类别 ${this.name}"
+        is ActressInfo -> "演员 ${this.name}"
+        is me.jbusdriver.mvp.bean.Movie -> "$code $title"
+        is SearchLink -> "搜索 $query"
+        else -> error(" $this has no matched class for des")
+    }
+
 data class PageInfo(val activePage: Int = 0, val nextPage: Int = 0,
                     val activePath: String = "",
                     val nextPath: String = "",
@@ -104,4 +115,4 @@ data class MenuOpHead(val name: String) : AbstractExpandableItem<MenuOp>(), Mult
 }
 
 /*历史记录项*/
-data class HistoryBean(val name: String, override val link: String, val image: String? = null) :  ILink
+data class HistoryBean(val name: String, override val link: String, val image: String? = null) : ILink

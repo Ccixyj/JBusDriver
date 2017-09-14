@@ -21,7 +21,7 @@ import me.jbusdriver.ui.data.CollectManager
  * Created by Administrator on 2017/5/9 0009.
  */
 class ActressListHolder(context: Context) : BaseHolder(context) {
-    val actionMap by lazy {
+   private val actionMap by lazy {
         mapOf("复制名字" to { act: ActressInfo ->
             weakRef.get()?.let {
                 it.copy(act.name)
@@ -69,7 +69,7 @@ class ActressListHolder(context: Context) : BaseHolder(context) {
         } ?: error("context ref is finish")
     }
 
-    val actressAdapter: BaseQuickAdapter<ActressInfo, BaseViewHolder> by lazy {
+    private val actressAdapter: BaseQuickAdapter<ActressInfo, BaseViewHolder> by lazy {
         ActressInfoAdapter(rxManager)
     }
 

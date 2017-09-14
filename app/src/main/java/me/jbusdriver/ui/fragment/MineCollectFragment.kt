@@ -23,9 +23,9 @@ import me.jbusdriver.ui.data.CollectManager
 class MineCollectFragment : TabViewPagerFragment<MineCollectContract.MineCollectPresenter, MineCollectContract.MineCollectView>(), MineCollectContract.MineCollectView {
     override fun createPresenter() = MineCollectPresenterImpl()
 
-    override val mTitles: List<String> by lazy { listOf("movies", "girls") }
+    override val mTitles: List<String> by lazy { listOf("电影", "演员", "链接") }
 
-    override val mFragments: List<Fragment> by lazy { listOf(MovieCollectFragment.newInstance(), ActressCollectFragment.newInstance()) }
+    override val mFragments: List<Fragment> by lazy { listOf(MovieCollectFragment.newInstance(), ActressCollectFragment.newInstance(), LinkCollectFragment.newInstance()) }
 
 
     private val events by lazy { hashMapOf<String, String>() }

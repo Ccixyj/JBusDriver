@@ -9,10 +9,8 @@ import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.AppBaseActivity
 import me.jbusdriver.common.C
 import me.jbusdriver.mvp.MovieParseContract
-import me.jbusdriver.mvp.bean.ActressInfo
-import me.jbusdriver.mvp.bean.Genre
-import me.jbusdriver.mvp.bean.Header
 import me.jbusdriver.mvp.bean.ILink
+import me.jbusdriver.mvp.bean.des
 import me.jbusdriver.mvp.presenter.MovieParsePresenterImpl
 import me.jbusdriver.ui.fragment.LinkedMovieListFragment
 
@@ -23,7 +21,7 @@ class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter
 
     override val layoutId = R.layout.activity_moive_list
 
-    val linkData by lazy { intent.getSerializableExtra(C.BundleKey.Key_1) as? ILink ?: error("no link data") }
+    private val linkData by lazy { intent.getSerializableExtra(C.BundleKey.Key_1) as? ILink ?: error("no link data") }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,26 +34,7 @@ class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        when (linkData) {
-            is Header -> {
-                (linkData as Header).let {
-                    supportActionBar?.title = "${it.name}${it.value}"
-                }
-            }
-            is Genre -> {
-                (linkData as Genre).let {
-                    supportActionBar?.title = "类别 ${it.name}"
-                }
-            }
-            is ActressInfo -> {
-                (linkData as ActressInfo).let {
-                    supportActionBar?.title = "演员 ${it.name}"
-                }
-            }
-            else -> {
-                //no op
-            }
-        }
+        supportActionBar?.title = linkData.des
     }
 
     override fun <T> showContent(data: T?) {
