@@ -50,6 +50,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
 
     override fun onRefresh() {
         rxManager.clear()
+        pageInfo =PageInfo(1,0)
         loadData4Page(1)
     }
 

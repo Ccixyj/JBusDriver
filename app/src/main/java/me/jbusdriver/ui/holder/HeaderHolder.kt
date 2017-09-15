@@ -71,8 +71,14 @@ class HeaderHolder(context: Context, type: DataSourceType) : BaseHolder(context)
                 //长按操作
                 setOnLongClickListener {
                     KLog.d("setOnLongClickListener text : $item")
-                    val action = if (LinkCollector.has(item)) actionMap.minus("收藏")
-                    else actionMap.minus("取消收藏")
+                    val action =   actionMap.filter {
+                        when {
+                            TextUtils.isEmpty(item.link) -> it.key == "复制"
+                            LinkCollector.has(item) -> it.key != "收藏"
+                            else -> it.key != "取消收藏"
+                        }
+                    }
+
 
                     MaterialDialog.Builder(holder.itemView.context).title(item.name).content(item.value)
                             .items(action.keys)

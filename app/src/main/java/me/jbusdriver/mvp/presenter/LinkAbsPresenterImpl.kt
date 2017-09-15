@@ -96,7 +96,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
 
     override fun onLoadMore() {
         //跳转后pageinfo可能不是线性的了,所以需要根据dataPageCache来判断
-        if (dataPageCache.lastKey() >= pageInfo.nextPage) {
+        if (dataPageCache.isNotEmpty() && dataPageCache.lastKey() >= pageInfo.nextPage) {
             //加载过比他大的页面
             //直接完成
             pageInfo = PageInfo(dataPageCache.lastKey(), dataPageCache.lastKey() + 1)

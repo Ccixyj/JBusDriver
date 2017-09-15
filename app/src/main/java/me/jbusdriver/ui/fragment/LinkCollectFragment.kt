@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.common.AppBaseRecycleFragment
 import me.jbusdriver.common.KLog
+import me.jbusdriver.common.dpToPx
 import me.jbusdriver.mvp.LinkCollectContract
 import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.bean.des
@@ -37,10 +38,10 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
     override val adapter: BaseQuickAdapter<ILink, in BaseViewHolder> by lazy {
         object : BaseQuickAdapter<ILink, BaseViewHolder>(R.layout.layout_header_item) {
             private val actionMap by lazy {
-                mapOf( "收藏" to { link :ILink->
+                mapOf("收藏" to { link: ILink ->
                     LinkCollector.addToCollect(link)
                     KLog.d("link data ${LinkCollector.dataList}")
-                }, "取消收藏" to { link :ILink->
+                }, "取消收藏" to { link: ILink ->
                     LinkCollector.removeCollect(link)
                     KLog.d("link data ${LinkCollector.dataList}")
                 })
@@ -74,6 +75,8 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
 
                     }
                 }
+                val dp8 = mContext.dpToPx(8f)
+                holder.itemView.setPadding(dp8 * 2, dp8, dp8 * 2, dp8)
                 holder.setText(R.id.tv_head_name, des.firstOrNull())
                         .setText(R.id.tv_head_value, des.lastOrNull())
             }

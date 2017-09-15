@@ -60,7 +60,7 @@ class SplashActivity : BaseActivity() {
         }, 6000)
     }
 
-    fun initUrls(): Observable<ArrayMap<String, String>> {
+    private fun initUrls(): Observable<ArrayMap<String, String>> {
         return if (CacheLoader.lru.get(C.Cache.BUS_URLS).isNullOrBlank()) {
             KLog.d("load initUrls")
             //内存在没有地址时 ,先从disk获取缓存的,没有则从网络下载
