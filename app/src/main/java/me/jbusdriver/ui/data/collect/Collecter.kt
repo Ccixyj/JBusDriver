@@ -113,6 +113,7 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
         if (!has(data)) {
             dataList.add(0, data)
             save()
+            AppContext.instace.toast("${data.des}收藏成功")
             return true
         }
         return false

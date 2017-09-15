@@ -19,10 +19,12 @@ import me.jbusdriver.mvp.presenter.LinkAbsPresenterImpl
 import me.jbusdriver.mvp.presenter.MovieLinkPresenterImpl
 import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.data.collect.ActressCollector
+import me.jbusdriver.ui.data.collect.LinkCollector
+import me.jbusdriver.ui.data.collect.MovieCollector
 
 
 /**
- * ilink 界面解析
+ * ilink 由跳转链接进入的
  */
 class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkListView {
     private val link by lazy { arguments.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ") }
@@ -35,41 +37,56 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
     private var removeCollectMenu: MenuItem? = null
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
-        if (link is ActressInfo) {
-            val isCollect = ActressCollector.has(link as ActressInfo)
-            collectMenu = menu?.add(Menu.NONE, R.id.action_add_movie_collect, 10, "收藏")?.apply {
-                setIcon(R.drawable.ic_star_border_white_24dp)
-                setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-                isVisible = !isCollect
+        val isCollect by lazy {
+            when (link) {
+                is Movie -> MovieCollector.has(link as Movie)
+                is ActressInfo -> ActressCollector.has(link as ActressInfo)
+                else -> LinkCollector.has(link)
             }
-            removeCollectMenu = menu?.add(Menu.NONE, R.id.action_remove_movie_collect, 10, "取消收藏")?.apply {
-                setIcon(R.drawable.ic_star_white_24dp)
-                setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-                isVisible = isCollect
-            }
+
+        }
+
+        collectMenu = menu?.add(Menu.NONE, R.id.action_add_movie_collect, 10, "收藏")?.apply {
+            setIcon(R.drawable.ic_star_border_white_24dp)
+            setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            isVisible = !isCollect
+        }
+        removeCollectMenu = menu?.add(Menu.NONE, R.id.action_remove_movie_collect, 10, "取消收藏")?.apply {
+            setIcon(R.drawable.ic_star_white_24dp)
+            setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            isVisible = isCollect
         }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val actress = link as?  ActressInfo
-        if (actress != null) {
-            val id = item.itemId
-            when (id) {
-                R.id.action_add_movie_collect -> {
-                    //收藏
-                    KLog.d("收藏")
-                    if (ActressCollector.addToCollect(actress)) {
-                        collectMenu?.isVisible = false
-                        removeCollectMenu?.isVisible = true
-                    }
+
+
+        val id = item.itemId
+        when (id) {
+            R.id.action_add_movie_collect -> {
+                //收藏
+                KLog.d("收藏")
+                val res = when (link) {
+                    is Movie -> MovieCollector.addToCollect(link as Movie)
+                    is ActressInfo -> ActressCollector.addToCollect(link as ActressInfo)
+                    else -> LinkCollector.addToCollect(link)
                 }
-                R.id.action_remove_movie_collect -> {
-                    //取消收藏
-                    KLog.d("取消收藏")
-                    if (ActressCollector.removeCollect(actress)) {
-                        collectMenu?.isVisible = true
-                        removeCollectMenu?.isVisible = false
-                    }
+                if (res) {
+                    collectMenu?.isVisible = false
+                    removeCollectMenu?.isVisible = true
+                }
+            }
+            R.id.action_remove_movie_collect -> {
+                //取消收藏
+                KLog.d("取消收藏")
+                val res = when (link) {
+                    is Movie -> MovieCollector.removeCollect(link as Movie)
+                    is ActressInfo -> ActressCollector.removeCollect(link as ActressInfo)
+                    else -> LinkCollector.removeCollect(link)
+                }
+                if (res) {
+                    collectMenu?.isVisible = true
+                    removeCollectMenu?.isVisible = false
                 }
             }
         }
@@ -147,6 +164,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
     /*================================================*/
 
     companion object {
+        //电影列表,演员,链接,搜索入口
         fun newInstance(link: ILink, cancelLazyLoad: Boolean? = null) = LinkedMovieListFragment().apply {
             if (true == cancelLazyLoad) userVisibleHint = true
             arguments = Bundle().apply {
