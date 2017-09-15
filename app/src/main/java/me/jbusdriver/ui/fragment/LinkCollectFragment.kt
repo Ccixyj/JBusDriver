@@ -17,9 +17,11 @@ import me.jbusdriver.common.KLog
 import me.jbusdriver.common.dpToPx
 import me.jbusdriver.mvp.LinkCollectContract
 import me.jbusdriver.mvp.bean.ILink
+import me.jbusdriver.mvp.bean.SearchLink
 import me.jbusdriver.mvp.bean.des
 import me.jbusdriver.mvp.presenter.LinkCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieListActivity
+import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.data.collect.LinkCollector
 
 /**
@@ -57,7 +59,11 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
 
                     setOnClickListener {
                         KLog.d("setOnClickListener text : $item")
-                        MovieListActivity.start(it.context, item)
+                        if (item is SearchLink){
+                            SearchResultActivity.start(mContext,item.query)
+                            return@setOnClickListener
+                        }
+                        MovieListActivity.start(mContext, item)
                     }
 
                     //长按操作

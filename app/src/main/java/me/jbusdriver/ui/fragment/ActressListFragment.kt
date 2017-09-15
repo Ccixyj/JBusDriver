@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import com.cfzx.utils.CacheLoader
 import io.reactivex.rxkotlin.addTo
@@ -25,6 +26,7 @@ import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.adapter.ActressInfoAdapter
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.DataSourceType
+import me.jbusdriver.ui.data.collect.LinkCollector
 
 class ActressListFragment : LinkableListFragment<ActressInfo>() {
     private val link by lazy { arguments.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ") }
@@ -59,19 +61,54 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
         }
     }
 
-
+    private var collectMenu: MenuItem? = null
+    private var removeCollectMenu: MenuItem? = null
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
         menu?.findItem(R.id.action_show_all)?.isVisible = false
+        if (isSearch) {
+            val isCollect = LinkCollector.has(link as SearchLink)
+            collectMenu = menu?.add(Menu.NONE, R.id.action_add_movie_collect, 10, "收藏")?.apply {
+                setIcon(R.drawable.ic_star_border_white_24dp)
+                setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                isVisible = !isCollect
+            }
+            removeCollectMenu = menu?.add(Menu.NONE, R.id.action_remove_movie_collect, 10, "取消收藏")?.apply {
+                setIcon(R.drawable.ic_star_white_24dp)
+                setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                isVisible = isCollect
+            }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+        when (id) {
+            R.id.action_add_movie_collect -> {
+                //收藏
+                KLog.d("收藏")
+                if (LinkCollector.addToCollect(link)) {
+                    collectMenu?.isVisible = false
+                    removeCollectMenu?.isVisible = true
+                }
+            }
+            R.id.action_remove_movie_collect -> {
+                //取消收藏
+                KLog.d("取消收藏")
+                if (LinkCollector.removeCollect(link)) {
+                    collectMenu?.isVisible = true
+                    removeCollectMenu?.isVisible = false
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 
     override fun gotoSearchResult(query: String) {
         (mBasePresenter as?  LinkAbsPresenterImpl<*>)?.let {
             if (isSearch) {
-//                it.linkData.query = query
-//                it.onRefresh()
-                viewContext.toast(query)
+                viewContext.toast("新搜索 : $query")
                 RxBus.post(SearchWord(query))
             } else {
                 super.gotoSearchResult(query)
@@ -83,6 +120,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
 
 
     companion object {
+        //需要处理搜索的特殊情况
         fun newInstance(link: ILink) = ActressListFragment().apply {
             arguments = Bundle().apply {
                 putSerializable(C.BundleKey.Key_1, link)

@@ -197,6 +197,12 @@ object LinkCollector : AbsCollectorImpl<ILink>() {
     override val key: String = "Link_Key"
     override val gson: Gson  by lazy { GsonBuilder().registerTypeAdapter(ILink::class.java, ILinkAdapter).create() }
 
+    override fun has(data: ILink): Boolean {
+        if (data is SearchLink)
+            return dataList.any { it is SearchLink && it.query == data.query }
+        return super.has(data)
+    }
+
     override fun transform(cacheString: String) = gson.fromJson<MutableList<ILink>>(cacheString) ?: mutableListOf()
 
     override fun checkUrls(data: MutableList<ILink>): MutableList<ILink> {
