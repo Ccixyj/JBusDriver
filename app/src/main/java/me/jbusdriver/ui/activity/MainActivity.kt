@@ -95,7 +95,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         fragments.onEach { (k, v) ->
             ft.add(R.id.content_main, v, k.toString()).hide(v)
         }
-        ft.commit()
+        ft.commitAllowingStateLoss()
         setNavSelected(savedInstanceState)
     }
 
@@ -115,7 +115,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
     private fun bindRx() {
         RxBus.toFlowable(MenuChangeEvent::class.java)
-                .delay(300,TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成
+                .delay(100, TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成
                 .compose(SchedulersCompat.computation())
                 .subscribeBy({
                     initFragments(null)

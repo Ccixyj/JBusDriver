@@ -102,9 +102,8 @@ class SettingActivity : BaseActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
-
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
+        super.onStop()
         AppConfiguration.pageMode = pageModeHolder
         if (!AppConfiguration.menuConfig.equals(menuOpValue)) AppConfiguration.saveSaveMenuConfig(menuOpValue) //必须调用equals
     }
