@@ -59,6 +59,12 @@ abstract class BaseActivity : AppCompatActivity() {
         KLog.t(TAG).d("onStop")
     }
 
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        KLog.t(TAG).d("onSaveInstanceState $outState")
+    }
+
+
     override fun onDestroy() {
         super.onDestroy()
         rxManager.clear()

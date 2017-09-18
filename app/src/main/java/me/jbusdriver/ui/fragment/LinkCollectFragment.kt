@@ -1,6 +1,7 @@
 package me.jbusdriver.ui.fragment
 
 import android.graphics.Paint
+import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
@@ -30,7 +31,7 @@ import me.jbusdriver.ui.data.collect.LinkCollector
 class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkCollectPresenter, LinkCollectContract.LinkCollectView, ILink>(), LinkCollectContract.LinkCollectView {
 
 
-    override fun createPresenter() = LinkCollectPresenterImpl()
+    override fun createPresenter() = LinkCollectPresenterImpl(LinkCollector)
 
     override val swipeView: SwipeRefreshLayout? by lazy { sr_refresh }
     override val recycleView: RecyclerView by lazy { rv_recycle }
@@ -90,6 +91,13 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
     }
 
     override val layoutId: Int = R.layout.layout_swipe_recycle
+
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        LinkCollector.save()
+    }
+
 
     companion object {
         fun newInstance() = LinkCollectFragment()

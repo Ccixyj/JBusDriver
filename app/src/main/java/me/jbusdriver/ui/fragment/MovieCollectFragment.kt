@@ -16,7 +16,7 @@ import me.jbusdriver.ui.data.collect.MovieCollector
  */
 class MovieCollectFragment : AbsMovieListFragment(), LinkListContract.LinkListView {
 
-    override fun createPresenter() = MovieCollectPresenterImpl()
+    override fun createPresenter() = MovieCollectPresenterImpl(MovieCollector)
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) = Unit
 
@@ -46,6 +46,11 @@ class MovieCollectFragment : AbsMovieListFragment(), LinkListContract.LinkListVi
     }
 
     override val pageMode: Int = AppConfiguration.PageMode.Normal
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        MovieCollector.save()
+    }
 
     companion object {
         fun newInstance() = MovieCollectFragment()

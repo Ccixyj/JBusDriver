@@ -164,9 +164,9 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         ft.commitAllowingStateLoss()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
+    override fun onSaveInstanceState(outState: Bundle?) {
         selectMenu?.let {
-            outState.putInt("MenuSelectedItemId", it.itemId)
+            outState?.putInt("MenuSelectedItemId", it.itemId)
         }
         super.onSaveInstanceState(outState)
     }

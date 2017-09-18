@@ -15,15 +15,13 @@ import org.jsoup.nodes.Document
  */
 
 
-abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T> : AbstractRefreshLoadMorePresenterImpl<V, T>() {
+abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T>(private val collector: ICollect<T>) : AbstractRefreshLoadMorePresenterImpl<V, T>() {
 
 
     private val PageSize = 20
     private val listData by lazy { collector.dataList.toMutableList() }
     private val pageNum
         get() = (listData.size / PageSize) + 1
-    abstract val collector: ICollect<T>
-
 
     override fun loadData4Page(page: Int) {
         val next = if (page < pageNum) page + 1 else pageNum
@@ -54,10 +52,5 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T> 
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-
-    override fun onPresenterDestroyed() {
-        super.onPresenterDestroyed()
-        collector.save()
-    }
 
 }

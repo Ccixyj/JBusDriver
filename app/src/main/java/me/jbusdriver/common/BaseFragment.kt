@@ -57,6 +57,11 @@ open class BaseFragment : Fragment() {
         rxManager.clear()
     }
 
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        KLog.t(TAG).d("onSaveInstanceState $outState")
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         rxManager.clear()

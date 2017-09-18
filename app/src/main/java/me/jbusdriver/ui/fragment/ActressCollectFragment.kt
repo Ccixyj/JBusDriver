@@ -1,5 +1,6 @@
 package me.jbusdriver.ui.fragment
 
+import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.OrientationHelper
 import android.support.v7.widget.RecyclerView
@@ -28,7 +29,7 @@ import me.jbusdriver.ui.data.collect.ActressCollector
 class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.ActressCollectPresenter, ActressCollectContract.ActressCollectView, ActressInfo>(), ActressCollectContract.ActressCollectView {
 
 
-    override fun createPresenter() = ActressCollectPresenterImpl()
+    override fun createPresenter() = ActressCollectPresenterImpl(ActressCollector)
 
     override val swipeView: SwipeRefreshLayout? by lazy { sr_refresh }
     override val recycleView: RecyclerView by lazy { rv_recycle }
@@ -71,6 +72,11 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 
 
     override val layoutId: Int = R.layout.layout_swipe_recycle
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        ActressCollector.save()
+    }
 
     companion object {
         fun newInstance() = ActressCollectFragment()

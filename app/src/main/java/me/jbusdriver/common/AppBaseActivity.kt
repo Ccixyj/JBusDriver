@@ -75,11 +75,11 @@ abstract class AppBaseActivity<P : BasePresenter<V>, V : BaseView> : BaseActivit
 
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
+    override fun onSaveInstanceState(outState: Bundle?) {
         KLog.d("onSaveInstanceState $outState")
         super.onSaveInstanceState(outState)
-        outState.putBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE, true)
-        outState.putInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE, mUniqueLoaderIdentifier)
+        outState?.putBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE, true)
+        outState?.putInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE, mUniqueLoaderIdentifier)
     }
 
     protected abstract val layoutId: Int
