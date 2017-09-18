@@ -4,8 +4,8 @@ import android.support.v4.util.ArrayMap
 import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
 import me.jbusdriver.common.*
-import me.jbusdriver.db.DB
 import me.jbusdriver.db.bean.History
+import me.jbusdriver.db.service.HistoryService
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.model.AbstractBaseModel
@@ -28,6 +28,7 @@ open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink)
         JAVBusService.getInstance(urls[type.key] ?: JAVBusService.defaultFastUrl).apply { JAVBusService.INSTANCE = this }
     }
 
+    private val historyService by lazy { HistoryService() }
 
     private val loadFromNet = { page: Int ->
         val urlN = (urls.get(type.key) ?: "").let { url ->
@@ -36,7 +37,7 @@ open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink)
         KLog.i("load url :$urlN")
         //existmag=all
         val pageLink = PageLink(page = page, title = type.key, link = urlN, isAll = IsAll)
-        DB.historyDao.insert(History(pageLink.des, pageLink.link, pageLink.DBtype, Date()))
+        historyService.insert(History(pageLink.des, pageLink.link, pageLink.DBtype, Date()))
         service.get(urlN, if (IsAll) "all" else null).doOnNext {
             if (page == 1) CacheLoader.lru.put(saveKey, it)
         }.map { Jsoup.parse(it) }.doOnError {

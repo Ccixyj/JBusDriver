@@ -4,8 +4,8 @@ import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.subscribeBy
 import me.jbusdriver.common.*
-import me.jbusdriver.db.DB
 import me.jbusdriver.db.bean.History
+import me.jbusdriver.db.service.HistoryService
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.*
@@ -31,7 +31,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
                 //清空dataPageCache
                 dataPageCache.clear()
             })
-
+    private val historyService by lazy { HistoryService() }
 
     override fun loadAll(iaAll: Boolean) {
         IsAll = iaAll
@@ -48,7 +48,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
                         is PageLink -> linkData.copy(t, mView?.type?.key ?: "", it, IsAll)
                         else -> PageLink(t, linkData.des, it, IsAll)
                     }
-                    DB.historyDao.insert(History(link.des, link.link, linkData.DBtype, Date()))
+                    historyService.insert(History(link.des, link.link, linkData.DBtype, Date()))
                     JAVBusService.INSTANCE.get(it, if (IsAll) "all" else null).map { Jsoup.parse(it) }
                 }.doOnNext {
                     if (t == 1) CacheLoader.lru.put("${linkData.link}$IsAll", it.toString())

@@ -9,10 +9,7 @@ import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.DataSourceType
 import me.jbusdriver.ui.data.SearchType
-import me.jbusdriver.ui.fragment.ActressListFragment
-import me.jbusdriver.ui.fragment.GenrePagesFragment
-import me.jbusdriver.ui.fragment.HomeMovieListFragment
-import me.jbusdriver.ui.fragment.MineCollectFragment
+import me.jbusdriver.ui.fragment.*
 import java.io.Serializable
 
 /**
@@ -88,7 +85,7 @@ data class MenuOp(@IdRes val id: Int, val name: String, val initializer: () -> B
         val mine by lazy {
             listOf(
                     MenuOp(R.id.mine_collect, "收藏夹") { MineCollectFragment.newInstance() },
-                    MenuOp(R.id.mine_history, "最近") { MineCollectFragment.newInstance() }
+                    MenuOp(R.id.mine_history, "最近") { LinkCollectFragment.newInstance() }
             )
         }
 

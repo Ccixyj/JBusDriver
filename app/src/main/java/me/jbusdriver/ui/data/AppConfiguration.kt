@@ -41,6 +41,9 @@ object AppConfiguration {
     }
 
     //endregion
+
+
+    //region menu
     private const val MenuConfigS: String = "MenuConfig"
 
     val menuConfig: MutableMap<String, Boolean> by lazy {
@@ -56,5 +59,11 @@ object AppConfiguration {
         saveSp(MenuConfigS, menuConfig.toJsonString())
         RxBus.post(MenuChangeEvent())
     }
+    //endregion
+
+
+    private const val HistoryS: String = "HistoryS"
+    val enableHistory: Boolean = true
+
 }
 

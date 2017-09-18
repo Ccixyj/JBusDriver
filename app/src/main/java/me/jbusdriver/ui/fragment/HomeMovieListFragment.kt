@@ -2,6 +2,8 @@ package me.jbusdriver.ui.fragment
 
 import android.os.Bundle
 import me.jbusdriver.common.C
+import me.jbusdriver.common.toast
+import me.jbusdriver.db.DB
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.PageLink
 import me.jbusdriver.mvp.presenter.HomeMovieListPresenterImpl
@@ -18,6 +20,7 @@ class HomeMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkListV
     companion object {
         fun newInstance(type: DataSourceType) = HomeMovieListFragment().apply {
             arguments = Bundle().apply { putSerializable(C.BundleKey.Key_1, type) }
+            this.viewContext.toast( DB.historyDao.count.toString() )
         }
     }
 

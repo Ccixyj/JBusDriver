@@ -5,8 +5,8 @@ import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.toSingle
 import me.jbusdriver.common.*
-import me.jbusdriver.db.DB
 import me.jbusdriver.db.bean.History
+import me.jbusdriver.db.service.HistoryService
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.MovieDetailContract
 import me.jbusdriver.mvp.bean.*
@@ -45,11 +45,13 @@ class MovieDetailPresenterImpl : BasePresenterImpl<MovieDetailContract.MovieDeta
         }
     }
 
+    private val historyService by lazy { HistoryService() }
+
     override fun onFirstLoad() {
         super.onFirstLoad()
         loadDetail()
         mView?.movie?.let {
-            DB.historyDao.insert(History(it.des,it.link,it.DBtype, Date(),it.imageUrl))
+            historyService.insert(History(it.des,it.link,it.DBtype, Date(),it.imageUrl))
         }
 
     }

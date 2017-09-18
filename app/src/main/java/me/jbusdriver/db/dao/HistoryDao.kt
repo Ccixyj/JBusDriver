@@ -27,8 +27,12 @@ class HistoryDao(private val db: BriteDatabase) {
         }
     }
 
-    fun quergroupByDate(){
+    fun queryByLimit(size: Int, offset: Int) {
+        db.createQuery(HISTORYTable.TABLE_NAME, "")
+    }
 
+    val count = db.query("select count(1) from ${HISTORYTable.TABLE_NAME}").let {
+       it.getInt(0)
     }
 
 
