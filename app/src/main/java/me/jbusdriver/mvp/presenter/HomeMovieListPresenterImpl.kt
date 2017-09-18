@@ -4,16 +4,21 @@ import android.support.v4.util.ArrayMap
 import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
 import me.jbusdriver.common.*
+import me.jbusdriver.db.DB
+import me.jbusdriver.db.bean.History
 import me.jbusdriver.http.JAVBusService
-import me.jbusdriver.mvp.bean.ILink
-import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.model.AbstractBaseModel
 import me.jbusdriver.mvp.model.BaseModel
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import java.util.*
 
+/**
+ * 首页列表
+ */
 open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink) : LinkAbsPresenterImpl<Movie>(link) {
 
     private val urls by lazy { CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) } ?: arrayMapof() }
@@ -22,12 +27,16 @@ open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink)
     private val service by lazy {
         JAVBusService.getInstance(urls[type.key] ?: JAVBusService.defaultFastUrl).apply { JAVBusService.INSTANCE = this }
     }
+
+
     private val loadFromNet = { page: Int ->
         val urlN = (urls.get(type.key) ?: "").let { url ->
             return@let if (page == 1) url else "$url${type.prefix}$page"
         }
         KLog.i("load url :$urlN")
         //existmag=all
+        val pageLink = PageLink(page = page, title = type.key, link = urlN, isAll = IsAll)
+        DB.historyDao.insert(History(pageLink.des, pageLink.link, pageLink.DBtype, Date()))
         service.get(urlN, if (IsAll) "all" else null).doOnNext {
             if (page == 1) CacheLoader.lru.put(saveKey, it)
         }.map { Jsoup.parse(it) }.doOnError {
@@ -45,7 +54,7 @@ open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink)
     override fun stringMap(str: Document) = Movie.loadFromDoc(mView?.type ?: DataSourceType.CENSORED, str).let {
         when (mView?.pageMode) {
             AppConfiguration.PageMode.Page -> {
-                listOf(Movie.newPageMovie(pageInfo.activePage,pageInfo.pages, mView?.type ?: DataSourceType.CENSORED)) + it
+                listOf(Movie.newPageMovie(pageInfo.activePage, pageInfo.pages, mView?.type ?: DataSourceType.CENSORED)) + it
             }
             else -> it
         }

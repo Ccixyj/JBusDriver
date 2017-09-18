@@ -12,9 +12,9 @@ import kotlinx.android.synthetic.main.layout_menu_op_item.view.*
 import me.jbusdriver.common.BaseActivity
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.spanCount
+import me.jbusdriver.mvp.bean.Expand_Type_Head
 import me.jbusdriver.mvp.bean.MenuOp
 import me.jbusdriver.mvp.bean.MenuOpHead
-import me.jbusdriver.ui.adapter.Expand_Type_Head
 import me.jbusdriver.ui.adapter.MenuOpAdapter
 import me.jbusdriver.ui.data.AppConfiguration
 

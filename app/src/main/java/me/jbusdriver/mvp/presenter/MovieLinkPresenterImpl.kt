@@ -10,7 +10,7 @@ import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.nodes.Document
 
 /**
- * Created by Administrator on 2017/7/29.
+ * 网页链接列表
  */
 class MovieLinkPresenterImpl(val link: ILink) : LinkAbsPresenterImpl<Movie>(link) {
 

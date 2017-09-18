@@ -6,8 +6,6 @@ import com.chad.library.adapter.base.entity.MultiItemEntity
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.BaseFragment
 import me.jbusdriver.http.JAVBusService
-import me.jbusdriver.ui.adapter.Expand_Type_Head
-import me.jbusdriver.ui.adapter.Expand_Type_Item
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.DataSourceType
 import me.jbusdriver.ui.data.SearchType
@@ -20,19 +18,39 @@ import java.io.Serializable
 /**
  * Created by Administrator on 2017/4/9.
  */
+
+const val Expand_Type_Head = 0
+const val Expand_Type_Item = 1
+
+
 interface ILink : Serializable {
     val link: String
 }
 
 val ILink.des: String
     inline get() = when (this) {
-        is Header -> "${this.name} ${this.value}"
-        is Genre -> "类别 ${this.name}"
-        is ActressInfo -> "演员 ${this.name}"
+        is Header -> "$name $value"
+        is Genre -> "类别 $name"
+        is ActressInfo -> "演员 $name"
         is me.jbusdriver.mvp.bean.Movie -> "$code $title"
         is SearchLink -> "搜索 $query"
+        is PageLink -> "$title 第 $page 页 ${if (isAll) "全部" else "已有种子"}电影"
         else -> error(" $this has no matched class for des")
     }
+
+val ILink.DBtype: Int
+    inline get() = when (this) {
+        is Movie -> 1
+        is ActressInfo -> 2
+        is Header -> 3
+        is Genre -> 4
+        is SearchLink -> 5
+        is PageLink -> 6
+        else -> error(" $this has no matched class for des")
+    }
+
+
+data class PageLink(val page: Int, val title: String, override val link: String, var isAll: Boolean = false) : ILink
 
 data class PageInfo(val activePage: Int = 0, val nextPage: Int = 0,
                     val activePath: String = "",

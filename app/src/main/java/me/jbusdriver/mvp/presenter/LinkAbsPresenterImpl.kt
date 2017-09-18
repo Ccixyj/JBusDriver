@@ -4,15 +4,16 @@ import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.subscribeBy
 import me.jbusdriver.common.*
+import me.jbusdriver.db.DB
+import me.jbusdriver.db.bean.History
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.LinkListContract
-import me.jbusdriver.mvp.bean.ILink
-import me.jbusdriver.mvp.bean.PageChangeEvent
-import me.jbusdriver.mvp.bean.PageInfo
+import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.model.BaseModel
 import me.jbusdriver.ui.data.AppConfiguration
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import java.util.*
 import java.util.concurrent.ConcurrentSkipListMap
 
 /**
@@ -34,6 +35,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
 
     override fun loadAll(iaAll: Boolean) {
         IsAll = iaAll
+        dataPageCache.clear()
         loadData4Page(1)
     }
 
@@ -42,6 +44,11 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
         override fun requestFor(t: Int) =
                 (if (t == 1) linkData.link else "${linkData.link.urlHost}${linkData.link.urlPath}/$t").let {
                     KLog.i("fromCallable page $pageInfo requestFor : $it")
+                    val link = when (linkData) {
+                        is PageLink -> linkData.copy(t, mView?.type?.key ?: "", it, IsAll)
+                        else -> PageLink(t, linkData.des, it, IsAll)
+                    }
+                    DB.historyDao.insert(History(link.des, link.link, linkData.DBtype, Date()))
                     JAVBusService.INSTANCE.get(it, if (IsAll) "all" else null).map { Jsoup.parse(it) }
                 }.doOnNext {
                     if (t == 1) CacheLoader.lru.put("${linkData.link}$IsAll", it.toString())
@@ -60,10 +67,6 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
 
     override fun lazyLoad() {
         onFirstLoad()
-    }
-
-    override fun onFirstLoad() {
-        super.onFirstLoad()
     }
 
     override fun jumpToPage(page: Int) {
@@ -110,6 +113,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
 
         super.onLoadMore()
     }
+
 
     override fun doAddData(t: List<T>) {
 

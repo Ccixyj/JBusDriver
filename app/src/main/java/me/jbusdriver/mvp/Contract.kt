@@ -88,3 +88,10 @@ interface GenreListContract {
 
     interface GenreListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<GenreListView>
 }
+
+
+interface HistoryContract {
+    interface HistoryView : BaseView.BaseListWithRefreshView
+
+    interface HistoryPresenter : BasePresenter.BaseRefreshLoadMorePresenter<HistoryView>
+}

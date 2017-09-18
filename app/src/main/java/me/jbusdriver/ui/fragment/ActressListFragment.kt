@@ -15,10 +15,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
-import me.jbusdriver.mvp.bean.ActressInfo
-import me.jbusdriver.mvp.bean.ILink
-import me.jbusdriver.mvp.bean.SearchLink
-import me.jbusdriver.mvp.bean.SearchWord
+import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.presenter.ActressLinkPresenterImpl
 import me.jbusdriver.mvp.presenter.LinkAbsPresenterImpl
 import me.jbusdriver.ui.activity.MovieListActivity
@@ -29,6 +26,7 @@ import me.jbusdriver.ui.data.DataSourceType
 import me.jbusdriver.ui.data.collect.LinkCollector
 
 class ActressListFragment : LinkableListFragment<ActressInfo>() {
+
     private val link by lazy { arguments.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ") }
     private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }
 
@@ -131,9 +129,13 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
             val urls = CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) } ?: arrayMapof()
             val url = urls[type.key] ?: JAVBusService.defaultFastUrl + "/actresses"
             arguments = Bundle().apply {
-                putSerializable(C.BundleKey.Key_1, object : ILink {
+                /*
+                *
+                * object : ILink {
                     override val link: String = url
-                })
+                }*/
+                putSerializable(C.BundleKey.Key_2, PageLink(1, type.key, url))
+                putSerializable(C.BundleKey.Key_1, type)
             }
         }
 
