@@ -28,7 +28,7 @@ interface LinkListContract {
     interface LinkListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<LinkListView>, BasePresenter.LazyLoaderPresenter {
         fun loadAll(iaAll: Boolean)
         fun jumpToPage(page: Int)
-        fun isPrevPageLoaded(currentPage : Int):Boolean
+        fun isPrevPageLoaded(currentPage: Int): Boolean
     }
 }
 
@@ -54,22 +54,18 @@ interface MovieParseContract {
 
 interface MineCollectContract {
     interface MineCollectView : BaseView
-    interface MineCollectPresenter : BasePresenter<MineCollectView>
+    interface MineCollectPresenter : BasePresenter<MineCollectView>, BasePresenter.LazyLoaderPresenter
 }
 
-interface MovieCollectContract {
-    interface MovieCollectView : BaseView
-    interface MovieCollectPresenter : BasePresenter<MovieCollectView>
-}
 
 interface ActressCollectContract {
     interface ActressCollectView : BaseView.BaseListWithRefreshView
-    interface ActressCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<ActressCollectView>
+    interface ActressCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<ActressCollectView>, BasePresenter.LazyLoaderPresenter
 }
 
 interface LinkCollectContract {
     interface LinkCollectView : BaseView.BaseListWithRefreshView
-    interface LinkCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<LinkCollectView>
+    interface LinkCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<LinkCollectView>, BasePresenter.LazyLoaderPresenter
 }
 
 interface GenrePageContract {
@@ -86,12 +82,12 @@ interface GenreListContract {
         val data: List<Genre>
     }
 
-    interface GenreListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<GenreListView>
+    interface GenreListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<GenreListView>, BasePresenter.LazyLoaderPresenter
 }
 
 
 interface HistoryContract {
     interface HistoryView : BaseView.BaseListWithRefreshView
 
-    interface HistoryPresenter : BasePresenter.BaseRefreshLoadMorePresenter<HistoryView>
+    interface HistoryPresenter : BasePresenter.BaseRefreshLoadMorePresenter<HistoryView>, BasePresenter.LazyLoaderPresenter
 }

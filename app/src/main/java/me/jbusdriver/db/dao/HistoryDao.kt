@@ -2,8 +2,13 @@ package me.jbusdriver.db.dao
 
 import android.content.ContentValues
 import com.squareup.sqlbrite2.BriteDatabase
+import io.reactivex.Observable
+import me.jbusdriver.common.getIntByColumn
+import me.jbusdriver.common.getLongByColumn
+import me.jbusdriver.common.getStringByColumn
 import me.jbusdriver.db.HISTORYTable
 import me.jbusdriver.db.bean.History
+import java.util.*
 
 
 /**
@@ -27,12 +32,20 @@ class HistoryDao(private val db: BriteDatabase) {
         }
     }
 
-    fun queryByLimit(size: Int, offset: Int) {
-        db.createQuery(HISTORYTable.TABLE_NAME, "")
+    fun queryByLimit(size: Int, offset: Int): Observable<List<History>> {
+        return db.createQuery(HISTORYTable.TABLE_NAME, "SELECT * FROM ${HISTORYTable.TABLE_NAME} ORDER BY ${HISTORYTable.COLUMN_ID} DESC LIMIT $offset , $size ").mapToList {
+            History(it.getStringByColumn(HISTORYTable.COLUMN_DES) ?: "", it.getStringByColumn(HISTORYTable.COLUMN_URL) ?: "",
+                    it.getIntByColumn(HISTORYTable.COLUMN_DB_TYPE), Date(it.getLongByColumn(HISTORYTable.COLUMN_CREATE_TIME)),
+                    it.getStringByColumn(HISTORYTable.COLUMN_IMG)).apply {
+                id = it.getIntByColumn(HISTORYTable.COLUMN_ID)
+            }
+        }.flatMap { Observable.just(it) }
     }
 
-    val count = db.query("select count(1) from ${HISTORYTable.TABLE_NAME}").let {
-       it.getInt(0)
+    val count: Int = db.query("select count(1) from ${HISTORYTable.TABLE_NAME}").let {
+        if (it.moveToFirst()) {
+            it.getInt(0)
+        } else -1
     }
 
 
@@ -42,7 +55,7 @@ class HistoryDao(private val db: BriteDatabase) {
             if (isInsert) it.put(HISTORYTable.COLUMN_CREATE_TIME, createTime.time)
             it.put(HISTORYTable.COLUMN_DES, des)
             it.put(HISTORYTable.COLUMN_URL, url)
-            it.put(HISTORYTable.COLUMN_TYPE, type)
+            it.put(HISTORYTable.COLUMN_DB_TYPE, type)
             it.put(HISTORYTable.COLUMN_IMG, img)
         }
 

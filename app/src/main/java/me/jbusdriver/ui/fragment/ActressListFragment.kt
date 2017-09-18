@@ -27,7 +27,9 @@ import me.jbusdriver.ui.data.collect.LinkCollector
 
 class ActressListFragment : LinkableListFragment<ActressInfo>() {
 
-    private val link by lazy { arguments.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ") }
+    private val link by lazy {
+        arguments.getSerializable(C.BundleKey.Key_2)  as? ILink ?: error("no link data ")
+    }
     private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }
 
     override val layoutManager: RecyclerView.LayoutManager  by lazy { StaggeredGridLayoutManager(viewContext.spanCount, OrientationHelper.VERTICAL) }
@@ -121,7 +123,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
         //需要处理搜索的特殊情况
         fun newInstance(link: ILink) = ActressListFragment().apply {
             arguments = Bundle().apply {
-                putSerializable(C.BundleKey.Key_1, link)
+                putSerializable(C.BundleKey.Key_2, link)
             }
         }
 

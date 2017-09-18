@@ -63,7 +63,7 @@ object AppConfiguration {
 
 
     private const val HistoryS: String = "HistoryS"
-    val enableHistory: Boolean = true
+    var enableHistory: Boolean = true
 
 }
 

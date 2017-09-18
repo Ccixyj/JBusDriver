@@ -27,7 +27,7 @@ data class Movie(
     companion object {
         //图片url host 设置
         fun loadFromDoc(type: DataSourceType, str: Document): List<Movie> {
-            return str.select(".movie-box").mapIndexed { index, element ->
+            return str.select(".movie-box").mapIndexed { _, element ->
                 Movie(
                         type = type,
                         title = element.select("img").attr("title"),

@@ -12,6 +12,8 @@
         android:layout_gravity="center_vertical"
         style="@style/Widget.AppCompat.CompoundButton.CheckBox"
         android:checked="true"
+        android:focusable="false"
+        android:clickable="false"
         android:gravity="center_vertical" />
 
     <Space

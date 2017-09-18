@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
+import android.database.Cursor
 import android.net.Uri
 import android.support.v4.util.ArrayMap
 import android.text.format.Formatter
@@ -33,7 +34,7 @@ const val GB = MB * 1024
 const val TB = GB * 1024
 
 
-fun Long.formatFileSize(): String  =  Formatter.formatFileSize(AppContext.instace, this)
+fun Long.formatFileSize(): String = Formatter.formatFileSize(AppContext.instace, this)
 
 /*array map*/
 
@@ -171,3 +172,9 @@ fun Context.browse(url: String) {
         this.data = Uri.parse(url)
     })
 }
+
+/*cursor*/
+
+fun Cursor.getStringByColumn(colName: String): String? = this.getString(this.getColumnIndexOrThrow(colName))
+fun Cursor.getIntByColumn(colName: String): Int = this.getInt(this.getColumnIndexOrThrow(colName))
+fun Cursor.getLongByColumn(colName: String): Long = this.getLong(this.getColumnIndexOrThrow(colName))

@@ -33,10 +33,10 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
     private lateinit var collectMenu: MenuItem
     private lateinit var removeCollectMenu: MenuItem
 
-    private val headHolder by lazy { HeaderHolder(this, movie.type) }
+    private val headHolder by lazy { HeaderHolder(this) }
     private val sampleHolder by lazy { ImageSampleHolder(this) }
     private val actressHolder by lazy { ActressListHolder(this) }
-    private val genreHolder by lazy { GenresHolder(this, movie.type) }
+    private val genreHolder by lazy { GenresHolder(this) }
     private val relativeMovieHolder by lazy { RelativeMovieHolder(this) }
 
 

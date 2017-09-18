@@ -4,10 +4,10 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import me.jbusdriver.db.HISTORYTable.COLUMN_CREATE_TIME
+import me.jbusdriver.db.HISTORYTable.COLUMN_DB_TYPE
 import me.jbusdriver.db.HISTORYTable.COLUMN_DES
 import me.jbusdriver.db.HISTORYTable.COLUMN_ID
 import me.jbusdriver.db.HISTORYTable.COLUMN_IMG
-import me.jbusdriver.db.HISTORYTable.COLUMN_TYPE
 import me.jbusdriver.db.HISTORYTable.COLUMN_URL
 import me.jbusdriver.db.HISTORYTable.TABLE_NAME
 
@@ -17,7 +17,7 @@ private const val CREATE_SQL = "CREATE TABLE $TABLE_NAME ( " +
         "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
         "$COLUMN_DES NVARCHAR(512) NOT NULL ," +
         "$COLUMN_URL VARCHAR(128)  NOT NULL ," +
-        "$COLUMN_TYPE TINYINT  NOT NULL ," +
+        "$COLUMN_DB_TYPE TINYINT  NOT NULL ," +
         "$COLUMN_IMG VARCHAR(128) ," +
         "$COLUMN_CREATE_TIME INTEGER  DEFAULT 0" +
         ")"
@@ -27,7 +27,7 @@ object HISTORYTable {
     const val COLUMN_ID = "id"
     const val COLUMN_DES = "des"
     const val COLUMN_URL = "url"
-    const val COLUMN_TYPE = "DBtype"
+    const val COLUMN_DB_TYPE = "dbType"
     const val COLUMN_IMG = "image"
     const val COLUMN_CREATE_TIME = "createTime"
 }

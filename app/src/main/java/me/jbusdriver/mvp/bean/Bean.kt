@@ -85,7 +85,7 @@ data class MenuOp(@IdRes val id: Int, val name: String, val initializer: () -> B
         val mine by lazy {
             listOf(
                     MenuOp(R.id.mine_collect, "收藏夹") { MineCollectFragment.newInstance() },
-                    MenuOp(R.id.mine_history, "最近") { LinkCollectFragment.newInstance() }
+                    MenuOp(R.id.mine_history, "最近") { HistoryFragment.newInstance() }
             )
         }
 

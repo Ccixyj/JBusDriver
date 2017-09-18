@@ -21,7 +21,7 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T>(
     private val PageSize = 20
     private val listData by lazy { collector.dataList.toMutableList() }
     private val pageNum
-        get() = (listData.size / PageSize) + 1
+        get() = ((listData.size - 1) / PageSize) + 1
 
     override fun loadData4Page(page: Int) {
         val next = if (page < pageNum) page + 1 else pageNum

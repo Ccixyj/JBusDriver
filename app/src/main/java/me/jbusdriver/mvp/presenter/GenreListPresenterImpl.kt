@@ -22,4 +22,8 @@ class GenreListPresenterImpl : BasePresenterImpl<GenreListContract.GenreListView
     override fun onRefresh() {
         loadData4Page(1)
     }
+
+    override fun lazyLoad() {
+        onFirstLoad()
+    }
 }

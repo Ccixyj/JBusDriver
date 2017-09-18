@@ -53,7 +53,7 @@ data class MovieDetail(val title: String,
                         Header(split.first(), split.getOrNull(1) ?: "", it.select("p a").attr("href"))
                     }//解析附带跳转信息
 
-            val generes = headersContainer.select(".genre:has(a[href*=genre])").map {
+            val geneses = headersContainer.select(".genre:has(a[href*=genre])").map {
                 Genre(it.text(), it.select("a").attr("href"))
             }//解析分类
 
@@ -73,7 +73,7 @@ data class MovieDetail(val title: String,
                 Movie(type, it.attr("title"), it.select("img").attr("src"), url.split("/").last(), "", url)
             }
 
-            return MovieDetail(title, content, cover, headers, generes, actresses, samples, relatedMovies).apply {
+            return MovieDetail(title, content, cover, headers, geneses, actresses, samples, relatedMovies).apply {
                 KLog.d("end parseDetails $this")
             }
         }

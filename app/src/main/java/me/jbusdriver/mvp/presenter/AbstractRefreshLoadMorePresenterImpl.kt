@@ -50,7 +50,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
 
     override fun onRefresh() {
         rxManager.clear()
-        pageInfo =PageInfo(1,0)
+        pageInfo = PageInfo(1, 0)
         loadData4Page(1)
     }
 
@@ -104,8 +104,14 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
             return PageInfo(current.split("/").lastOrNull()?.toIntOrNull() ?: 0,
                     next.split("/").lastOrNull()?.toIntOrNull() ?: 0
                     , current, next, pages).apply {
-                if (activePage == nextPage && activePage == pages.last()) {
-                    lastPage = pages.last()
+                if (pages.isNotEmpty()) {
+                    if (activePage == nextPage && activePage == pages.last()) {
+                        lastPage = pages.last()
+                    }
+                    //pages小于10页可以认为最大页就是pages的最后一个
+                    pages.last().let {
+                        if (it < 10) lastPage = it
+                    }
                 }
             }
         }

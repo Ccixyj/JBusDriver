@@ -13,7 +13,7 @@ import me.jbusdriver.ui.data.DataSourceType
 /**
  * Created by Administrator on 2017/5/10 0010.
  */
-class GenresHolder(context: Context, type: DataSourceType) : BaseHolder(context) {
+class GenresHolder(context: Context) : BaseHolder(context) {
     val view by lazy {
         weakRef.get()?.let {
             it.inflate(R.layout.layout_detail_genres).apply {

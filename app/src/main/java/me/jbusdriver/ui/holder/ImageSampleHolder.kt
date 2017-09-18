@@ -47,7 +47,7 @@ class ImageSampleHolder(context: Context): BaseHolder(context) {
     }
 
 
-    val imageSampleAdapter = object : BaseQuickAdapter<ImageSample, BaseViewHolder>(R.layout.layout_image_sample_item) {
+    private val imageSampleAdapter = object : BaseQuickAdapter<ImageSample, BaseViewHolder>(R.layout.layout_image_sample_item) {
         override fun convert(holder: BaseViewHolder, item: ImageSample) {
             weakRef.get()?.apply {
                 holder.getView<ImageView>(R.id.iv_movie_thumb)?.let {

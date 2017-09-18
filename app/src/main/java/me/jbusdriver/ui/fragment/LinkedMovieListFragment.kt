@@ -1,5 +1,6 @@
 package me.jbusdriver.ui.fragment
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -12,6 +13,7 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_actress_attr.view.*
+import kotlinx.android.synthetic.main.layout_load_all.view.*
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.*
@@ -59,8 +61,6 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-
         val id = item.itemId
         when (id) {
             R.id.action_add_movie_collect -> {
@@ -68,7 +68,9 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
                 KLog.d("收藏")
                 val res = when (link) {
                     is Movie -> MovieCollector.addToCollect(link as Movie)
-                    is ActressInfo -> ActressCollector.addToCollect(link as ActressInfo)
+                    is ActressInfo -> ActressCollector.addToCollect((link as ActressInfo).apply {
+                        tag = null
+                    })
                     else -> LinkCollector.addToCollect(link)
                 }
                 if (res) {
@@ -122,8 +124,11 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
 
     override fun <T> showContent(data: T?) {
         KLog.d("parse res :$data")
+        if (data is String) {
+            getLoaAlldView(data)?.let { attrViews.add(it) }
+        }
+
         if (data is IAttr) {
-            attrViews.clear()
             attrViews.add(getMovieAttrView(data))
         }
     }
@@ -131,6 +136,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
     override fun showContents(datas: List<*>?) {
         adapter.removeAllHeaderView()
         attrViews.forEach { adapter.addHeaderView(it) }
+        attrViews.clear()
         super.showContents(datas)
 
     }
@@ -154,6 +160,28 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         }
         else -> error("current not provide for IAttr $data")
     }
+
+    private fun getLoaAlldView(data: String): View? {
+        return data.split("：").let { txts ->
+            if (txts.size == 2) {
+                this.viewContext.inflate(R.layout.layout_load_all).apply {
+                    tv_info_title.text = txts[0]
+                    val spans = txts[1].split("，")
+                    require(spans.size == 2)
+                    tv_change_a.text = spans[0]
+                    tv_change_b.text = spans[1]
+                    tv_change_b.paintFlags = tv_change_b.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+                    tv_change_b.setOnClickListener {
+                        val showAll = arguments?.getBoolean(MENU_SHOW_ALL) ?: false
+                        mBasePresenter?.loadAll(!showAll)
+                        arguments?.putBoolean(MENU_SHOW_ALL, !showAll)
+                    }
+                }
+            } else null
+        }
+
+    }
+
 
     private fun generateTextView() = TextView(this.viewContext).apply {
         textSize = 11.5f

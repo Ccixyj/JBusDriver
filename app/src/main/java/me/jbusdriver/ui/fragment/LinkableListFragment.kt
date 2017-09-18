@@ -40,7 +40,6 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.main, menu)
-        menu?.findItem(R.id.action_show_all)?.isChecked = arguments?.getBoolean(MENU_SHOW_ALL, false) ?: false
         menu?.getItem(0)?.let {
             val mSearchView = MenuItemCompat.getActionView(it) as SearchView
 
@@ -59,6 +58,11 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
             })
         }
 
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?) {
+        super.onPrepareOptionsMenu(menu) //menu before show
+        menu?.findItem(R.id.action_show_all)?.isChecked = arguments?.getBoolean(MENU_SHOW_ALL, false) ?: false
     }
 
     protected open fun gotoSearchResult(query: String) {

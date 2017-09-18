@@ -24,7 +24,7 @@ import me.jbusdriver.ui.data.collect.LinkCollector
 /**
  * Created by Administrator on 2017/5/9 0009.
  */
-class HeaderHolder(context: Context, type: DataSourceType) : BaseHolder(context) {
+class HeaderHolder(context: Context) : BaseHolder(context) {
 
     val actionMap by lazy {
         mapOf("复制" to { header: Header ->

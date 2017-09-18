@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentSkipListMap
  */
 abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoadMorePresenterImpl<LinkListContract.LinkListView, T>(), LinkListContract.LinkListPresenter {
 
-    protected var IsAll = false
+    protected var IsAll = linkData is PageLink && linkData.isAll
     private val dataPageCache by lazy { ConcurrentSkipListMap<Int, Int>() }
     private val pageModeDisposable = RxBus.toFlowable(PageChangeEvent::class.java)
             .subscribeBy(onNext = {
@@ -48,7 +48,9 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
                         is PageLink -> linkData.copy(t, mView?.type?.key ?: "", it, IsAll)
                         else -> PageLink(t, linkData.des, it, IsAll)
                     }
-                    historyService.insert(History(link.des, link.link, linkData.DBtype, Date()))
+                    val img = if (linkData is ActressInfo) linkData.avatar else if (linkData is Movie) linkData.imageUrl else null
+
+                    historyService.insert(History(link.des, link.link, linkData.DBtype, Date(), img))
                     JAVBusService.INSTANCE.get(it, if (IsAll) "all" else null).map { Jsoup.parse(it) }
                 }.doOnNext {
                     if (t == 1) CacheLoader.lru.put("${linkData.link}$IsAll", it.toString())
