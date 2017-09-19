@@ -89,5 +89,7 @@ interface GenreListContract {
 interface HistoryContract {
     interface HistoryView : BaseView.BaseListWithRefreshView
 
-    interface HistoryPresenter : BasePresenter.BaseRefreshLoadMorePresenter<HistoryView>, BasePresenter.LazyLoaderPresenter
+    interface HistoryPresenter : BasePresenter.BaseRefreshLoadMorePresenter<HistoryView>, BasePresenter.LazyLoaderPresenter {
+        fun clearHistory()
+    }
 }

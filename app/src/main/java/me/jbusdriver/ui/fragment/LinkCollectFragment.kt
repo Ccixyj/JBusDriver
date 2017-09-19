@@ -40,16 +40,6 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
 
     override val adapter: BaseQuickAdapter<ILink, in BaseViewHolder> by lazy {
         object : BaseQuickAdapter<ILink, BaseViewHolder>(R.layout.layout_header_item) {
-            private val actionMap by lazy {
-                mapOf("收藏" to { link: ILink ->
-                    LinkCollector.addToCollect(link)
-                    KLog.d("link data ${LinkCollector.dataList}")
-                }, "取消收藏" to { link: ILink ->
-                    LinkCollector.removeCollect(link)
-                    KLog.d("link data ${LinkCollector.dataList}")
-                })
-            }
-
 
             override fun convert(holder: BaseViewHolder, item: ILink) {
                 val des = item.des.split(" ")
@@ -70,13 +60,13 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
                     //长按操作
                     setOnLongClickListener {
                         KLog.d("setOnLongClickListener text : $item")
-                        val action = if (LinkCollector.has(item)) actionMap.minus("收藏")
-                        else actionMap.minus("取消收藏")
 
                         MaterialDialog.Builder(holder.itemView.context).content(item.des)
-                                .items(action.keys)
+                                .items(listOf("取消收藏"))
                                 .itemsCallback { _, _, _, text ->
-                                    action[text]?.invoke(item)
+                                    LinkCollector.removeCollect(item)
+                                    mData.removeAt(holder.adapterPosition)
+                                    adapter.notifyItemRemoved(holder.adapterPosition)
                                 }.show()
                         return@setOnLongClickListener true
 

@@ -17,7 +17,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.util.*
 
-class MovieDetailPresenterImpl : BasePresenterImpl<MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailPresenter {
+class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenterImpl<MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailPresenter {
 
 
     private val loadFromNet = { s: String ->
@@ -51,7 +51,8 @@ class MovieDetailPresenterImpl : BasePresenterImpl<MovieDetailContract.MovieDeta
         super.onFirstLoad()
         loadDetail()
         mView?.movie?.let {
-            historyService.insert(History(it.DBtype, Date(),it.toJsonString()))
+            if (!fromHistory)
+                historyService.insert(History(it.DBtype, Date(),it.toJsonString()))
         }
 
     }

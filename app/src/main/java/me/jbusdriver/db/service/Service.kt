@@ -25,4 +25,8 @@ class HistoryService {
 
     fun queryPage(dbPage: DBPage): Observable<List<History>> =
             dao.queryByLimit(dbPage.pageSize, (dbPage.currentPage - 1) * dbPage.pageSize)
+
+    fun clearAll(){
+        dao.deleteAndSetZero()
+    }
 }

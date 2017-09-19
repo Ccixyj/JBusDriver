@@ -155,7 +155,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         })
     }
 
-    override fun createPresenter() = MovieDetailPresenterImpl()
+    override fun createPresenter() = MovieDetailPresenterImpl(intent?.getBooleanExtra(C.BundleKey.Key_2,false) ?: false)
     override val layoutId = R.layout.activity_movie_detail
 
     override val movie: Movie by lazy {
@@ -202,9 +202,10 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
     /*===========================other===================================*/
     companion object {
-        fun start(current: Context, movie: Movie) {
+        fun start(current: Context, movie: Movie, fromHistory: Boolean = false) {
             current.startActivity(Intent(current, MovieDetailActivity::class.java).apply {
                 putExtra(C.BundleKey.Key_1, movie)
+                putExtra(C.BundleKey.Key_2, fromHistory)
             })
         }
 

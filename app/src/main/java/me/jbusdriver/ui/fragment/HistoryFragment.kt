@@ -1,8 +1,12 @@
 package me.jbusdriver.ui.fragment
 
+import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -31,6 +35,27 @@ class HistoryFragment : AppBaseRecycleFragment<HistoryContract.HistoryPresenter,
     override val swipeView: SwipeRefreshLayout?  by lazy { sr_refresh }
     override val recycleView: RecyclerView by lazy { rv_recycle }
     override val layoutManager: RecyclerView.LayoutManager  by lazy { LinearLayoutManager(viewContext) }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater?) {
+        super.onCreateOptionsMenu(menu, inflater)
+        menu.add(Menu.NONE, R.id.cancel_action, 10, "清除历史记录").apply {
+            setIcon(R.drawable.ic_delete_24dp)
+            setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            setOnMenuItemClickListener {
+                mBasePresenter?.clearHistory()
+                adapter.setNewData(null)
+                adapter.notifyDataSetChanged()
+                true
+            }
+
+        }
+
+    }
 
     override val adapter: BaseQuickAdapter<History, in BaseViewHolder> by lazy {
         val format = SimpleDateFormat("yyyy-MM-dd")

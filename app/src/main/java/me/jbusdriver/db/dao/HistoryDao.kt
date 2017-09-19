@@ -60,4 +60,11 @@ class HistoryDao(private val db: BriteDatabase) {
         }
 
     }
+
+    fun deleteAndSetZero() {
+        db.run {
+            delete(HISTORYTable.TABLE_NAME,null)
+            execute("update sqlite_sequence SET seq = 0 where name = ?", arrayOf(HISTORYTable.TABLE_NAME))
+        }
+    }
 }

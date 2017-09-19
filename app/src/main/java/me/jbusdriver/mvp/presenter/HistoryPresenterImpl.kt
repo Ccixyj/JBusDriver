@@ -45,6 +45,10 @@ class HistoryPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HistoryContrac
                 .addTo(rxManager)
     }
 
+    override fun clearHistory() {
+        service.clearAll()
+    }
+
     override fun onRefresh() {
         pageInfo = PageInfo()
         loadData4Page(1)
