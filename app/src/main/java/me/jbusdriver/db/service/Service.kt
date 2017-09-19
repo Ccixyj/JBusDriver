@@ -15,7 +15,7 @@ class HistoryService {
     private val dao by lazy { DB.historyDao }
 
     fun insert(history: History) {
-        if (AppConfiguration.enableHistory && !TextUtils.isEmpty(history.url)) dao.insert(history)
+        if (AppConfiguration.enableHistory && !TextUtils.isEmpty(history.jsonStr)) dao.insert(history)
     }
 
     fun page(pageSize: Int = 20): DBPage {

@@ -26,12 +26,12 @@ import me.jbusdriver.ui.data.collect.MovieCollector
 
 
 /**
- * ilink 由跳转链接进入的
+ * ilink 由跳转链接进入的 /历史记录
  */
 class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkListView {
     private val link by lazy { arguments.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ") }
     private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }
-
+    private val isHistory by lazy { arguments.getBoolean(C.BundleKey.Key_2, false) }
     private val attrViews by lazy { mutableListOf<View>() }
 
 
@@ -47,17 +47,22 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
             }
 
         }
+        if (!isHistory || link !is PageLink) { //历史记录隐藏
+            collectMenu = menu?.add(Menu.NONE, R.id.action_add_movie_collect, 10, "收藏")?.apply {
+                setIcon(R.drawable.ic_star_border_white_24dp)
+                setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                isVisible = !isCollect
+            }
+            removeCollectMenu = menu?.add(Menu.NONE, R.id.action_remove_movie_collect, 10, "取消收藏")?.apply {
+                setIcon(R.drawable.ic_star_white_24dp)
+                setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                isVisible = isCollect
+            }
+        }
+    }
 
-        collectMenu = menu?.add(Menu.NONE, R.id.action_add_movie_collect, 10, "收藏")?.apply {
-            setIcon(R.drawable.ic_star_border_white_24dp)
-            setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-            isVisible = !isCollect
-        }
-        removeCollectMenu = menu?.add(Menu.NONE, R.id.action_remove_movie_collect, 10, "取消收藏")?.apply {
-            setIcon(R.drawable.ic_star_white_24dp)
-            setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-            isVisible = isCollect
-        }
+    override fun onPrepareOptionsMenu(menu: Menu?) {
+        super.onPrepareOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -120,12 +125,12 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         }
     }
 
-    override fun createPresenter() = MovieLinkPresenterImpl(link)
+    override fun createPresenter() = MovieLinkPresenterImpl(link, arguments.getBoolean(LinkableListFragment.MENU_SHOW_ALL, false) , isHistory)
 
     override fun <T> showContent(data: T?) {
         KLog.d("parse res :$data")
         if (data is String) {
-            getLoaAlldView(data)?.let { attrViews.add(it) }
+            getLoaAllView(data)?.let { attrViews.add(it) }
         }
 
         if (data is IAttr) {
@@ -161,7 +166,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         else -> error("current not provide for IAttr $data")
     }
 
-    private fun getLoaAlldView(data: String): View? {
+    private fun getLoaAllView(data: String): View? {
         return data.split("：").let { txts ->
             if (txts.size == 2) {
                 this.viewContext.inflate(R.layout.layout_load_all).apply {

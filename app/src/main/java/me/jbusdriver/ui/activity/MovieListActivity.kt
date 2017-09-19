@@ -8,10 +8,12 @@ import android.widget.Toast
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.AppBaseActivity
 import me.jbusdriver.common.C
+import me.jbusdriver.db.bean.History
 import me.jbusdriver.mvp.MovieParseContract
 import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.bean.des
 import me.jbusdriver.mvp.presenter.MovieParsePresenterImpl
+import me.jbusdriver.ui.fragment.LinkableListFragment
 import me.jbusdriver.ui.fragment.LinkedMovieListFragment
 
 class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter, MovieParseContract.MovieParseView>(), MovieParseContract.MovieParseView {
@@ -26,8 +28,9 @@ class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setToolBar()
-        supportFragmentManager.beginTransaction().replace(R.id.fl_container, LinkedMovieListFragment.newInstance(linkData, true))
-                .commitAllowingStateLoss()
+        supportFragmentManager.beginTransaction().replace(R.id.fl_container, LinkedMovieListFragment.newInstance(linkData, true).apply {
+            arguments = intent.extras
+        }).commitAllowingStateLoss()
     }
 
     private fun setToolBar() {
@@ -51,6 +54,25 @@ class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter
                 Toast.makeText(context, "没有可用的跳转链接", Toast.LENGTH_LONG).show()
             }
 
+        }
+
+        /**
+         * inline get() = when (this) {
+        is Movie -> 1
+        is ActressInfo -> 2
+        is Header -> 3
+        is Genre -> 4
+        is SearchLink -> 5
+        is PageLink -> 6
+        else -> error(" $this has no matched class for des")
+        }
+         */
+        fun reloadFromHistory(context: Context, his: History) {
+            context.startActivity(Intent(context, MovieListActivity::class.java).apply {
+                putExtra(C.BundleKey.Key_1, his.getLinkItem())
+                putExtra(C.BundleKey.Key_2, true)/*from History*/
+                putExtra(LinkableListFragment.MENU_SHOW_ALL, his.isAll)
+            })
         }
     }
 }

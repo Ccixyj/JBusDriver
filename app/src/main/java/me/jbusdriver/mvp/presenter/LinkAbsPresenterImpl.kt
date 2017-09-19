@@ -19,9 +19,9 @@ import java.util.concurrent.ConcurrentSkipListMap
 /**
  * Created by Administrator on 2017/5/10 0010.
  */
-abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoadMorePresenterImpl<LinkListContract.LinkListView, T>(), LinkListContract.LinkListPresenter {
+abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, val isHistory: Boolean = false) : AbstractRefreshLoadMorePresenterImpl<LinkListContract.LinkListView, T>(), LinkListContract.LinkListPresenter {
 
-    protected var IsAll = linkData is PageLink && linkData.isAll
+    protected open var IsAll = false
     private val dataPageCache by lazy { ConcurrentSkipListMap<Int, Int>() }
     private val pageModeDisposable = RxBus.toFlowable(PageChangeEvent::class.java)
             .subscribeBy(onNext = {
@@ -33,10 +33,24 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
             })
     private val historyService by lazy { HistoryService() }
 
+    override fun onFirstLoad() {
+        super.onFirstLoad()
+        val link = when (linkData) {
+            is PageLink -> linkData.copy(1, mView?.type?.key ?: "")
+            else -> linkData
+        }
+        if (!isHistory) addHistory(link)
+    }
+
     override fun loadAll(iaAll: Boolean) {
         IsAll = iaAll
         dataPageCache.clear()
         loadData4Page(1)
+        val link = when (linkData) {
+            is PageLink -> linkData.copy(1, mView?.type?.key ?: "")
+            else -> linkData
+        }
+        if (!isHistory) addHistory(link)
     }
 
     /*不需要*/
@@ -44,13 +58,6 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
         override fun requestFor(t: Int) =
                 (if (t == 1) linkData.link else "${linkData.link.urlHost}${linkData.link.urlPath}/$t").let {
                     KLog.i("fromCallable page $pageInfo requestFor : $it")
-                    val link = when (linkData) {
-                        is PageLink -> linkData.copy(t, mView?.type?.key ?: "", it, IsAll)
-                        else -> PageLink(t, linkData.des, it, IsAll)
-                    }
-                    val img = if (linkData is ActressInfo) linkData.avatar else if (linkData is Movie) linkData.imageUrl else null
-
-                    historyService.insert(History(link.des, link.link, linkData.DBtype, Date(), img))
                     JAVBusService.INSTANCE.get(it, if (IsAll) "all" else null).map { Jsoup.parse(it) }
                 }.doOnNext {
                     if (t == 1) CacheLoader.lru.put("${linkData.link}$IsAll", it.toString())
@@ -60,6 +67,9 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink) : AbstractRefreshLoa
                 .firstOrError().toFlowable()
     }
 
+    protected open fun addHistory(link: ILink) {
+        historyService.insert(History(link.DBtype, Date(), link.toJsonString(), IsAll))
+    }
 
     override fun onRefresh() {
         dataPageCache.clear()

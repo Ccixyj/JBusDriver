@@ -1,64 +1,47 @@
 package me.jbusdriver.db.bean
 
 import android.content.Context
+import me.jbusdriver.common.AppContext
+import me.jbusdriver.common.fromJson
+import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.activity.MovieListActivity
-import me.jbusdriver.ui.data.DataSourceType
 import java.util.*
 
 /**
  * Created by Administrator on 2017/9/18 0018.
  */
-data class History(val des: String, val url: String, val type: Int, val createTime: Date, val img: String? = null) {
+data class History(val type: Int, val createTime: Date, val jsonStr: String, var isAll: Boolean = false) {
     var id: Int? = null
 
-    /**
-     * inline get() = when (this) {
-    is Movie -> 1
-    is ActressInfo -> 2
-    is Header -> 3
-    is Genre -> 4
-    is SearchLink -> 5
-    is PageLink -> 6
-    else -> error(" $this has no matched class for des")
-    }
-     */
-    fun moveto(context: Context) {
+
+    fun move(context: Context) {
+
         when (type) {
             1 -> {
-                val ss = des.split(" ")
-                MovieDetailActivity.start(context, Movie(DataSourceType.CENSORED, ss[0], img ?: "", ss[1], "", url))
+                MovieDetailActivity.start(context, AppContext.gson.fromJson(jsonStr))
             }
 
-            2 -> {
-                val ss = des.split(" ")
-                MovieListActivity.start(context, ActressInfo(ss[1], img ?: "", url))
+            in 2..6 -> {
+                MovieListActivity.reloadFromHistory(context, this)
             }
 
-            3 -> {
-                val ss = des.split(" ")
-
-                MovieListActivity.start(context, Header(ss[0], ss[1], url))
-            }
-
-            4 -> {
-                val ss = des.split(" ")
-                MovieListActivity.start(context, Genre(ss[1], url))
-            }
-            5 -> {
-                val ss = des.split(" ")
-                MovieListActivity.start(context, Genre(ss[1], url))
-            }
-
-            6 -> {
-                val isAll = des.endsWith("全部电影")
-//                val s = url.split("/").last()
-//                val page = s.toIntOrNull()?.let { it } ?: 1
-//                val replace = if (page > 1) url.replace("$page", "") else url
-                MovieListActivity.start(context, PageLink(1, des, url, isAll))
+            else -> {
+                AppContext.instace.toast("没有可以跳转的界面")
             }
         }
+
+    }
+
+    fun getLinkItem() = when (type) {
+        1 -> AppContext.gson.fromJson<Movie>(jsonStr)
+        2 -> AppContext.gson.fromJson<ActressInfo>(jsonStr)
+        3 -> AppContext.gson.fromJson<Header>(jsonStr)
+        4 -> AppContext.gson.fromJson<Genre>(jsonStr)
+        5 -> AppContext.gson.fromJson<SearchLink>(jsonStr)
+        6 -> AppContext.gson.fromJson<PageLink>(jsonStr)
+        else -> error("$this has no matched class ")
     }
 }
 

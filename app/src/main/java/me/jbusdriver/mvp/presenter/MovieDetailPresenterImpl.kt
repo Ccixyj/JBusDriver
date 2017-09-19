@@ -51,7 +51,7 @@ class MovieDetailPresenterImpl : BasePresenterImpl<MovieDetailContract.MovieDeta
         super.onFirstLoad()
         loadDetail()
         mView?.movie?.let {
-            historyService.insert(History(it.des,it.link,it.DBtype, Date(),it.imageUrl))
+            historyService.insert(History(it.DBtype, Date(),it.toJsonString()))
         }
 
     }

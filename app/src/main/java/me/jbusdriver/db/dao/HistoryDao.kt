@@ -34,9 +34,10 @@ class HistoryDao(private val db: BriteDatabase) {
 
     fun queryByLimit(size: Int, offset: Int): Observable<List<History>> {
         return db.createQuery(HISTORYTable.TABLE_NAME, "SELECT * FROM ${HISTORYTable.TABLE_NAME} ORDER BY ${HISTORYTable.COLUMN_ID} DESC LIMIT $offset , $size ").mapToList {
-            History(it.getStringByColumn(HISTORYTable.COLUMN_DES) ?: "", it.getStringByColumn(HISTORYTable.COLUMN_URL) ?: "",
-                    it.getIntByColumn(HISTORYTable.COLUMN_DB_TYPE), Date(it.getLongByColumn(HISTORYTable.COLUMN_CREATE_TIME)),
-                    it.getStringByColumn(HISTORYTable.COLUMN_IMG)).apply {
+            History(it.getIntByColumn(HISTORYTable.COLUMN_DB_TYPE), Date(it.getLongByColumn(HISTORYTable.COLUMN_CREATE_TIME)),
+                    it.getStringByColumn(HISTORYTable.COLUMN_JSON_STR) ?: "",
+                    it.getIntByColumn(HISTORYTable.COLUMN_IS_ALL) == 1
+            ).apply {
                 id = it.getIntByColumn(HISTORYTable.COLUMN_ID)
             }
         }.flatMap { Observable.just(it) }
@@ -53,10 +54,9 @@ class HistoryDao(private val db: BriteDatabase) {
 
         fun History.cv(isInsert: Boolean): ContentValues = ContentValues().also {
             if (isInsert) it.put(HISTORYTable.COLUMN_CREATE_TIME, createTime.time)
-            it.put(HISTORYTable.COLUMN_DES, des)
-            it.put(HISTORYTable.COLUMN_URL, url)
             it.put(HISTORYTable.COLUMN_DB_TYPE, type)
-            it.put(HISTORYTable.COLUMN_IMG, img)
+            it.put(HISTORYTable.COLUMN_JSON_STR, jsonStr)
+            it.put(HISTORYTable.COLUMN_IS_ALL, if (isAll) 1 else 0)
         }
 
     }

@@ -5,36 +5,33 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import me.jbusdriver.db.HISTORYTable.COLUMN_CREATE_TIME
 import me.jbusdriver.db.HISTORYTable.COLUMN_DB_TYPE
-import me.jbusdriver.db.HISTORYTable.COLUMN_DES
 import me.jbusdriver.db.HISTORYTable.COLUMN_ID
-import me.jbusdriver.db.HISTORYTable.COLUMN_IMG
-import me.jbusdriver.db.HISTORYTable.COLUMN_URL
+import me.jbusdriver.db.HISTORYTable.COLUMN_IS_ALL
+import me.jbusdriver.db.HISTORYTable.COLUMN_JSON_STR
 import me.jbusdriver.db.HISTORYTable.TABLE_NAME
 
 private const val DB_NAME = "jbusdriver.db"
 private const val DB_VERSION = 1
 private const val CREATE_SQL = "CREATE TABLE $TABLE_NAME ( " +
-        "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
-        "$COLUMN_DES NVARCHAR(512) NOT NULL ," +
-        "$COLUMN_URL VARCHAR(128)  NOT NULL ," +
-        "$COLUMN_DB_TYPE TINYINT  NOT NULL ," +
-        "$COLUMN_IMG VARCHAR(128) ," +
-        "$COLUMN_CREATE_TIME INTEGER  DEFAULT 0" +
+        " $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+        " $COLUMN_DB_TYPE TINYINT  NOT NULL ," +
+        " $COLUMN_CREATE_TIME INTEGER  DEFAULT 0 ," +
+        " $COLUMN_JSON_STR TEXT  NOT NULL ," +
+        " $COLUMN_IS_ALL TINYINT  NOT NULL " +
         ")"
 
 object HISTORYTable {
     const val TABLE_NAME = "t_history"
     const val COLUMN_ID = "id"
-    const val COLUMN_DES = "des"
-    const val COLUMN_URL = "url"
     const val COLUMN_DB_TYPE = "dbType"
-    const val COLUMN_IMG = "image"
     const val COLUMN_CREATE_TIME = "createTime"
+    const val COLUMN_JSON_STR = "jsonStr"
+    const val COLUMN_IS_ALL = "isAll"
 }
 
 
 /**
- * Created by Administrator on 2017/9/18 0018.
+ * data class History(val type: Int, val createTime: Date, val jsonStr: String)
  */
 class JBusDBOpenHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 

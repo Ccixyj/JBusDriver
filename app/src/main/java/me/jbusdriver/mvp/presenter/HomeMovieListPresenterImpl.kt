@@ -7,7 +7,10 @@ import me.jbusdriver.common.*
 import me.jbusdriver.db.bean.History
 import me.jbusdriver.db.service.HistoryService
 import me.jbusdriver.http.JAVBusService
-import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.bean.DBtype
+import me.jbusdriver.mvp.bean.ILink
+import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.mvp.bean.PageLink
 import me.jbusdriver.mvp.model.AbstractBaseModel
 import me.jbusdriver.mvp.model.BaseModel
 import me.jbusdriver.ui.data.AppConfiguration
@@ -36,8 +39,9 @@ open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink)
         }
         KLog.i("load url :$urlN")
         //existmag=all
-        val pageLink = PageLink(page = page, title = type.key, link = urlN, isAll = IsAll)
-        historyService.insert(History(pageLink.des, pageLink.link, pageLink.DBtype, Date()))
+        //add his
+        val pageLink = PageLink(page = page, title = type.key, link = urlN)
+        historyService.insert(History(pageLink.DBtype, Date(),pageLink.toJsonString(),IsAll))
         service.get(urlN, if (IsAll) "all" else null).doOnNext {
             if (page == 1) CacheLoader.lru.put(saveKey, it)
         }.map { Jsoup.parse(it) }.doOnError {

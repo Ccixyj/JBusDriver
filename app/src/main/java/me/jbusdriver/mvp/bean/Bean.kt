@@ -31,7 +31,7 @@ val ILink.des: String
         is ActressInfo -> "演员 $name"
         is me.jbusdriver.mvp.bean.Movie -> "$code $title"
         is SearchLink -> "搜索 $query"
-        is PageLink -> "$title 第 $page 页 ${if (isAll) "全部" else "已有种子"}电影"
+        is PageLink -> "$title 第 $page 页" /*${if (isAll) "全部" else "已有种子"}电影*/
         else -> error(" $this has no matched class for des")
     }
 
@@ -47,7 +47,7 @@ val ILink.DBtype: Int
     }
 
 
-data class PageLink(val page: Int, val title: String, override val link: String, var isAll: Boolean = false) : ILink
+data class PageLink(val page: Int, val title: String /*XX类型*/, override val link: String) : ILink
 
 data class PageInfo(val activePage: Int = 0, val nextPage: Int = 0,
                     val activePath: String = "",

@@ -11,7 +11,9 @@ import org.jsoup.nodes.Document
 /**
  * 网页链接列表
  */
-class MovieLinkPresenterImpl(val link: ILink) : LinkAbsPresenterImpl<Movie>(link) {
+class MovieLinkPresenterImpl(val link: ILink, isAllFromBundle: Boolean,isHis:Boolean) : LinkAbsPresenterImpl<Movie>(link,isHis) {
+
+    override var IsAll = isAllFromBundle
 
     override fun stringMap(str: Document): List<Movie> {
         //处理alert
