@@ -1,6 +1,5 @@
 package me.jbusdriver.db
 
-import com.squareup.sqlbrite2.BuildConfig
 import com.squareup.sqlbrite2.SqlBrite
 import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.common.AppContext
@@ -24,7 +23,7 @@ object DB {
 
     private val dataBase by lazy {
         provideSqlBrite.wrapDatabaseHelper(JBusDBOpenHelper(AppContext.instace), Schedulers.io()).apply {
-            setLoggingEnabled(BuildConfig.DEBUG)
+            setLoggingEnabled(jbusdriver.me.jbusdriver.BuildConfig.DEBUG)
         }
     }
 

@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentSkipListMap
 abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, val isHistory: Boolean = false) : AbstractRefreshLoadMorePresenterImpl<LinkListContract.LinkListView, T>(), LinkListContract.LinkListPresenter {
 
     protected open var IsAll = false
+    private val urlPath by lazy { if (linkData is PageLink) linkData.link.urlPath.replace("/${linkData.page}", "") else linkData.link.urlPath }
     private val dataPageCache by lazy { ConcurrentSkipListMap<Int, Int>() }
     private val pageModeDisposable = RxBus.toFlowable(PageChangeEvent::class.java)
             .subscribeBy(onNext = {
@@ -34,10 +35,16 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, val isHistory: Boole
     private val historyService by lazy { HistoryService() }
 
     override fun onFirstLoad() {
-        super.onFirstLoad()
         val link = when (linkData) {
-            is PageLink -> linkData.copy(1, mView?.type?.key ?: "")
-            else -> linkData
+            is PageLink -> {
+                pageInfo = PageInfo(linkData.page, linkData.page + 1)
+                loadData4Page(linkData.page)//首次加载 可以从内存中读取
+                linkData.copy(linkData.page, mView?.type?.key ?: "")
+            }
+            else -> {
+                loadData4Page(1)
+                linkData
+            }
         }
         if (!isHistory) addHistory(link)
     }
@@ -56,7 +63,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, val isHistory: Boole
     /*不需要*/
     override val model: BaseModel<Int, Document> = object : BaseModel<Int, Document> {
         override fun requestFor(t: Int) =
-                (if (t == 1) linkData.link else "${linkData.link.urlHost}${linkData.link.urlPath}/$t").let {
+                (if (t == 1) linkData.link else "${linkData.link.urlHost}$urlPath/$t").let {
                     KLog.i("fromCallable page $pageInfo requestFor : $it")
                     JAVBusService.INSTANCE.get(it, if (IsAll) "all" else null).map { Jsoup.parse(it) }
                 }.doOnNext {
