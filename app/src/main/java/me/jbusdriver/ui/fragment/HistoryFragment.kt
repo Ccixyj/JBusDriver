@@ -20,6 +20,7 @@ import me.jbusdriver.db.bean.History
 import me.jbusdriver.mvp.HistoryContract
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.mvp.bean.SearchLink
 import me.jbusdriver.mvp.bean.des
 import me.jbusdriver.mvp.presenter.HistoryPresenterImpl
 import java.text.SimpleDateFormat
@@ -63,7 +64,7 @@ class HistoryFragment : AppBaseRecycleFragment<HistoryContract.HistoryPresenter,
 
             override fun convert(helper: BaseViewHolder, item: History) {
                 val itemLink = item.getLinkItem()
-                val appender = if (itemLink !is Movie) {
+                val appender = if (itemLink !is Movie && itemLink !is SearchLink) {
                     if (item.isAll) "全部电影" else "已有种子电影"
                 } else ""
                 helper.setText(R.id.tv_history_date, format.format(item.createTime))

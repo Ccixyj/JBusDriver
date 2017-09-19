@@ -32,7 +32,7 @@ val ILink.des: String
         is Genre -> "类别 $name"
         is ActressInfo -> "演员 $name"
         is me.jbusdriver.mvp.bean.Movie -> "$code $title"
-        is SearchLink -> "搜索 $query"
+        is SearchLink -> "搜索 ${type.title} $query"
         is PageLink -> "$title 第 $page 页" /*${if (isAll) "全部" else "已有种子"}电影*/
         else -> error(" $this has no matched class for des")
     }
