@@ -117,7 +117,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
             if (isSearch) {
 //                it.linkData.query = query
 //                it.onRefresh()
-                viewContext.toast(query)
+                viewContext.toast("新搜索 : $query")
                 RxBus.post(SearchWord(query))
             } else {
                 super.gotoSearchResult(query)
