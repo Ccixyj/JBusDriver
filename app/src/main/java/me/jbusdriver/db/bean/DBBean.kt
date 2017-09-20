@@ -22,7 +22,7 @@ data class History(val type: Int, val createTime: Date, val jsonStr: String, var
     fun move(context: Context) {
 
         when (type) {
-            1 -> MovieDetailActivity.start(context, AppContext.gson.fromJson(jsonStr), true)
+            1 -> MovieDetailActivity.start(context, getLinkItem() as Movie, true)
             in 2..6 -> MovieListActivity.reloadFromHistory(context, this)
             else -> AppContext.instace.toast("没有可以跳转的界面")
         }
