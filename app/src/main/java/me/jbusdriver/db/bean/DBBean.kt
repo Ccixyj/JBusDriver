@@ -30,24 +30,24 @@ data class History(val type: Int, val createTime: Date, val jsonStr: String, var
     }
 
     fun getLinkItem() = when (type) {
-        1 -> AppContext.gson.fromJson<Movie>(jsonStr).apply {
-            MovieCollector.checkUrls(mutableListOf(this)).first()
+        1 -> AppContext.gson.fromJson<Movie>(jsonStr).let {
+            MovieCollector.checkUrls(mutableListOf(it)).first()
         }
-        2 -> AppContext.gson.fromJson<ActressInfo>(jsonStr).apply {
-            ActressCollector.checkUrls(mutableListOf(this)).first()
+        2 -> AppContext.gson.fromJson<ActressInfo>(jsonStr).let {
+            ActressCollector.checkUrls(mutableListOf(it)).first()
         }
-        3 -> AppContext.gson.fromJson<Header>(jsonStr).apply {
-            LinkCollector.checkUrls(mutableListOf(this)).first()
+        3 -> AppContext.gson.fromJson<Header>(jsonStr).let {
+            LinkCollector.checkUrls(mutableListOf(it)).first()
         }
 
-        4 -> AppContext.gson.fromJson<Genre>(jsonStr).apply {
-            LinkCollector.checkUrls(mutableListOf(this)).first()
+        4 -> AppContext.gson.fromJson<Genre>(jsonStr).let {
+            LinkCollector.checkUrls(mutableListOf(it)).first()
         }
-        5 -> AppContext.gson.fromJson<SearchLink>(jsonStr).apply {
-            LinkCollector.checkUrls(mutableListOf(this)).first()
+        5 -> AppContext.gson.fromJson<SearchLink>(jsonStr).let {
+            LinkCollector.checkUrls(mutableListOf(it)).first()
         }
-        6 -> AppContext.gson.fromJson<PageLink>(jsonStr).apply {
-            LinkCollector.checkUrls(mutableListOf(this)).first()
+        6 -> AppContext.gson.fromJson<PageLink>(jsonStr).let {
+            LinkCollector.checkUrls(mutableListOf(it)).first()
         }
         else -> error("$this has no matched class ")
     }

@@ -1,6 +1,7 @@
 package me.jbusdriver.ui.fragment
 
 import android.os.Bundle
+import android.support.v4.util.ArrayMap
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -18,10 +19,7 @@ import me.jbusdriver.common.AppBaseRecycleFragment
 import me.jbusdriver.common.toGlideUrl
 import me.jbusdriver.db.bean.History
 import me.jbusdriver.mvp.HistoryContract
-import me.jbusdriver.mvp.bean.ActressInfo
-import me.jbusdriver.mvp.bean.Movie
-import me.jbusdriver.mvp.bean.SearchLink
-import me.jbusdriver.mvp.bean.des
+import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.presenter.HistoryPresenterImpl
 import java.text.SimpleDateFormat
 
@@ -59,11 +57,12 @@ class HistoryFragment : AppBaseRecycleFragment<HistoryContract.HistoryPresenter,
     }
 
     override val adapter: BaseQuickAdapter<History, in BaseViewHolder> by lazy {
-        val format = SimpleDateFormat("yyyy-MM-dd")
-        object : BaseQuickAdapter<History, BaseViewHolder>(R.layout.layout_history_item) {
 
+        object : BaseQuickAdapter<History, BaseViewHolder>(R.layout.layout_history_item) {
+            val format = SimpleDateFormat("yyyy-MM-dd")
+            val linkCache by lazy { ArrayMap<Int, ILink>(mData?.size ?: 16) }
             override fun convert(helper: BaseViewHolder, item: History) {
-                val itemLink = item.getLinkItem()
+                val itemLink = linkCache.getOrPut(item.id) { item.getLinkItem() }
                 val appender = if (itemLink !is Movie && itemLink !is SearchLink) {
                     if (item.isAll) "全部电影" else "已有种子电影"
                 } else ""
@@ -83,11 +82,17 @@ class HistoryFragment : AppBaseRecycleFragment<HistoryContract.HistoryPresenter,
                     helper.setGone(R.id.iv_history_icon, false)
                 }
             }
+
+            override fun onDetachedFromRecyclerView(recyclerView: RecyclerView?) {
+                super.onDetachedFromRecyclerView(recyclerView)
+                linkCache.clear()
+            }
         }.apply {
-            setOnItemClickListener { adapter, view, position ->
+            setOnItemClickListener { _, view, position ->
                 data.getOrNull(position)?.move(view.context)
             }
         }
+
     }
 
     companion object {
