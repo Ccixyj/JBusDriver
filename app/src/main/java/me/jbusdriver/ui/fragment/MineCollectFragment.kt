@@ -48,7 +48,7 @@ class MineCollectFragment : TabViewPagerFragment<MineCollectContract.MineCollect
         menu?.findItem(R.id.action_collect_info)?.let { menu ->
             menu.isVisible = false
             //if (key == CollectType.Movie_Key) "电影" else if (key == CollectType.Actress_Key) "演员" else "链接"
-            val key = vp_fragment.currentItem.let {
+            val key = vp_fragment?.currentItem?.let {
                 if (it == 0) MovieCollector.key else if (it == 1) ActressCollector.key else LinkCollector.key
             }
             events.get(key)?.let { msg ->
