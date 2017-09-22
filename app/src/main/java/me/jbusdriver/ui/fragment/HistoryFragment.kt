@@ -60,9 +60,9 @@ class HistoryFragment : AppBaseRecycleFragment<HistoryContract.HistoryPresenter,
 
         object : BaseQuickAdapter<History, BaseViewHolder>(R.layout.layout_history_item) {
             val format = SimpleDateFormat("yyyy-MM-dd")
-            val linkCache by lazy { ArrayMap<Int, ILink>(mData?.size ?: 16) }
+            val linkCache by lazy { ArrayMap<Int, ILink>() }
             override fun convert(helper: BaseViewHolder, item: History) {
-                val itemLink = linkCache.getOrPut(item.id) { item.getLinkItem() }
+                val itemLink = linkCache.getOrPut(item.hashCode()) { item.getLinkItem() }
                 val appender = if (itemLink !is Movie && itemLink !is SearchLink) {
                     if (item.isAll) "全部电影" else "已有种子电影"
                 } else ""
@@ -83,10 +83,6 @@ class HistoryFragment : AppBaseRecycleFragment<HistoryContract.HistoryPresenter,
                 }
             }
 
-            override fun onDetachedFromRecyclerView(recyclerView: RecyclerView?) {
-                super.onDetachedFromRecyclerView(recyclerView)
-                linkCache.clear()
-            }
         }.apply {
             setOnItemClickListener { _, view, position ->
                 data.getOrNull(position)?.move(view.context)
