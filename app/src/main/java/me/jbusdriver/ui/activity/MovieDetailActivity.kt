@@ -108,7 +108,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         super.doStart()
         //mBasePresenter初始化完毕后再加载
         //has disk cache ?
-        //  firstLoadMagnet()
+        firstLoadMagnet()
     }
 
     override fun onDestroy() {
@@ -143,6 +143,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             }
 
             override fun onPageFinished(view: WebView, url: String) {
+                toast("onPageFinished $url")
                 view.loadUrl("javascript:window.handler.getContent(document.body.innerHTML);")
                 super.onPageFinished(view, url)
             }
@@ -195,9 +196,13 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
     override fun addMagnet(t: List<Magnet>) {
         //如果movie含有tag说明有种子了,重新加载
-        if (movie.tags.isNotEmpty() && t.isEmpty()) {
-            initMagnetLoad()
-        }
+        KLog.d("addMagnet $t")
+//        t.forEach {
+//            browse(it.link)
+//        }
+//        if (movie.tags.isNotEmpty() && t.isEmpty()) {
+//            initMagnetLoad()
+//        }
     }
 
     /*===========================other===================================*/

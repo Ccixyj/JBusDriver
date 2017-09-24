@@ -38,6 +38,9 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
 
             //可能存在旧的,复制到新的目录下去并删除
             ACache.get(File(dir).apply {
+                if (!this.exists() && !this.mkdirs()) {
+                    error("can not create file dir in ${this.absolutePath}")
+                }
                 if (dir.contains(Environment.getExternalStorageDirectory().absolutePath)) {
                     if ((this.list()?.size ?: -1) > 0) return@apply
                     if (getAvailableExternalMemorySize() < MB * 100) {
@@ -61,12 +64,20 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
     private fun createDir(collectDir: String): String? {
         File(collectDir.trim()).let {
             try {
-                if (!it.exists()) it.mkdirs()
+                if (!it.exists() && it.mkdirs()) return collectDir
+                if (it.exists()) {
+                    if (it.isDirectory) {
+                        return collectDir
+                    } else {
+                        it.delete()
+                        createDir(collectDir) //recreate
+                    }
+                }
             } catch (e: Exception) {
                 MobclickAgent.reportError(AppContext.instace, e)
             }
         }
-        return collectDir
+        return null
     }
 
 
