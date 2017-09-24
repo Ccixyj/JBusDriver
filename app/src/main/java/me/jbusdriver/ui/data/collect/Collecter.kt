@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken
 import com.umeng.analytics.MobclickAgent
 import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.common.*
+import me.jbusdriver.db.service.LinkService
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.*
 import java.io.File
@@ -31,6 +32,9 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
     protected val imageHost: String by lazy { JAVBusService.defaultImageUrlHost }
     protected val collectCache by lazy {
         try {
+            if (android.os.Environment.MEDIA_MOUNTED != android.os.Environment.getExternalStorageState()) {
+                error("sd mount state : ${android.os.Environment.getExternalStorageState()}")
+            }
             val pathSuffix = File.separator + "collect" + File.separator
             val dir: String = createDir(Environment.getExternalStorageDirectory().absolutePath + File.separator + AppContext.instace.packageName + pathSuffix)
                     ?: createDir(AppContext.instace.filesDir.absolutePath + pathSuffix)
@@ -60,6 +64,7 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
             null
         }
     }
+    protected val linkService by lazy { LinkService() }
 
     private fun createDir(collectDir: String): String? {
         File(collectDir.trim()).let {
@@ -95,26 +100,36 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
 
     abstract fun transform(cacheString: String): MutableList<T>
     abstract fun checkUrls(data: MutableList<T>): MutableList<T>
-    abstract val backUpAction: (File) -> Unit
+    abstract fun loadFromDb(): MutableList<T>
+
+    abstract val backUpAction: ((File) -> Unit)?
 
     private fun refreshData(): MutableList<T> {
         return collectCache?.getAsString(key)?.let {
             try {
-                transform(it).let { checkUrls(it) }
+                transform(it).let { checkUrls(it) }.apply {
+                    //迁移到db
+                    Schedulers.io().scheduleDirect {
+                        if (linkService.save(this)) {
+                            collectCache?.remove(key)
+                        }
+                    }
+                }
             } catch (e: Exception) {
                 KLog.w("refreshData key $e")
                 backUp(key)
                 mutableListOf<T>()
             }
-        } ?: mutableListOf()
+        } ?: loadFromDb()
     }
+
 
     private fun backUp(key: String) {
         collectCache?.file(key)?.let {
             val bak = File(it.parent, "${key.hashCode()}.BAK")
             try {
                 it.copyTo(bak, true)
-                backUpAction.invoke(bak)
+                backUpAction?.invoke(bak)
             } catch (e: Exception) {
             }
         }
@@ -169,6 +184,10 @@ object MovieCollector : AbsCollectorImpl<Movie>() {
         } else data
     }
 
+    override fun loadFromDb(): MutableList<Movie> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override val backUpAction = { bakFile: File ->
         RxBus.post(CollectErrorEvent(key, "收藏电影数据格式错误,已转存至${bakFile.absolutePath}"))
     }
@@ -195,6 +214,10 @@ object ActressCollector : AbsCollectorImpl<ActressInfo>() {
 
     }
 
+    override fun loadFromDb(): MutableList<ActressInfo> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override val backUpAction = { bakFile: File ->
         RxBus.post(CollectErrorEvent(key, "收藏演员数据格式错误,已转存至${bakFile.absolutePath}"))
     }
@@ -215,6 +238,9 @@ object LinkCollector : AbsCollectorImpl<ILink>() {
     }
 
     override fun transform(cacheString: String) = gson.fromJson<MutableList<ILink>>(cacheString) ?: mutableListOf()
+    override fun loadFromDb(): MutableList<ILink> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     override fun checkUrls(data: MutableList<ILink>): MutableList<ILink> {
         if (host.endsWith(".xyz")) return data

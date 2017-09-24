@@ -3,8 +3,11 @@ package me.jbusdriver.db.service
 import android.text.TextUtils
 import io.reactivex.Observable
 import me.jbusdriver.db.DB
+import me.jbusdriver.db.bean.Category
 import me.jbusdriver.db.bean.DBPage
 import me.jbusdriver.db.bean.History
+import me.jbusdriver.mvp.bean.ILink
+import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.ui.data.AppConfiguration
 
 /**
@@ -25,7 +28,26 @@ class HistoryService {
 
     fun queryPage(dbPage: DBPage): Observable<List<History>> =
             dao.queryByLimit(dbPage.pageSize, (dbPage.currentPage - 1) * dbPage.pageSize)
-    fun clearAll(){
+
+    fun clearAll() {
         dao.deleteAndSetZero()
+    }
+}
+
+class CategoryService {
+    private val dao by lazy { DB.categoryDao }
+    fun insert(history: Category) {
+        dao.insert(history)
+    }
+
+}
+
+class LinkService {
+    private val dao by lazy { DB.linkDao }
+
+    fun save(datas: List<ILink>): Boolean {
+        return datas.map {
+            dao.insert(it.convertDBItem())
+        }.size == datas.size
     }
 }

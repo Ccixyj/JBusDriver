@@ -5,12 +5,15 @@ import com.chad.library.adapter.base.entity.AbstractExpandableItem
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.BaseFragment
+import me.jbusdriver.common.toJsonString
+import me.jbusdriver.db.bean.LinkItem
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.DataSourceType
 import me.jbusdriver.ui.data.SearchType
 import me.jbusdriver.ui.fragment.*
 import java.io.Serializable
+import java.util.*
 
 /**
  * Created by Administrator on 2017/4/9.
@@ -48,6 +51,7 @@ val ILink.DBtype: Int
         else -> error(" $this has no matched class for des")
     }
 
+fun ILink.convertDBItem() = LinkItem(this.DBtype, Date(), this.toJsonString())
 
 data class PageLink(val page: Int, val title: String /*XX类型*/, override val link: String) : ILink
 

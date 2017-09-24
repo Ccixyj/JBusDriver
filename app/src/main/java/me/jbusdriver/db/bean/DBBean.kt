@@ -12,9 +12,16 @@ import me.jbusdriver.ui.data.collect.LinkCollector
 import me.jbusdriver.ui.data.collect.MovieCollector
 import java.util.*
 
-/**
- * Created by Administrator on 2017/9/18 0018.
- */
+
+data class Category(val name: String, val ref: List<ILink>) {
+    var id: Int? = null
+}
+
+data class LinkItem(val type: Int, val createTime: Date, val jsonStr: String) {
+    var id: Int? = null
+    fun getLinkItem() = doGet(type, jsonStr)
+}
+
 data class History(val type: Int, val createTime: Date, val jsonStr: String, var isAll: Boolean = false) {
     var id: Int? = null
 
@@ -29,28 +36,30 @@ data class History(val type: Int, val createTime: Date, val jsonStr: String, var
 
     }
 
-    fun getLinkItem() = when (type) {
-        1 -> AppContext.gson.fromJson<Movie>(jsonStr).let {
-            MovieCollector.checkUrls(mutableListOf(it)).first()
-        }
-        2 -> AppContext.gson.fromJson<ActressInfo>(jsonStr).let {
-            ActressCollector.checkUrls(mutableListOf(it)).first()
-        }
-        3 -> AppContext.gson.fromJson<Header>(jsonStr).let {
-            LinkCollector.checkUrls(mutableListOf(it)).first()
-        }
+    fun getLinkItem() = doGet(type, jsonStr)
+}
 
-        4 -> AppContext.gson.fromJson<Genre>(jsonStr).let {
-            LinkCollector.checkUrls(mutableListOf(it)).first()
-        }
-        5 -> AppContext.gson.fromJson<SearchLink>(jsonStr).let {
-            LinkCollector.checkUrls(mutableListOf(it)).first()
-        }
-        6 -> AppContext.gson.fromJson<PageLink>(jsonStr).let {
-            LinkCollector.checkUrls(mutableListOf(it)).first()
-        }
-        else -> error("$this has no matched class ")
+private fun doGet(type: Int, jsonStr: String) = when (type) {
+    1 -> AppContext.gson.fromJson<Movie>(jsonStr).let {
+        MovieCollector.checkUrls(mutableListOf(it)).first()
     }
+    2 -> AppContext.gson.fromJson<ActressInfo>(jsonStr).let {
+        ActressCollector.checkUrls(mutableListOf(it)).first()
+    }
+    3 -> AppContext.gson.fromJson<Header>(jsonStr).let {
+        LinkCollector.checkUrls(mutableListOf(it)).first()
+    }
+
+    4 -> AppContext.gson.fromJson<Genre>(jsonStr).let {
+        LinkCollector.checkUrls(mutableListOf(it)).first()
+    }
+    5 -> AppContext.gson.fromJson<SearchLink>(jsonStr).let {
+        LinkCollector.checkUrls(mutableListOf(it)).first()
+    }
+    6 -> AppContext.gson.fromJson<PageLink>(jsonStr).let {
+        LinkCollector.checkUrls(mutableListOf(it)).first()
+    }
+    else -> error("$type : $jsonStr has no matched class ")
 }
 
 

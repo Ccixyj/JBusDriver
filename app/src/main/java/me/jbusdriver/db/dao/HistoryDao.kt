@@ -6,7 +6,7 @@ import io.reactivex.Observable
 import me.jbusdriver.common.getIntByColumn
 import me.jbusdriver.common.getLongByColumn
 import me.jbusdriver.common.getStringByColumn
-import me.jbusdriver.db.HISTORYTable
+import me.jbusdriver.db.HistoryTable
 import me.jbusdriver.db.bean.History
 import java.util.*
 
@@ -17,13 +17,13 @@ import java.util.*
 class HistoryDao(private val db: BriteDatabase) {
 
 
-    fun insert(history: History) = db.insert(HISTORYTable.TABLE_NAME, history.cv(true))
+    fun insert(history: History) = db.insert(HistoryTable.TABLE_NAME, history.cv(true))
 
     fun update(histories: List<History>) {
         val newTransaction = db.newTransaction()
         try {
             histories.forEach {
-                db.update(HISTORYTable.TABLE_NAME, it.cv(false), HISTORYTable.COLUMN_ID + " = ? ",
+                db.update(HistoryTable.TABLE_NAME, it.cv(false), HistoryTable.COLUMN_ID + " = ? ",
                         it.id.toString())
             }
             newTransaction.markSuccessful()
@@ -33,17 +33,17 @@ class HistoryDao(private val db: BriteDatabase) {
     }
 
     fun queryByLimit(size: Int, offset: Int): Observable<List<History>> {
-        return db.createQuery(HISTORYTable.TABLE_NAME, "SELECT * FROM ${HISTORYTable.TABLE_NAME} ORDER BY ${HISTORYTable.COLUMN_ID} DESC LIMIT $offset , $size ").mapToList {
-            History(it.getIntByColumn(HISTORYTable.COLUMN_DB_TYPE), Date(it.getLongByColumn(HISTORYTable.COLUMN_CREATE_TIME)),
-                    it.getStringByColumn(HISTORYTable.COLUMN_JSON_STR) ?: "",
-                    it.getIntByColumn(HISTORYTable.COLUMN_IS_ALL) == 1
+        return db.createQuery(HistoryTable.TABLE_NAME, "SELECT * FROM ${HistoryTable.TABLE_NAME} ORDER BY ${HistoryTable.COLUMN_ID} DESC LIMIT $offset , $size ").mapToList {
+            History(it.getIntByColumn(HistoryTable.COLUMN_DB_TYPE), Date(it.getLongByColumn(HistoryTable.COLUMN_CREATE_TIME)),
+                    it.getStringByColumn(HistoryTable.COLUMN_JSON_STR) ?: "",
+                    it.getIntByColumn(HistoryTable.COLUMN_IS_ALL) == 1
             ).apply {
-                id = it.getIntByColumn(HISTORYTable.COLUMN_ID)
+                id = it.getIntByColumn(HistoryTable.COLUMN_ID)
             }
         }.flatMap { Observable.just(it) }
     }
 
-    val count: Int = db.query("select count(1) from ${HISTORYTable.TABLE_NAME}").let {
+    val count: Int = db.query("select count(1) from ${HistoryTable.TABLE_NAME}").let {
         if (it.moveToFirst()) {
             it.getInt(0)
         } else -1
@@ -51,8 +51,8 @@ class HistoryDao(private val db: BriteDatabase) {
 
     fun deleteAndSetZero() {
         db.run {
-            delete(HISTORYTable.TABLE_NAME,null)
-            execute("update sqlite_sequence SET seq = 0 where name = '${HISTORYTable.TABLE_NAME}'")
+            delete(HistoryTable.TABLE_NAME, null)
+            execute("update sqlite_sequence SET seq = 0 where name = '${HistoryTable.TABLE_NAME}'")
         }
     }
 
@@ -60,10 +60,10 @@ class HistoryDao(private val db: BriteDatabase) {
     companion object {
 
         fun History.cv(isInsert: Boolean): ContentValues = ContentValues().also {
-            if (isInsert) it.put(HISTORYTable.COLUMN_CREATE_TIME, createTime.time)
-            it.put(HISTORYTable.COLUMN_DB_TYPE, type)
-            it.put(HISTORYTable.COLUMN_JSON_STR, jsonStr)
-            it.put(HISTORYTable.COLUMN_IS_ALL, if (isAll) 1 else 0)
+            if (isInsert) it.put(HistoryTable.COLUMN_CREATE_TIME, createTime.time)
+            it.put(HistoryTable.COLUMN_DB_TYPE, type)
+            it.put(HistoryTable.COLUMN_JSON_STR, jsonStr)
+            it.put(HistoryTable.COLUMN_IS_ALL, if (isAll) 1 else 0)
         }
 
     }
