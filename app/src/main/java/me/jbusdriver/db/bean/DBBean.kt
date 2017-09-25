@@ -1,9 +1,11 @@
 package me.jbusdriver.db.bean
 
+import android.content.ContentValues
 import android.content.Context
 import me.jbusdriver.common.AppContext
 import me.jbusdriver.common.fromJson
 import me.jbusdriver.common.toast
+import me.jbusdriver.db.CategoryTable
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.activity.MovieListActivity
@@ -13,11 +15,24 @@ import me.jbusdriver.ui.data.collect.MovieCollector
 import java.util.*
 
 
-data class Category(val name: String, val ref: List<ILink>) {
+data class Category(val name: String, val pid: Int = -1, val tree: String) {
     var id: Int? = null
+    val depth: Int by lazy { tree.split("/").filter { it.isNotBlank() }.size }
+
+    fun cv(): ContentValues = ContentValues().also {
+        it.put(CategoryTable.COLUMN_NAME, name)
+        it.put(CategoryTable.COLUMN_P_ID, pid)
+        it.put(CategoryTable.COLUMN_DEPTH, depth)
+        it.put(CategoryTable.COLUMN_TREE, tree)
+    }
 }
 
-data class LinkItem(val type: Int, val createTime: Date,val key:String, val jsonStr: String) {
+val MovieCategory = Category("默认电影分类", -1, "/").apply { id = 1 }
+val ActressCategory = Category("默认演员分类", -1, "/").apply { id = 2 }
+val LinkCategory = Category("默认链接分类", -1, "/").apply { id = 3 }
+
+
+data class LinkItem(val type: Int, val createTime: Date, val key: String, val jsonStr: String, var categoryId: Int = -1) {
     var id: Int? = null
     fun getLinkValue() = doGet(type, jsonStr)
 }

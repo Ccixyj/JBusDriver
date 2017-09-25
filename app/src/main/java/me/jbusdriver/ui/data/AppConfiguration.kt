@@ -61,6 +61,12 @@ object AppConfiguration {
     }
     //endregion
 
+    //region collectCategory
+
+    private const val collectCategoryS: String = "collectCategoryS"
+    var enableCategory: Boolean = false
+
+    //endregion
 
     private const val HistoryS: String = "HistoryS"
     var enableHistory: Boolean = true

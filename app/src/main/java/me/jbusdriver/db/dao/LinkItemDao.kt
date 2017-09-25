@@ -38,6 +38,7 @@ class LinkItemDao(private val db: BriteDatabase) {
         fun LinkItem.cv(isInsert: Boolean): ContentValues = ContentValues().also {
             if (isInsert) it.put(LinkItemTable.COLUMN_CREATE_TIME, createTime.time)
             it.put(LinkItemTable.COLUMN_DB_TYPE, type)
+            it.put(LinkItemTable.COLUMN_CATEGORY_ID, categoryId)
             it.put(LinkItemTable.COLUMN_KEY, key)
             it.put(LinkItemTable.COLUMN_JSON_STR, jsonStr)
         }

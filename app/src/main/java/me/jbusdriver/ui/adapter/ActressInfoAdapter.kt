@@ -58,4 +58,6 @@ class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseQuickAdapter<
         holder.setText(R.id.tv_actress_tag, item.tag)
         holder.setVisible(R.id.tv_actress_tag, !TextUtils.isEmpty(item.tag))
     }
+
+
 }

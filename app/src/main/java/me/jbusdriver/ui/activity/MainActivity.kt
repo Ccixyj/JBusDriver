@@ -123,10 +123,6 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                 .addTo(rxManager)
     }
 
-    override fun onPostResume() {
-        super.onPostResume()
-
-    }
 
     override fun onBackPressed() {
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout

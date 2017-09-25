@@ -4,6 +4,9 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import me.jbusdriver.common.KLog
+import me.jbusdriver.db.bean.ActressCategory
+import me.jbusdriver.db.bean.LinkCategory
+import me.jbusdriver.db.bean.MovieCategory
 
 
 //region history
@@ -29,12 +32,18 @@ object HistoryTable {
 object CategoryTable {
     const val TABLE_NAME = "t_category"
     const val COLUMN_ID = "id"
+    const val COLUMN_P_ID = "p_id"
+    const val COLUMN_DEPTH = "depth"
     const val COLUMN_NAME = "name"
+    const val COLUMN_TREE = "tree"
 }
 
 private const val CREATE_COLLECT_CATEGORY_SQL = "CREATE TABLE ${CategoryTable.TABLE_NAME} ( " +
         " ${CategoryTable.COLUMN_ID} INTEGER PRIMARY KEY AUTOINCREMENT," +
-        " ${CategoryTable.COLUMN_NAME} TEXT NOT NULL " +
+        " ${CategoryTable.COLUMN_P_ID} INTEGER  NOT NULL DEFAULT -1," +
+        " ${CategoryTable.COLUMN_DEPTH} INTEGER  NOT NULL," +
+        " ${CategoryTable.COLUMN_NAME} NVARCHAR(100) NOT NULL ," +
+        " ${CategoryTable.COLUMN_TREE} TEXT NOT NULL " +
         ")"
 //endregion
 
@@ -61,9 +70,6 @@ private const val CREATE_LINK_ITEM_SQL = "CREATE TABLE ${LinkItemTable.TABLE_NAM
         ")"
 //endregion
 
-/**
- * up 1 -> 2
- */
 
 private const val JBUS_DB_NAME = "jbusdriver.db"
 private const val JBUS_DB_VERSION = 1
@@ -97,10 +103,16 @@ private const val COLLECT_DB_VERSION = 1
 
 class CollectDBOpenHelper(context: Context) : SQLiteOpenHelper(context, COLLECT_DB_NAME, null, COLLECT_DB_VERSION) {
 
+    //插入默认的3种分类
     override fun onCreate(db: SQLiteDatabase?) {
         KLog.d("JBusDBOpenHelper onCreate")
         db?.execSQL(CREATE_LINK_ITEM_SQL)
         db?.execSQL(CREATE_COLLECT_CATEGORY_SQL)
+        //添加默认的分类
+        db?.insertWithOnConflict(CategoryTable.TABLE_NAME, null, MovieCategory.cv(), SQLiteDatabase.CONFLICT_NONE)
+        db?.insertWithOnConflict(CategoryTable.TABLE_NAME, null, ActressCategory.cv(), SQLiteDatabase.CONFLICT_NONE)
+        db?.insertWithOnConflict(CategoryTable.TABLE_NAME, null, LinkCategory.cv(), SQLiteDatabase.CONFLICT_NONE)
+
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
