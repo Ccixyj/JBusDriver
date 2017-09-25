@@ -4,7 +4,6 @@ import android.os.Environment
 import android.os.StatFs
 import android.text.TextUtils
 import com.google.gson.*
-import com.google.gson.reflect.TypeToken
 import com.umeng.analytics.MobclickAgent
 import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.common.*
@@ -23,18 +22,18 @@ interface ICollect<T> {
     fun addToCollect(data: T): Boolean
     fun has(data: T): Boolean
     fun removeCollect(data: T): Boolean
-    fun save()
 }
 
 abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
-    protected open val gson: Gson by lazy { AppContext.gson }
+    @Deprecated("since version 1.1.1") protected open val gson: Gson by lazy { AppContext.gson }
     protected val host: String by lazy { JAVBusService.defaultFastUrl }
     protected val imageHost: String by lazy { JAVBusService.defaultImageUrlHost }
-    protected val collectCache by lazy {
+    @Deprecated("since version 1.1.1") protected val collectCache by lazy {
         try {
             if (android.os.Environment.MEDIA_MOUNTED != android.os.Environment.getExternalStorageState()) {
                 error("sd mount state : ${android.os.Environment.getExternalStorageState()}")
             }
+
             val pathSuffix = File.separator + "collect" + File.separator
             val dir: String = createDir(Environment.getExternalStorageDirectory().absolutePath + File.separator + AppContext.instace.packageName + pathSuffix)
                     ?: createDir(AppContext.instace.filesDir.absolutePath + pathSuffix)
@@ -47,9 +46,7 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
                 }
                 if (dir.contains(Environment.getExternalStorageDirectory().absolutePath)) {
                     if ((this.list()?.size ?: -1) > 0) return@apply
-                    if (getAvailableExternalMemorySize() < MB * 100) {
-                        AppContext.instace.toast("sd卡可用空间不足100M")
-                    }
+
                     val fileOld = File(AppContext.instace.filesDir.absolutePath + pathSuffix)
                     if (fileOld.exists() && (fileOld.list()?.size ?: -1) > 0) {
                         fileOld.copyRecursively(this)
@@ -98,30 +95,35 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
         }
     }
 
-    abstract fun transform(cacheString: String): MutableList<T>
+    @Deprecated("since version 1.1.1") abstract fun transform(cacheString: String): MutableList<T>
     abstract fun checkUrls(data: MutableList<T>): MutableList<T>
-    abstract fun loadFromDb(): MutableList<T>
 
-    abstract val backUpAction: ((File) -> Unit)?
+
+    @Deprecated("since version 1.1.1") abstract val backUpAction: ((File) -> Unit)?
 
     private fun refreshData(): MutableList<T> {
+        KLog.w("refreshData key $key")
+        if (getAvailableExternalMemorySize() < MB * 100) {
+            AppContext.instace.toast("sd卡可用空间不足100M")
+        }
         return collectCache?.getAsString(key)?.let {
             try {
                 transform(it).let { checkUrls(it) }.apply {
                     //迁移到db
                     Schedulers.io().scheduleDirect {
-                        if (linkService.save(this)) {
-                            collectCache?.remove(key)
-                        }
+                        linkService.save(this.asReversed())
+                        collectCache?.remove(key)
                     }
                 }
             } catch (e: Exception) {
                 KLog.w("refreshData key $e")
-                backUp(key)
+                // backUp(key)
                 mutableListOf<T>()
             }
         } ?: loadFromDb()
     }
+
+    abstract fun loadFromDb(): MutableList<T>
 
 
     private fun backUp(key: String) {
@@ -138,7 +140,7 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
     override fun addToCollect(data: T): Boolean {
         if (!has(data)) {
             dataList.add(0, data)
-            save()
+            save(data)
             AppContext.instace.toast("${data.des}收藏成功")
             return true
         }
@@ -147,18 +149,13 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
 
     override val dataList: MutableList<T> by lazy { refreshData() }
 
+    override fun has(data: T): Boolean = dataList.any { it.uniqueKey == data.uniqueKey }
 
-    override fun has(data: T): Boolean = dataList.any { it.link.urlPath == data.link.urlPath }
+    override fun removeCollect(data: T) = linkService.remove(data)
 
-    override fun removeCollect(data: T): Boolean {
-        val res = dataList.remove(data) || (if (has(data)) dataList.remove(dataList.find { it.link.urlPath == data.link.urlPath }) else false)
-        if (res) save()
-        return res
-    }
-
-    override fun save() {
+    private fun save(data: T) {
         Schedulers.io().scheduleDirect {
-            collectCache?.put(key, dataList.toJsonString())
+            linkService.save(data)
         }
     }
 }
@@ -184,13 +181,12 @@ object MovieCollector : AbsCollectorImpl<Movie>() {
         } else data
     }
 
-    override fun loadFromDb(): MutableList<Movie> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 
     override val backUpAction = { bakFile: File ->
         RxBus.post(CollectErrorEvent(key, "收藏电影数据格式错误,已转存至${bakFile.absolutePath}"))
     }
+
+    override fun loadFromDb() = linkService.queryMovies().toMutableList()
 }
 
 
@@ -214,13 +210,12 @@ object ActressCollector : AbsCollectorImpl<ActressInfo>() {
 
     }
 
-    override fun loadFromDb(): MutableList<ActressInfo> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 
     override val backUpAction = { bakFile: File ->
         RxBus.post(CollectErrorEvent(key, "收藏演员数据格式错误,已转存至${bakFile.absolutePath}"))
     }
+
+    override fun loadFromDb() : MutableList<ActressInfo> = linkService.queryActress().toMutableList()
 }
 
 /**
@@ -231,16 +226,7 @@ object LinkCollector : AbsCollectorImpl<ILink>() {
     override val key: String = "Link_Key"
     override val gson: Gson  by lazy { GsonBuilder().registerTypeAdapter(ILink::class.java, ILinkAdapter).create() }
 
-    override fun has(data: ILink): Boolean {
-        if (data is SearchLink)
-            return dataList.any { it is SearchLink && it.query == data.query }
-        return super.has(data)
-    }
-
     override fun transform(cacheString: String) = gson.fromJson<MutableList<ILink>>(cacheString) ?: mutableListOf()
-    override fun loadFromDb(): MutableList<ILink> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 
     override fun checkUrls(data: MutableList<ILink>): MutableList<ILink> {
         if (host.endsWith(".xyz")) return data
@@ -261,17 +247,11 @@ object LinkCollector : AbsCollectorImpl<ILink>() {
 
     }
 
-    override fun save() {
-        Schedulers.io().scheduleDirect {
-            collectCache?.put(key, gson.toJson(dataList, object : TypeToken<MutableList<ILink>>() {
-
-            }.type))
-        }
-    }
-
     override val backUpAction = { bakFile: File ->
         RxBus.post(CollectErrorEvent(key, "收藏链接数据格式错误,已转存至${bakFile.absolutePath}"))
     }
+
+    override fun loadFromDb(): MutableList<ILink>  =  linkService.queryLink().toMutableList()
 
     private object ILinkAdapter : JsonSerializer<ILink>, JsonDeserializer<ILink> {
         private const val CLASSNAME = "LINK_CLASS"

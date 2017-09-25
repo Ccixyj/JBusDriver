@@ -17,9 +17,9 @@ data class Category(val name: String, val ref: List<ILink>) {
     var id: Int? = null
 }
 
-data class LinkItem(val type: Int, val createTime: Date, val jsonStr: String) {
+data class LinkItem(val type: Int, val createTime: Date,val key:String, val jsonStr: String) {
     var id: Int? = null
-    fun getLinkItem() = doGet(type, jsonStr)
+    fun getLinkValue() = doGet(type, jsonStr)
 }
 
 data class History(val type: Int, val createTime: Date, val jsonStr: String, var isAll: Boolean = false) {

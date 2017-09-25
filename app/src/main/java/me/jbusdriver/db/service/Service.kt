@@ -6,7 +6,9 @@ import me.jbusdriver.db.DB
 import me.jbusdriver.db.bean.Category
 import me.jbusdriver.db.bean.DBPage
 import me.jbusdriver.db.bean.History
+import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.ILink
+import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.ui.data.AppConfiguration
 
@@ -45,9 +47,16 @@ class CategoryService {
 class LinkService {
     private val dao by lazy { DB.linkDao }
 
+    fun save(data: ILink) = dao.insert(data.convertDBItem()) != null
+
     fun save(datas: List<ILink>): Boolean {
-        return datas.map {
+        return datas.mapNotNull {
             dao.insert(it.convertDBItem())
         }.size == datas.size
     }
+
+    fun remove(data: ILink) = dao.delete(data.convertDBItem())
+    fun queryMovies() = dao.listByType(1).let { it.mapNotNull { it.getLinkValue() as? Movie } }
+    fun queryActress() = dao.listByType(2).let { it.mapNotNull { it.getLinkValue() as? ActressInfo } }
+    fun queryLink() = dao.queryLink().let { it.map { it.getLinkValue() } }
 }

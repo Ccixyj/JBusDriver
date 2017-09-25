@@ -83,11 +83,6 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
     override val layoutId: Int = R.layout.layout_swipe_recycle
 
 
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
-        LinkCollector.save()
-    }
-
 
     companion object {
         fun newInstance() = LinkCollectFragment()

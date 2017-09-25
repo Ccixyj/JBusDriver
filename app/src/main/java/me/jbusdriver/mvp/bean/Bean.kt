@@ -6,6 +6,7 @@ import com.chad.library.adapter.base.entity.MultiItemEntity
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.BaseFragment
 import me.jbusdriver.common.toJsonString
+import me.jbusdriver.common.urlPath
 import me.jbusdriver.db.bean.LinkItem
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.AppConfiguration
@@ -50,8 +51,13 @@ val ILink.DBtype: Int
         is PageLink -> 6
         else -> error(" $this has no matched class for des")
     }
+val ILink.uniqueKey: String
+    inline get() = when (this) {
+        is SearchLink -> query
+        else -> link.urlPath
+    }
 
-fun ILink.convertDBItem() = LinkItem(this.DBtype, Date(), this.toJsonString())
+fun ILink.convertDBItem() = LinkItem(this.DBtype, Date(), this.uniqueKey, this.toJsonString())
 
 data class PageLink(val page: Int, val title: String /*XX类型*/, override val link: String) : ILink
 

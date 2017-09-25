@@ -46,15 +46,17 @@ object LinkItemTable {
     const val COLUMN_CATEGORY_ID = "category_id"
     const val COLUMN_DB_TYPE = "dbType"
     const val COLUMN_CREATE_TIME = "createTime"
+    const val COLUMN_KEY = "key"
     const val COLUMN_JSON_STR = "jsonStr"
 
 }
 
 private const val CREATE_LINK_ITEM_SQL = "CREATE TABLE ${LinkItemTable.TABLE_NAME} ( " +
         " ${LinkItemTable.COLUMN_ID} INTEGER PRIMARY KEY AUTOINCREMENT," +
-        " ${LinkItemTable.COLUMN_CATEGORY_ID} INTEGER DEFAULT -1," +
+        " ${LinkItemTable.COLUMN_CATEGORY_ID} INTEGER ," +
         " ${LinkItemTable.COLUMN_DB_TYPE} TINYINT  NOT NULL ," +
         " ${LinkItemTable.COLUMN_CREATE_TIME} INTEGER  DEFAULT 0 ," +
+        " ${LinkItemTable.COLUMN_KEY} VARCHAR(100) NOT NULL UNIQUE," +
         " ${LinkItemTable.COLUMN_JSON_STR} TEXT  NOT NULL " +
         ")"
 //endregion

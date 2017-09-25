@@ -20,6 +20,7 @@ abstract class SDCardDatabaseContext
  */
 (base: Context) : ContextWrapper(base) {
 
+
     /*根目录下目录，数据库所在目录*/
     abstract val dir: String
 
@@ -64,9 +65,8 @@ abstract class SDCardDatabaseContext
         }
     }
 
-    override fun openOrCreateDatabase(name: String, mode: Int,
-                                      factory: SQLiteDatabase.CursorFactory) = SQLiteDatabase.openOrCreateDatabase(getDatabasePath(name), null)
+    override fun openOrCreateDatabase(name: String, mode: Int, factory: CursorFactory?) = SQLiteDatabase.openOrCreateDatabase(getDatabasePath(name), null)
 
-    override fun openOrCreateDatabase(name: String, mode: Int, factory: CursorFactory,
+    override fun openOrCreateDatabase(name: String, mode: Int, factory: CursorFactory?,
                                       errorHandler: DatabaseErrorHandler?) = SQLiteDatabase.openOrCreateDatabase(getDatabasePath(name), null)
 }

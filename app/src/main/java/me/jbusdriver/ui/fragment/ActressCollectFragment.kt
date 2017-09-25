@@ -73,10 +73,6 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 
     override val layoutId: Int = R.layout.layout_swipe_recycle
 
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
-        ActressCollector.save()
-    }
 
     companion object {
         fun newInstance() = ActressCollectFragment()
