@@ -3,6 +3,8 @@ package me.jbusdriver.mvp.bean
 import android.text.TextUtils
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.urlHost
+import me.jbusdriver.db.bean.ActressCategory
+import me.jbusdriver.db.bean.Category
 import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -99,6 +101,10 @@ interface IAttr
 data class Header(val name: String, val value: String, override val link: String) : ILink
 data class Genre(val name: String, override val link: String) : ILink
 data class ActressInfo(val name: String, val avatar: String, override val link: String, var tag: String? = null) : ILink {
+
+
+    @Transient
+    var category: Category = ActressCategory
 
     companion object {
         fun parseActressAttrs(doc: Document): ActressAttrs {

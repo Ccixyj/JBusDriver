@@ -47,8 +47,9 @@ class LinkItemDao(private val db: BriteDatabase) {
     fun listByType(i: Int): List<LinkItem> {
         return db.createQuery(LinkItemTable.TABLE_NAME, "SELECT * FROM ${LinkItemTable.TABLE_NAME} WHERE ${LinkItemTable.COLUMN_DB_TYPE} = ?  ORDER BY ${LinkItemTable.COLUMN_ID} DESC", i.toString()).mapToList {
             LinkItem(it.getIntByColumn(LinkItemTable.COLUMN_DB_TYPE), Date(it.getLongByColumn(LinkItemTable.COLUMN_CREATE_TIME)),
-                    it.getStringByColumn(LinkItemTable.COLUMN_KEY) ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR) ?: ""
-            )
+                    it.getStringByColumn(LinkItemTable.COLUMN_KEY) ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR) ?: "").apply {
+                categoryId = it.getIntByColumn(LinkItemTable.COLUMN_CATEGORY_ID)
+            }
         }.take(1).blockingFirst()
     }
 

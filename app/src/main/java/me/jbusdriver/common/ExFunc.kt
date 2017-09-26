@@ -176,5 +176,14 @@ fun Context.browse(url: String) {
 /*cursor*/
 
 fun Cursor.getStringByColumn(colName: String): String? = this.getString(this.getColumnIndexOrThrow(colName))
-fun Cursor.getIntByColumn(colName: String): Int = this.getInt(this.getColumnIndexOrThrow(colName))
-fun Cursor.getLongByColumn(colName: String): Long = this.getLong(this.getColumnIndexOrThrow(colName))
+fun Cursor.getIntByColumn(colName: String): Int = try {
+    this.getInt(this.getColumnIndexOrThrow(colName))
+} catch (ex: Exception) {
+    -1
+}
+
+fun Cursor.getLongByColumn(colName: String): Long = try {
+    this.getLong(this.getColumnIndexOrThrow(colName))
+} catch (ex: Exception) {
+    -1
+}

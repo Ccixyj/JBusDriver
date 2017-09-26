@@ -29,7 +29,7 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
     protected val host: String by lazy { JAVBusService.defaultFastUrl }
     protected val imageHost: String by lazy { JAVBusService.defaultImageUrlHost }
     @Deprecated("since version 1.1.1") protected val collectCache by lazy {
-        try {
+     try {
             if (android.os.Environment.MEDIA_MOUNTED != android.os.Environment.getExternalStorageState()) {
                 error("sd mount state : ${android.os.Environment.getExternalStorageState()}")
             }
@@ -215,11 +215,11 @@ object ActressCollector : AbsCollectorImpl<ActressInfo>() {
         RxBus.post(CollectErrorEvent(key, "收藏演员数据格式错误,已转存至${bakFile.absolutePath}"))
     }
 
-    override fun loadFromDb() : MutableList<ActressInfo> = linkService.queryActress().toMutableList()
+    override fun loadFromDb(): MutableList<ActressInfo> = linkService.queryActress().toMutableList()
 }
 
 /**
- * header grene searchWord
+ * header genre searchWord
  */
 object LinkCollector : AbsCollectorImpl<ILink>() {
 
@@ -251,7 +251,7 @@ object LinkCollector : AbsCollectorImpl<ILink>() {
         RxBus.post(CollectErrorEvent(key, "收藏链接数据格式错误,已转存至${bakFile.absolutePath}"))
     }
 
-    override fun loadFromDb(): MutableList<ILink>  =  linkService.queryLink().toMutableList()
+    override fun loadFromDb(): MutableList<ILink> = linkService.queryLink().toMutableList()
 
     private object ILinkAdapter : JsonSerializer<ILink>, JsonDeserializer<ILink> {
         private const val CLASSNAME = "LINK_CLASS"

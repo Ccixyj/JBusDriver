@@ -3,6 +3,7 @@ package me.jbusdriver.db.service
 import android.text.TextUtils
 import io.reactivex.Observable
 import me.jbusdriver.db.DB
+import me.jbusdriver.db.bean.ActressCategory
 import me.jbusdriver.db.bean.Category
 import me.jbusdriver.db.bean.DBPage
 import me.jbusdriver.db.bean.History
@@ -46,6 +47,7 @@ class CategoryService {
 
 class LinkService {
     private val dao by lazy { DB.linkDao }
+    private val categoryDao by lazy { DB.categoryDao }
 
     fun save(data: ILink) = dao.insert(data.convertDBItem()) != null
 
@@ -57,6 +59,18 @@ class LinkService {
 
     fun remove(data: ILink) = dao.delete(data.convertDBItem())
     fun queryMovies() = dao.listByType(1).let { it.mapNotNull { it.getLinkValue() as? Movie } }
-    fun queryActress() = dao.listByType(2).let { it.mapNotNull { it.getLinkValue() as? ActressInfo } }
+    fun queryActress() = dao.listByType(2).let {
+        it.mapNotNull {
+            (it.getLinkValue() as? ActressInfo)?.apply {
+                category = if (it.categoryId > 0){
+                    categoryDao.findById(it.categoryId) ?: ActressCategory
+                }else{
+                    ActressCategory
+                }
+
+            }
+        }
+    }
+
     fun queryLink() = dao.queryLink().let { it.map { it.getLinkValue() } }
 }

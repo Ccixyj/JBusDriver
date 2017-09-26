@@ -17,7 +17,7 @@ import java.util.*
 
 data class Category(val name: String, val pid: Int = -1, val tree: String) {
     var id: Int? = null
-    val depth: Int by lazy { tree.split("/").filter { it.isNotBlank() }.size }
+    val depth: Int by lazy { tree.split("/").filter { it.isNotBlank() }.size  }
 
     fun cv(): ContentValues = ContentValues().also {
         it.put(CategoryTable.COLUMN_NAME, name)

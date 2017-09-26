@@ -18,18 +18,18 @@ import org.jsoup.nodes.Document
 abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T>(private val collector: ICollect<T>) : AbstractRefreshLoadMorePresenterImpl<V, T>() {
 
 
-    private val PageSize = 20
+    protected open val pageSize = 20
     private val listData by lazy { collector.dataList.toMutableList() }
     private val pageNum
-        get() = ((listData.size - 1) / PageSize) + 1
+        get() = ((listData.size - 1) / pageSize) + 1
 
     override fun loadData4Page(page: Int) {
         val next = if (page < pageNum) page + 1 else pageNum
         pageInfo = pageInfo.copy(activePage = page, nextPage = next)
         Flowable.just(pageInfo).map {
             KLog.d("request page : $it")
-            val start = (pageInfo.activePage - 1) * PageSize
-            val nextSize = start + PageSize
+            val start = (pageInfo.activePage - 1) * pageSize
+            val nextSize = start + pageSize
             val end = if (nextSize <= listData.size) nextSize else listData.size
             listData.subList(start, end)
         }.compose(SchedulersCompat.io())
