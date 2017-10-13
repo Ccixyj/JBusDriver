@@ -30,7 +30,7 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
     protected val host: String by lazy { JAVBusService.defaultFastUrl }
     protected val imageHost: String by lazy { JAVBusService.defaultImageUrlHost }
     @Deprecated("since version 1.1.1") protected val collectCache by lazy {
-     try {
+        try {
             if (android.os.Environment.MEDIA_MOUNTED != android.os.Environment.getExternalStorageState()) {
                 error("sd mount state : ${android.os.Environment.getExternalStorageState()}")
             }
@@ -113,13 +113,14 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
                     //迁移到db
                     Schedulers.io().scheduleDirect {
                         linkService.save(this.asReversed())
-                        collectCache?.remove(key)
                     }
                 }
             } catch (e: Exception) {
                 KLog.w("refreshData key $e")
-                // backUp(key)
                 mutableListOf<T>()
+            } finally {
+                backUp(key)//生成备份
+                collectCache?.remove(key)
             }
         } ?: loadFromDb()
     }
@@ -129,10 +130,10 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
 
     private fun backUp(key: String) {
         collectCache?.file(key)?.let {
-            val bak = File(it.parent, "${key.hashCode()}.BAK")
+            val bak = File(it.parent, "$key#${key.hashCode()}.BAK")
             try {
                 it.copyTo(bak, true)
-                backUpAction?.invoke(bak)
+                // backUpAction?.invoke(bak)
             } catch (e: Exception) {
             }
         }

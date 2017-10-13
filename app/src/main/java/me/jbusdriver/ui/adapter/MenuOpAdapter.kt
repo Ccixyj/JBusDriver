@@ -25,10 +25,10 @@ class MenuOpAdapter(data: List<MultiItemEntity>) : BaseMultiItemQuickAdapter<Mul
         when (item.itemType) {
             Expand_Type_Head -> {
                 (item as? MenuOpHead)?.let { head ->
-                    holder.setText(R.id.tv_nav_menu_name, " ${if (head.isExpanded) "👇" else "👆"} ${head.name}")
+                    holder.setText(R.id.tv_nav_menu_name, " ${if (head.isExpanded) "👆" else "👉"} ${head.name}")
                     holder.itemView.setOnClickListener {
                         head.changeItemState(holder.adapterPosition)
-                        holder.setText(R.id.tv_nav_menu_name, " ${if (head.isExpanded) "👇" else "👆"} ${head.name}")
+                        holder.setText(R.id.tv_nav_menu_name, " ${if (head.isExpanded) "👆" else "👉"} ${head.name}")
                     }
                 }
             }

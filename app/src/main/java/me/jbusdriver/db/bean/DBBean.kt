@@ -17,7 +17,7 @@ import java.util.*
 
 data class Category(val name: String, val pid: Int = -1, val tree: String) {
     var id: Int? = null
-    val depth: Int by lazy { tree.split("/").filter { it.isNotBlank() }.size  }
+    val depth: Int by lazy { tree.split("/").filter { it.isNotBlank() }.size }
 
     fun cv(): ContentValues = ContentValues().also {
         it.put(CategoryTable.COLUMN_NAME, name)
@@ -25,6 +25,9 @@ data class Category(val name: String, val pid: Int = -1, val tree: String) {
         it.put(CategoryTable.COLUMN_DEPTH, depth)
         it.put(CategoryTable.COLUMN_TREE, tree)
     }
+
+    override fun equals(other: Any?) =
+            other?.let { (it as? Category)?.id == this.id } ?: false
 }
 
 val MovieCategory = Category("默认电影分类", -1, "/").apply { id = 1 }
