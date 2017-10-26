@@ -168,11 +168,11 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
         if (AppConfiguration.enableCategory) {
             Flowable.just(dd).map {
                 it.groupBy { it.category }
-            }.subscribeBy({
+            }.subscribeBy{
                 KLog.d("showContents group  $it")
                 adapter.addData(reloadAdapter(it))
                 adapter.expand(0)
-            })
+            }
         } else {
 
             adapter.addData(reloadAdapter(mapOf(MovieCategory to dd)))

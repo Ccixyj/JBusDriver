@@ -52,12 +52,12 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
 
     override fun initData() {
         if (isSearch) {
-            RxBus.toFlowable(SearchWord::class.java).subscribeBy({ sea ->
+            RxBus.toFlowable(SearchWord::class.java).subscribeBy{ sea ->
                 (mBasePresenter as? LinkAbsPresenterImpl<*>)?.let {
                     (it.linkData as SearchLink).query = sea.query
                     it.onRefresh()
                 }
-            }).addTo(rxManager)
+            }.addTo(rxManager)
         }
     }
 

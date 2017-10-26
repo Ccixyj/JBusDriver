@@ -3,11 +3,13 @@ package me.jbusdriver.common
 import android.app.Application
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
-import com.orhanobut.logger.LogLevel
+import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
+import com.orhanobut.logger.PrettyFormatStrategy
 import com.umeng.analytics.MobclickAgent
 import jbusdriver.me.jbusdriver.BuildConfig
 import me.jbusdriver.http.JAVBusService
+
 
 /**
  * Created by Administrator on 2017/4/8.
@@ -18,9 +20,19 @@ class AppContext : Application() {
         super.onCreate()
         instace = this
 
-        Logger.init("old_driver")                 // default PRETTYLOGGER or use just init()
-                .methodCount(3)                 // default 2
-                .logLevel(if (BuildConfig.DEBUG) LogLevel.FULL else LogLevel.NONE)        // default LogLevel.FULL
+        val formatStrategy = PrettyFormatStrategy.newBuilder()
+                .showThreadInfo(true)  // (Optional) Whether to show thread info or not. Default true
+                .methodCount(2)         // (Optional) How many method line to show. Default 2
+                .methodOffset(0)        // (Optional) Hides internal method calls up to offset. Default 5
+                // .logStrategy(customLog) // (Optional) Changes the log strategy to print out. Default LogCat
+                .tag("old_driver")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
+                .build()
+
+        Logger.addLogAdapter(object : AndroidLogAdapter(formatStrategy) {
+            override fun isLoggable(priority: Int, tag: String?): Boolean {
+                return BuildConfig.DEBUG
+            }
+        })
 
         MobclickAgent.setDebugMode(BuildConfig.DEBUG)
     }

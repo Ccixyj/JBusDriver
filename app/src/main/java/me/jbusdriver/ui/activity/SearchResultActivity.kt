@@ -28,7 +28,9 @@ class SearchResultActivity : BaseActivity() {
             arguments = Bundle().apply { putString(C.BundleKey.Key_1, searchWord) }
         }).commit()
 
-        RxBus.toFlowable(SearchWord::class.java).subscribeBy({ setTitle(it.query) }) .addTo(rxManager)
+        RxBus.toFlowable(SearchWord::class.java).subscribeBy{
+           setTitle(it.query)
+        } .addTo(rxManager)
     }
 
     private fun setTitle(title: String) {
