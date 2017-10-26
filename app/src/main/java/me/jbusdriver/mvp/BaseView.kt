@@ -16,12 +16,12 @@ interface BaseView {
 
     val viewContext: Context
 
-    fun showLoading(): Unit {
+    fun showLoading() {
         if (viewContext is AppContext) return
         place_holder_loading = MaterialDialog.Builder(viewContext).content("正在加载...").progress(true, 0).show()
     }
 
-    fun dismissLoading(): Unit {
+    fun dismissLoading() {
         place_holder_loading?.dismiss()
         place_holder_loading = null
     }

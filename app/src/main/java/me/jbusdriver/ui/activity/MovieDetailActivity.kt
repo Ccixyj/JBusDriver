@@ -108,7 +108,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         super.doStart()
         //mBasePresenter初始化完毕后再加载
         //has disk cache ?
-        firstLoadMagnet()
+        //firstLoadMagnet()
     }
 
     override fun onDestroy() {
@@ -156,7 +156,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         })
     }
 
-    override fun createPresenter() = MovieDetailPresenterImpl(intent?.getBooleanExtra(C.BundleKey.Key_2,false) ?: false)
+    override fun createPresenter() = MovieDetailPresenterImpl(intent?.getBooleanExtra(C.BundleKey.Key_2, false) ?: false)
     override val layoutId = R.layout.activity_movie_detail
 
     override val movie: Movie by lazy {
