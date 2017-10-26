@@ -8,14 +8,13 @@ import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.common.AppBaseRecycleFragment
+import me.jbusdriver.common.GlideApp
 import me.jbusdriver.common.toGlideUrl
 import me.jbusdriver.db.bean.History
 import me.jbusdriver.mvp.HistoryContract
@@ -77,7 +76,7 @@ class HistoryFragment : AppBaseRecycleFragment<HistoryContract.HistoryPresenter,
 
                 if (img.isNotBlank()) {
                     helper.setVisible(R.id.iv_history_icon, true)
-                    Glide.with(mContext).load(img.toGlideUrl).asBitmap().into(BitmapImageViewTarget(helper.getView(R.id.iv_history_icon)))
+                    GlideApp.with(mContext).load(img.toGlideUrl).into(helper.getView(R.id.iv_history_icon))
                 } else {
                     helper.setGone(R.id.iv_history_icon, false)
                 }

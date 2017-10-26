@@ -69,7 +69,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                         KLog.d("convert :$item")
                         val actress = requireNotNull(item.actressInfo)
 
-                        Glide.with(holder.itemView.context).load(actress.avatar.toGlideUrl).asBitmap()
+                        GlideApp.with(holder.itemView.context).load(actress.avatar.toGlideUrl).asBitmap()
                                 .error(R.drawable.ic_nowprinting).into(object : BitmapImageViewTarget(holder.getView(R.id.iv_actress_avatar)) {
                             override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
                                 resource?.let {

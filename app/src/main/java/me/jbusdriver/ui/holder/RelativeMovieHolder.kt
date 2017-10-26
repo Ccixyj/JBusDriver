@@ -72,7 +72,7 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
     private val relativeAdapter: BaseQuickAdapter<Movie, BaseViewHolder> by lazy {
         object : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.layout_detail_relative_movies_item) {
             override fun convert(holder: BaseViewHolder, item: Movie) {
-                Glide.with(holder.itemView.context).load(item.imageUrl.toGlideUrl).asBitmap().into(object : BitmapImageViewTarget(holder.getView(R.id.iv_relative_movie_image)) {
+                GlideApp.with(holder.itemView.context).load(item.imageUrl.toGlideUrl).asBitmap().into(object : BitmapImageViewTarget(holder.getView(R.id.iv_relative_movie_image)) {
                     override fun setResource(resource: Bitmap?) {
                         super.setResource(resource)
                         resource?.let {

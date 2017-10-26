@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'//kapt3插件
 
 android {
     compileSdkVersion 25
@@ -37,6 +38,9 @@ android {
     }
     lintOptions {
         abortOnError false
+    }
+    kapt {
+        generateStubs = true
     }
     buildTypes {
         release {
@@ -130,8 +134,9 @@ dependencies {
     compile group: 'org.jsoup', name: 'jsoup', version: '1.10.3'
 
     compile 'com.squareup.okhttp3:okhttp:3.9.0'
-    compile 'com.github.bumptech.glide:glide:3.8.0'
-    compile 'com.github.bumptech.glide:okhttp3-integration:1.5.0@jar'
+    compile 'com.github.bumptech.glide:glide:4.2.0'
+    kapt  'com.github.bumptech.glide:compiler:4.2.0'
+    compile 'com.github.bumptech.glide:okhttp3-integration:4.2.0@jar'
 
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
 //    compile 'com.squareup.retrofit2:converter-gson:2.2.0'

@@ -51,7 +51,7 @@ class ImageSampleHolder(context: Context): BaseHolder(context) {
         override fun convert(holder: BaseViewHolder, item: ImageSample) {
             weakRef.get()?.apply {
                 holder.getView<ImageView>(R.id.iv_movie_thumb)?.let {
-                    Glide.with(this).load(item.thumb.toGlideUrl)
+                    GlideApp.with(this).load(item.thumb.toGlideUrl)
                             .fitCenter()
                             .placeholder(R.drawable.ic_child_care_black_24dp)
                             .error(R.drawable.ic_child_care_black_24dp)

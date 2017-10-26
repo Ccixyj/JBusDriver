@@ -12,8 +12,7 @@ import android.view.View
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
+import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.cfzx.utils.CacheLoader
 import com.jaeger.library.StatusBarUtil
 import jbusdriver.me.jbusdriver.R
@@ -178,7 +177,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             KLog.d("date : $data")
             //cover fixme
             iv_movie_cover.setOnClickListener { WatchLargeImageActivity.startShow(this, listOf(data.cover) + data.imageSamples.map { it.image }) }
-            Glide.with(this).load(data.cover.toGlideUrl).thumbnail(0.1f).into(GlideDrawableImageViewTarget(iv_movie_cover))
+            GlideApp.with(this).load(data.cover.toGlideUrl).thumbnail(0.1f).into(DrawableImageViewTarget(iv_movie_cover))
             //animation
             ll_movie_detail.y = ll_movie_detail.y + 120
             ll_movie_detail.alpha = 0f

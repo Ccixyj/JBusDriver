@@ -150,7 +150,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         is ActressAttrs -> {
             this.viewContext.inflate(R.layout.layout_actress_attr).apply {
                 //img
-                Glide.with(this@LinkedMovieListFragment).load(data.imageUrl.toGlideUrl).into(GlideDrawableImageViewTarget(this.iv_actress_avatar))
+                GlideApp.with(this@LinkedMovieListFragment).load(data.imageUrl.toGlideUrl).into(GlideDrawableImageViewTarget(this.iv_actress_avatar))
                 //title
                 this.ll_attr_container.addView(generateTextView().apply {
                     textSize = 16f
