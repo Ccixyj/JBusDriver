@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "me.jbusdriver"
         minSdkVersion 16
@@ -12,6 +12,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        flavorDimensions "github"
     }
 
     signingConfigs {
@@ -42,11 +43,15 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            applicationVariants.all { variant ->
+            android.applicationVariants.all { variant ->
                 if (variant.buildType.name == 'release') {
                     variant.mergedFlavor.versionName = VersionName()
                     variant.mergedFlavor.versionCode = VersionCode()
-                    renameArtifact(variant)
+                    variant.outputs.all { output ->
+                        output.setVersionNameOverride(VersionName())
+                        output.setVersionCodeOverride(VersionCode())
+                        outputFileName  = "JubsDriver[v${variant.versionName}]_(code_${variant.versionCode}).apk"
+                    }
                 }
 
             }
@@ -59,6 +64,7 @@ android {
     }
     productFlavors {
         gayhub {
+            dimension "github"
             manifestPlaceholders = [UMENG_KEY: "58e8ecaa7666134a5a001740",
                                     CHANNEL  : "gayhub"]
         }
@@ -67,15 +73,6 @@ android {
 
 def releaseTime() {
     return new Date().format("yyyyMMdd_HHmmss")
-}
-
-//"HelloWord-${variant.buildType.name}-v${variant.versionName}-${variant.productFlavors[0].name}-${releaseTime()}.apk".toLowerCase())
-def renameArtifact(variant) {
-    variant.outputs.each { output ->
-        output.outputFile = new File(
-                (String) output.outputFile.parent,
-                (String) "JubsDriver[v${variant.versionName}]_(code_${variant.versionCode}).apk")
-    }
 }
 
 //使用git的Tag来自动定制Version

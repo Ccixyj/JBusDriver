@@ -78,6 +78,7 @@ class WatchLargeImageActivity : BaseActivity() {
         }
 
         private fun loadImage(view: View, position: Int) {
+            view.findViewById(R.id.pb_large_progress).animate().alpha(1f).setDuration(300).start()
             val offset = Math.abs(vp_largeImage.currentItem - position)
             val priority = when (offset) {
                 in 0..1 -> Priority.IMMEDIATE
@@ -87,7 +88,7 @@ class WatchLargeImageActivity : BaseActivity() {
             }
             KLog.d("load $position for ${vp_largeImage.currentItem} offset = $offset : $priority")
 
-            Glide.with(this@WatchLargeImageActivity).load(urls[position].toGlideUrl)
+            Glide.with(this@WatchLargeImageActivity).load((urls[position]).toGlideUrl)
                     .asBitmap()
                     .crossFade()
                     .error(R.drawable.ic_image_broken)
@@ -112,6 +113,7 @@ class WatchLargeImageActivity : BaseActivity() {
                                 setImageGestureListener(object : ImageGestureListener {
                                     override fun onImageGestureSingleTapConfirmed() {
                                         KLog.e("onImageGestureSingleTapConfirmed : reload")
+                                        imageBitmap.recycle()
                                         loadImage(view, position)
                                     }
 
@@ -130,6 +132,8 @@ class WatchLargeImageActivity : BaseActivity() {
         override fun getCount(): Int {
             return imageViewList.size//返回页卡的数量
         }
+
+
 
         override fun isViewFromObject(arg0: View, arg1: Any): Boolean {
             return arg0 === arg1//官方提示这样写
