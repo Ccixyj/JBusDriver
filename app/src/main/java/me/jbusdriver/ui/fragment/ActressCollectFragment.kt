@@ -12,7 +12,6 @@ import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.transition.Transition
-import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.chad.library.adapter.base.util.MultiTypeDelegate
@@ -51,21 +50,14 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 
     override val adapter: BaseQuickAdapter<ActressWrapper, in BaseViewHolder> by lazy {
 
-        object : BaseMultiItemQuickAdapter<ActressWrapper, BaseViewHolder>(null) {
+        object : BaseQuickAdapter<ActressWrapper, BaseViewHolder>(null) {
             private val random = Random()
             private fun randomNum(number: Int) = Math.abs(random.nextInt() % number)
 
-            init {
-                addItemType(0, R.layout.layout_actress_item)
-                addItemType(1, R.layout.layout_menu_op_head)
-            }
-
             override fun convert(holder: BaseViewHolder, item: ActressWrapper) {
-                KLog.d("item $item")
-
-                when (item.itemType) {
-                    0 -> {
-                        KLog.d("convert :$item")
+                KLog.d("item ${item.level} , ${holder.itemViewType}")
+                when (holder.itemViewType) {
+                    -1 -> {
                         val actress = requireNotNull(item.actressInfo)
 
                         GlideApp.with(holder.itemView.context).asBitmap().load(actress.avatar.toGlideUrl)
@@ -101,9 +93,9 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                     }
 
                     else -> {
-                        KLog.d("convert :$item")
+                        KLog.d("convert :${item.level}")
                         setFullSpan(holder)
-                        holder.setText(R.id.tv_nav_menu_name, item.subItems.first().actressInfo?.category?.name)
+                        holder.setText(R.id.tv_nav_menu_name,  item.subItems.first().actressInfo?.category?.name)
                         holder.itemView.setOnClickListener {
                             if (item.isExpanded) collapse(holder.adapterPosition) else expand(holder.adapterPosition)
                         }
@@ -186,27 +178,28 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 
     private fun reloadAdapterData(it: Map<Category, List<ActressInfo>>): List<ActressWrapper> {
         val delegate = object : MultiTypeDelegate<ActressWrapper>() {
-            override fun getItemType(t: ActressWrapper): Int = t.itemType
+            override fun getItemType(t: ActressWrapper): Int = t.level
         }
         val newDts = mutableListOf<ActressWrapper>()
-        delegate.registerItemType(0, R.layout.layout_actress_item) //默认注入类型０，即actress
+
         it.forEach {
-            delegate.registerItemType(it.key.depth + 1, layouts[it.key.depth] ?: R.layout.layout_actress_item)
             if (AppConfiguration.enableCategory) {
                 newDts.add(ActressWrapper().apply {
-                    it.value.forEach { addSubItem(ActressWrapper(it)) }
+                    it.value.forEach {
+                        addSubItem(ActressWrapper(it).apply {
+                            delegate.registerItemType(level, R.layout.layout_actress_item) //默认注入类型0，即actress
+                        })
+                    }
+                    delegate.registerItemType(level, R.layout.layout_menu_op_head)
                 })
             } else {
                 it.value.mapTo(newDts) { ActressWrapper(it) }
             }
         }
+        //设置 delegate
+        adapter.setMultiTypeDelegate(delegate)
         KLog.d("reloadAdapterData size ${newDts.size}, $newDts")
         return newDts
-    }
-
-    private val layouts by lazy {
-        mapOf(0 to R.layout.layout_actress_item)
-        mapOf(1 to R.layout.layout_menu_op_head)
     }
 
     companion object {

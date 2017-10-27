@@ -20,14 +20,13 @@ class CategoryDao(private val db: BriteDatabase) {
     }
 
     fun findById(cId: Int): Category? {
-        return db.query("select * from ${CategoryTable.TABLE_NAME}  where ${CategoryTable.COLUMN_ID} = ?", cId.toString())?.let {
-            if (it.count > 0) {
-                Category(it.getStringByColumn(CategoryTable.COLUMN_NAME) ?: "", it.getIntByColumn(CategoryTable.COLUMN_P_ID),
-                        it.getStringByColumn(CategoryTable.COLUMN_TREE) ?: ""
-                ).apply {
-                    id = it.getIntByColumn(CategoryTable.COLUMN_ID)
-                }
-            } else null
-        }
+        return db.createQuery(CategoryTable.TABLE_NAME, "select * from ${CategoryTable.TABLE_NAME}  where ${CategoryTable.COLUMN_ID} = ?", cId.toString())
+                .mapToOne {
+                    Category(it.getStringByColumn(CategoryTable.COLUMN_NAME) ?: "", it.getIntByColumn(CategoryTable.COLUMN_P_ID),
+                            it.getStringByColumn(CategoryTable.COLUMN_TREE) ?: ""
+                    ).apply {
+                        id = it.getIntByColumn(CategoryTable.COLUMN_ID)
+                    }
+                }.blockingFirst()
     }
 }
