@@ -7,12 +7,12 @@ import android.util.DisplayMetrics
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
+import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_image_samples.view.*
+import me.jbusdriver.common.GlideApp
 import me.jbusdriver.common.dpToPx
 import me.jbusdriver.common.inflate
 import me.jbusdriver.common.toGlideUrl
@@ -55,7 +55,7 @@ class ImageSampleHolder(context: Context): BaseHolder(context) {
                             .fitCenter()
                             .placeholder(R.drawable.ic_child_care_black_24dp)
                             .error(R.drawable.ic_child_care_black_24dp)
-                            .into(GlideDrawableImageViewTarget(it))
+                            .into(DrawableImageViewTarget(it))
 
                 }
             }

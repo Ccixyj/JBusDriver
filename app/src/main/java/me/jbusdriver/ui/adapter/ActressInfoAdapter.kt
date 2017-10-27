@@ -3,9 +3,8 @@ package me.jbusdriver.ui.adapter
 import android.graphics.Bitmap
 import android.support.v7.graphics.Palette
 import android.text.TextUtils
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.BitmapImageViewTarget
+import com.bumptech.glide.request.transition.Transition
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import io.reactivex.Flowable
@@ -25,9 +24,9 @@ class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseQuickAdapter<
 
     override fun convert(holder: BaseViewHolder, item: ActressInfo) {
         KLog.d("ActressInfo :$item")
-        GlideApp.with(holder.itemView.context).load(item.avatar.toGlideUrl).asBitmap()
+        GlideApp.with(holder.itemView.context).asBitmap().load(item.avatar.toGlideUrl)
                 .error(R.drawable.ic_nowprinting).into(object : BitmapImageViewTarget(holder.getView(R.id.iv_actress_avatar)) {
-            override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
+            override fun onResourceReady(resource: Bitmap?, transition: Transition<in Bitmap>?) {
                 resource?.let {
                     Flowable.just(it).map {
                         Palette.from(it).generate()
@@ -46,7 +45,8 @@ class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseQuickAdapter<
                             })
                             .addTo(rxManager)
                 }
-                super.onResourceReady(resource, glideAnimation)
+
+                super.onResourceReady(resource, transition)
             }
         })
         //加载名字

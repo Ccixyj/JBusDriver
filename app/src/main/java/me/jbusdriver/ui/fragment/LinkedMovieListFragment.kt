@@ -7,8 +7,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
+import com.bumptech.glide.request.target.DrawableImageViewTarget
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
@@ -150,7 +149,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         is ActressAttrs -> {
             this.viewContext.inflate(R.layout.layout_actress_attr).apply {
                 //img
-                GlideApp.with(this@LinkedMovieListFragment).load(data.imageUrl.toGlideUrl).into(GlideDrawableImageViewTarget(this.iv_actress_avatar))
+                GlideApp.with(this@LinkedMovieListFragment).load(data.imageUrl.toGlideUrl).into(DrawableImageViewTarget(this.iv_actress_avatar))
                 //title
                 this.ll_attr_container.addView(generateTextView().apply {
                     textSize = 16f

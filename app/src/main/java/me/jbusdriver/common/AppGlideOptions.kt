@@ -17,7 +17,7 @@ import java.net.URL
  * Created by Administrator on 2016/7/22 0022.
  */
 @GlideModule
-open  class GlideOptions : AppGlideModule() {
+open  class AppGlideOptions : AppGlideModule() {
     override fun applyOptions(context: Context, builder: GlideBuilder) {
 
     }

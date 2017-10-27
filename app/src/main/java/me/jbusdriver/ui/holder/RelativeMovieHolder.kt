@@ -6,7 +6,6 @@ import android.support.v7.graphics.Palette
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
-import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
@@ -72,7 +71,7 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
     private val relativeAdapter: BaseQuickAdapter<Movie, BaseViewHolder> by lazy {
         object : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.layout_detail_relative_movies_item) {
             override fun convert(holder: BaseViewHolder, item: Movie) {
-                GlideApp.with(holder.itemView.context).load(item.imageUrl.toGlideUrl).asBitmap().into(object : BitmapImageViewTarget(holder.getView(R.id.iv_relative_movie_image)) {
+                GlideApp.with(holder.itemView.context).asBitmap().load(item.imageUrl.toGlideUrl).into(object : BitmapImageViewTarget(holder.getView(R.id.iv_relative_movie_image)) {
                     override fun setResource(resource: Bitmap?) {
                         super.setResource(resource)
                         resource?.let {

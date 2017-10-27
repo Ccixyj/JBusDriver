@@ -28,7 +28,7 @@
             android:name="UMENG_CHANNEL"
             android:value="${CHANNEL}"/>
         <!--<meta-data-->
-            <!--android:name="me.jbusdriver.common.GlideOptions"-->
+            <!--android:name.jbusdriver.common.AppGlideOptionsonsions"-->
             <!--android:value="GlideModule" />-->
 
         <activity

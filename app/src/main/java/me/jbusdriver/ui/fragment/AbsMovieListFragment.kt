@@ -8,16 +8,12 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
+import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.dpToPx
-import me.jbusdriver.common.toGlideUrl
-import me.jbusdriver.common.toast
+import me.jbusdriver.common.*
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.ui.activity.MovieDetailActivity
@@ -73,7 +69,7 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                                 .setText(R.id.tv_movie_code, item.code)
 
                         GlideApp.with(this@AbsMovieListFragment).load(item.imageUrl.toGlideUrl).placeholder(R.drawable.ic_place_holder)
-                                .error(R.drawable.ic_place_holder).centerCrop().into(GlideDrawableImageViewTarget(holder.getView(R.id.iv_movie_img)))
+                                .error(R.drawable.ic_place_holder).centerCrop().into(DrawableImageViewTarget(holder.getView(R.id.iv_movie_img)))
 
 
                         with(holder.getView<LinearLayout>(R.id.ll_movie_hot)) {

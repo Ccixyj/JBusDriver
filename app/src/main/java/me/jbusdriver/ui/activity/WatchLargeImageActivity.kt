@@ -9,17 +9,16 @@ import android.os.Bundle
 import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
-import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
-import com.bumptech.glide.request.animation.GlideAnimation
+import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
 import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import com.jaeger.library.StatusBarUtil
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_watch_large_image.*
 import me.jbusdriver.common.*
 import me.jbusdriver.ui.widget.ImageGestureListener
 import me.jbusdriver.ui.widget.MultiTouchZoomableImageView
-import java.lang.Exception
 
 
 class WatchLargeImageActivity : BaseActivity() {
@@ -85,8 +84,10 @@ class WatchLargeImageActivity : BaseActivity() {
             }
             KLog.d("load $position for ${vp_largeImage.currentItem} offset = $offset : $priority")
 
-            GlideApp.with(this@WatchLargeImageActivity).load((urls[position]).toGlideUrl)
-                    .crossFade()
+            GlideApp.with(this@WatchLargeImageActivity)
+                    .asBitmap()
+                    .load((urls[position]).toGlideUrl)
+                    .transition(withCrossFade())
                     .error(R.drawable.ic_image_broken)
                     .priority(priority)
                     .into(object : SimpleTarget<Bitmap>() {
@@ -96,13 +97,13 @@ class WatchLargeImageActivity : BaseActivity() {
                             view.findViewById(R.id.pb_large_progress).alpha = 1f
                         }
 
-                        override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
+                        override fun onResourceReady(resource: Bitmap?, transition: Transition<in Bitmap>?) {
                             (view.findViewById(R.id.mziv_image_large) as MultiTouchZoomableImageView).imageBitmap = resource
                             view.findViewById(R.id.pb_large_progress).animate().alpha(0f).setDuration(300).start()
                         }
 
-                        override fun onLoadFailed(e: Exception?, errorDrawable: Drawable?) {
-                            super.onLoadFailed(e, errorDrawable)
+                        override fun onLoadFailed(errorDrawable: Drawable?) {
+                            super.onLoadFailed(errorDrawable)
                             view.findViewById(R.id.pb_large_progress).animate().alpha(0f).setDuration(500).start()
                             (view.findViewById(R.id.mziv_image_large) as MultiTouchZoomableImageView).apply {
                                 imageBitmap = BitmapFactory.decodeResource(viewContext.resources, R.drawable.ic_image_broken)
@@ -128,7 +129,6 @@ class WatchLargeImageActivity : BaseActivity() {
         override fun getCount(): Int {
             return imageViewList.size//返回页卡的数量
         }
-
 
 
         override fun isViewFromObject(arg0: View, arg1: Any): Boolean {

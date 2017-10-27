@@ -10,9 +10,8 @@ import android.support.v7.widget.StaggeredGridLayoutManager
 import android.text.TextUtils
 import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.BitmapImageViewTarget
+import com.bumptech.glide.request.transition.Transition
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
@@ -69,9 +68,9 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                         KLog.d("convert :$item")
                         val actress = requireNotNull(item.actressInfo)
 
-                        GlideApp.with(holder.itemView.context).load(actress.avatar.toGlideUrl).asBitmap()
+                        GlideApp.with(holder.itemView.context).asBitmap().load(actress.avatar.toGlideUrl)
                                 .error(R.drawable.ic_nowprinting).into(object : BitmapImageViewTarget(holder.getView(R.id.iv_actress_avatar)) {
-                            override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
+                            override fun onResourceReady(resource: Bitmap?, transition: Transition<in Bitmap>?) {
                                 resource?.let {
                                     Flowable.just(it).map {
                                         Palette.from(it).generate()
@@ -90,7 +89,8 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                                             })
                                             .addTo(rxManager)
                                 }
-                                super.onResourceReady(resource, glideAnimation)
+
+                                super.onResourceReady(resource, transition)
                             }
                         })
                         //加载名字
@@ -168,7 +168,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
         if (AppConfiguration.enableCategory) {
             Flowable.just(dd).map {
                 it.groupBy { it.category }
-            }.subscribeBy{
+            }.subscribeBy {
                 KLog.d("showContents group  $it")
                 adapter.addData(reloadAdapter(it))
                 adapter.expand(0)
