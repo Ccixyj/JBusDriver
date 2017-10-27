@@ -170,12 +170,12 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                 it.groupBy { it.category }
             }.subscribeBy {
                 KLog.d("showContents group  $it")
-                adapter.addData(reloadAdapter(it))
+                adapter.addData(reloadAdapterData(it))
                 adapter.expand(0)
             }
         } else {
 
-            adapter.addData(reloadAdapter(mapOf(MovieCategory to dd)))
+            adapter.addData(reloadAdapterData(mapOf(MovieCategory to dd)))
 
         }
         //super.showContents(datas)
@@ -184,7 +184,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 //        }
     }
 
-    private fun reloadAdapter(it: Map<Category, List<ActressInfo>>): List<ActressWrapper> {
+    private fun reloadAdapterData(it: Map<Category, List<ActressInfo>>): List<ActressWrapper> {
         val delegate = object : MultiTypeDelegate<ActressWrapper>() {
             override fun getItemType(t: ActressWrapper): Int = t.itemType
         }
@@ -200,7 +200,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                 it.value.mapTo(newDts) { ActressWrapper(it) }
             }
         }
-        KLog.d("reloadAdapter size ${newDts.size}, $newDts")
+        KLog.d("reloadAdapterData size ${newDts.size}, $newDts")
         return newDts
     }
 

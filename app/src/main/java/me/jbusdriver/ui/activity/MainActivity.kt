@@ -13,6 +13,7 @@ import android.text.TextUtils
 import android.view.MenuItem
 import com.afollestad.materialdialogs.MaterialDialog
 import com.cfzx.utils.CacheLoader
+import io.reactivex.functions.Consumer
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.BuildConfig
@@ -117,9 +118,9 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         RxBus.toFlowable(MenuChangeEvent::class.java)
                 .delay(100, TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成
                 .compose(SchedulersCompat.computation())
-                .subscribeBy({
+                .subscribeBy{
                     initFragments(null)
-                })
+                }
                 .addTo(rxManager)
     }
 
