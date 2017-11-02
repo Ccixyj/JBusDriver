@@ -59,5 +59,9 @@ class LinkItemDao(private val db: BriteDatabase) {
         )
     }.take(1).blockingFirst()
 
+    fun updateByCategoryId(id: Int, type: Int) {
+        val cv = ContentValues().apply { putNull(LinkItemTable.COLUMN_CATEGORY_ID) }
+        db.update(LinkItemTable.TABLE_NAME, cv, " ${LinkItemTable.COLUMN_CATEGORY_ID} = ? and ${LinkItemTable.COLUMN_DB_TYPE} = ? ", id.toString(), type.toString())
+    }
 
 }

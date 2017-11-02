@@ -32,11 +32,13 @@ val ILink.des: String
         is PageLink -> "$title 第 $page 页" /*${if (isAll) "全部" else "已有种子"}电影*/
         else -> error(" $this has no matched class for des")
     }
+const val MovieDBType = 1
+const val ActressDBType = 2
 
 val ILink.DBtype: Int
     inline get() = when (this) {
-        is Movie -> 1
-        is ActressInfo -> 2
+        is Movie -> MovieDBType
+        is ActressInfo -> ActressDBType
         is Header -> 3
         is Genre -> 4
         is SearchLink -> 5

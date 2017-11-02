@@ -2,6 +2,7 @@ package me.jbusdriver.db.service
 
 import android.text.TextUtils
 import io.reactivex.Observable
+import me.jbusdriver.common.KLog
 import me.jbusdriver.db.DB
 import me.jbusdriver.db.bean.ActressCategory
 import me.jbusdriver.db.bean.Category
@@ -39,8 +40,19 @@ class HistoryService {
 
 class CategoryService {
     private val dao by lazy { DB.categoryDao }
-    fun insert(history: Category) {
-        dao.insert(history)
+    private val linkService by lazy { LinkService() }
+
+    fun insert(category: Category) {
+        dao.insert(category)
+    }
+
+    /**
+     * 删除对应分类
+     * 重置所有收藏
+     */
+    fun delete(category: Category, actressDBType: Int) {
+        dao.delete(category)
+        linkService.resetCategory(category,actressDBType)
     }
 
 }
@@ -62,9 +74,9 @@ class LinkService {
     fun queryActress() = dao.listByType(2).let {
         it.mapNotNull {
             (it.getLinkValue() as? ActressInfo)?.apply {
-                category = if (it.categoryId > 0){
+                category = if (it.categoryId > 0) {
                     categoryDao.findById(it.categoryId) ?: ActressCategory
-                }else{
+                } else {
                     ActressCategory
                 }
 
@@ -73,4 +85,12 @@ class LinkService {
     }
 
     fun queryLink() = dao.queryLink().let { it.map { it.getLinkValue() } }
+
+    fun resetCategory(category: Category, dBType: Int) {
+        KLog.d("reset $category")
+        category.id?.let {
+            dao.updateByCategoryId(it, dBType)
+        }
+
+    }
 }

@@ -41,6 +41,7 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T>(
     override fun onRefresh() {
         pageInfo = PageInfo()
         listData.clear()
+        collector.reload()
         listData.addAll(collector.dataList)
         loadData4Page(1)
     }

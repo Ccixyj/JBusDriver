@@ -22,6 +22,7 @@ interface ICollect<T> {
     fun addToCollect(data: T): Boolean
     fun has(data: T): Boolean
     fun removeCollect(data: T): Boolean
+    fun reload()
 }
 
 abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
@@ -157,6 +158,11 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
         Schedulers.io().scheduleDirect {
             linkService.save(data)
         }
+    }
+
+    override fun reload() {
+        dataList.clear()
+        dataList.addAll(refreshData())
     }
 }
 

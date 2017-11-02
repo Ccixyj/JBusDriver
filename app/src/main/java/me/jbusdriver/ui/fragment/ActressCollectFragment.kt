@@ -1,6 +1,5 @@
 package me.jbusdriver.ui.fragment
 
-import android.animation.ObjectAnimator
 import android.graphics.Bitmap
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.graphics.Palette
@@ -8,7 +7,8 @@ import android.support.v7.widget.OrientationHelper
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.text.TextUtils
-import android.view.View
+import android.view.Menu
+import android.view.MenuInflater
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.transition.Transition
@@ -24,18 +24,19 @@ import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.common.*
 import me.jbusdriver.db.bean.Category
 import me.jbusdriver.db.bean.MovieCategory
+import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.mvp.ActressCollectContract
+import me.jbusdriver.mvp.bean.ActressDBType
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.ActressWrapper
 import me.jbusdriver.mvp.presenter.ActressCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.collect.ActressCollector
+import me.jbusdriver.ui.holder.CollectDirEditHolder
 import java.util.*
 
-/**
- * Created by Administrator on 2017/7/17 0017.
- */
+
 class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.ActressCollectPresenter, ActressCollectContract.ActressCollectView, ActressWrapper>(), ActressCollectContract.ActressCollectView {
 
 
@@ -95,9 +96,10 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                     else -> {
                         KLog.d("convert :${item.level}")
                         setFullSpan(holder)
-                        holder.setText(R.id.tv_nav_menu_name,  item.subItems.first().actressInfo?.category?.name)
+                        holder.setText(R.id.tv_nav_menu_name, " ${if (item.isExpanded) "👇" else "👆"} " + item.subItems.first().actressInfo?.category?.name)
                         holder.itemView.setOnClickListener {
                             if (item.isExpanded) collapse(holder.adapterPosition) else expand(holder.adapterPosition)
+                            holder.setText(R.id.tv_nav_menu_name, " ${if (item.isExpanded) "👇" else "👆"} " + item.subItems.first().actressInfo?.category?.name)
                         }
                     }
                 }
@@ -138,37 +140,55 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 
     override val layoutId: Int = R.layout.layout_swipe_recycle
 
+    private val actGroupMap by lazy { mutableMapOf<Category, List<ActressInfo>>() }
 
-    override fun initWidget(rootView: View) {
-        if (AppConfiguration.enableCategory) {
-            recycleView.layoutManager = layoutManager
-            adapter.setOnLoadMoreListener({ mBasePresenter?.onLoadMore() }, recycleView)
-            adapter.openLoadAnimation {
-                arrayOf(ObjectAnimator.ofFloat(it, "alpha", 0.0f, 1.0f),
-                        ObjectAnimator.ofFloat(it, "translationY", 120f, 0f))
-            }
-            swipeView?.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimaryLight)
-            swipeView?.setOnRefreshListener { mBasePresenter?.onRefresh() }
-            recycleView.adapter = adapter
-        } else {
-            super.initWidget(rootView)
+    private val holder by lazy {
+        CollectDirEditHolder(viewContext)
+    }
+    private val categoryService by lazy { CategoryService() }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        super.onCreateOptionsMenu(menu, inflater)
+        menu?.findItem(R.id.action_collect_dir_edit)?.setOnMenuItemClickListener {
+            holder.initData(actGroupMap.keys.toList())
+            MaterialDialog.Builder(viewContext).customView(holder.view, true)
+                    .positiveText("提交更改")
+                    .negativeText("不提交")
+                    .negativeColor(R.color.secondText.toColorInt())
+                    .onPositive { _, _ ->
+                        if (holder.delActionsParams.isNotEmpty()) {
+                            holder.delActionsParams.forEach {
+                                categoryService.delete(it,ActressDBType)
+                            }
+                        }
+
+                        if (holder.addActionsParams.isNotEmpty()) {
+                            holder.addActionsParams.forEach {
+                                categoryService.insert(it)
+                            }
+                        }
+                        mBasePresenter?.onRefresh()
+                    }
+                    .show()
+            true
         }
     }
 
+
     override fun showContents(datas: List<*>?) {
         val dd = datas as List<ActressInfo>
+        actGroupMap.clear()
         if (AppConfiguration.enableCategory) {
             Flowable.just(dd).map {
-                it.groupBy { it.category }
+                actGroupMap.putAll(it.groupBy { it.category })
+                actGroupMap
             }.subscribeBy {
                 KLog.d("showContents group  $it")
                 adapter.addData(reloadAdapterData(it))
                 adapter.expand(0)
             }
         } else {
-
             adapter.addData(reloadAdapterData(mapOf(MovieCategory to dd)))
-
         }
         //super.showContents(datas)
 //        if (AppConfiguration.enableCategory) {
