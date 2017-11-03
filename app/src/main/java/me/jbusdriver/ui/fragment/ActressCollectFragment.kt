@@ -56,7 +56,6 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
             private fun randomNum(number: Int) = Math.abs(random.nextInt() % number)
 
             override fun convert(holder: BaseViewHolder, item: ActressWrapper) {
-                KLog.d("item ${item.level} , ${holder.itemViewType}")
                 when (holder.itemViewType) {
                     -1 -> {
                         val actress = requireNotNull(item.actressInfo)
@@ -94,12 +93,11 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                     }
 
                     else -> {
-                        KLog.d("convert :${item.level}")
                         setFullSpan(holder)
-                        holder.setText(R.id.tv_nav_menu_name, " ${if (item.isExpanded) "👇" else "👆"} " + item.subItems.first().actressInfo?.category?.name)
+                        holder.setText(R.id.tv_nav_menu_name, " ${if (item.isExpanded) "👇" else "👆"} " + item.category?.name)
                         holder.itemView.setOnClickListener {
                             if (item.isExpanded) collapse(holder.adapterPosition) else expand(holder.adapterPosition)
-                            holder.setText(R.id.tv_nav_menu_name, " ${if (item.isExpanded) "👇" else "👆"} " + item.subItems.first().actressInfo?.category?.name)
+                            holder.setText(R.id.tv_nav_menu_name, " ${if (item.isExpanded) "👇" else "👆"} " + item.category?.name)
                         }
                     }
                 }
@@ -156,9 +154,14 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                     .negativeText("不提交")
                     .negativeColor(R.color.secondText.toColorInt())
                     .onPositive { _, _ ->
+                        KLog.d("${holder.delActionsParams} ${holder.addActionsParams}")
                         if (holder.delActionsParams.isNotEmpty()) {
                             holder.delActionsParams.forEach {
-                                categoryService.delete(it,ActressDBType)
+                                try {
+                                    categoryService.delete(it, ActressDBType)
+                                } catch (e: Exception) {
+                                    viewContext.toast("不能删除默认分类")
+                                }
                             }
                         }
 
@@ -179,8 +182,14 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
         val dd = datas as List<ActressInfo>
         actGroupMap.clear()
         if (AppConfiguration.enableCategory) {
-            Flowable.just(dd).map {
+            Flowable.just(dd).compose(SchedulersCompat.io()).map {
                 actGroupMap.putAll(it.groupBy { it.category })
+                //添加其他未使用分类
+                val usedId = actGroupMap.keys.mapNotNull { it.id }
+                categoryService.queryTreeByLike(2).filterNot { usedId.contains(it.id) }
+                        .forEach {
+                            actGroupMap.put(it, emptyList())
+                        }
                 actGroupMap
             }.subscribeBy {
                 KLog.d("showContents group  $it")
@@ -196,24 +205,24 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 //        }
     }
 
-    private fun reloadAdapterData(it: Map<Category, List<ActressInfo>>): List<ActressWrapper> {
+    private fun reloadAdapterData(group: Map<Category, List<ActressInfo>>): List<ActressWrapper> {
         val delegate = object : MultiTypeDelegate<ActressWrapper>() {
             override fun getItemType(t: ActressWrapper): Int = t.level
         }
         val newDts = mutableListOf<ActressWrapper>()
 
-        it.forEach {
+        group.forEach {
             if (AppConfiguration.enableCategory) {
-                newDts.add(ActressWrapper().apply {
+                newDts.add(ActressWrapper(it.key).apply {
                     it.value.forEach {
-                        addSubItem(ActressWrapper(it).apply {
+                        addSubItem(ActressWrapper(null, it).apply {
                             delegate.registerItemType(level, R.layout.layout_actress_item) //默认注入类型0，即actress
                         })
                     }
                     delegate.registerItemType(level, R.layout.layout_menu_op_head)
                 })
             } else {
-                it.value.mapTo(newDts) { ActressWrapper(it) }
+                it.value.mapTo(newDts) { ActressWrapper(null, it) }
             }
         }
         //设置 delegate

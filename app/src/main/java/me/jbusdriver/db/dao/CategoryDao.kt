@@ -1,5 +1,6 @@
 package me.jbusdriver.db.dao
 
+import android.database.Cursor
 import com.squareup.sqlbrite2.BriteDatabase
 import me.jbusdriver.common.getIntByColumn
 import me.jbusdriver.common.getStringByColumn
@@ -21,12 +22,19 @@ class CategoryDao(private val db: BriteDatabase) {
 
     fun findById(cId: Int): Category? {
         return db.createQuery(CategoryTable.TABLE_NAME, "select * from ${CategoryTable.TABLE_NAME}  where ${CategoryTable.COLUMN_ID} = ?", cId.toString())
-                .mapToOne {
-                    Category(it.getStringByColumn(CategoryTable.COLUMN_NAME) ?: "", it.getIntByColumn(CategoryTable.COLUMN_P_ID),
-                            it.getStringByColumn(CategoryTable.COLUMN_TREE) ?: ""
-                    ).apply {
-                        id = it.getIntByColumn(CategoryTable.COLUMN_ID)
-                    }
-                }.blockingFirst()
+                .mapToOne {  toCategory(it) }.blockingFirst()
+    }
+
+    private fun toCategory(it: Cursor): Category {
+        return Category(it.getStringByColumn(CategoryTable.COLUMN_NAME) ?: "", it.getIntByColumn(CategoryTable.COLUMN_P_ID),
+                it.getStringByColumn(CategoryTable.COLUMN_TREE) ?: ""
+        ).apply {
+            id = it.getIntByColumn(CategoryTable.COLUMN_ID)
+        }
+    }
+
+    fun queryTreeByLike(like: String) : List<Category>{
+       return db.createQuery(CategoryTable.TABLE_NAME,"select * from ${CategoryTable.TABLE_NAME}  where ${CategoryTable.COLUMN_TREE} like ? ",like)
+                .mapToList { toCategory(it) }.blockingFirst()
     }
 }

@@ -26,6 +26,7 @@ class CollectDirEditHolder(context: Context) : BaseHolder(context) {
 
     val delActionsParams = mutableSetOf<Category>()
     val addActionsParams = mutableSetOf<Category>()
+    private val collectDirs by lazy { categoryAdapter.data }
 
 
     val view by lazy {
@@ -59,10 +60,23 @@ class CollectDirEditHolder(context: Context) : BaseHolder(context) {
 
                 tv_category_add_confirm.setOnClickListener {
                     val txt = tv_add_category_name.text.toString()
-                    if (txt.isNotBlank()){
-                       addActionsParams.add( Category(txt, ActressCategory.id ?: -1,"/${ActressCategory.id}/"))
-                    }else{
+                    val add = if (txt.isNotBlank()) {
+                        if (collectDirs.any { it.name == txt }) {
+                            context.toast("$txt 分类已存在")
+                            false
+                        } else true
+
+                    } else {
                         context.toast("请输入收藏夹名称")
+                        false
+                    }
+
+                    if (add) {
+                        val category = Category(txt, ActressCategory.id ?: -1, "/${ActressCategory.id}/")
+                        addActionsParams.add(category)
+                        categoryAdapter.addData(category)
+                        categoryAdapter.notifyItemChanged(categoryAdapter.data.size - 1)
+                        tv_add_category_name.setText("")
                     }
 
                     AnimatorSet().apply {
@@ -95,6 +109,7 @@ class CollectDirEditHolder(context: Context) : BaseHolder(context) {
                                 //删除
                                 categoryAdapter.data.getOrNull(position)?.let {
                                     //具体删除逻辑
+                                    if (it.id in (1..3)) return@setOnItemChildClickListener
                                     categoryAdapter.data.removeAt(position)
                                     categoryAdapter.notifyItemRemoved(position)
                                     delActionsParams.add(it)
@@ -123,6 +138,7 @@ class CollectDirEditHolder(context: Context) : BaseHolder(context) {
     fun initData(datas: List<Category>) {
         //清空Action的参数
         delActionsParams.clear()
+        addActionsParams.clear()
         //清空原有的数据
         categoryAdapter.data.clear()
         categoryAdapter.addData(datas)

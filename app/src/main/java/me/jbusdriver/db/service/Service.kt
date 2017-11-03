@@ -52,8 +52,15 @@ class CategoryService {
      */
     fun delete(category: Category, actressDBType: Int) {
         dao.delete(category)
-        linkService.resetCategory(category,actressDBType)
+        linkService.resetCategory(category, actressDBType)
     }
+
+    /**
+     * movie :1
+     * actress : 2
+     * link : 3
+     */
+    fun queryTreeByLike(type: Int)  =  dao.queryTreeByLike("/$type/%")
 
 }
 
@@ -72,14 +79,14 @@ class LinkService {
     fun remove(data: ILink) = dao.delete(data.convertDBItem())
     fun queryMovies() = dao.listByType(1).let { it.mapNotNull { it.getLinkValue() as? Movie } }
     fun queryActress() = dao.listByType(2).let {
+        val cats = hashMapOf<Int, Category>()
         it.mapNotNull {
             (it.getLinkValue() as? ActressInfo)?.apply {
                 category = if (it.categoryId > 0) {
-                    categoryDao.findById(it.categoryId) ?: ActressCategory
+                    cats.getOrPut(it.categoryId) { categoryDao.findById(it.categoryId) ?: ActressCategory }
                 } else {
                     ActressCategory
                 }
-
             }
         }
     }
