@@ -44,7 +44,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
         loaderManager.initLoader(mUniqueLoaderIdentifier, null, this).startLoading()
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         KLog.t(TAG).d("onCreateView : ${rootViewWeakRef?.get()}")
         rootViewWeakRef?.get()?.let {
             ((it.parent as? View) as? ViewGroup)?.also {
@@ -69,9 +69,8 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     protected open fun onRestartInstance(bundle: Bundle) {}
 
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //初始化化一次
         if (mFirstStart || mViewReCreate) {
             initWidget(rootViewWeakRef?.get() ?: error("view is no inflated!!"))
         }
@@ -178,10 +177,10 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     }
 
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState?.putBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE, true)
-        outState?.putInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE, mUniqueLoaderIdentifier)
+        outState.putBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE, true)
+        outState.putInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE, mUniqueLoaderIdentifier)
     }
 
 

@@ -1,7 +1,6 @@
 package me.jbusdriver.mvp.presenter
 
 import android.text.TextUtils
-import com.cfzx.mvp.view.BaseView
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Function
@@ -10,6 +9,7 @@ import me.jbusdriver.common.KLog
 import me.jbusdriver.common.SchedulersCompat
 import me.jbusdriver.common.SimpleSubscriber
 import me.jbusdriver.common.toast
+import me.jbusdriver.mvp.BaseView
 import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.mvp.bean.hasNext
 import me.jbusdriver.mvp.model.BaseModel

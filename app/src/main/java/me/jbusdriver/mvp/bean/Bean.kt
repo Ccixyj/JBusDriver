@@ -4,7 +4,7 @@ import me.jbusdriver.common.toJsonString
 import me.jbusdriver.common.urlPath
 import me.jbusdriver.db.bean.LinkItem
 import me.jbusdriver.http.JAVBusService
-import me.jbusdriver.ui.data.SearchType
+import me.jbusdriver.ui.data.enums.SearchType
 import java.io.Serializable
 import java.util.*
 

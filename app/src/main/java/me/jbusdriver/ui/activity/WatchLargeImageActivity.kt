@@ -66,15 +66,14 @@ class WatchLargeImageActivity : BaseActivity() {
         }
 
 
-        override fun instantiateItem(container: ViewGroup, position: Int): Any? {  //这个方法用来实例化页卡
+        override fun instantiateItem(container: ViewGroup, position: Int): Any {
             return imageViewList.getOrNull(position)?.apply {
                 container.addView(this, 0)//添加页卡
                 loadImage(this, position)
-            }
+            } ?: error("can not instantiateItem for $position in $imageViewList")
         }
-
         private fun loadImage(view: View, position: Int) {
-            view.findViewById(R.id.pb_large_progress).animate().alpha(1f).setDuration(300).start()
+            view.findViewById<View>(R.id.pb_large_progress).animate().alpha(1f).setDuration(300).start()
             val offset = Math.abs(vp_largeImage.currentItem - position)
             val priority = when (offset) {
                 in 0..1 -> Priority.IMMEDIATE
@@ -94,18 +93,18 @@ class WatchLargeImageActivity : BaseActivity() {
 
                         override fun onLoadStarted(placeholder: Drawable?) {
                             super.onLoadStarted(placeholder)
-                            view.findViewById(R.id.pb_large_progress).alpha = 1f
+                            view.findViewById<View>(R.id.pb_large_progress).alpha = 1f
                         }
 
                         override fun onResourceReady(resource: Bitmap?, transition: Transition<in Bitmap>?) {
-                            (view.findViewById(R.id.mziv_image_large) as MultiTouchZoomableImageView).imageBitmap = resource
-                            view.findViewById(R.id.pb_large_progress).animate().alpha(0f).setDuration(300).start()
+                            (view.findViewById<MultiTouchZoomableImageView>(R.id.mziv_image_large)).imageBitmap = resource
+                            view.findViewById<View>(R.id.pb_large_progress).animate().alpha(0f).setDuration(300).start()
                         }
 
                         override fun onLoadFailed(errorDrawable: Drawable?) {
                             super.onLoadFailed(errorDrawable)
-                            view.findViewById(R.id.pb_large_progress).animate().alpha(0f).setDuration(500).start()
-                            (view.findViewById(R.id.mziv_image_large) as MultiTouchZoomableImageView).apply {
+                            view.findViewById<View>(R.id.pb_large_progress).animate().alpha(0f).setDuration(500).start()
+                            (view.findViewById<View>(R.id.mziv_image_large) as MultiTouchZoomableImageView).apply {
                                 imageBitmap = BitmapFactory.decodeResource(viewContext.resources, R.drawable.ic_image_broken)
                                 setImageGestureListener(object : ImageGestureListener {
                                     override fun onImageGestureSingleTapConfirmed() {

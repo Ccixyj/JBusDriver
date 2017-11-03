@@ -5,7 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.Loader
-import com.cfzx.mvp.view.BaseView
+import me.jbusdriver.mvp.BaseView
 import me.jbusdriver.mvp.presenter.BasePresenter
 import me.jbusdriver.mvp.presenter.loader.PresenterFactory
 import me.jbusdriver.mvp.presenter.loader.PresenterLoader
@@ -31,7 +31,7 @@ abstract class AppBaseActivity<P : BasePresenter<V>, V : BaseView> : BaseActivit
         //  UIHelper.$optimizeBackgroundOverdraw(this);
         mFirstStart = savedInstanceState == null || savedInstanceState.getBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE)
         mUniqueLoaderIdentifier = savedInstanceState?.getInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE) ?: AppBaseActivity.sViewCounter.incrementAndGet()
-        setContentView(layoutInflater.inflate(layoutId, null))
+        setContentView(this.inflate(layoutId))
         supportLoaderManager.initLoader(mUniqueLoaderIdentifier, savedInstanceState, this@AppBaseActivity)
 
     }

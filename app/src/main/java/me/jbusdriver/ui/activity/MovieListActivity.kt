@@ -34,7 +34,7 @@ class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter
     }
 
     private fun setToolBar() {
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = linkData.des

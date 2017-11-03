@@ -28,9 +28,9 @@ import me.jbusdriver.ui.data.collect.MovieCollector
  * ilink 由跳转链接进入的 /历史记录
  */
 class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkListView {
-    private val link by lazy { arguments.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ") }
+    private val link by lazy { arguments?.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ") }
     private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }
-    private val isHistory by lazy { arguments.getBoolean(C.BundleKey.Key_2, false) }
+    private val isHistory by lazy { arguments?.getBoolean(C.BundleKey.Key_2, false) ?: false }
     private val attrViews by lazy { mutableListOf<View>() }
 
 
@@ -124,7 +124,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         }
     }
 
-    override fun createPresenter() = MovieLinkPresenterImpl(link, arguments.getBoolean(LinkableListFragment.MENU_SHOW_ALL, false) , isHistory)
+    override fun createPresenter() = MovieLinkPresenterImpl(link, arguments?.getBoolean(LinkableListFragment.MENU_SHOW_ALL, false) ?:false , isHistory)
 
     override fun <T> showContent(data: T?) {
         KLog.d("parse res :$data")

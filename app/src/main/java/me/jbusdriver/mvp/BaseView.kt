@@ -1,4 +1,4 @@
-package com.cfzx.mvp.view
+package me.jbusdriver.mvp
 
 import android.content.Context
 import com.afollestad.materialdialogs.MaterialDialog

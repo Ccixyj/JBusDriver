@@ -96,7 +96,7 @@ class SettingActivity : BaseActivity() {
     }
 
     private fun setToolBar() {
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.title = "设置"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

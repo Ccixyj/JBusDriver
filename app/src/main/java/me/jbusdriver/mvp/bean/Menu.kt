@@ -6,7 +6,7 @@ import com.chad.library.adapter.base.entity.MultiItemEntity
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.BaseFragment
 import me.jbusdriver.ui.data.AppConfiguration
-import me.jbusdriver.ui.data.DataSourceType
+import me.jbusdriver.ui.data.enums.DataSourceType
 import me.jbusdriver.ui.fragment.*
 
 /*首页菜单配置化*/

@@ -1,4 +1,4 @@
-package com.cfzx.mvp.usercase
+package me.jbusdriver.mvp.model
 
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers

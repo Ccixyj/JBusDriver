@@ -153,7 +153,14 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
 
     override fun has(data: T): Boolean = dataList.any { it.uniqueKey == data.uniqueKey }
 
-    override fun removeCollect(data: T) = linkService.remove(data)
+    override fun removeCollect(data: T): Boolean {
+        val d = dataList.remove(dataList.find { it.uniqueKey == data.uniqueKey })
+        if (d) {
+            if (linkService.remove(data)) AppContext.instace.toast("已取消收藏")
+            return true
+        }
+        return false
+    }
 
     private fun save(data: T) {
         Schedulers.io().scheduleDirect {

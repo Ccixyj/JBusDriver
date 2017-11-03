@@ -18,7 +18,6 @@ import me.jbusdriver.common.inflate
 import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.bean.Header
 import me.jbusdriver.ui.activity.MovieListActivity
-import me.jbusdriver.ui.data.DataSourceType
 import me.jbusdriver.ui.data.collect.LinkCollector
 
 /**

@@ -195,7 +195,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                 KLog.d("showContents group  $it")
                 adapter.addData(reloadAdapterData(it))
                 adapter.expand(0)
-            }
+            }.addTo(rxManager)
         } else {
             adapter.addData(reloadAdapterData(mapOf(MovieCategory to dd)))
         }

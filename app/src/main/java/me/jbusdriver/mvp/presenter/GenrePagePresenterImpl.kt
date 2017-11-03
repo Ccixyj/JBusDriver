@@ -1,6 +1,6 @@
 package me.jbusdriver.mvp.presenter
 
-import com.cfzx.utils.CacheLoader
+import me.jbusdriver.common.CacheLoader
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo

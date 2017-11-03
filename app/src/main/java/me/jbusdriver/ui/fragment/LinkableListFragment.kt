@@ -19,7 +19,7 @@ import me.jbusdriver.common.KLog
 import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.ui.activity.SearchResultActivity
-import me.jbusdriver.ui.data.DataSourceType
+import me.jbusdriver.ui.data.enums.DataSourceType
 
 abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract.LinkListPresenter, LinkListContract.LinkListView, T>(), LinkListContract.LinkListView {
 
@@ -85,11 +85,11 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
         return super.onOptionsItemSelected(item)
     }
 
-
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState?.putBoolean(MENU_SHOW_ALL, arguments?.getBoolean(MENU_SHOW_ALL, false) ?: false)
+        outState.putBoolean(MENU_SHOW_ALL, arguments?.getBoolean(MENU_SHOW_ALL, false) ?: false)
     }
+
 
     /*================================================*/
     override val type by lazy { arguments?.getSerializable(C.BundleKey.Key_1) as? DataSourceType ?: DataSourceType.CENSORED }

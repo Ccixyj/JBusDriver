@@ -26,7 +26,7 @@ open class BaseFragment : Fragment() {
         KLog.t(TAG).d("onActivityCreated")
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         KLog.t(TAG).d("onCreateView")
         return super.onCreateView(inflater, container, savedInstanceState)
     }
@@ -57,9 +57,9 @@ open class BaseFragment : Fragment() {
         rxManager.clear()
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
+    override fun onSaveInstanceState(outState: Bundle) {
         KLog.t(TAG).d("onSaveInstanceState $outState")
+        super.onSaveInstanceState(outState)
     }
 
     override fun onDestroy() {

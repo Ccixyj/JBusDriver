@@ -86,7 +86,7 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
 
                         }
                         holder.getView<View>(R.id.card_movie_item)?.setOnClickListener {
-                            MovieDetailActivity.start(activity, item)
+                            MovieDetailActivity.start(viewContext, item)
                         }
 
                         holder.addOnLongClickListener(R.id.card_movie_item)

@@ -5,14 +5,14 @@ import me.jbusdriver.common.C
 import me.jbusdriver.mvp.MineCollectContract
 import me.jbusdriver.mvp.bean.SearchLink
 import me.jbusdriver.mvp.presenter.MineCollectPresenterImpl
-import me.jbusdriver.ui.data.SearchType
+import me.jbusdriver.ui.data.enums.SearchType
 
 /**
  * Created by Administrator on 2017/7/17 0017.
  */
 class SearchResultPagesFragment : TabViewPagerFragment<MineCollectContract.MineCollectPresenter, MineCollectContract.MineCollectView>(), MineCollectContract.MineCollectView {
 
-    private val searchWord by lazy { arguments.getString(C.BundleKey.Key_1) }
+    private val searchWord by lazy { arguments?.getString(C.BundleKey.Key_1) ?: error("no searchWord") }
 
     override fun createPresenter() = MineCollectPresenterImpl()
 

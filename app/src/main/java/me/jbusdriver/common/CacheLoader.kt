@@ -1,4 +1,4 @@
-package com.cfzx.utils
+package me.jbusdriver.common
 
 import android.app.Activity
 import android.app.ActivityManager
@@ -6,7 +6,6 @@ import android.support.v4.util.LruCache
 import com.umeng.analytics.MobclickAgent
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
-import me.jbusdriver.common.*
 import java.util.concurrent.TimeUnit
 
 

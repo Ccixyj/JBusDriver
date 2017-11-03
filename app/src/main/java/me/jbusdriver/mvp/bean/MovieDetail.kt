@@ -5,7 +5,7 @@ import me.jbusdriver.common.KLog
 import me.jbusdriver.common.urlHost
 import me.jbusdriver.db.bean.ActressCategory
 import me.jbusdriver.db.bean.Category
-import me.jbusdriver.ui.data.DataSourceType
+import me.jbusdriver.ui.data.enums.DataSourceType
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 

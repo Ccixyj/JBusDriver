@@ -30,7 +30,7 @@
         app:contentPadding="@dimen/material_8dp">
 
         <TextView
-            style="@style/TextAppearance.AppCompat.Notification.Info"
+            style="@style/TextAppearance.Compat.Notification.Info"
             android:layout_width="match_parent"
             android:layout_height="@dimen/material_24dp"
             android:gravity="center_vertical"
@@ -112,7 +112,7 @@
         app:contentPadding="@dimen/material_8dp">
 
         <TextView
-            style="@style/TextAppearance.AppCompat.Notification.Info"
+            style="@style/TextAppearance.Compat.Notification.Info"
             android:layout_width="match_parent"
             android:layout_height="@dimen/material_24dp"
             android:gravity="center_vertical"

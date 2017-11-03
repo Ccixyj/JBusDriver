@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.util.ArrayMap
-import com.cfzx.utils.CacheLoader
 import com.google.gson.JsonObject
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.Flowable
@@ -20,7 +19,7 @@ import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.*
 import me.jbusdriver.http.GitHub
 import me.jbusdriver.http.JAVBusService
-import me.jbusdriver.ui.data.DataSourceType
+import me.jbusdriver.ui.data.enums.DataSourceType
 import org.jsoup.Jsoup
 
 class SplashActivity : BaseActivity() {

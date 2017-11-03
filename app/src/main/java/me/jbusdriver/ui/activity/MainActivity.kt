@@ -12,8 +12,7 @@ import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.view.MenuItem
 import com.afollestad.materialdialogs.MaterialDialog
-import com.cfzx.utils.CacheLoader
-import io.reactivex.functions.Consumer
+import me.jbusdriver.common.CacheLoader
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.BuildConfig
@@ -31,7 +30,7 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.MainView>(), NavigationView.OnNavigationItemSelectedListener, MainContract.MainView {
 
-    private val navigationView by lazy { findViewById(R.id.nav_view) as NavigationView }
+    private val navigationView by lazy { findViewById<NavigationView>(R.id.nav_view) }
     private var selectMenu: MenuItem? = null
     private val sharfp by lazy { getSharedPreferences("config", Context.MODE_PRIVATE) }
     private val fragments by lazy { hashMapOf<Int, BaseFragment>() }
@@ -46,9 +45,9 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
 
     private fun initNavigationView() {
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         val toggle = ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer.addDrawerListener(toggle)
@@ -126,7 +125,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
 
     override fun onBackPressed() {
-        val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
         } else {
@@ -144,7 +143,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         switchFragment(item.itemId)
         selectMenu = item
         KLog.d("onNavigationItemSelected $item ")
-        val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         drawer.closeDrawer(GravityCompat.START)
         supportActionBar?.title = selectMenu?.title
         return true

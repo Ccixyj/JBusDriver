@@ -9,7 +9,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import com.cfzx.utils.CacheLoader
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
@@ -22,13 +21,13 @@ import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.adapter.ActressInfoAdapter
 import me.jbusdriver.ui.data.AppConfiguration
-import me.jbusdriver.ui.data.DataSourceType
 import me.jbusdriver.ui.data.collect.LinkCollector
+import me.jbusdriver.ui.data.enums.DataSourceType
 
 class ActressListFragment : LinkableListFragment<ActressInfo>() {
 
     private val link by lazy {
-        arguments.getSerializable(C.BundleKey.Key_2)  as? ILink ?: error("no link data ")
+        arguments?.getSerializable(C.BundleKey.Key_2)  as? ILink ?: error("no link data ")
     }
     private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }
 

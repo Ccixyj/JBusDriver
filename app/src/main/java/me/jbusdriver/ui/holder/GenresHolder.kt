@@ -8,7 +8,6 @@ import kotlinx.android.synthetic.main.layout_detail_genres.view.*
 import me.jbusdriver.common.inflate
 import me.jbusdriver.mvp.bean.Genre
 import me.jbusdriver.ui.adapter.GenreAdapter
-import me.jbusdriver.ui.data.DataSourceType
 
 /**
  * Created by Administrator on 2017/5/10 0010.

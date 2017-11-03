@@ -13,7 +13,6 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.bumptech.glide.request.target.DrawableImageViewTarget
-import com.cfzx.utils.CacheLoader
 import com.jaeger.library.StatusBarUtil
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_movie_detail.*
@@ -41,9 +40,9 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        val fab = findViewById(R.id.fab) as FloatingActionButton
+        val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener {
             mBasePresenter?.onRefresh()
         }
@@ -127,11 +126,11 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
     override fun initMagnetLoad() {
         KLog.d("load url : ${movie.link}")
-        val mWebView = findViewById(R.id.webview) as WebView
+        val mWebView = findViewById<WebView>(R.id.webview)
         mWebView.settings.javaScriptEnabled = true
         mWebView.addJavascriptInterface(JavascriptHandler(movie.detailSaveKey + "_magnet"), "handler")
         mWebView.loadUrl(movie.link)
-        mWebView.setWebViewClient(object : WebViewClient() {
+        mWebView.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
             }
@@ -152,7 +151,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
                 super.onReceivedError(view, errorCode, description, failingUrl)
             }
 
-        })
+        }
     }
 
     override fun createPresenter() = MovieDetailPresenterImpl(intent?.getBooleanExtra(C.BundleKey.Key_2, false) ?: false)

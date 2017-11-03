@@ -1,6 +1,5 @@
 package me.jbusdriver.mvp.presenter
 
-import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.toSingle
@@ -12,7 +11,7 @@ import me.jbusdriver.mvp.MovieDetailContract
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.model.AbstractBaseModel
 import me.jbusdriver.mvp.model.BaseModel
-import me.jbusdriver.ui.data.DataSourceType
+import me.jbusdriver.ui.data.enums.DataSourceType
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.util.*

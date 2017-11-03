@@ -1,7 +1,6 @@
 package me.jbusdriver.mvp.presenter
 
 import android.support.v4.util.ArrayMap
-import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
 import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
@@ -11,7 +10,7 @@ import me.jbusdriver.mvp.bean.PageLink
 import me.jbusdriver.mvp.model.AbstractBaseModel
 import me.jbusdriver.mvp.model.BaseModel
 import me.jbusdriver.ui.data.AppConfiguration
-import me.jbusdriver.ui.data.DataSourceType
+import me.jbusdriver.ui.data.enums.DataSourceType
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 

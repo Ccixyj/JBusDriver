@@ -1,6 +1,6 @@
 package me.jbusdriver.mvp.presenter
 
-import com.cfzx.mvp.view.BaseView
+import me.jbusdriver.mvp.BaseView
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import me.jbusdriver.common.KLog

@@ -5,7 +5,7 @@ import com.chad.library.adapter.base.entity.MultiItemEntity
 import com.google.gson.annotations.SerializedName
 import me.jbusdriver.common.urlHost
 import me.jbusdriver.http.JAVBusService
-import me.jbusdriver.ui.data.DataSourceType
+import me.jbusdriver.ui.data.enums.DataSourceType
 import org.jsoup.nodes.Document
 
 /**
