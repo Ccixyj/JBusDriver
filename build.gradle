@@ -2,20 +2,20 @@
 
 buildscript {
     ext.versions = [
-            'compileSdk'    : 27,
+            'compileSdk'    : 26,
             'targetSdk'     : 26,
-            'buildTools'    : '26.0.2',
+            'buildTools'    : '27.0.1',
 
-            'gradle'        : '3.0.0',
-            'kotlin'        : '1.1.51',
-            'supportLibrary': '27.0.0'
+            'gradle'        : '3.0.1',
+            'kotlin'        : '1.2.0',
+            'supportLibrary': '27.0.2'
     ]
     repositories {
         jcenter()
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0'
+        classpath 'com.android.tools.build:gradle:3.0.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -24,6 +24,8 @@ buildscript {
 
 allprojects {
     repositories {
+        google()
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
         jcenter()
         maven { url "https://jitpack.io" }
     }

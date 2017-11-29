@@ -33,7 +33,6 @@ abstract class AppBaseActivity<P : BasePresenter<V>, V : BaseView> : BaseActivit
         mUniqueLoaderIdentifier = savedInstanceState?.getInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE) ?: AppBaseActivity.sViewCounter.incrementAndGet()
         setContentView(this.inflate(layoutId))
         supportLoaderManager.initLoader(mUniqueLoaderIdentifier, savedInstanceState, this@AppBaseActivity)
-
     }
 
     override fun onStart() {

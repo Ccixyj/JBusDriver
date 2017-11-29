@@ -131,12 +131,12 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     /*============================================added======================================================*/
     implementation 'com.google.code.gson:gson:2.8.2'
-    implementation 'com.afollestad.material-dialogs:core:0.9.5.0'
+    implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
     implementation 'com.orhanobut:logger:2.1.1'
-    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.+'
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.34'
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.10.3'
 
-    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.9.1'
     implementation 'com.github.bumptech.glide:glide:4.3.0'
     kapt  'com.github.bumptech.glide:compiler:4.3.0'
     implementation 'com.github.bumptech.glide:okhttp3-integration:4.3.0@jar'
@@ -146,10 +146,10 @@ dependencies {
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
 
 
-    implementation 'io.reactivex.rxjava2:rxjava:2.+'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.+'
-    implementation 'io.reactivex.rxjava2:rxkotlin:2.+'
-    implementation 'com.jakewharton.rxrelay2:rxrelay:2.+'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.6'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.1.0'
+    implementation 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
     implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.3@aar'
 
     //sqllite
@@ -160,8 +160,4 @@ dependencies {
     implementation 'com.xiaofeng.android:flowlayoutmanager:1.2.3.2'
     implementation 'com.umeng.analytics:analytics:6.1.2'
 
-}
-repositories {
-    mavenCentral()
-    google()
 }

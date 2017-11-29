@@ -137,7 +137,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         }
     }
 
-    override fun showContents(datas: List<*>?) {
+    override fun showContents(datas: List<*>) {
         adapter.removeAllHeaderView()
         attrViews.forEach { adapter.addHeaderView(it) }
         attrViews.clear()

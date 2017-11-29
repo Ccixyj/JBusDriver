@@ -178,7 +178,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
     }
 
 
-    override fun showContents(datas: List<*>?) {
+    override fun showContents(datas: List<*>) {
         val dd = datas as List<ActressInfo>
         actGroupMap.clear()
         if (AppConfiguration.enableCategory) {
