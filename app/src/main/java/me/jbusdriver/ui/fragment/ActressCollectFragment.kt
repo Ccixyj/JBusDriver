@@ -34,6 +34,7 @@ import me.jbusdriver.mvp.presenter.ActressCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.collect.ActressCollector
+import me.jbusdriver.ui.helper.CollectDataHelper
 import me.jbusdriver.ui.holder.CollectDirEditHolder
 import java.util.*
 
@@ -141,6 +142,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 
     override val layoutId: Int = R.layout.layout_swipe_recycle
 
+    private val dataHelper by lazy { CollectDataHelper<ActressInfo>() }
     private val actGroupMap by lazy { mutableMapOf<Category, List<ActressInfo>>() }
 
     private val holder by lazy {
@@ -177,6 +179,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 
     override fun showContents(data: List<*>) {
         val dd = data as List<ActressInfo>
+        dataHelper.initFromData(dd)
         actGroupMap.clear()
         if (AppConfiguration.enableCategory) {
             Flowable.just(dd).compose(SchedulersCompat.io()).map {

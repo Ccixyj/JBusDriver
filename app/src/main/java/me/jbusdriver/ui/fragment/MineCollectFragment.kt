@@ -19,6 +19,7 @@ class MineCollectFragment : TabViewPagerFragment<MineCollectContract.MineCollect
 
     override val mFragments: List<Fragment> by lazy { listOf(MovieCollectFragment.newInstance(), ActressCollectFragment.newInstance(), LinkCollectFragment.newInstance()) }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)

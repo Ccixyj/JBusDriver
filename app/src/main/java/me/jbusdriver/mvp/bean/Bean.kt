@@ -18,8 +18,6 @@ const val Expand_Type_Item = 1
 
 interface ILink : Serializable {
     val link: String
-
-
 }
 
 val ILink.des: String
