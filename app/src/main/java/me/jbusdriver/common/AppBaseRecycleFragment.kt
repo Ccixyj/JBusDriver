@@ -5,11 +5,11 @@ import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import me.jbusdriver.mvp.BaseView
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import io.reactivex.Flowable
 import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.mvp.BaseView
 import me.jbusdriver.mvp.presenter.BasePresenter
 
 /**
@@ -65,9 +65,9 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
         } ?: super.dismissLoading()
     }
 
-    override fun showContents(datas: List<*>) {
-        KLog.d("showContents :$datas")
-        adapter.addData(datas as MutableList<M>)
+    override fun showContents(data: List<*>) {
+        KLog.d("showContents :$data")
+        adapter.addData(data as MutableList<M>)
         //Diffutils
     }
 

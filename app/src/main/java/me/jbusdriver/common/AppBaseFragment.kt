@@ -52,7 +52,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
             }
         } ?: run {
             if (!mFirstStart) mViewReCreate = true
-            inflater?.inflate(layoutId, container, false)?.let {
+            inflater.inflate(layoutId, container, false)?.let {
                 rootViewWeakRef = WeakReference(it)
             }
         }
@@ -136,7 +136,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
         if (!isUserVisible || isLazyLoaded || mBasePresenter == null) {
             //SPresenter 可能没有初始化 ,放入dostart 中执行lazy
 
-        }else{
+        } else {
             lazyLoad()
             isLazyLoaded = true
         }
@@ -184,9 +184,8 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     }
 
 
-    override fun onCreateLoader(id: Int, args: Bundle?): Loader<P> {
-        return PresenterLoader(viewContext, this)
-    }
+    override fun onCreateLoader(id: Int, args: Bundle?) =
+            PresenterLoader(viewContext, this)
 
     /**
      * fragment 会回调两次

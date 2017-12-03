@@ -155,8 +155,8 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
         get() = AppConfiguration.pageMode
 
 
-    override fun insertDatas(pos: Int, datas: List<*>) {
-        adapter.addData(pos, datas as List<Movie>)
+    override fun insertData(pos: Int, data: List<*>) {
+        adapter.addData(pos, data as List<Movie>)
     }
 
     override fun moveTo(pos: Int) {

@@ -8,7 +8,6 @@ import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
@@ -44,10 +43,6 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
     }
 
     override fun createPresenter() = ActressLinkPresenterImpl(link)
-
-    override fun initWidget(rootView: View) {
-        super.initWidget(rootView)
-    }
 
     override fun initData() {
         if (isSearch) {
@@ -142,7 +137,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
 
     }
 
-    override fun insertDatas(pos: Int, datas: List<*>) {
+    override fun insertData(pos: Int, data: List<*>) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

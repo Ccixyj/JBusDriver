@@ -20,7 +20,7 @@ interface LinkListContract {
     interface LinkListView : BaseView.BaseListWithRefreshView {
         val type: DataSourceType
         val pageMode: Int
-        fun insertDatas(pos: Int, datas: List<*>)
+        fun insertData(pos: Int, data: List<*>)
         fun moveTo(pos: Int)
     }
 

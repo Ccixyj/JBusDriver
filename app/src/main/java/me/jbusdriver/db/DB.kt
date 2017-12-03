@@ -1,5 +1,6 @@
 package me.jbusdriver.db
 
+import android.annotation.SuppressLint
 import com.squareup.sqlbrite2.SqlBrite
 import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.common.AppContext
@@ -10,18 +11,14 @@ import me.jbusdriver.db.dao.LinkItemDao
 import java.io.File
 
 
-/**
- * Created by Administrator on 2017/9/18 0018.
- */
-
+@SuppressLint("CheckResult")
 object DB {
-
     private val provideSqlBrite: SqlBrite by lazy {
-        val builder = SqlBrite.Builder()
-        if (jbusdriver.me.jbusdriver.BuildConfig.DEBUG) {
-            builder.logger { message -> KLog.i(message) }
-        }
-        builder.build()
+        SqlBrite.Builder().apply {
+            if (jbusdriver.me.jbusdriver.BuildConfig.DEBUG) {
+                this.logger { message -> KLog.i(message) }
+            }
+        }.build()
     }
 
     private val dataBase by lazy {

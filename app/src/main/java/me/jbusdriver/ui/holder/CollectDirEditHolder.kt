@@ -7,12 +7,14 @@ import android.animation.ObjectAnimator
 import android.content.Context
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import com.afollestad.materialdialogs.MaterialDialog
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_collect_dir_edit.view.*
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.inflate
+import me.jbusdriver.common.toColorInt
 import me.jbusdriver.common.toast
 import me.jbusdriver.db.bean.ActressCategory
 import me.jbusdriver.db.bean.Category
@@ -24,8 +26,8 @@ import me.jbusdriver.db.bean.Category
 
 class CollectDirEditHolder(context: Context) : BaseHolder(context) {
 
-    val delActionsParams = mutableSetOf<Category>()
-    val addActionsParams = mutableSetOf<Category>()
+    private val delActionsParams = mutableSetOf<Category>()
+    private val addActionsParams = mutableSetOf<Category>()
     private val collectDirs by lazy { categoryAdapter.data }
 
 
@@ -102,7 +104,7 @@ class CollectDirEditHolder(context: Context) : BaseHolder(context) {
                 rv_category_list.apply {
                     layoutManager = LinearLayoutManager(context)
                     adapter = categoryAdapter
-                    categoryAdapter.setOnItemChildClickListener { adapter, view, position ->
+                    categoryAdapter.setOnItemChildClickListener { _, view, position ->
                         KLog.d("$position view $view ")
                         when (view.id) {
                             R.id.tv_category_delete -> {
@@ -135,12 +137,26 @@ class CollectDirEditHolder(context: Context) : BaseHolder(context) {
         }
     }
 
-    fun initData(datas: List<Category>) {
+    /**
+     * @param callback : 确认回调; first : 删除的元素 ,second : 添加的元素
+     *
+     */
+    fun showDialogWithData(data: Collection<Category>, callback: (Set<Category>, Set<Category>) -> Unit) {
         //清空Action的参数
         delActionsParams.clear()
         addActionsParams.clear()
         //清空原有的数据
         categoryAdapter.data.clear()
-        categoryAdapter.addData(datas)
+        categoryAdapter.addData(data)
+
+        MaterialDialog.Builder(view.context).customView(view, true)
+                .positiveText("提交更改")
+                .negativeText("不提交")
+                .negativeColor(R.color.secondText.toColorInt())
+                .onPositive { _, _ ->
+                    callback.invoke(delActionsParams, addActionsParams)
+                }
+                .show()
+
     }
 }

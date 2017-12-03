@@ -19,6 +19,7 @@ import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
+import kotlinx.android.synthetic.main.layout_menu_op_head.view.*
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.common.*
@@ -68,9 +69,9 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                                         Palette.from(it).generate()
                                     }.compose(SchedulersCompat.io())
                                             .subscribeWith(object : SimpleSubscriber<Palette>() {
-                                                override fun onNext(it: Palette) {
-                                                    super.onNext(it)
-                                                    val swatch = listOf(it.lightMutedSwatch, it.lightVibrantSwatch, it.vibrantSwatch, it.mutedSwatch).filterNotNull()
+                                                override fun onNext(t: Palette) {
+                                                    super.onNext(t)
+                                                    val swatch = listOfNotNull(t.lightMutedSwatch, t.lightVibrantSwatch, t.vibrantSwatch, t.mutedSwatch)
                                                     if (!swatch.isEmpty()) {
                                                         swatch[randomNum(swatch.size)].let {
                                                             holder.setBackgroundColor(R.id.tv_actress_name, it.rgb)
@@ -93,21 +94,23 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                     }
 
                     else -> {
+                        KLog.d("type item $item")
                         setFullSpan(holder)
                         holder.setText(R.id.tv_nav_menu_name, " ${if (item.isExpanded) "👇" else "👆"} " + item.category?.name)
-                        holder.itemView.setOnClickListener {
-                            if (item.isExpanded) collapse(holder.adapterPosition) else expand(holder.adapterPosition)
-                            holder.setText(R.id.tv_nav_menu_name, " ${if (item.isExpanded) "👇" else "👆"} " + item.category?.name)
-                        }
                     }
                 }
 
             }
         }.apply {
-            setOnItemClickListener { adapter, _, position ->
-                val data = this@ActressCollectFragment.adapter.getData().getOrNull(position)
-                (data?.actressInfo ?: (data as? ActressInfo))?.let {
+            setOnItemClickListener { _, view, position ->
+                val data = this@ActressCollectFragment.adapter.getData().getOrNull(position) ?: return@setOnItemClickListener
+                KLog.d("click data : ${data.isExpanded} ; ${adapter.getData().size} ${adapter.getData()}")
+                data.actressInfo?.let {
                     MovieListActivity.start(viewContext, it)
+                } ?: apply {
+                    view.tv_nav_menu_name.text = " ${if (data.isExpanded) "👇" else "👆"} " + data.category?.name
+                    if (data.isExpanded) collapse(adapter.getHeaderLayoutCount() + position) else expand(adapter.getHeaderLayoutCount() + position)
+                    (layoutManager as StaggeredGridLayoutManager).invalidateSpanAssignments()
                 }
             }
 
@@ -148,38 +151,32 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
         menu?.findItem(R.id.action_collect_dir_edit)?.setOnMenuItemClickListener {
-            holder.initData(actGroupMap.keys.toList())
-            MaterialDialog.Builder(viewContext).customView(holder.view, true)
-                    .positiveText("提交更改")
-                    .negativeText("不提交")
-                    .negativeColor(R.color.secondText.toColorInt())
-                    .onPositive { _, _ ->
-                        KLog.d("${holder.delActionsParams} ${holder.addActionsParams}")
-                        if (holder.delActionsParams.isNotEmpty()) {
-                            holder.delActionsParams.forEach {
-                                try {
-                                    categoryService.delete(it, ActressDBType)
-                                } catch (e: Exception) {
-                                    viewContext.toast("不能删除默认分类")
-                                }
-                            }
+            holder.showDialogWithData(actGroupMap.keys.toList()) { delActionsParams, addActionsParams ->
+                KLog.d("$delActionsParams $addActionsParams")
+                if (delActionsParams.isNotEmpty()) {
+                    delActionsParams.forEach {
+                        try {
+                            categoryService.delete(it, ActressDBType)
+                        } catch (e: Exception) {
+                            viewContext.toast("不能删除默认分类")
                         }
-
-                        if (holder.addActionsParams.isNotEmpty()) {
-                            holder.addActionsParams.forEach {
-                                categoryService.insert(it)
-                            }
-                        }
-                        mBasePresenter?.onRefresh()
                     }
-                    .show()
+                }
+
+                if (addActionsParams.isNotEmpty()) {
+                    addActionsParams.forEach {
+                        categoryService.insert(it)
+                    }
+                }
+                mBasePresenter?.onRefresh()
+            }
             true
         }
     }
 
 
-    override fun showContents(datas: List<*>) {
-        val dd = datas as List<ActressInfo>
+    override fun showContents(data: List<*>) {
+        val dd = data as List<ActressInfo>
         actGroupMap.clear()
         if (AppConfiguration.enableCategory) {
             Flowable.just(dd).compose(SchedulersCompat.io()).map {
@@ -199,7 +196,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
         } else {
             adapter.addData(reloadAdapterData(mapOf(MovieCategory to dd)))
         }
-        //super.showContents(datas)
+        //super.showContents(data)
 //        if (AppConfiguration.enableCategory) {
 //            adapter.expandAll()
 //        }

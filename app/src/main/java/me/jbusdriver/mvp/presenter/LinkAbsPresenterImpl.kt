@@ -1,6 +1,5 @@
 package me.jbusdriver.mvp.presenter
 
-import me.jbusdriver.common.CacheLoader
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.subscribeBy
 import me.jbusdriver.common.*
@@ -147,7 +146,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, val isHistory: Boole
                     }
                     if (dataPageCache.size > 0 && pageInfo.activePage < dataPageCache.lastKey()) {
                         //当前页属于插入页面
-                        mView?.insertDatas(getJumpIndex(pageInfo.activePage), t)
+                        mView?.insertData(getJumpIndex(pageInfo.activePage), t)
                     } else {
                         super.doAddData(t)
                     }

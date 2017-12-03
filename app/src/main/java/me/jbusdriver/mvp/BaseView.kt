@@ -31,7 +31,7 @@ interface BaseView {
     fun showError(e: Throwable?): Unit = TODO(" no impl")
 
     interface BaseListView : BaseView {
-        fun showContents(datas: List<*>)
+        fun showContents(data: List<*>)
         //加载更多完成
         fun loadMoreComplete()
 

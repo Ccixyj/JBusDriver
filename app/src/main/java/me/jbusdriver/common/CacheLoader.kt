@@ -89,8 +89,7 @@ object CacheLoader {
     fun justDisk(key: String, add2Lru: Boolean = true): Flowable<String> {
         val v = acache.getAsString(key)
         KLog.i("justDisk : $key add lru $add2Lru,$v")
-        if (add2Lru) lru.put(key, v)
-        return v?.let { Flowable.just(v) } ?: Flowable.empty()
+        return v?.let { Flowable.just(v).doOnError { if (add2Lru) lru.put(key, v) } } ?: Flowable.empty()
     }
 
     /*===============================remove cache=====================================*/

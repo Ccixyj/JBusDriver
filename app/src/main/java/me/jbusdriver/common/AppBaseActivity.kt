@@ -92,9 +92,7 @@ abstract class AppBaseActivity<P : BasePresenter<V>, V : BaseView> : BaseActivit
     }
 
 
-    override fun onCreateLoader(id: Int, args: Bundle?): Loader<P> {
-        return PresenterLoader(this, this)
-    }
+    override fun onCreateLoader(id: Int, args: Bundle?) = PresenterLoader(this, this)
 
     override fun onLoadFinished(loader: Loader<P>, data: P) {
         mBasePresenter = data
