@@ -24,7 +24,7 @@ object CacheLoader {
             MobclickAgent.reportError(AppContext.instace, "可能的内存不足")
             AppContext.instace.toast("当前可用内存:$memSize,请注意释放内存")
         }
-        val cacheSize = if (memoryInfo.availMem   > 32 * 1024 * 1024) 4 * 1024 * 1024 else 2 * 1024 * 1024
+        val cacheSize = if (memoryInfo.availMem > 32 * 1024 * 1024) 4 * 1024 * 1024 else 2 * 1024 * 1024
         KLog.t(TAG).d("max cacheSize = ${cacheSize.toLong().formatFileSize()}")
         return object : LruCache<String, String>(cacheSize) { //4m
             override fun entryRemoved(evicted: Boolean, key: String?, oldValue: String?, newValue: String?) {
@@ -89,6 +89,7 @@ object CacheLoader {
     fun justDisk(key: String, add2Lru: Boolean = true): Flowable<String> {
         val v = acache.getAsString(key)
         KLog.i("justDisk : $key add lru $add2Lru,$v")
+        if (add2Lru) lru.put(key, v)
         return v?.let { Flowable.just(v) } ?: Flowable.empty()
     }
 

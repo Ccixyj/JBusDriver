@@ -2,7 +2,6 @@ package me.jbusdriver.mvp.presenter
 
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.toSingle
 import me.jbusdriver.common.*
 import me.jbusdriver.db.bean.History
 import me.jbusdriver.db.service.HistoryService
@@ -21,17 +20,15 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
 
     private val loadFromNet = { s: String ->
         KLog.d("request for : $s")
-        mView?.let {
-            view ->
+        mView?.let { view ->
             JAVBusService.INSTANCE.get(view.movie.link).map { MovieDetail.parseDetails(Jsoup.parse(it), view.movie.type) }
                     .doOnNext { mView?.movie?.detailSaveKey?.let { key -> CacheLoader.cacheDisk(key to it) } }
         } ?: Flowable.empty()
     }
     val model: BaseModel<String, MovieDetail> = object : AbstractBaseModel<String, MovieDetail>(loadFromNet) {
         override fun requestFromCache(t: String): Flowable<MovieDetail> {
-            val disk = mView?.let {
-                view ->
-                CacheLoader.acache.getAsString(view.movie.detailSaveKey)?.let {
+            val disk = mView?.let { view ->
+                CacheLoader.justDisk(view.movie.detailSaveKey, false).map {
                     val old = AppContext.gson.fromJson<MovieDetail>(it)
                     if (old != null && mView?.movie?.type != DataSourceType.XYZ) {
                         val new = old.checkUrl(JAVBusService.defaultFastUrl)
@@ -39,7 +36,7 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
                         new
                     } else old
                 }
-            }?.toSingle()?.toFlowable() ?: Flowable.empty<MovieDetail>()
+            } ?: Flowable.empty<MovieDetail>()
             return Flowable.concat(disk, requestFor(t)).firstOrError().toFlowable()
         }
     }
@@ -51,7 +48,7 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
         loadDetail()
         mView?.movie?.let {
             if (!fromHistory)
-                historyService.insert(History(it.DBtype, Date(),it.toJsonString()))
+                historyService.insert(History(it.DBtype, Date(), it.toJsonString()))
         }
 
     }
@@ -69,7 +66,7 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
 
     override fun loadDetail() {
         mView?.movie?.link?.let {
-            KLog.d("detailurl :$it  , movie ${mView?.movie}")
+            KLog.d("detail url :$it  , movie ${mView?.movie}")
             model.requestFromCache(it).compose(SchedulersCompat.io())
                     .compose(SchedulersCompat.io())
                     .doOnTerminate { mView?.dismissLoading() }
