@@ -25,25 +25,25 @@ class MovieCollectFragment : AbsMovieListFragment(), LinkListContract.LinkListVi
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         menu?.findItem(R.id.action_collect_dir_edit)?.setOnMenuItemClickListener {
-            holder.showDialogWithData(actGroupMap.keys.toList()) { delActionsParams, addActionsParams ->
-                KLog.d("$delActionsParams $addActionsParams")
-                if (delActionsParams.isNotEmpty()) {
-                    delActionsParams.forEach {
-                        try {
-                            categoryService.delete(it, ActressDBType)
-                        } catch (e: Exception) {
-                            viewContext.toast("不能删除默认分类")
-                        }
-                    }
-                }
-
-                if (addActionsParams.isNotEmpty()) {
-                    addActionsParams.forEach {
-                        categoryService.insert(it)
-                    }
-                }
-                mBasePresenter?.onRefresh()
-            }
+//            holder.showDialogWithData(actGroupMap.keys.toList()) { delActionsParams, addActionsParams ->
+//                KLog.d("$delActionsParams $addActionsParams")
+//                if (delActionsParams.isNotEmpty()) {
+//                    delActionsParams.forEach {
+//                        try {
+//                            categoryService.delete(it, ActressDBType)
+//                        } catch (e: Exception) {
+//                            viewContext.toast("不能删除默认分类")
+//                        }
+//                    }
+//                }
+//
+//                if (addActionsParams.isNotEmpty()) {
+//                    addActionsParams.forEach {
+//                        categoryService.insert(it)
+//                    }
+//                }
+//                mBasePresenter?.onRefresh()
+//            }
             true
         }
 
