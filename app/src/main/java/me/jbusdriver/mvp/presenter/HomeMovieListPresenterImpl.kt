@@ -35,7 +35,7 @@ open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink)
         //add his
         val pageLink = PageLink(page = page, title = type.key, link = urlN)
         addHistory(pageLink)
-        service.get(urlN, if (IsAll) "all" else null).doOnNext {
+        service.get(urlN, if (IsAll) "all" else null).addUserCase().doOnNext {
             if (page == 1) CacheLoader.lru.put(saveKey, it)
         }.map { Jsoup.parse(it) }.doOnError {
             //可能网址被封

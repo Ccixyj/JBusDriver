@@ -64,7 +64,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, val isHistory: Boole
         override fun requestFor(t: Int) =
                 (if (t == 1) linkData.link else "${linkData.link.urlHost}$urlPath/$t").let {
                     KLog.i("fromCallable page $pageInfo requestFor : $it")
-                    JAVBusService.INSTANCE.get(it, if (IsAll) "all" else null).map { Jsoup.parse(it) }
+                    JAVBusService.INSTANCE.get(it, if (IsAll) "all" else null).addUserCase().map { Jsoup.parse(it) }
                 }.doOnNext {
                     if (t == 1) CacheLoader.lru.put("${linkData.link}$IsAll", it.toString())
                 }

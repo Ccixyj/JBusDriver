@@ -93,6 +93,7 @@ fun <R> Flowable<R>.addUserCase(sec: Int = 12) =
         this.timeout(sec.toLong(), TimeUnit.SECONDS, Schedulers.io()) //超时
                 .subscribeOn(Schedulers.io())
                 .take(1)
+                .filter { it != null }
 //endregion
 
 //region screenWidth
