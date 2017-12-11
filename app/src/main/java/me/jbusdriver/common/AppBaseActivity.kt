@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.Loader
+import com.afollestad.materialdialogs.MaterialDialog
 import me.jbusdriver.mvp.BaseView
 import me.jbusdriver.mvp.presenter.BasePresenter
 import me.jbusdriver.mvp.presenter.loader.PresenterFactory
@@ -15,16 +16,17 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * Created by Administrator on 2016/7/21 0021.
  */
-abstract class AppBaseActivity<P : BasePresenter<V>, V : BaseView> : BaseActivity(), LoaderManager.LoaderCallbacks<P>, PresenterFactory<P> {
+abstract class AppBaseActivity<P : BasePresenter<V>, V : BaseView> : BaseActivity(), LoaderManager.LoaderCallbacks<P>, PresenterFactory<P>, BaseView {
     /**
      * Do we need to call [.doStart] from the [.onLoadFinished] method.
      * Will be true if SPresenter wasn't loaded when [.onStart] is reached
      */
     private val mNeedToCallStart = AtomicBoolean(false)
-    protected var mFirstStart: Boolean = false//Is this the first start of the activity (after onCreate)
+    private var mFirstStart: Boolean = false//Is this the first start of the activity (after onCreate)
     protected var mBasePresenter: P? = null
-
     private var mUniqueLoaderIdentifier: Int = 0//Unique identifier for the loader, persisted across re-creation
+
+    private var placeDialogHolder: MaterialDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,6 +107,17 @@ abstract class AppBaseActivity<P : BasePresenter<V>, V : BaseView> : BaseActivit
         mBasePresenter = null
     }
 
+
+
+   override fun showLoading() {
+        if (viewContext is AppContext) return
+        placeDialogHolder = MaterialDialog.Builder(viewContext).content("正在加载...").progress(true, 0).show()
+    }
+
+    override fun dismissLoading() {
+        placeDialogHolder?.dismiss()
+        placeDialogHolder = null
+    }
 
     companion object {
         val sViewCounter = AtomicInteger(Integer.MIN_VALUE)

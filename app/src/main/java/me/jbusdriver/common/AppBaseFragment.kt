@@ -6,6 +6,8 @@ import android.support.v4.content.Loader
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.afollestad.materialdialogs.MaterialDialog
+import me.jbusdriver.mvp.BaseView
 import me.jbusdriver.mvp.presenter.BasePresenter
 import me.jbusdriver.mvp.presenter.loader.PresenterFactory
 import me.jbusdriver.mvp.presenter.loader.PresenterLoader
@@ -16,21 +18,23 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**
  * Created by Administrator on 2016/7/21 0021.
  */
-abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), LoaderManager.LoaderCallbacks<P>, PresenterFactory<P> {
+abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), LoaderManager.LoaderCallbacks<P>, PresenterFactory<P>, BaseView {
 
     /**
      * Do we need to call [.doStart] from the [.onLoadFinished] method.
      * Will be true if SPresenter wasn't loaded when [.onStart] is reached
      */
     private val mNeedToCallStart = AtomicBoolean(false)
-    protected var mFirstStart: Boolean = false//Is this the first start of the fragment (after onCreate)
-    protected var mViewReCreate = false //rootViewWeakRef 是否重新创建了
-    protected var isUserVisible: Boolean = false
+    private var mFirstStart: Boolean = false//Is this the first start of the fragment (after onCreate)
+    private var mViewReCreate = false //rootViewWeakRef 是否重新创建了
+    private var isUserVisible: Boolean = false
     protected var mBasePresenter: P? = null
-    protected var rootViewWeakRef: WeakReference<View>? = null
+    private var rootViewWeakRef: WeakReference<View>? = null
     private var mUniqueLoaderIdentifier: Int = 0//Unique identifier for the loader, persisted across re-creation
     //lazy load tag
     private var isLazyLoaded = false
+
+    private var placeDialogHolder: MaterialDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -172,11 +176,6 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
         rootViewWeakRef = null
     }
 
-    override fun onDetach() {
-        super.onDetach()
-    }
-
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE, true)
@@ -205,6 +204,16 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
 
     override fun onLoaderReset(loader: Loader<P>) {
         mBasePresenter = null
+    }
+
+    override fun showLoading() {
+        if (viewContext is AppContext) return
+        placeDialogHolder = MaterialDialog.Builder(viewContext).content("正在加载...").progress(true, 0).show()
+    }
+
+    override fun dismissLoading() {
+        placeDialogHolder?.dismiss()
+        placeDialogHolder = null
     }
 
 }
