@@ -1,6 +1,7 @@
 package me.jbusdriver.db.dao
 
 import android.content.ContentValues
+import android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE
 import com.squareup.sqlbrite2.BriteDatabase
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.getIntByColumn
@@ -18,8 +19,8 @@ class LinkItemDao(private val db: BriteDatabase) {
 
     fun insert(link: LinkItem): Long? {
         return try {
-            KLog.d("LinkItemDao ${db.writableDatabase},$link")
-            db.insert(LinkItemTable.TABLE_NAME, link.cv(true))
+            KLog.i("LinkItemDao ${db.writableDatabase},$link")
+            db.insert(LinkItemTable.TABLE_NAME, link.cv(true), CONFLICT_IGNORE)
         } catch (e: Exception) {
             null
         }
@@ -31,7 +32,7 @@ class LinkItemDao(private val db: BriteDatabase) {
         LinkItem(it.getIntByColumn(LinkItemTable.COLUMN_DB_TYPE), Date(it.getLongByColumn(LinkItemTable.COLUMN_CREATE_TIME)),
                 it.getStringByColumn(LinkItemTable.COLUMN_KEY) ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR) ?: ""
         )
-    }.take(1).blockingFirst()
+    }.blockingFirst()
 
 
     companion object {
@@ -50,14 +51,14 @@ class LinkItemDao(private val db: BriteDatabase) {
                     it.getStringByColumn(LinkItemTable.COLUMN_KEY) ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR) ?: "").apply {
                 categoryId = it.getIntByColumn(LinkItemTable.COLUMN_CATEGORY_ID)
             }
-        }.take(1).blockingFirst()
+        }.blockingFirst()
     }
 
     fun queryLink() = db.createQuery(LinkItemTable.TABLE_NAME, "SELECT * FROM ${LinkItemTable.TABLE_NAME} WHERE ${LinkItemTable.COLUMN_DB_TYPE} NOT IN (1,2)  ORDER BY ${LinkItemTable.COLUMN_ID} DESC").mapToList {
         LinkItem(it.getIntByColumn(LinkItemTable.COLUMN_DB_TYPE), Date(it.getLongByColumn(LinkItemTable.COLUMN_CREATE_TIME)),
                 it.getStringByColumn(LinkItemTable.COLUMN_KEY) ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR) ?: ""
         )
-    }.take(1).blockingFirst()
+    }.blockingFirst()
 
     fun updateByCategoryId(id: Int, type: Int) {
         val cv = ContentValues().apply { putNull(LinkItemTable.COLUMN_CATEGORY_ID) }

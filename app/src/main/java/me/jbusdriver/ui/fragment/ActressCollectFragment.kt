@@ -9,6 +9,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuInflater
+import android.widget.Toast
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.transition.Transition
@@ -23,7 +24,9 @@ import kotlinx.android.synthetic.main.layout_menu_op_head.view.*
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.common.*
+import me.jbusdriver.db.bean.ActressCategory
 import me.jbusdriver.db.bean.Category
+import me.jbusdriver.db.bean.LinkCategory
 import me.jbusdriver.db.bean.MovieCategory
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.mvp.ActressCollectContract
@@ -148,7 +151,6 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
     private val holder by lazy {
         CollectDirEditHolder(viewContext)
     }
-    private val categoryService by lazy { CategoryService() }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
@@ -158,7 +160,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                 if (delActionsParams.isNotEmpty()) {
                     delActionsParams.forEach {
                         try {
-                            categoryService.delete(it, ActressDBType)
+                            CategoryService.delete(it, ActressDBType)
                         } catch (e: Exception) {
                             viewContext.toast("不能删除默认分类")
                         }
@@ -167,7 +169,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 
                 if (addActionsParams.isNotEmpty()) {
                     addActionsParams.forEach {
-                        categoryService.insert(it)
+                        CategoryService.insert(it)
                     }
                 }
                 mBasePresenter?.onRefresh()
@@ -183,10 +185,11 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
         actGroupMap.clear()
         if (AppConfiguration.enableCategory) {
             Flowable.just(dd).compose(SchedulersCompat.io()).map {
-                actGroupMap.putAll(it.groupBy { it.category })
+                actGroupMap.putAll(it.groupBy { it.categoryId }.mapKeys { CategoryService.getById(it.key) })
                 //添加其他未使用分类
+                KLog.i("showContents actGroupMap $actGroupMap $ActressCategory $MovieCategory $LinkCategory ")
                 val usedId = actGroupMap.keys.mapNotNull { it.id }
-                categoryService.queryTreeByLike(2).filterNot { usedId.contains(it.id) }
+                CategoryService.queryTreeByLike(2).filterNot { usedId.contains(it.id) }
                         .forEach {
                             actGroupMap.put(it, emptyList())
                         }

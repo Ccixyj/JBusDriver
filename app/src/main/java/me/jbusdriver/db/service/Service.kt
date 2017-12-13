@@ -1,12 +1,12 @@
 package me.jbusdriver.db.service
 
 import android.text.TextUtils
+import com.umeng.analytics.pro.db
 import io.reactivex.Observable
 import me.jbusdriver.common.KLog
+import me.jbusdriver.db.CategoryTable
 import me.jbusdriver.db.DB
-import me.jbusdriver.db.bean.Category
-import me.jbusdriver.db.bean.DBPage
-import me.jbusdriver.db.bean.History
+import me.jbusdriver.db.bean.*
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.bean.Movie
@@ -16,7 +16,7 @@ import me.jbusdriver.ui.data.AppConfiguration
 /**
  * Created by Administrator on 2017/9/18 0018.
  */
-class HistoryService {
+object HistoryService {
 
     private val dao by lazy { DB.historyDao }
 
@@ -37,10 +37,12 @@ class HistoryService {
     }
 }
 
-class CategoryService {
+object CategoryService {
     private val dao by lazy { DB.categoryDao }
-    private val linkService by lazy { LinkService() }
-    private val catCache = hashMapOf<Long, Category>()
+    private val catCache = hashMapOf(
+            1L to MovieCategory,
+            2L to ActressCategory,
+            3L to LinkCategory)
 //    apply {
 //        category = if (it.categoryId > 0) {
 //            cats.getOrPut(it.categoryId) { categoryDao.findById(it.categoryId) ?: ActressCategory }
@@ -49,8 +51,16 @@ class CategoryService {
 //        }
 //    }
 
-    fun insert(category: Category) {
-        catCache.put(dao.insert(category), category)
+    fun insert(category: Category): Category {
+        return dao.insert(category).let {
+            if (it != -1L) {
+                catCache.put(it, category)
+                category.id = it.toInt()
+            } else {
+                KLog.w("save $category error return id : $it")
+            }
+            category
+        }
     }
 
     /**
@@ -61,7 +71,7 @@ class CategoryService {
         if (category.id in 1..3) error("cant delete category $category because id is in 1..3")
         catCache.remove(category.id?.toLong())
         dao.delete(category)
-        linkService.resetCategory(category, actressDBType)
+        LinkService.resetCategory(category, actressDBType)
     }
 
     /**
@@ -75,9 +85,17 @@ class CategoryService {
         }
     }
 
+
+    fun getById(cId: Int): Category {
+        if (cId < 0) return error("Category id must > 0")
+        return catCache.getOrPut(cId.toLong()) {
+            return dao.findById(cId)
+        }
+    }
+
 }
 
-class LinkService {
+object LinkService {
     private val dao by lazy { DB.linkDao }
 
     fun save(data: ILink) = dao.insert(data.convertDBItem()) != null

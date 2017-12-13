@@ -2,6 +2,7 @@ package me.jbusdriver.db.bean
 
 import android.content.ContentValues
 import android.content.Context
+import com.google.gson.annotations.Expose
 import me.jbusdriver.common.AppContext
 import me.jbusdriver.common.fromJson
 import me.jbusdriver.common.toast
@@ -17,12 +18,13 @@ import java.util.*
 
 data class Category(val name: String, val pid: Int = -1, val tree: String) {
     var id: Int? = null
+
+    @delegate:Transient
     val depth: Int by lazy { tree.split("/").filter { it.isNotBlank() }.size }
 
     fun cv(): ContentValues = ContentValues().also {
         it.put(CategoryTable.COLUMN_NAME, name)
         it.put(CategoryTable.COLUMN_P_ID, pid)
-        it.put(CategoryTable.COLUMN_DEPTH, depth)
         it.put(CategoryTable.COLUMN_TREE, tree)
     }
 
@@ -37,7 +39,11 @@ val LinkCategory = Category("默认链接分类", -1, "/").apply { id = 3 }
 
 data class LinkItem(val type: Int, val createTime: Date, val key: String, val jsonStr: String, var categoryId: Int = -1) {
     var id: Int? = null
-    fun getLinkValue() = doGet(type, jsonStr)
+    fun getLinkValue() = doGet(type, jsonStr).apply {
+        if (this is ICollectCategory) {
+            this.categoryId = this@LinkItem.categoryId
+        }
+    }
 }
 
 data class History(val type: Int, val createTime: Date, val jsonStr: String, var isAll: Boolean = false) {
@@ -78,6 +84,10 @@ private fun doGet(type: Int, jsonStr: String) = when (type) {
         LinkCollector.checkUrls(mutableListOf(it)).first()
     }
     else -> error("$type : $jsonStr has no matched class ")
+}
+
+interface ICollectCategory {
+    var categoryId: Int
 }
 
 

@@ -1,6 +1,7 @@
 package me.jbusdriver.db.dao
 
 import android.content.ContentValues
+import android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE
 import com.squareup.sqlbrite2.BriteDatabase
 import io.reactivex.Observable
 import me.jbusdriver.common.getIntByColumn
@@ -17,7 +18,7 @@ import java.util.*
 class HistoryDao(private val db: BriteDatabase) {
 
 
-    fun insert(history: History) = db.insert(HistoryTable.TABLE_NAME, history.cv(true))
+    fun insert(history: History) = db.insert(HistoryTable.TABLE_NAME, history.cv(true) , CONFLICT_IGNORE)
 
     fun update(histories: List<History>) {
         val newTransaction = db.newTransaction()

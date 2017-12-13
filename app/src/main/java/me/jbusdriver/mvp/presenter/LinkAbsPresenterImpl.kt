@@ -31,7 +31,6 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, val isHistory: Boole
                 //清空dataPageCache
                 dataPageCache.clear()
             })
-    private val historyService by lazy { HistoryService() }
 
     override fun onFirstLoad() {
         val link = when (linkData) {
@@ -74,7 +73,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, val isHistory: Boole
     }
 
     protected open fun addHistory(link: ILink) {
-        historyService.insert(History(link.DBtype, Date(), link.toJsonString(), IsAll))
+        HistoryService.insert(History(link.DBtype, Date(), link.toJsonString(), IsAll))
     }
 
     override fun onRefresh() {

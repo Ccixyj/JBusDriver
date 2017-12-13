@@ -34,7 +34,7 @@ class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseQuickAdapter<
                             .subscribeWith(object : SimpleSubscriber<Palette>() {
                                 override fun onNext(it: Palette) {
                                     super.onNext(it)
-                                    val swatch = listOf(it.lightMutedSwatch, it.lightVibrantSwatch, it.vibrantSwatch, it.mutedSwatch).filterNotNull()
+                                    val swatch = listOfNotNull(it.lightMutedSwatch, it.lightVibrantSwatch, it.vibrantSwatch, it.mutedSwatch)
                                     if (!swatch.isEmpty()) {
                                         swatch[randomNum(swatch.size)].let {
                                             holder.setBackgroundColor(R.id.tv_actress_name, it.rgb)

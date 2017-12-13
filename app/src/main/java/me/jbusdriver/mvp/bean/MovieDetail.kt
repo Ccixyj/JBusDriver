@@ -5,9 +5,13 @@ import me.jbusdriver.common.KLog
 import me.jbusdriver.common.urlHost
 import me.jbusdriver.db.bean.ActressCategory
 import me.jbusdriver.db.bean.Category
+import me.jbusdriver.db.bean.ICollectCategory
+import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.ui.data.enums.DataSourceType
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 /**
  * Created by Administrator on 2017/4/16.
@@ -100,13 +104,13 @@ interface IAttr
 
 data class Header(val name: String, val value: String, override val link: String) : ILink
 data class Genre(val name: String, override val link: String) : ILink
-data class ActressInfo(val name: String, val avatar: String, override val link: String, var tag: String? = null) : ILink {
-
+data class ActressInfo(val name: String, val avatar: String, override val link: String, var tag: String? = null) : ILink, ICollectCategory {
 
     @Transient
-    var category: Category = ActressCategory
+    override var categoryId: Int = ActressCategory.id ?: 2
 
     companion object {
+
         fun parseActressAttrs(doc: Document): ActressAttrs {
             val frame = doc.select(".avatar-box")
             val photo = frame.select("img")
@@ -120,6 +124,10 @@ data class ActressInfo(val name: String, val avatar: String, override val link: 
                 ActressInfo(img.attr("title"), img.attr("src"), it.attr("href"), it.select("button").text())
             } ?: emptyList()
         }
+    }
+
+    override fun toString(): String {
+        return "ActressInfo(name='$name', avatar='$avatar', link='$link', tag=$tag  categoryId $categoryId) "
     }
 
 }

@@ -47,14 +47,13 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
         }
     }
 
-    private val historyService by lazy { HistoryService() }
 
     override fun onFirstLoad() {
         super.onFirstLoad()
         loadDetail()
         mView?.movie?.let {
             if (!fromHistory)
-                historyService.insert(History(it.DBtype, Date(), it.toJsonString()))
+                HistoryService.insert(History(it.DBtype, Date(), it.toJsonString()))
         }
 
     }

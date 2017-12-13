@@ -1,6 +1,7 @@
 package me.jbusdriver.db.dao
 
 import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import com.squareup.sqlbrite2.BriteDatabase
 import me.jbusdriver.common.getIntByColumn
 import me.jbusdriver.common.getStringByColumn
@@ -13,15 +14,19 @@ import me.jbusdriver.db.bean.Category
 class CategoryDao(private val db: BriteDatabase) {
 
 
-    fun insert(category: Category) = db.insert(CategoryTable.TABLE_NAME, category.cv())
+    fun insert(category: Category) = try {
+        db.insert(CategoryTable.TABLE_NAME, category.cv(), SQLiteDatabase.CONFLICT_IGNORE)
+    } catch (e: Exception) {
+        -1L
+    }
 
     fun delete(category: Category) {
         db.delete(CategoryTable.TABLE_NAME, "${CategoryTable.COLUMN_ID} = ? ", category.id.toString())
     }
 
-    fun findById(cId: Int): Category? {
+    fun findById(cId: Int): Category {
         return db.createQuery(CategoryTable.TABLE_NAME, "select * from ${CategoryTable.TABLE_NAME}  where ${CategoryTable.COLUMN_ID} = ?", cId.toString())
-                .mapToOne {  toCategory(it) }.blockingFirst()
+                .mapToOne { toCategory(it) }.blockingSingle()
     }
 
     private fun toCategory(it: Cursor): Category {
@@ -32,8 +37,8 @@ class CategoryDao(private val db: BriteDatabase) {
         }
     }
 
-    fun queryTreeByLike(like: String) : List<Category>{
-       return db.createQuery(CategoryTable.TABLE_NAME,"select * from ${CategoryTable.TABLE_NAME}  where ${CategoryTable.COLUMN_TREE} like ? ",like)
+    fun queryTreeByLike(like: String): List<Category> {
+        return db.createQuery(CategoryTable.TABLE_NAME, "select * from ${CategoryTable.TABLE_NAME}  where ${CategoryTable.COLUMN_TREE} like ? ", like)
                 .mapToList { toCategory(it) }.blockingFirst()
     }
 }

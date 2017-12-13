@@ -12,6 +12,7 @@ import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.*
 import java.io.File
 import java.lang.reflect.Type
+import kotlin.concurrent.thread
 
 /**
  * Created by Administrator on 2017/9/14.
@@ -62,7 +63,6 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
             null
         }
     }
-    protected val linkService by lazy { LinkService() }
 
     private fun createDir(collectDir: String): String? {
         File(collectDir.trim()).let {
@@ -108,20 +108,23 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
             AppContext.instace.toast("sd卡可用空间不足100M")
         }
         return collectCache?.getAsString(key)?.let {
-            try {
-                transform(it).let { checkUrls(it) }.apply {
-                    //迁移到db
-                    Schedulers.io().scheduleDirect {
-                        linkService.save(this.asReversed())
-                    }
-                }
+            val res = try {
+                transform(it).let { checkUrls(it) }
             } catch (e: Exception) {
                 KLog.w("refreshData key $e")
                 mutableListOf<T>()
-            } finally {
-                backUp(key)//生成备份
-                collectCache?.remove(key)
             }
+            //迁移到db
+            if (res.isNotEmpty()) {
+                LinkService.save(res.asReversed())
+                KLog.i("scheduleDirect LinkService $key.save ok;")
+                backUp(key)//生成备份
+                KLog.i("scheduleDirect backUp $key ok;")
+                collectCache?.remove(key)
+                KLog.i("scheduleDirect remove $key ok;")
+            }
+            //返回
+            res
         } ?: loadFromDb()
     }
 
@@ -156,7 +159,7 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
     override fun removeCollect(data: T): Boolean {
         val d = dataList.remove(dataList.find { it.uniqueKey == data.uniqueKey })
         if (d) {
-            if (linkService.remove(data)) AppContext.instace.toast("已取消收藏")
+            if (LinkService.remove(data)) AppContext.instace.toast("已取消收藏")
             return true
         }
         return false
@@ -164,7 +167,7 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
 
     private fun save(data: T) {
         Schedulers.io().scheduleDirect {
-            linkService.save(data)
+            LinkService.save(data)
         }
     }
 
@@ -200,7 +203,7 @@ object MovieCollector : AbsCollectorImpl<Movie>() {
         RxBus.post(CollectErrorEvent(key, "收藏电影数据格式错误,已转存至${bakFile.absolutePath}"))
     }
 
-    override fun loadFromDb() = linkService.queryMovies().toMutableList()
+    override fun loadFromDb() = LinkService.queryMovies().toMutableList()
 }
 
 
@@ -229,7 +232,7 @@ object ActressCollector : AbsCollectorImpl<ActressInfo>() {
         RxBus.post(CollectErrorEvent(key, "收藏演员数据格式错误,已转存至${bakFile.absolutePath}"))
     }
 
-    override fun loadFromDb(): MutableList<ActressInfo> = linkService.queryActress().toMutableList()
+    override fun loadFromDb(): MutableList<ActressInfo> = LinkService.queryActress().toMutableList()
 }
 
 /**
@@ -265,7 +268,7 @@ object LinkCollector : AbsCollectorImpl<ILink>() {
         RxBus.post(CollectErrorEvent(key, "收藏链接数据格式错误,已转存至${bakFile.absolutePath}"))
     }
 
-    override fun loadFromDb(): MutableList<ILink> = linkService.queryLink().toMutableList()
+    override fun loadFromDb(): MutableList<ILink> = LinkService.queryLink().toMutableList()
 
     private object ILinkAdapter : JsonSerializer<ILink>, JsonDeserializer<ILink> {
         private const val CLASSNAME = "LINK_CLASS"

@@ -11,7 +11,6 @@ class CollectDataHelper<in T : ILink> {
 
     private var isInit = false
     private val collectGroupMap by lazy { mutableMapOf<Category, List<T>>() }
-    private val categoryService by lazy { CategoryService() }
 
     private fun getCollectGroup(): Map<Category, List<T>> {
         if (!isInit) error("must call initFromData first")
@@ -25,7 +24,7 @@ class CollectDataHelper<in T : ILink> {
 //        collectGroupMap.putAll(data.groupBy { it.category })
         //添加其他未使用分类
 //        val usedId = actGroupMap.keys.mapNotNull { it.id }
-//        categoryService.queryTreeByLike(2).filterNot { usedId.contains(it.id) }
+//        CategoryService.queryTreeByLike(2).filterNot { usedId.contains(it.id) }
 //                .forEach {
 //                    actGroupMap.put(it, emptyList())
 //                }

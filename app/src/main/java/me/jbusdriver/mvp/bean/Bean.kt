@@ -2,6 +2,7 @@ package me.jbusdriver.mvp.bean
 
 import me.jbusdriver.common.toJsonString
 import me.jbusdriver.common.urlPath
+import me.jbusdriver.db.bean.ICollectCategory
 import me.jbusdriver.db.bean.LinkItem
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.enums.SearchType
@@ -49,7 +50,8 @@ val ILink.uniqueKey: String
         else -> link.urlPath
     }
 
-fun ILink.convertDBItem() = LinkItem(this.DBtype, Date(), this.uniqueKey, this.toJsonString())
+fun ILink.convertDBItem() = LinkItem(this.DBtype, Date(), this.uniqueKey, this.toJsonString(),
+        if (this is ICollectCategory && this.categoryId >0) this.categoryId else if (this.DBtype in 1..2) this.DBtype else 3)
 
 data class PageLink(val page: Int, val title: String /*XX类型*/, override val link: String) : ILink
 

@@ -33,7 +33,6 @@ object CategoryTable {
     const val TABLE_NAME = "t_category"
     const val COLUMN_ID = "id"
     const val COLUMN_P_ID = "p_id"
-    const val COLUMN_DEPTH = "depth"
     const val COLUMN_NAME = "name"
     const val COLUMN_TREE = "tree"
 }
@@ -41,7 +40,6 @@ object CategoryTable {
 private const val CREATE_COLLECT_CATEGORY_SQL = "CREATE TABLE ${CategoryTable.TABLE_NAME} ( " +
         " ${CategoryTable.COLUMN_ID} INTEGER PRIMARY KEY AUTOINCREMENT," +
         " ${CategoryTable.COLUMN_P_ID} INTEGER  NOT NULL DEFAULT -1," +
-        " ${CategoryTable.COLUMN_DEPTH} INTEGER  NOT NULL," +
         " ${CategoryTable.COLUMN_NAME} NVARCHAR(100) NOT NULL ," +
         " ${CategoryTable.COLUMN_TREE} TEXT NOT NULL " +
         ")"
@@ -62,10 +60,10 @@ object LinkItemTable {
 
 private const val CREATE_LINK_ITEM_SQL = "CREATE TABLE ${LinkItemTable.TABLE_NAME} ( " +
         " ${LinkItemTable.COLUMN_ID} INTEGER PRIMARY KEY AUTOINCREMENT," +
-        " ${LinkItemTable.COLUMN_CATEGORY_ID} INTEGER ," +
+        " ${LinkItemTable.COLUMN_CATEGORY_ID} INTEGER  DEFAULT -1 ," +
         " ${LinkItemTable.COLUMN_DB_TYPE} TINYINT  NOT NULL ," +
         " ${LinkItemTable.COLUMN_CREATE_TIME} INTEGER  DEFAULT 0 ," +
-        " ${LinkItemTable.COLUMN_KEY} VARCHAR(100) NOT NULL UNIQUE," +
+        " ${LinkItemTable.COLUMN_KEY} VARCHAR(100) NOT NULL ," +
         " ${LinkItemTable.COLUMN_JSON_STR} TEXT  NOT NULL " +
         ")"
 //endregion
