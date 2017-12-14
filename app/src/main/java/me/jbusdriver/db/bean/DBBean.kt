@@ -2,8 +2,8 @@ package me.jbusdriver.db.bean
 
 import android.content.ContentValues
 import android.content.Context
-import com.google.gson.annotations.Expose
 import me.jbusdriver.common.AppContext
+import me.jbusdriver.common.arrayMapof
 import me.jbusdriver.common.fromJson
 import me.jbusdriver.common.toast
 import me.jbusdriver.db.CategoryTable
@@ -23,6 +23,7 @@ data class Category(val name: String, val pid: Int = -1, val tree: String) {
     val depth: Int by lazy { tree.split("/").filter { it.isNotBlank() }.size }
 
     fun cv(): ContentValues = ContentValues().also {
+        if (id != null) it.put(CategoryTable.COLUMN_ID, id)
         it.put(CategoryTable.COLUMN_NAME, name)
         it.put(CategoryTable.COLUMN_P_ID, pid)
         it.put(CategoryTable.COLUMN_TREE, tree)
@@ -34,7 +35,8 @@ data class Category(val name: String, val pid: Int = -1, val tree: String) {
 
 val MovieCategory = Category("默认电影分类", -1, "/").apply { id = 1 }
 val ActressCategory = Category("默认演员分类", -1, "/").apply { id = 2 }
-val LinkCategory = Category("默认链接分类", -1, "/").apply { id = 3 }
+val LinkCategory = Category("默认链接分类", -1, "/").apply { id = 10 }
+val AllFirstParentDBCategoryGroup by lazy { arrayMapof(1 to MovieCategory, 2 to ActressCategory, 10 to LinkCategory) }
 
 
 data class LinkItem(val type: Int, val createTime: Date, val key: String, val jsonStr: String, var categoryId: Int = -1) {

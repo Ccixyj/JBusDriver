@@ -4,9 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import me.jbusdriver.common.KLog
-import me.jbusdriver.db.bean.ActressCategory
-import me.jbusdriver.db.bean.LinkCategory
-import me.jbusdriver.db.bean.MovieCategory
+import me.jbusdriver.db.bean.AllFirstParentDBCategoryGroup
 
 
 //region history
@@ -107,9 +105,10 @@ class CollectDBOpenHelper(context: Context) : SQLiteOpenHelper(context, COLLECT_
         db?.execSQL(CREATE_LINK_ITEM_SQL)
         db?.execSQL(CREATE_COLLECT_CATEGORY_SQL)
         //添加默认的分类
-        db?.insertWithOnConflict(CategoryTable.TABLE_NAME, null, MovieCategory.cv(), SQLiteDatabase.CONFLICT_NONE)
-        db?.insertWithOnConflict(CategoryTable.TABLE_NAME, null, ActressCategory.cv(), SQLiteDatabase.CONFLICT_NONE)
-        db?.insertWithOnConflict(CategoryTable.TABLE_NAME, null, LinkCategory.cv(), SQLiteDatabase.CONFLICT_NONE)
+        AllFirstParentDBCategoryGroup.forEach {
+            db?.insertWithOnConflict(CategoryTable.TABLE_NAME, null, it.value.cv(), SQLiteDatabase.CONFLICT_NONE)
+        }
+
 
     }
 

@@ -2,7 +2,9 @@ package me.jbusdriver.mvp.bean
 
 import me.jbusdriver.common.toJsonString
 import me.jbusdriver.common.urlPath
+import me.jbusdriver.db.bean.AllFirstParentDBCategoryGroup
 import me.jbusdriver.db.bean.ICollectCategory
+import me.jbusdriver.db.bean.LinkCategory
 import me.jbusdriver.db.bean.LinkItem
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.enums.SearchType
@@ -31,17 +33,24 @@ val ILink.des: String
         is PageLink -> "$title 第 $page 页" /*${if (isAll) "全部" else "已有种子"}电影*/
         else -> error(" $this has no matched class for des")
     }
+
 const val MovieDBType = 1
 const val ActressDBType = 2
+const val HeaderDBType = 3
+const val GenreDBType = 4
+const val SearchLinkDBType = 5
+const val PageLinkDBType = 6
+
+val AllDBType by lazy { listOf(MovieDBType, ActressDBType, HeaderDBType, GenreDBType, SearchLinkDBType, PageLinkDBType) }
 
 val ILink.DBtype: Int
     inline get() = when (this) {
         is Movie -> MovieDBType
         is ActressInfo -> ActressDBType
-        is Header -> 3
-        is Genre -> 4
-        is SearchLink -> 5
-        is PageLink -> 6
+        is Header -> HeaderDBType
+        is Genre -> GenreDBType
+        is SearchLink -> SearchLinkDBType
+        is PageLink -> PageLinkDBType
         else -> error(" $this has no matched class for des")
     }
 val ILink.uniqueKey: String
@@ -51,7 +60,10 @@ val ILink.uniqueKey: String
     }
 
 fun ILink.convertDBItem() = LinkItem(this.DBtype, Date(), this.uniqueKey, this.toJsonString(),
-        if (this is ICollectCategory && this.categoryId >0) this.categoryId else if (this.DBtype in 1..2) this.DBtype else 3)
+        when {
+            this is ICollectCategory && this.categoryId > 0 -> categoryId
+            else -> AllFirstParentDBCategoryGroup[this.DBtype]?.id ?: LinkCategory.id ?: -1
+        })
 
 data class PageLink(val page: Int, val title: String /*XX类型*/, override val link: String) : ILink
 

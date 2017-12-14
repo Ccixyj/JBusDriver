@@ -26,7 +26,7 @@ class MineCollectFragment : TabViewPagerFragment<MineCollectContract.MineCollect
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.menu_collect, menu)
+        if (AppConfiguration.enableCategory) inflater?.inflate(R.menu.menu_collect, menu)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {

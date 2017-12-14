@@ -9,7 +9,6 @@ import android.support.v7.widget.StaggeredGridLayoutManager
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuInflater
-import android.widget.Toast
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.transition.Transition
@@ -26,7 +25,6 @@ import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.common.*
 import me.jbusdriver.db.bean.ActressCategory
 import me.jbusdriver.db.bean.Category
-import me.jbusdriver.db.bean.LinkCategory
 import me.jbusdriver.db.bean.MovieCategory
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.mvp.ActressCollectContract
@@ -37,7 +35,7 @@ import me.jbusdriver.mvp.presenter.ActressCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.collect.ActressCollector
-import me.jbusdriver.ui.helper.CollectDataHelper
+import me.jbusdriver.ui.helper.CollectCategoryHelper
 import me.jbusdriver.ui.holder.CollectDirEditHolder
 import java.util.*
 
@@ -145,17 +143,14 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 
     override val layoutId: Int = R.layout.layout_swipe_recycle
 
-    private val dataHelper by lazy { CollectDataHelper<ActressInfo>() }
-    private val actGroupMap by lazy { mutableMapOf<Category, List<ActressInfo>>() }
+    private val dataHelper by lazy { CollectCategoryHelper<ActressInfo>() }
 
-    private val holder by lazy {
-        CollectDirEditHolder(viewContext)
-    }
+    private val holder by lazy { CollectDirEditHolder(viewContext) }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
         menu?.findItem(R.id.action_collect_dir_edit)?.setOnMenuItemClickListener {
-            holder.showDialogWithData(actGroupMap.keys.toList()) { delActionsParams, addActionsParams ->
+            holder.showDialogWithData(dataHelper.getCollectGroup().keys.toList()) { delActionsParams, addActionsParams ->
                 KLog.d("$delActionsParams $addActionsParams")
                 if (delActionsParams.isNotEmpty()) {
                     delActionsParams.forEach {
@@ -181,20 +176,11 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 
     override fun showContents(data: List<*>) {
         val dd = data as List<ActressInfo>
-        dataHelper.initFromData(dd)
-        actGroupMap.clear()
         if (AppConfiguration.enableCategory) {
-            Flowable.just(dd).compose(SchedulersCompat.io()).map {
-                actGroupMap.putAll(it.groupBy { it.categoryId }.mapKeys { CategoryService.getById(it.key) })
-                //添加其他未使用分类
-                KLog.i("showContents actGroupMap $actGroupMap $ActressCategory $MovieCategory $LinkCategory ")
-                val usedId = actGroupMap.keys.mapNotNull { it.id }
-                CategoryService.queryTreeByLike(2).filterNot { usedId.contains(it.id) }
-                        .forEach {
-                            actGroupMap.put(it, emptyList())
-                        }
-                actGroupMap
-            }.subscribeBy {
+            Flowable.just(dd).map {
+                dataHelper.initFromData(dd, ActressCategory.id!!)
+                dataHelper.getCollectGroup()
+            }.compose(SchedulersCompat.io()).subscribeBy {
                 KLog.d("showContents group  $it")
                 adapter.addData(reloadAdapterData(it))
                 adapter.expand(0)
@@ -202,10 +188,6 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
         } else {
             adapter.addData(reloadAdapterData(mapOf(MovieCategory to dd)))
         }
-        //super.showContents(data)
-//        if (AppConfiguration.enableCategory) {
-//            adapter.expandAll()
-//        }
     }
 
     private fun reloadAdapterData(group: Map<Category, List<ActressInfo>>): List<ActressWrapper> {

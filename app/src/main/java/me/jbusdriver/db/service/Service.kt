@@ -1,17 +1,19 @@
 package me.jbusdriver.db.service
 
 import android.text.TextUtils
-import com.umeng.analytics.pro.db
 import io.reactivex.Observable
 import me.jbusdriver.common.KLog
-import me.jbusdriver.db.CategoryTable
 import me.jbusdriver.db.DB
-import me.jbusdriver.db.bean.*
+import me.jbusdriver.db.bean.AllFirstParentDBCategoryGroup
+import me.jbusdriver.db.bean.Category
+import me.jbusdriver.db.bean.DBPage
+import me.jbusdriver.db.bean.History
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.ui.data.AppConfiguration
+import java.util.*
 
 /**
  * Created by Administrator on 2017/9/18 0018.
@@ -39,10 +41,7 @@ object HistoryService {
 
 object CategoryService {
     private val dao by lazy { DB.categoryDao }
-    private val catCache = hashMapOf(
-            1L to MovieCategory,
-            2L to ActressCategory,
-            3L to LinkCategory)
+    private val catCache = HashMap(AllFirstParentDBCategoryGroup)
 //    apply {
 //        category = if (it.categoryId > 0) {
 //            cats.getOrPut(it.categoryId) { categoryDao.findById(it.categoryId) ?: ActressCategory }
@@ -54,7 +53,7 @@ object CategoryService {
     fun insert(category: Category): Category {
         return dao.insert(category).let {
             if (it != -1L) {
-                catCache.put(it, category)
+                catCache.put(it.toInt(), category)
                 category.id = it.toInt()
             } else {
                 KLog.w("save $category error return id : $it")
@@ -68,8 +67,8 @@ object CategoryService {
      * 重置所有收藏
      */
     fun delete(category: Category, actressDBType: Int) {
-        if (category.id in 1..3) error("cant delete category $category because id is in 1..3")
-        catCache.remove(category.id?.toLong())
+        if (category.id in 1..10) error("cant delete category $category because id is in 1..10")
+        catCache.remove(category.id)
         dao.delete(category)
         LinkService.resetCategory(category, actressDBType)
     }
@@ -77,18 +76,19 @@ object CategoryService {
     /**
      * movie :1
      * actress : 2
-     * link : 3
+     * ....
+     * link : 10
      */
-    fun queryTreeByLike(type: Int) = dao.queryTreeByLike("/$type/%").apply {
+    fun queryCategoryTreeLike(type: Int) = dao.queryTreeByLike("/$type/%").apply {
         this.forEach { v ->
-            v.id?.let { catCache.put(it.toLong(), v) }
+            v.id?.let { catCache.put(it, v) }
         }
     }
 
 
     fun getById(cId: Int): Category {
         if (cId < 0) return error("Category id must > 0")
-        return catCache.getOrPut(cId.toLong()) {
+        return catCache.getOrPut(cId) {
             return dao.findById(cId)
         }
     }
