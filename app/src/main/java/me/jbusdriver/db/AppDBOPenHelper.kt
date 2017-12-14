@@ -63,7 +63,7 @@ private const val CREATE_LINK_ITEM_SQL = "CREATE TABLE ${LinkItemTable.TABLE_NAM
         " ${LinkItemTable.COLUMN_CATEGORY_ID} INTEGER  DEFAULT -1 ," +
         " ${LinkItemTable.COLUMN_DB_TYPE} TINYINT  NOT NULL ," +
         " ${LinkItemTable.COLUMN_CREATE_TIME} INTEGER  DEFAULT 0 ," +
-        " ${LinkItemTable.COLUMN_KEY} VARCHAR(100) NOT NULL ," +
+        " ${LinkItemTable.COLUMN_KEY} VARCHAR(100) NOT NULL UNIQUE," +
         " ${LinkItemTable.COLUMN_JSON_STR} TEXT  NOT NULL " +
         ")"
 //endregion
