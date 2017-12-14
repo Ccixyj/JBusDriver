@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.view.PagerAdapter
 import android.view.View
@@ -40,7 +41,11 @@ class WatchLargeImageActivity : BaseActivity() {
         }
         vp_largeImage.adapter = MyViewPagerAdapter()
         vp_largeImage.currentItem = if (index == -1) 0 else index
-        StatusBarUtil.setTransparent(this)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            StatusBarUtil.setTransparent(this)
+        }
+
     }
 
 
@@ -72,6 +77,7 @@ class WatchLargeImageActivity : BaseActivity() {
                 loadImage(this, position)
             } ?: error("can not instantiateItem for $position in $imageViewList")
         }
+
         private fun loadImage(view: View, position: Int) {
             view.findViewById<View>(R.id.pb_large_progress).animate().alpha(1f).setDuration(300).start()
             val offset = Math.abs(vp_largeImage.currentItem - position)

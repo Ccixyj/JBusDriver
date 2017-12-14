@@ -7,8 +7,10 @@ import android.os.Bundle
 import android.support.v4.BuildConfig
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import com.jaeger.library.StatusBarUtil
 import com.umeng.analytics.MobclickAgent
 import io.reactivex.disposables.CompositeDisposable
+import jbusdriver.me.jbusdriver.R
 
 /**
  * Created by Administrator on 2016/8/11 0011.
@@ -24,7 +26,6 @@ abstract class BaseActivity : AppCompatActivity() {
         MobclickAgent.setDebugMode(jbusdriver.me.jbusdriver.BuildConfig.DEBUG)
         MobclickAgent.openActivityDurationTrack(BuildConfig.DEBUG)
         MobclickAgent.setScenarioType(this, MobclickAgent.EScenarioType.E_UM_NORMAL)
-
     }
 
     override fun onStart() {

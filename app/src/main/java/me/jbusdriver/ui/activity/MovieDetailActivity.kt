@@ -3,6 +3,7 @@ package me.jbusdriver.ui.activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.Toolbar
@@ -49,7 +50,10 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = movie.des
 
-        StatusBarUtil.setTransparent(this)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //忽略4.4.4以下版本状态栏的问题
+            StatusBarUtil.setTransparent(this)
+        }
         initWidget()
     }
 
