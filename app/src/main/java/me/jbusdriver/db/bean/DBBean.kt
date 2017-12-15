@@ -33,6 +33,9 @@ data class Category(val name: String, val pid: Int = -1, val tree: String) {
             other?.let { (it as? Category)?.id == this.id } ?: false
 }
 
+/**
+ * 预留 [3..9]的分类
+ */
 val MovieCategory = Category("默认电影分类", -1, "/").apply { id = 1 }
 val ActressCategory = Category("默认演员分类", -1, "/").apply { id = 2 }
 val LinkCategory = Category("默认链接分类", -1, "/").apply { id = 10 }

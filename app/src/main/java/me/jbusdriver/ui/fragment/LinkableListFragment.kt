@@ -29,9 +29,6 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
     override val recycleView: RecyclerView by lazy { rv_recycle }
     override val layoutManager: RecyclerView.LayoutManager  by lazy { LinearLayoutManager(viewContext) }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onRestartInstance(bundle: Bundle) {
         super.onRestartInstance(bundle)

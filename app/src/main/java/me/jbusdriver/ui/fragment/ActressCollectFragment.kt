@@ -14,7 +14,6 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-import com.chad.library.adapter.base.util.MultiTypeDelegate
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
@@ -24,13 +23,11 @@ import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.common.*
 import me.jbusdriver.db.bean.ActressCategory
-import me.jbusdriver.db.bean.Category
-import me.jbusdriver.db.bean.MovieCategory
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.mvp.ActressCollectContract
 import me.jbusdriver.mvp.bean.ActressDBType
 import me.jbusdriver.mvp.bean.ActressInfo
-import me.jbusdriver.mvp.bean.ActressWrapper
+import me.jbusdriver.mvp.bean.CollectLinkWrapper
 import me.jbusdriver.mvp.presenter.ActressCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.data.AppConfiguration
@@ -40,7 +37,7 @@ import me.jbusdriver.ui.holder.CollectDirEditHolder
 import java.util.*
 
 
-class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.ActressCollectPresenter, ActressCollectContract.ActressCollectView, ActressWrapper>(), ActressCollectContract.ActressCollectView {
+class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.ActressCollectPresenter, ActressCollectContract.ActressCollectView, CollectLinkWrapper<ActressInfo>>(), ActressCollectContract.ActressCollectView {
 
 
     override fun createPresenter() = ActressCollectPresenterImpl(ActressCollector)
@@ -52,16 +49,16 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
     }
 
 
-    override val adapter: BaseQuickAdapter<ActressWrapper, in BaseViewHolder> by lazy {
+    override val adapter: BaseQuickAdapter<CollectLinkWrapper<ActressInfo>, in BaseViewHolder> by lazy {
 
-        object : BaseQuickAdapter<ActressWrapper, BaseViewHolder>(null) {
+        object : BaseQuickAdapter<CollectLinkWrapper<ActressInfo>, BaseViewHolder>(null) {
             private val random = Random()
             private fun randomNum(number: Int) = Math.abs(random.nextInt() % number)
 
-            override fun convert(holder: BaseViewHolder, item: ActressWrapper) {
+            override fun convert(holder: BaseViewHolder, item: CollectLinkWrapper<ActressInfo>) {
                 when (holder.itemViewType) {
                     -1 -> {
-                        val actress = requireNotNull(item.actressInfo)
+                        val actress = requireNotNull(item.linkBean)
 
                         GlideApp.with(holder.itemView.context).asBitmap().load(actress.avatar.toGlideUrl)
                                 .error(R.drawable.ic_nowprinting).into(object : BitmapImageViewTarget(holder.getView(R.id.iv_actress_avatar)) {
@@ -107,10 +104,10 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
             setOnItemClickListener { _, view, position ->
                 val data = this@ActressCollectFragment.adapter.getData().getOrNull(position) ?: return@setOnItemClickListener
                 KLog.d("click data : ${data.isExpanded} ; ${adapter.getData().size} ${adapter.getData()}")
-                data.actressInfo?.let {
+                data.linkBean?.let {
                     MovieListActivity.start(viewContext, it)
                 } ?: apply {
-                    view.tv_nav_menu_name.text = " ${if (data.isExpanded) "👇" else "👆"} " + data.category?.name
+                    view.tv_nav_menu_name.text = " ${if (data.isExpanded) "👇" else "👆"} " + data.category.name
                     if (data.isExpanded) collapse(adapter.getHeaderLayoutCount() + position) else expand(adapter.getHeaderLayoutCount() + position)
                     (layoutManager as StaggeredGridLayoutManager).invalidateSpanAssignments()
                 }
@@ -118,7 +115,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 
 
             setOnItemLongClickListener { adapter, _, position ->
-                (this@ActressCollectFragment.adapter.getData().getOrNull(position)?.actressInfo)?.let {
+                (this@ActressCollectFragment.adapter.getData().getOrNull(position)?.linkBean)?.let {
                     MaterialDialog.Builder(viewContext)
                             .title(it.name)
                             .items(listOf("取消收藏"))
@@ -176,45 +173,21 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 
     override fun showContents(data: List<*>) {
         val dd = data as List<ActressInfo>
-        if (AppConfiguration.enableCategory) {
-            Flowable.just(dd).map {
-                dataHelper.initFromData(dd, ActressCategory.id!!)
-                dataHelper.getCollectGroup()
-            }.compose(SchedulersCompat.io()).subscribeBy {
-                KLog.d("showContents group  $it")
-                adapter.addData(reloadAdapterData(it))
-                adapter.expand(0)
-            }.addTo(rxManager)
-        } else {
-            adapter.addData(reloadAdapterData(mapOf(MovieCategory to dd)))
-        }
+        Flowable.just(dd).map {
+            dataHelper.initFromData(dd, ActressCategory.id!!)
+        }.compose(SchedulersCompat.io()).subscribeBy {
+            adapter.setMultiTypeDelegate(dataHelper.getDelegate().apply {
+                needInjectType.forEach {
+                    if (it == -1) registerItemType(it, R.layout.layout_actress_item) //默认注入类型0，即actress
+                    else registerItemType(it, R.layout.layout_menu_op_head) //头部，可以做特化
+                }
+            })
+            adapter.addData(dataHelper.getDataWrapper())
+            if (AppConfiguration.enableCategory) adapter.expand(0)
+        }.addTo(rxManager)
+
     }
 
-    private fun reloadAdapterData(group: Map<Category, List<ActressInfo>>): List<ActressWrapper> {
-        val delegate = object : MultiTypeDelegate<ActressWrapper>() {
-            override fun getItemType(t: ActressWrapper): Int = t.level
-        }
-        val newDts = mutableListOf<ActressWrapper>()
-
-        group.forEach {
-            if (AppConfiguration.enableCategory) {
-                newDts.add(ActressWrapper(it.key).apply {
-                    it.value.forEach {
-                        addSubItem(ActressWrapper(null, it).apply {
-                            delegate.registerItemType(level, R.layout.layout_actress_item) //默认注入类型0，即actress
-                        })
-                    }
-                    delegate.registerItemType(level, R.layout.layout_menu_op_head)
-                })
-            } else {
-                it.value.mapTo(newDts) { ActressWrapper(null, it) }
-            }
-        }
-        //设置 delegate
-        adapter.setMultiTypeDelegate(delegate)
-        KLog.d("reloadAdapterData size ${newDts.size}, $newDts")
-        return newDts
-    }
 
     companion object {
         fun newInstance() = ActressCollectFragment()
