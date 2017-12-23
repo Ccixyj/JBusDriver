@@ -27,7 +27,6 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     private val mNeedToCallStart = AtomicBoolean(false)
     private var mFirstStart: Boolean = false//Is this the first start of the fragment (after onCreate)
     private var mViewReCreate = false //rootViewWeakRef 是否重新创建了
-    private var isUserVisible: Boolean = false
     protected var mBasePresenter: P? = null
     private var rootViewWeakRef: WeakReference<View>? = null
     private var mUniqueLoaderIdentifier: Int = 0//Unique identifier for the loader, persisted across re-creation
@@ -88,9 +87,8 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
         if (mFirstStart || mViewReCreate) {
             initData()
         }
-        if (!isLazyLoaded && isUserVisible) {
+        if (userVisibleHint && !isLazyLoaded) {
             lazyLoad()
-            isLazyLoaded = true
         }
         mFirstStart = false
         mViewReCreate = false
@@ -116,10 +114,8 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
-            isUserVisible = true
             onVisible()
         } else {
-            isUserVisible = false
             onInvisible()
         }
     }
@@ -127,27 +123,24 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if (userVisibleHint) {
-            isUserVisible = true
             onVisible()
         } else {
-            isUserVisible = false
             onInvisible()
         }
     }
 
     protected open fun onVisible() {
         KLog.t(TAG).d("onVisible")
-        if (!isUserVisible || isLazyLoaded || mBasePresenter == null) {
-            //SPresenter 可能没有初始化 ,放入dostart 中执行lazy
-
+        if (isLazyLoaded || mBasePresenter == null) {
+            //mBasePresenter 可能没有初始化 ,放入dostart 中执行lazy
         } else {
             lazyLoad()
-            isLazyLoaded = true
         }
     }
 
     protected open fun lazyLoad() {
         if (mBasePresenter is BasePresenter.LazyLoaderPresenter) (mBasePresenter as? BasePresenter.LazyLoaderPresenter)?.lazyLoad()
+        isLazyLoaded = true
     }
 
     protected open fun onInvisible() {}

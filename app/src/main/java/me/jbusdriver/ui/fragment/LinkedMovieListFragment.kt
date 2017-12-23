@@ -195,8 +195,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
     companion
     object {
         //电影列表,演员,链接,搜索入口
-        fun newInstance(link: ILink, cancelLazyLoad: Boolean? = null) = LinkedMovieListFragment().apply {
-            if (true == cancelLazyLoad) userVisibleHint = true
+        fun newInstance(link: ILink) = LinkedMovieListFragment().apply {
             arguments = Bundle().apply {
                 putSerializable(C.BundleKey.Key_1, link)
             }

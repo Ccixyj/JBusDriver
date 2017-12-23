@@ -28,7 +28,7 @@ class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setToolBar()
-        supportFragmentManager.beginTransaction().replace(R.id.fl_container, LinkedMovieListFragment.newInstance(linkData, true).apply {
+        supportFragmentManager.beginTransaction().replace(R.id.fl_container, LinkedMovieListFragment.newInstance(linkData).apply {
             arguments = intent.extras
         }).commitAllowingStateLoss()
     }
