@@ -3,8 +3,10 @@ package me.jbusdriver.ui.activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Paint
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
@@ -19,6 +21,7 @@ import com.jaeger.library.StatusBarUtil
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_movie_detail.*
 import kotlinx.android.synthetic.main.content_movie_detail.*
+import kotlinx.android.synthetic.main.layout_load_magnet.view.*
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.MovieDetailContract
 import me.jbusdriver.mvp.bean.*
@@ -98,6 +101,11 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
     private fun initWidget() {
         ll_movie_detail.addView(headHolder.view)
+
+        ll_movie_detail.addView(viewContext.inflate(R.layout.layout_load_magnet).apply {
+            this.tv_movie_look_magnet.setTextColor(ResourcesCompat.getColor(this@apply.resources, R.color.colorPrimaryDark, null))
+            this.tv_movie_look_magnet.paintFlags = this.tv_movie_look_magnet.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        })
         ll_movie_detail.addView(sampleHolder.view)
         ll_movie_detail.addView(actressHolder.view)
         ll_movie_detail.addView(genreHolder.view)
@@ -156,7 +164,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         })
     }
 
-    override fun createPresenter() = MovieDetailPresenterImpl(intent?.getBooleanExtra(C.BundleKey.Key_2,false) ?: false)
+    override fun createPresenter() = MovieDetailPresenterImpl(intent?.getBooleanExtra(C.BundleKey.Key_2, false) ?: false)
     override val layoutId = R.layout.activity_movie_detail
 
     override val movie: Movie by lazy {
