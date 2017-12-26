@@ -37,6 +37,7 @@ class ImageSampleHolder(context: Context): BaseHolder(context) {
                 rv_recycle_images.layoutManager = GridLayoutManager(it, spannCount)
                 rv_recycle_images.addItemDecoration(GridSpacingItemDecoration(spannCount, it.dpToPx(6f), false))
                 rv_recycle_images.adapter = imageSampleAdapter
+                rv_recycle_images.isNestedScrollingEnabled = true
                 imageSampleAdapter.setOnItemClickListener { _, v, position ->
                     if (position < imageSampleAdapter.data.size) {
                         WatchLargeImageActivity.startShow(v.context, imageSampleAdapter.data.map { if (TextUtils.isEmpty(it.image)) it.thumb  else it.image }, position)

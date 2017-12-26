@@ -8,7 +8,6 @@ import kotlinx.android.synthetic.main.layout_detail_genres.view.*
 import me.jbusdriver.common.inflate
 import me.jbusdriver.mvp.bean.Genre
 import me.jbusdriver.ui.adapter.GenreAdapter
-import me.jbusdriver.ui.data.DataSourceType
 
 /**
  * Created by Administrator on 2017/5/10 0010.
@@ -19,6 +18,7 @@ class GenresHolder(context: Context) : BaseHolder(context) {
             it.inflate(R.layout.layout_detail_genres).apply {
                 rv_recycle_genres.layoutManager = FlowLayoutManager().apply { isAutoMeasureEnabled = true }
                 rv_recycle_genres.adapter = genreAdapter
+                rv_recycle_genres.isNestedScrollingEnabled = true
             }
         } ?: error("context ref is finish")
     }
