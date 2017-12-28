@@ -29,7 +29,6 @@
             style="@style/AppTheme.TextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxLines="2"
             android:text="没有电影相关信息"
             android:textColor="@color/primaryText"
             android:visibility="gone" />

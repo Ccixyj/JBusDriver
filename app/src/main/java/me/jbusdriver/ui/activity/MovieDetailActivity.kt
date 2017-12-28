@@ -2,7 +2,6 @@ package me.jbusdriver.ui.activity
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.Paint
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -11,9 +10,6 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.webkit.JavascriptInterface
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
 import com.cfzx.utils.CacheLoader
@@ -24,11 +20,13 @@ import kotlinx.android.synthetic.main.content_movie_detail.*
 import kotlinx.android.synthetic.main.layout_load_magnet.view.*
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.MovieDetailContract
-import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.mvp.bean.MovieDetail
+import me.jbusdriver.mvp.bean.des
+import me.jbusdriver.mvp.bean.detailSaveKey
 import me.jbusdriver.mvp.presenter.MovieDetailPresenterImpl
 import me.jbusdriver.ui.data.collect.MovieCollector
 import me.jbusdriver.ui.holder.*
-import org.jsoup.Jsoup
 
 
 class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPresenter, MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailView {
@@ -105,18 +103,14 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         ll_movie_detail.addView(viewContext.inflate(R.layout.layout_load_magnet).apply {
             this.tv_movie_look_magnet.setTextColor(ResourcesCompat.getColor(this@apply.resources, R.color.colorPrimaryDark, null))
             this.tv_movie_look_magnet.paintFlags = this.tv_movie_look_magnet.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+            setOnClickListener {
+                MagnetPagerListActivity.start(viewContext, movie.code.replace("-", "")) //replace("-", "")
+            }
         })
         ll_movie_detail.addView(sampleHolder.view)
         ll_movie_detail.addView(actressHolder.view)
         ll_movie_detail.addView(genreHolder.view)
         ll_movie_detail.addView(relativeMovieHolder.view)
-    }
-
-    override fun doStart() {
-        super.doStart()
-        //mBasePresenter初始化完毕后再加载
-        //has disk cache ?
-        //firstLoadMagnet()
     }
 
     override fun onDestroy() {
@@ -126,42 +120,6 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         actressHolder.release()
         genreHolder.release()
         relativeMovieHolder.release()
-    }
-
-    private fun firstLoadMagnet() {
-        CacheLoader.acache.getAsString(movie.detailSaveKey + "_magnet")?.let {
-            mBasePresenter?.loadMagnets(Jsoup.parse(it))
-        } ?: initMagnetLoad()
-    }
-
-    override fun initMagnetLoad() {
-        KLog.d("load url : ${movie.link}")
-        val mWebView = findViewById(R.id.webview) as WebView
-        mWebView.settings.javaScriptEnabled = true
-        mWebView.addJavascriptInterface(JavascriptHandler(movie.detailSaveKey + "_magnet"), "handler")
-        mWebView.loadUrl(movie.link)
-        mWebView.setWebViewClient(object : WebViewClient() {
-            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                super.onPageStarted(view, url, favicon)
-            }
-
-            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                view.loadUrl(url)
-                return true
-            }
-
-            override fun onPageFinished(view: WebView, url: String) {
-                // toast("onPageFinished $url")
-                view.loadUrl("javascript:window.handler.getContent(document.body.innerHTML);")
-                super.onPageFinished(view, url)
-            }
-
-            override fun onReceivedError(view: WebView, errorCode: Int,
-                                         description: String, failingUrl: String) {
-                super.onReceivedError(view, errorCode, description, failingUrl)
-            }
-
-        })
     }
 
     override fun createPresenter() = MovieDetailPresenterImpl(intent?.getBooleanExtra(C.BundleKey.Key_2, false) ?: false)
@@ -175,10 +133,6 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         CacheLoader.acache.getAsString(movie.detailSaveKey)?.let { AppContext.gson.fromJson<MovieDetail>(it) }
     }
 
-    override fun dismissLoading() {
-        super.dismissLoading()
-        // sr_refresh_detail?.post { sr_refresh_detail?.isRefreshing = false }
-    }
 
     override fun <T> showContent(data: T?) {
         if (data is MovieDetail) {
@@ -202,17 +156,6 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         }
     }
 
-    override fun addMagnet(t: List<Magnet>) {
-        //如果movie含有tag说明有种子了,重新加载
-        KLog.d("addMagnet $t")
-//        t.forEach {
-//            browse(it.link)
-//        }
-//        if (movie.tags.isNotEmpty() && t.isEmpty()) {
-//            initMagnetLoad()
-//        }
-    }
-
     /*===========================other===================================*/
     companion object {
         fun start(current: Context, movie: Movie, fromHistory: Boolean = false) {
@@ -223,19 +166,5 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         }
 
     }
-
-    inner class JavascriptHandler(val magnetKey: String) {
-        @JavascriptInterface
-        fun getContent(htmlContent: String) {
-            //save disk for ever
-            Jsoup.parse(htmlContent).select("#magnet-table").first()?.let { table ->
-                KLog.i("magnetKey :$magnetKey ,table : $table")
-                CacheLoader.cacheDisk(magnetKey to table.toString(), ACache.TIME_DAY)
-                mBasePresenter?.loadMagnets(table)
-            }
-
-        }
-    }
-
 
 }

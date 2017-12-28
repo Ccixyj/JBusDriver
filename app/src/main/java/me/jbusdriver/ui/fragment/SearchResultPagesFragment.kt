@@ -12,7 +12,7 @@ import me.jbusdriver.ui.data.SearchType
  */
 class SearchResultPagesFragment : TabViewPagerFragment<MineCollectContract.MineCollectPresenter, MineCollectContract.MineCollectView>(), MineCollectContract.MineCollectView {
 
-    private val searchWord by lazy { arguments.getString(C.BundleKey.Key_1) }
+    private val searchWord by lazy { arguments.getString(C.BundleKey.Key_1) ?: error("must set search word") }
 
     override fun createPresenter() = MineCollectPresenterImpl()
 
@@ -20,10 +20,10 @@ class SearchResultPagesFragment : TabViewPagerFragment<MineCollectContract.MineC
 
     override val mFragments: List<Fragment> by lazy {
         SearchType.values().map {
-            if (it == SearchType.ACTRESS ){
-                ActressListFragment.newInstance(SearchLink(it,searchWord))
-            }else{
-                LinkedMovieListFragment.newInstance(SearchLink(it,searchWord))
+            if (it == SearchType.ACTRESS) {
+                ActressListFragment.newInstance(SearchLink(it, searchWord))
+            } else {
+                LinkedMovieListFragment.newInstance(SearchLink(it, searchWord))
             }
         }
     }

@@ -1,5 +1,7 @@
 package  me.jbusdriver.ui.data.magnet
 
+import me.jbusdriver.common.KLog
+import me.jbusdriver.common.arrayMapof
 import me.jbusdriver.mvp.bean.Magnet
 import org.jsoup.Jsoup
 
@@ -19,14 +21,19 @@ interface IMagnetLoader {
 
 const val MagnetFormatPrefix = "magnet:?xt=urn:btih:"
 
+val MagnetLoaders: Map<String, IMagnetLoader> by lazy {
+    arrayMapof("BTSOW" to BTSOWMagnetLoaderImpl(), "Btanv" to BtanvMagnetLoaderImpl())
+}
+
 
 class BTSOWMagnetLoaderImpl : IMagnetLoader {
     //  key -> page
-    private val search = "www.btsows.com/s/%s/%s"
+    private val search = "http://www.btsows.com/s/%s/%s/"
 
     override var hasNexPage: Boolean = true
 
     override fun loadMagnets(key: String, page: Int): List<Magnet> {
+        KLog.d("loadMagnets ${search.format(key.toLowerCase(), page)}")
         val doc = Jsoup.connect(search.format(key, page)).get()
         hasNexPage = doc.select(".pagination").text().equals("next", true)
         return doc.select(".btsowlist .row").map {
@@ -52,6 +59,7 @@ class BtanvMagnetLoaderImpl : IMagnetLoader {
     override var hasNexPage: Boolean = true
 
     override fun loadMagnets(key: String, page: Int): List<Magnet> {
+        KLog.d("loadMagnets ${search.format(key.toLowerCase(), page)}")
         val doc = Jsoup.connect(search.format(key, page)).get()
         hasNexPage = (doc.select(".bottom-pager").firstOrNull()?.children()?.size ?: 0) > 0
         return doc.select("#content .search-item").map {

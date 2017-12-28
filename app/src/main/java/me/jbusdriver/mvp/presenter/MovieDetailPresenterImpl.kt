@@ -9,12 +9,14 @@ import me.jbusdriver.db.bean.History
 import me.jbusdriver.db.service.HistoryService
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.MovieDetailContract
-import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.bean.DBtype
+import me.jbusdriver.mvp.bean.MovieDetail
+import me.jbusdriver.mvp.bean.checkUrl
+import me.jbusdriver.mvp.bean.detailSaveKey
 import me.jbusdriver.mvp.model.AbstractBaseModel
 import me.jbusdriver.mvp.model.BaseModel
 import me.jbusdriver.ui.data.DataSourceType
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Element
 import java.util.*
 
 class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenterImpl<MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailPresenter {
@@ -90,28 +92,4 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
 
     }
 
-    override fun loadMagnets(doc: Element) {
-        Flowable.just(doc).map {
-            MovieDetail.parseMagnets(it)
-        }.compose(SchedulersCompat.io())
-                .subscribeWith(object : SimpleSubscriber<List<Magnet>>() {
-                    override fun onStart() {
-                        super.onStart()
-                    }
-
-                    override fun onComplete() {
-                        super.onComplete()
-                    }
-
-                    override fun onError(e: Throwable) {
-                        super.onError(e)
-                    }
-
-                    override fun onNext(t: List<Magnet>) {
-                        super.onNext(t)
-                        mView?.addMagnet(t)
-                    }
-                })
-                .addTo(rxManager)
-    }
 }
