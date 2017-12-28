@@ -116,7 +116,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         super.doStart()
         //mBasePresenter初始化完毕后再加载
         //has disk cache ?
-        firstLoadMagnet()
+        //firstLoadMagnet()
     }
 
     override fun onDestroy() {
@@ -151,7 +151,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             }
 
             override fun onPageFinished(view: WebView, url: String) {
-                toast("onPageFinished $url")
+                // toast("onPageFinished $url")
                 view.loadUrl("javascript:window.handler.getContent(document.body.innerHTML);")
                 super.onPageFinished(view, url)
             }

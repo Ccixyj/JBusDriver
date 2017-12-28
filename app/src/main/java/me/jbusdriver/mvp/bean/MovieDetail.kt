@@ -83,8 +83,8 @@ data class MovieDetail(val title: String,
                 Magnet(it.select("td").getOrNull(0)?.text() ?: "",
                         it.select("td").getOrNull(1)?.text() ?: "",
                         it.select("td").getOrNull(2)?.text() ?: "",
-                        it.select("a").attr("href"),
-                        it.select("a[class*=btn]").map { it.text() }
+                        it.select("a").attr("href")
+//                        it.select("a[class*=btn]").map { it.text() }
                 )
             }
         }
@@ -118,7 +118,7 @@ data class ActressInfo(val name: String, val avatar: String, override val link: 
 
 }
 
-data class Magnet(val name: String, val size: String, val date: String, override val link: String, val tag: List<String> = listOf()) : ILink
+data class Magnet(val name: String, val size: String, val date: String, override val link: String) : ILink
 data class ImageSample(val title: String, val thumb: String, val image: String)
 
 data class ActressAttrs(val title: String, val imageUrl: String, val info: List<String>) : IAttr
