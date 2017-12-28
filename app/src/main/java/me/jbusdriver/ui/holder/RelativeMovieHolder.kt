@@ -46,7 +46,8 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
             it.inflate(R.layout.layout_detail_relative_movies).apply {
                 rv_recycle_relative_movies.layoutManager = LinearLayoutManager(it, LinearLayoutManager.HORIZONTAL, false)
                 rv_recycle_relative_movies.adapter = relativeAdapter
-                relativeAdapter.setOnItemClickListener { adapter, v, position ->
+                rv_recycle_relative_movies.isNestedScrollingEnabled = true
+                relativeAdapter.setOnItemClickListener { _, v, position ->
                     relativeAdapter.data.getOrNull(position)?.let {
                         KLog.d("relative  : $it")
                         MovieDetailActivity.start(v.context, it)
@@ -83,7 +84,7 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
                                     .subscribeWith(object : SimpleSubscriber<Palette>() {
                                         override fun onNext(it: Palette) {
                                             super.onNext(it)
-                                            val swatch = listOf(it.lightMutedSwatch, it.lightVibrantSwatch, it.vibrantSwatch, it.mutedSwatch).filterNotNull()
+                                            val swatch = listOfNotNull(it.lightMutedSwatch, it.lightVibrantSwatch, it.vibrantSwatch, it.mutedSwatch)
                                             if (!swatch.isEmpty()) {
                                                 swatch[randomNum(swatch.size)].let {
                                                     holder.setBackgroundColor(R.id.tv_relative_movie_title, it.rgb)

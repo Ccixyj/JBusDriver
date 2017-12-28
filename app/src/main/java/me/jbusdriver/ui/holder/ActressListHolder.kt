@@ -41,6 +41,7 @@ class ActressListHolder(context: Context) : BaseHolder(context) {
             it.inflate(R.layout.layout_detail_actress).apply {
                 rv_recycle_actress.layoutManager = LinearLayoutManager(it, LinearLayoutManager.HORIZONTAL, false)
                 rv_recycle_actress.adapter = actressAdapter
+                rv_recycle_actress.isNestedScrollingEnabled = true
                 actressAdapter.setOnItemClickListener { _, _, position ->
                     actressAdapter.data.getOrNull(position)?.let {
                         item ->

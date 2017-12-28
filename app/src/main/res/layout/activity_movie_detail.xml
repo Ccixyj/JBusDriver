@@ -32,9 +32,9 @@
                 app:layout_collapseMode="parallax" />
 
             <View
-                android:layout_gravity="bottom"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/material_180dp"
+                android:layout_gravity="bottom"
                 android:background="@drawable/coll_toolbar_image_gradient"
                 android:fitsSystemWindows="true" />
 
@@ -51,10 +51,6 @@
 
     <include layout="@layout/content_movie_detail" />
 
-    <WebView
-        android:id="@+id/webview"
-        android:layout_width="@dimen/material_0dp"
-        android:layout_height="@dimen/material_0dp"/>
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"

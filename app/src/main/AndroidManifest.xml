@@ -57,6 +57,10 @@
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name="me.jbusdriver.ui.activity.MagnetPagerListActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name="me.jbusdriver.ui.activity.SettingActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>
