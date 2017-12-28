@@ -5,6 +5,7 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -48,6 +49,7 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListP
                     gravity = Gravity.CENTER
                 }
             }
+            emptyView.visibility = View.INVISIBLE
 
             setOnItemClickListener { adapter, _, position ->
                 (adapter.data.getOrNull(position) as? Magnet)?.let { magnet ->
@@ -76,6 +78,11 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListP
             }
         }
 
+    }
+
+    override fun showContents(datas: List<*>?) {
+        super.showContents(datas)
+        if (adapter.getData().isEmpty()) adapter.getEmptyView().visibility = View.VISIBLE
     }
 
     companion object {

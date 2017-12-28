@@ -99,7 +99,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
     private fun initWidget() {
         ll_movie_detail.addView(headHolder.view)
-
+        ll_movie_detail.addView(sampleHolder.view)
         ll_movie_detail.addView(viewContext.inflate(R.layout.layout_load_magnet).apply {
             this.tv_movie_look_magnet.setTextColor(ResourcesCompat.getColor(this@apply.resources, R.color.colorPrimaryDark, null))
             this.tv_movie_look_magnet.paintFlags = this.tv_movie_look_magnet.paintFlags or Paint.UNDERLINE_TEXT_FLAG
@@ -107,7 +107,6 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
                 MagnetPagerListActivity.start(viewContext, movie.code.replace("-", "")) //replace("-", "")
             }
         })
-        ll_movie_detail.addView(sampleHolder.view)
         ll_movie_detail.addView(actressHolder.view)
         ll_movie_detail.addView(genreHolder.view)
         ll_movie_detail.addView(relativeMovieHolder.view)

@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="@dimen/material_4dp">
+        android:padding="@dimen/material_8dp">
 
         <RelativeLayout
             android:layout_width="0dp"
@@ -22,7 +22,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
+                android:gravity="center_vertical"
                 android:maxLines="2"
+                android:minHeight="@dimen/material_32dp"
                 android:paddingTop="@dimen/material_8dp"
                 android:textColor="?android:textColorPrimary"
                 android:textSize="@dimen/material_16sp"
@@ -36,7 +38,9 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/tv_magnet_title"
                 android:ellipsize="end"
+                android:gravity="center_vertical"
                 android:maxLines="1"
+                android:minHeight="@dimen/material_24dp"
                 android:textSize="12sp"
                 tools:text="abc123" />
 
@@ -46,7 +50,9 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_magnet_size"
                 android:ellipsize="end"
+                android:gravity="center_vertical"
                 android:maxLines="1"
+                android:minHeight="@dimen/material_24dp"
                 android:textSize="@dimen/material_12sp"
                 tools:text="2015/01/01" />
 
