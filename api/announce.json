@@ -6,18 +6,17 @@
     "https://www.javbus.info"
   ],
   "update": {
-    "versionCode": 155,
-    "versionName": "1.1.0",
-    "url": "http://git.oschina.net/751762476/jbusfile/raw/master/JubsDriver_v1.1.0build184.apk",
-    "desc": "JBusDriver 1.1.0 已更新!
-1.添加分页模式,可以自由跳页啦;
-2.添加最近浏览模式,请在设置中开启;
-3.抽屉菜单可配置,保留你想要的;
-4.其他界面内容优化;
+    "versionCode": 231,
+    "versionName": "1.1.1",
+    "url": "http://git.oschina.net/751762476/jbusfile/raw/master/JubsDriver_v1.1.1build231.apk",
+    "desc": "JBusDriver 1.1.1 已更新!
+    1.添加磁力链接页面,
+    可以直接打开或者复制.未来会再添加1~2个磁力源.
+    2.修复可能的崩溃.
 "
   },
   "notice": {
-    "id": 2,
+    "id": 0,
     "content": "简易磁力可能失效,神器磁力还是可以使用的."
   }
 }
