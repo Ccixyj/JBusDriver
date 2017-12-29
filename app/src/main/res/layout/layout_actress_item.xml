@@ -28,7 +28,6 @@
             android:layout_gravity="bottom"
             android:ellipsize="marquee"
             android:gravity="center"
-            android:lines="1"
             android:minHeight="@dimen/material_32dp"
             android:singleLine="true"
             tools:text="1234567890abcdefg" />

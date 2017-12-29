@@ -40,7 +40,6 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         initNavigationView()
         initFragments(savedInstanceState)
         bindRx()
-
     }
 
 
