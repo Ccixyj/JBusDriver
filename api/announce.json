@@ -6,12 +6,13 @@
     "https://www.javbus.info"
   ],
   "update": {
-    "versionCode": 167,
-    "versionName": "1.1.1",
-    "url": "http://git.oschina.net/751762476/jbusfile/raw/master/JubsDriver_v1.1.1build231.apk",
-    "desc": "JBusDriver 1.1.1 已更新!
-1.添加磁力链接页面,可以直接打开或者复制.未来会再添加1~2个磁力源.
-2.修复可能的崩溃.
+    "versionCode": 173,
+    "versionName": "1.1.2",
+    "url": "http://git.oschina.net/751762476/jbusfile/raw/master/JubsDriver_v1.1.2build244.apk",
+    "desc": "JBusDriver 1.1.2 已更新!
+1.添加了两个速度比较好的磁力源.
+2.设置中可以自由选择磁力源.
+3.优化了演员电影展示.
 "
   },
   "notice": {
