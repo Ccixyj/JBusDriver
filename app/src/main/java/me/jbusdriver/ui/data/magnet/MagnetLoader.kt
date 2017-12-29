@@ -1,7 +1,6 @@
 package  me.jbusdriver.ui.data.magnet
 
 import me.jbusdriver.common.KLog
-import me.jbusdriver.common.arrayMapof
 import me.jbusdriver.mvp.bean.Magnet
 import org.jsoup.Jsoup
 
@@ -22,7 +21,7 @@ interface IMagnetLoader {
 const val MagnetFormatPrefix = "magnet:?xt=urn:btih:"
 
 val MagnetLoaders: Map<String, IMagnetLoader> by lazy {
-    arrayMapof("btso.pw" to BtsoPWMagnetLoaderImpl(), "BTSOW" to BTSOWMagnetLoaderImpl(), "Btanv" to BtanvMagnetLoaderImpl())
+    mapOf("btso.pw" to BtsoPWMagnetLoaderImpl(), "BTSOW" to BTSOWMagnetLoaderImpl(), "Btanv" to BtanvMagnetLoaderImpl())
 }
 
 
