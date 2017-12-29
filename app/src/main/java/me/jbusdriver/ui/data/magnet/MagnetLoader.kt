@@ -63,8 +63,8 @@ class BtanvMagnetLoaderImpl : IMagnetLoader {
         return doc.select("#content .search-item").map {
             //it.log()
             val bars = it.select(".item-bar").firstOrNull()?.children()?.map { if (it.tagName() == "a") it.attr("href") else it.text() } ?: emptyList<String>()
-            Magnet(it.select(".item-title").text(), bars.find { it.contains("文件大小") } ?: "未知",
-                    bars.find { it.contains("收录时间") } ?: "未知", bars.find { it.contains(MagnetFormatPrefix) } ?: "")
+            Magnet(it.select(".item-title").text(), bars.find { it.contains("大小") } ?: "未知",
+                    bars.find { it.contains("时间") } ?: "未知", bars.find { it.contains(MagnetFormatPrefix) } ?: "")
         }
     }
 }

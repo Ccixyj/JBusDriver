@@ -66,6 +66,7 @@ object AppConfiguration {
     var enableHistory: Boolean = true
 
 
+    //region magnet
     private const val MagnetSourceS: String = "MagnetSourceS"
     val MagnetKeys: MutableList<String> by lazy {
         AppContext.gson.fromJson<MutableList<String>>(getSp(MagnetSourceS) ?: "") ?: let {
@@ -76,6 +77,7 @@ object AppConfiguration {
     }
 
     fun saveMagnetKeys() = saveSp(MagnetSourceS, MagnetKeys.toJsonString())
+    //endregion
 
 }
 
