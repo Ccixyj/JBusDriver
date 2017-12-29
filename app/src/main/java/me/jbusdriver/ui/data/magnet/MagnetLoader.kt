@@ -1,5 +1,6 @@
 package  me.jbusdriver.ui.data.magnet
 
+import android.util.Base64
 import me.jbusdriver.common.KLog
 import me.jbusdriver.mvp.bean.Magnet
 import org.jsoup.Jsoup
@@ -21,7 +22,7 @@ interface IMagnetLoader {
 const val MagnetFormatPrefix = "magnet:?xt=urn:btih:"
 
 val MagnetLoaders: Map<String, IMagnetLoader> by lazy {
-    mapOf("btso.pw" to BtsoPWMagnetLoaderImpl(), "BTSOW" to BTSOWMagnetLoaderImpl(), "Btanv" to BtanvMagnetLoaderImpl())
+    mapOf("btso.pw" to BtsoPWMagnetLoaderImpl(), "btdiggs" to BtdiggsMagnetLoaderImpl(), "BTSOW" to BTSOWMagnetLoaderImpl(), "Btanv" to BtanvMagnetLoaderImpl())
 }
 
 
@@ -32,7 +33,7 @@ class BTSOWMagnetLoaderImpl : IMagnetLoader {
     override var hasNexPage: Boolean = true
 
     override fun loadMagnets(key: String, page: Int): List<Magnet> {
-        val doc = Jsoup.connect(search.format(key, page)).get()
+        val doc = Jsoup.connect(search.format(key.trim(), page)).get()
         hasNexPage = doc.select(".pagination").text().contains("next", true)
         return doc.select(".btsowlist .row").map {
             val hrefNode = it.select("a")
@@ -57,7 +58,7 @@ class BtanvMagnetLoaderImpl : IMagnetLoader {
     override var hasNexPage: Boolean = true
 
     override fun loadMagnets(key: String, page: Int): List<Magnet> {
-        val doc = Jsoup.connect(search.format(key, page)).get()
+        val doc = Jsoup.connect(search.format(key.trim(), page)).get()
         hasNexPage = (doc.select(".bottom-pager").firstOrNull()?.children()?.size ?: 0) > 0
         return doc.select("#content .search-item").map {
             //it.log()
@@ -77,8 +78,7 @@ class BtsoPWMagnetLoaderImpl : IMagnetLoader {
     override var hasNexPage: Boolean = true
 
     override fun loadMagnets(key: String, page: Int): List<Magnet> {
-        KLog.d("loadMagnets ${search.format(key, page)}")
-        val doc = Jsoup.connect(search.format(key, page)).headers(headers).get()
+        val doc = Jsoup.connect(search.format(key.trim(), page)).headers(headers).get()
         hasNexPage = doc.select(".pagination [name=nextpage]").isNotEmpty()
         return doc.select(".data-list [class=row]").map {
             val labels = it.children().map { it.text() }.takeLast(2)
@@ -89,3 +89,26 @@ class BtsoPWMagnetLoaderImpl : IMagnetLoader {
 
     }
 }
+
+
+class BtdiggsMagnetLoaderImpl : IMagnetLoader {
+    //  key -> page
+    private val search = "http://btdiggs.com/search/%s/%s/0/0.html"
+
+    override var hasNexPage: Boolean = true
+
+    fun encode(string: String) = Base64.encodeToString(string.toByteArray(), Base64.NO_PADDING or Base64.URL_SAFE)
+    override fun loadMagnets(key: String, page: Int): List<Magnet> {
+        KLog.d("loadMagnets ${search.format(encode(key), page)}")
+        val doc = Jsoup.connect(search.format(encode(key).trim(), page)).get()
+        hasNexPage = doc.select(".page-split :last-child[title]").size > 0
+        return doc.select(".list dl").map {
+            val href = it.select("dt a")
+            val title = href.text()
+            val labels = it.select(".attr span")
+            Magnet(title, labels.component2().text(), labels.component1().text(), labels.select("a").attr("href"))
+        }
+
+    }
+}
+
