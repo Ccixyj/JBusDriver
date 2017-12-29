@@ -17,7 +17,7 @@ import kotlin.properties.Delegates
 
 object AppConfiguration {
 
-    private fun getSp(key: String) = AppContext.instace.getSharedPreferences("config", Context.MODE_PRIVATE).getString(key, null)
+    private fun getSp(key: String): String? = AppContext.instace.getSharedPreferences("config", Context.MODE_PRIVATE).getString(key, null)
     private fun saveSp(key: String, value: String) = Schedulers.io().scheduleDirect { AppContext.instace.getSharedPreferences("config", Context.MODE_PRIVATE).edit().putString(key, value).apply() }
 
     //region pageMode value
@@ -64,6 +64,18 @@ object AppConfiguration {
 
     private const val HistoryS: String = "HistoryS"
     var enableHistory: Boolean = true
+
+
+    private const val MagnetSourceS: String = "MagnetSourceS"
+    val MagnetKeys: MutableList<String> by lazy {
+        AppContext.gson.fromJson<MutableList<String>>(getSp(MagnetSourceS) ?: "") ?: let {
+            val default = listOf("btso.pw", "btdiggs")
+            saveSp(MagnetSourceS, default.toJsonString())
+            default.toMutableList()
+        }
+    }
+
+    fun saveMagnetKeys() = saveSp(MagnetSourceS, MagnetKeys.toJsonString())
 
 }
 
