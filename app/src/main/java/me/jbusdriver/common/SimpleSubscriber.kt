@@ -1,7 +1,6 @@
 package me.jbusdriver.common
 
 import io.reactivex.subscribers.DisposableSubscriber
-import org.reactivestreams.Subscription
 import retrofit2.HttpException
 
 /**
@@ -10,7 +9,6 @@ import retrofit2.HttpException
 open class SimpleSubscriber<T> : DisposableSubscriber<T>() {
 
     private val TAG: String = this.javaClass.name
-    private  var sub: Subscription? = null
 
     override fun onStart() {
         super.onStart()
@@ -19,7 +17,7 @@ open class SimpleSubscriber<T> : DisposableSubscriber<T>() {
 
     override fun onComplete() {
         KLog.t(TAG).i("onCompleted >> ")
-        sub?.cancel()
+        cancel()
     }
 
     override fun onError(e: Throwable) {
@@ -35,4 +33,6 @@ open class SimpleSubscriber<T> : DisposableSubscriber<T>() {
     override fun onNext(t: T) {
         KLog.t(TAG).i("t = $t")
     }
+
+
 }

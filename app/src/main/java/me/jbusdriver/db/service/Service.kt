@@ -28,7 +28,7 @@ object HistoryService {
 
     fun page(pageSize: Int = 20): DBPage {
         val count = dao.count
-        return DBPage(1, (count - 1) / 20 + 1, pageSize)
+        return DBPage(1, (count - 1) / pageSize + 1, pageSize)
     }
 
     fun queryPage(dbPage: DBPage): Observable<List<History>> =

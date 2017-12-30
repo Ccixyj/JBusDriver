@@ -3,6 +3,7 @@ package me.jbusdriver.ui.adapter
 import android.graphics.Bitmap
 import android.support.v7.graphics.Palette
 import android.text.TextUtils
+import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -13,12 +14,25 @@ import io.reactivex.rxkotlin.addTo
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.bean.ActressInfo
+import me.jbusdriver.ui.activity.MovieListActivity
+import me.jbusdriver.ui.data.collect.ActressCollector
 import java.util.*
 
-/**
- * Created by Administrator on 2017/7/17.
- */
 class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseQuickAdapter<ActressInfo, BaseViewHolder>(R.layout.layout_actress_item) {
+    private val actionMap by lazy {
+        mapOf("复制名字" to { act: ActressInfo ->
+            AppContext.instace.copy(act.name)
+            AppContext.instace.toast("已复制")
+        }, "收藏" to { act: ActressInfo ->
+            ActressCollector.addToCollect(act)
+            KLog.d("actress_data:${ActressCollector.dataList}")
+        }, "取消收藏" to { act: ActressInfo ->
+            ActressCollector.removeCollect(act)
+            KLog.d("actress_data:${ActressCollector.dataList}")
+        })
+    }
+
+
     private val random = Random()
     private fun randomNum(number: Int) = Math.abs(random.nextInt() % number)
 
@@ -56,5 +70,30 @@ class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseQuickAdapter<
         holder.setVisible(R.id.tv_actress_tag, !TextUtils.isEmpty(item.tag))
     }
 
+    init {
+
+
+        setOnItemClickListener { _, view, position ->
+            data.getOrNull(position)?.let { item ->
+                KLog.d("item : $item")
+                MovieListActivity.start(view.context, item)
+            }
+        }
+
+        setOnItemLongClickListener { _, view, position ->
+            data.getOrNull(position)?.let { act ->
+                val action = if (ActressCollector.has(act)) actionMap.minus("收藏")
+                else actionMap.minus("取消收藏")
+
+                MaterialDialog.Builder(view.context).title(act.name)
+                        .items(action.keys)
+                        .itemsCallback { _, _, _, text ->
+                            actionMap[text]?.invoke(act)
+                        }
+                        .show()
+            }
+            true
+        }
+    }
 
 }

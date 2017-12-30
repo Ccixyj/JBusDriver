@@ -16,7 +16,6 @@ import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.presenter.ActressLinkPresenterImpl
 import me.jbusdriver.mvp.presenter.LinkAbsPresenterImpl
-import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.adapter.ActressInfoAdapter
 import me.jbusdriver.ui.data.AppConfiguration
@@ -31,22 +30,13 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
     private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }
 
     override val layoutManager: RecyclerView.LayoutManager  by lazy { StaggeredGridLayoutManager(viewContext.spanCount, OrientationHelper.VERTICAL) }
-    override val adapter by lazy {
-        ActressInfoAdapter(rxManager).apply {
-            setOnItemClickListener { adapter, _, position ->
-                (adapter.data.getOrNull(position) as? ActressInfo)?.let {
-                    MovieListActivity.start(viewContext, it)
-                }
-            }
-
-        }
-    }
+    override val adapter by lazy { ActressInfoAdapter(rxManager) }
 
     override fun createPresenter() = ActressLinkPresenterImpl(link)
 
     override fun initData() {
         if (isSearch) {
-            RxBus.toFlowable(SearchWord::class.java).subscribeBy{ sea ->
+            RxBus.toFlowable(SearchWord::class.java).subscribeBy { sea ->
                 (mBasePresenter as? LinkAbsPresenterImpl<*>)?.let {
                     (it.linkData as SearchLink).query = sea.query
                     it.onRefresh()

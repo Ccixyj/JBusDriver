@@ -66,6 +66,7 @@ class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter
         is PageLink -> 6
         else -> error(" $this has no matched class for des")
         }
+         不需要加入历史记录
          */
         fun reloadFromHistory(context: Context, his: History) {
             context.startActivity(Intent(context, MovieListActivity::class.java).apply {

@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentSkipListMap
 /**
  * Created by Administrator on 2017/5/10 0010.
  */
-abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, val isHistory: Boolean = false) : AbstractRefreshLoadMorePresenterImpl<LinkListContract.LinkListView, T>(), LinkListContract.LinkListPresenter {
+abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistory: Boolean = false) : AbstractRefreshLoadMorePresenterImpl<LinkListContract.LinkListView, T>(), LinkListContract.LinkListPresenter {
 
     protected open var IsAll = false
     private val urlPath by lazy { if (linkData is PageLink) linkData.link.urlPath.replace("/${linkData.page}", "") else linkData.link.urlPath }

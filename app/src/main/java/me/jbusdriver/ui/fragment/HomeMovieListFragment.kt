@@ -12,7 +12,7 @@ import me.jbusdriver.ui.data.enums.DataSourceType
  * Created by Administraor on 2017/4/9.
  */
 class HomeMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkListView {
-    override fun createPresenter() = HomeMovieListPresenterImpl(type, PageLink(1, "", "") /*没什么用*/)
+    override fun createPresenter() = HomeMovieListPresenterImpl(type, PageLink(1, "", "") /*PageLink没什么用,默认设置""就可以*/)
 
     /*================================================*/
     companion object {
