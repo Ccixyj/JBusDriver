@@ -2,7 +2,6 @@ package me.jbusdriver.ui.activity
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -11,8 +10,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.webkit.JavascriptInterface
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.jaeger.library.StatusBarUtil
 import jbusdriver.me.jbusdriver.R
@@ -52,10 +49,11 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //忽略4.4.4以下版本状态栏的问题
-            StatusBarUtil.setTransparent(this)
+            StatusBarUtil.setTranslucentForImageView(this, 30, toolbar)
         }
         initWidget()
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_movie_detail, menu)
@@ -129,33 +127,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
     }
 
     override fun initMagnetLoad() {
-        KLog.d("load url : ${movie.link}")
-        val mWebView = findViewById<WebView>(R.id.webview)
-        mWebView.settings.javaScriptEnabled = true
-        mWebView.addJavascriptInterface(JavascriptHandler(movie.detailSaveKey + "_magnet"), "handler")
-        mWebView.loadUrl(movie.link)
-        mWebView.webViewClient = object : WebViewClient() {
-            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                super.onPageStarted(view, url, favicon)
-            }
 
-            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                view.loadUrl(url)
-                return true
-            }
-
-            override fun onPageFinished(view: WebView, url: String) {
-                toast("onPageFinished $url")
-                view.loadUrl("javascript:window.handler.getContent(document.body.innerHTML);")
-                super.onPageFinished(view, url)
-            }
-
-            override fun onReceivedError(view: WebView, errorCode: Int,
-                                         description: String, failingUrl: String) {
-                super.onReceivedError(view, errorCode, description, failingUrl)
-            }
-
-        }
     }
 
     override fun createPresenter() = MovieDetailPresenterImpl(intent?.getBooleanExtra(C.BundleKey.Key_2, false) ?: false)
@@ -169,10 +141,6 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         CacheLoader.acache.getAsString(movie.detailSaveKey)?.let { AppContext.gson.fromJson<MovieDetail>(it) }
     }
 
-    override fun dismissLoading() {
-        super.dismissLoading()
-        // sr_refresh_detail?.post { sr_refresh_detail?.isRefreshing = false }
-    }
 
     override fun <T> showContent(data: T?) {
         if (data is MovieDetail) {

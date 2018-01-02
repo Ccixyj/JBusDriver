@@ -33,6 +33,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     //lazy load tag
     private var isLazyLoaded = false
 
+    private var isUserVisible: Boolean = false
     private var placeDialogHolder: MaterialDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,7 +88,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
         if (mFirstStart || mViewReCreate) {
             initData()
         }
-        if (userVisibleHint && !isLazyLoaded) {
+        if (mFirstStart && !isLazyLoaded && userVisibleHint) {
             lazyLoad()
         }
         mFirstStart = false
@@ -114,8 +115,10 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
+            isUserVisible = true
             onVisible()
         } else {
+            isUserVisible = false
             onInvisible()
         }
     }
@@ -123,14 +126,16 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if (userVisibleHint) {
+            isUserVisible = true
             onVisible()
         } else {
+            isUserVisible = false
             onInvisible()
         }
     }
 
     protected open fun onVisible() {
-        KLog.t(TAG).d("onVisible")
+        KLog.t(TAG).i("onVisible")
         if (isLazyLoaded || mBasePresenter == null) {
             //mBasePresenter 可能没有初始化 ,放入dostart 中执行lazy
         } else {
@@ -139,6 +144,10 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     }
 
     protected open fun lazyLoad() {
+        if (isLazyLoaded ) {
+            return
+        }
+        KLog.w("lazy load :$TAG")
         if (mBasePresenter is BasePresenter.LazyLoaderPresenter) (mBasePresenter as? BasePresenter.LazyLoaderPresenter)?.lazyLoad()
         isLazyLoaded = true
     }

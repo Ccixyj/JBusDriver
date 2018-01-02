@@ -1,5 +1,6 @@
 package me.jbusdriver.ui.activity
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -12,7 +13,6 @@ import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.view.MenuItem
 import com.afollestad.materialdialogs.MaterialDialog
-import me.jbusdriver.common.CacheLoader
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.BuildConfig
@@ -172,6 +172,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
     override val layoutId = R.layout.activity_main
 
 
+    @SuppressLint("ResourceAsColor")
     override fun <T> showContent(data: T?) {
         if (data is Pair<*, *> && data.first is UpdateBean) {
             val bean = data.first as UpdateBean
@@ -195,6 +196,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
     }
 
+    @SuppressLint("ResourceAsColor")
     private fun showNotice(notice: Any?) {
         if (notice != null && notice is NoticeBean && !TextUtils.isEmpty(notice.content) && notice.id > 0 && sharfp.getInt(NoticeIgnoreID, -1) < notice.id) {
             MaterialDialog.Builder(this).title("公告")
