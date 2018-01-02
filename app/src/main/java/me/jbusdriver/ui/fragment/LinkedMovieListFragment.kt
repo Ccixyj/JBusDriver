@@ -126,7 +126,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
     override fun <T> showContent(data: T?) {
         KLog.d("parse res :$data")
         if (data is String) {
-            getLoaAllView(data)?.let { attrViews.add(it) }
+            getLoadAllView(data)?.let { attrViews.add(it) }
         }
 
         if (data is IAttr) {
@@ -162,7 +162,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         else -> error("current not provide for IAttr $data")
     }
 
-    private fun getLoaAllView(data: String): View? {
+    private fun getLoadAllView(data: String): View? {
         return data.split("：").let { txts ->
             if (txts.size == 2) {
                 this.viewContext.inflate(R.layout.layout_load_all).apply {

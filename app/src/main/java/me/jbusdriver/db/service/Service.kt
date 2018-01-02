@@ -119,4 +119,6 @@ object LinkService {
         }
 
     }
+
+    fun  update(data: ILink) =  dao.update(data.convertDBItem())
 }

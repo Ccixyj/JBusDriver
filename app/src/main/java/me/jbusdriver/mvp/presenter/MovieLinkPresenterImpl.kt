@@ -1,17 +1,19 @@
 package me.jbusdriver.mvp.presenter
 
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.ui.data.AppConfiguration
+import me.jbusdriver.ui.data.collect.ActressCollector
 import me.jbusdriver.ui.data.enums.DataSourceType
 import org.jsoup.nodes.Document
 
 /**
  * 网页链接列表
  */
-class MovieLinkPresenterImpl(val link: ILink, isAllFromBundle: Boolean,isHis:Boolean) : LinkAbsPresenterImpl<Movie>(link,isHis) {
+class MovieLinkPresenterImpl(val link: ILink, isAllFromBundle: Boolean, isHis: Boolean) : LinkAbsPresenterImpl<Movie>(link, isHis) {
 
     override var IsAll = isAllFromBundle
 
@@ -23,8 +25,8 @@ class MovieLinkPresenterImpl(val link: ILink, isAllFromBundle: Boolean,isHis:Boo
             }
         }
 
-        //处理ilink
-        parseActressAttrs(linkData, str)?.let {
+        //处理ilink : actress collect
+        parseAttrs(linkData, str)?.let {
             AndroidSchedulers.mainThread().scheduleDirect {
                 mView?.showContent(it)
             }
@@ -42,9 +44,17 @@ class MovieLinkPresenterImpl(val link: ILink, isAllFromBundle: Boolean,isHis:Boo
     }
 
 
-    private fun parseActressAttrs(link: ILink, doc: Document) = when (link) {
+    private fun parseAttrs(link: ILink, doc: Document) = when (link) {
         is ActressInfo -> {
-            ActressInfo.parseActressAttrs(doc)
+            ActressInfo.parseActressAttrs(doc).let { attr ->
+                Schedulers.single().scheduleDirect {
+                    if (link.avatar != attr.imageUrl) {
+                        //如果已收藏演员, 需要重新设置头像
+                        ActressCollector.update(link.copy(avatar = attr.imageUrl))
+                    }
+                }
+                attr
+            }
         }
         else -> null
     }

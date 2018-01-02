@@ -6,6 +6,7 @@ import me.jbusdriver.db.bean.ICollectCategory
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.mvp.bean.CollectLinkWrapper
 import me.jbusdriver.ui.data.AppConfiguration
+import java.util.concurrent.ConcurrentSkipListSet
 
 /**
  * Created by Administrator on 2017/12/3.
@@ -40,6 +41,7 @@ class CollectCategoryHelper<T : ICollectCategory> {
     fun initFromData(data: List<T>, parentType: Int) {
         if (AppConfiguration.enableCategory) {
             collectGroupMap.clear()
+            dataWrapperList.clear()
             //添加所有分类
             CategoryService.queryCategoryTreeLike(parentType).forEach {
                 collectGroupMap.put(it, emptyList())
@@ -71,7 +73,7 @@ class CollectCategoryHelper<T : ICollectCategory> {
         /**
          * 待注入的类型
          */
-        val needInjectType = mutableSetOf<Int>()
+        val needInjectType = ConcurrentSkipListSet<Int>()
 
         override fun getItemType(t: CollectLinkWrapper<T>): Int {
             require(needInjectType.isEmpty()) { "needInjectType must all inject" }

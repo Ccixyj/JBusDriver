@@ -175,16 +175,21 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
         val dd = data as List<ActressInfo>
         Flowable.just(dd).map {
             dataHelper.initFromData(dd, ActressCategory.id!!)
-        }.compose(SchedulersCompat.io()).subscribeBy {
-            adapter.setMultiTypeDelegate(dataHelper.getDelegate().apply {
-                needInjectType.forEach {
-                    if (it == -1) registerItemType(it, R.layout.layout_actress_item) //默认注入类型0，即actress
-                    else registerItemType(it, R.layout.layout_menu_op_head) //头部，可以做特化
-                }
-            })
+        }.compose(SchedulersCompat.io()).subscribeBy({
+            KLog.e(it.message)
+            it.printStackTrace()
+        }, {
+            val delegate = dataHelper.getDelegate()
+            KLog.d("needInjectType : ${delegate.needInjectType}")
+            delegate.needInjectType.onEach {
+                if (it == -1) delegate.registerItemType(it, R.layout.layout_actress_item) //默认注入类型0，即actress
+                else delegate.registerItemType(it, R.layout.layout_menu_op_head) //头部，可以做特化
+            }
+
+            adapter.setMultiTypeDelegate(delegate)
             adapter.addData(dataHelper.getDataWrapper())
             if (AppConfiguration.enableCategory) adapter.expand(0)
-        }.addTo(rxManager)
+        }).addTo(rxManager)
 
     }
 

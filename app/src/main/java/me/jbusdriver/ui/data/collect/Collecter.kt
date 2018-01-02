@@ -12,7 +12,6 @@ import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.*
 import java.io.File
 import java.lang.reflect.Type
-import kotlin.concurrent.thread
 
 /**
  * Created by Administrator on 2017/9/14.
@@ -24,6 +23,7 @@ interface ICollect<T> {
     fun has(data: T): Boolean
     fun removeCollect(data: T): Boolean
     fun reload()
+    fun update(data: T): Boolean
 }
 
 abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
@@ -174,6 +174,12 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
     override fun reload() {
         dataList.clear()
         dataList.addAll(refreshData())
+    }
+
+    override fun update(data: T): Boolean {
+       return dataList.find { it.uniqueKey == data.uniqueKey }?.let {
+           LinkService.update(data)
+        }  ?: false
     }
 }
 

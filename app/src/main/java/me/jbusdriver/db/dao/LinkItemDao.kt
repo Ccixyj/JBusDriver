@@ -25,6 +25,15 @@ class LinkItemDao(private val db: BriteDatabase) {
             null
         }
     }
+    fun update(link: LinkItem): Boolean {
+        return try {
+            KLog.i("LinkItemDao ${db.writableDatabase},$link")
+            db.update(LinkItemTable.TABLE_NAME, link.cv(false),LinkItemTable.COLUMN_KEY  + " = ? " ,link.key) > 0
+        } catch (e: Exception) {
+            false
+        }
+    }
+
 
     fun delete(link: LinkItem) = db.delete(LinkItemTable.TABLE_NAME, "${LinkItemTable.COLUMN_KEY} = ? ", link.key) > 0
 
