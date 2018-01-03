@@ -33,7 +33,6 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     //lazy load tag
     private var isLazyLoaded = false
 
-    private var isUserVisible: Boolean = false
     private var placeDialogHolder: MaterialDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,6 +87,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
         if (mFirstStart || mViewReCreate) {
             initData()
         }
+        KLog.d("doStart lazyLoad $TAG $mFirstStart $isLazyLoaded $userVisibleHint")
         if (mFirstStart && !isLazyLoaded && userVisibleHint) {
             lazyLoad()
         }
@@ -113,29 +113,27 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
      *fragment show hide 不走setUserVisibleHint , 走onHiddenChanged方法.
      */
     override fun onHiddenChanged(hidden: Boolean) {
+        KLog.t(TAG).d("onHiddenChanged :$hidden")
         super.onHiddenChanged(hidden)
-        if (!hidden) {
-            isUserVisible = true
-            onVisible()
-        } else {
-            isUserVisible = false
-            onInvisible()
-        }
+        userVisibleHint = !hidden
+//        if (!hidden) {
+//            onVisible()
+//        } else {
+//            onInvisible()
+//        }
     }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if (userVisibleHint) {
-            isUserVisible = true
             onVisible()
         } else {
-            isUserVisible = false
             onInvisible()
         }
     }
 
     protected open fun onVisible() {
-        KLog.t(TAG).i("onVisible")
+        KLog.t(TAG).i("onVisible : $isLazyLoaded $mBasePresenter")
         if (isLazyLoaded || mBasePresenter == null) {
             //mBasePresenter 可能没有初始化 ,放入dostart 中执行lazy
         } else {
@@ -144,10 +142,10 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     }
 
     protected open fun lazyLoad() {
-        if (isLazyLoaded ) {
+        if (isLazyLoaded) {
             return
         }
-        KLog.w("lazy load :$TAG")
+        KLog.w("lazyLoad :$TAG")
         if (mBasePresenter is BasePresenter.LazyLoaderPresenter) (mBasePresenter as? BasePresenter.LazyLoaderPresenter)?.lazyLoad()
         isLazyLoaded = true
     }

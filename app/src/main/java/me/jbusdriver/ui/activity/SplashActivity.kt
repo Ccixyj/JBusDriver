@@ -4,12 +4,12 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.support.v4.util.ArrayMap
 import com.google.gson.JsonObject
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.addTo
@@ -21,6 +21,7 @@ import me.jbusdriver.http.GitHub
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.enums.DataSourceType
 import org.jsoup.Jsoup
+import java.util.concurrent.TimeUnit
 
 class SplashActivity : BaseActivity() {
 
@@ -53,10 +54,8 @@ class SplashActivity : BaseActivity() {
                 })
                 .addTo(rxManager)
 
-        Handler().postDelayed({
-            KLog.d("clear dispose")
-            rxManager.clear()
-        }, 6000)
+        //6s后无论怎样都要完成
+        Single.timer(6000, TimeUnit.MILLISECONDS).doFinally { rxManager.clear() }.subscribeBy().addTo(rxManager)
     }
 
     private fun initUrls(): Observable<ArrayMap<String, String>> {

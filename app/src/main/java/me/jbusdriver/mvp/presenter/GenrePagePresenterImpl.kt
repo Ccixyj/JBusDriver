@@ -43,7 +43,7 @@ class GenrePagePresenterImpl(val url: String) : BasePresenterImpl<GenrePageContr
                         it.fragmentValues.addAll(list)
                     }
                     Unit
-                }.doOnTerminate { AndroidSchedulers.mainThread().scheduleDirect { mView?.dismissLoading() } }
+                }.doFinally { AndroidSchedulers.mainThread().scheduleDirect { mView?.dismissLoading() } }
                 .compose(SchedulersCompat.io())
                 .subscribeBy(onError = {
                     KLog.d(it)
