@@ -1,15 +1,31 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.versions = [
-            'compileSdk'    : 26,
-            'targetSdk'     : 26,
-            'buildTools'    : '27.0.1',
 
-            'gradle'        : '3.0.1',
-            'kotlin'        : '1.2.10',
-            'supportLibrary': '27.0.2'
+    ext.versions = [
+            'compileSdk'                   : 26,
+            'targetSdk'                    : 26,
+            'buildTools'                   : '27.0.1',
+
+            'gradle'                       : '3.0.1',
+            'kotlin'                       : '1.2.10',
+            'supportLibrary'               : '27.0.2',
+
+            'logger'                       : '2.1.1',
+            'gson'                         : '2.8.2',
+            'material_dialogs_core'        : '0.9.6.0',
+
+            'okhttp'                       : '3.9.1',
+            'retrofit'                     : '2.3.0',
+            'rxjava'                       : '2.1.8',
+            'glide'                        : '4.5.0',
+            'sqlbrite'                     : '3.1.0',
+
+            'BaseRecyclerViewAdapterHelper': '2.9.34',
+            'jsoup'                        : '1.11.2'
+
     ]
+
     repositories {
         jcenter()
         google()
@@ -25,7 +41,7 @@ buildscript {
 allprojects {
     repositories {
         google()
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+//        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
         jcenter()
         maven { url "https://jitpack.io" }
     }

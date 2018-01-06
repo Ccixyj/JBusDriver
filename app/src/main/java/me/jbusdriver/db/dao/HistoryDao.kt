@@ -2,7 +2,8 @@ package me.jbusdriver.db.dao
 
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE
-import com.squareup.sqlbrite2.BriteDatabase
+import com.squareup.sqlbrite3.BriteDatabase
+import com.squareup.sqlbrite3.inTransaction
 import io.reactivex.Observable
 import me.jbusdriver.common.getIntByColumn
 import me.jbusdriver.common.getLongByColumn
@@ -18,18 +19,14 @@ import java.util.*
 class HistoryDao(private val db: BriteDatabase) {
 
 
-    fun insert(history: History) = db.insert(HistoryTable.TABLE_NAME, history.cv(true) , CONFLICT_IGNORE)
+    fun insert(history: History) = ioBlock { db.insert(HistoryTable.TABLE_NAME, CONFLICT_IGNORE, history.cv(true)) }
 
     fun update(histories: List<History>) {
-        val newTransaction = db.newTransaction()
-        try {
+        db.inTransaction {
             histories.forEach {
-                db.update(HistoryTable.TABLE_NAME, it.cv(false), HistoryTable.COLUMN_ID + " = ? ",
+                db.update(HistoryTable.TABLE_NAME, CONFLICT_IGNORE, it.cv(false), HistoryTable.COLUMN_ID + " = ? ",
                         it.id.toString())
             }
-            newTransaction.markSuccessful()
-        } finally {
-            newTransaction.end()
         }
     }
 
@@ -51,9 +48,11 @@ class HistoryDao(private val db: BriteDatabase) {
     }
 
     fun deleteAndSetZero() {
-        db.run {
-            delete(HistoryTable.TABLE_NAME, null)
-            execute("update sqlite_sequence SET seq = 0 where name = '${HistoryTable.TABLE_NAME}'")
+        ioBlock {
+            db.run {
+                delete(HistoryTable.TABLE_NAME, null)
+                execute("update sqlite_sequence SET seq = 0 where name = '${HistoryTable.TABLE_NAME}'")
+            }
         }
     }
 

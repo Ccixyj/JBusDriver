@@ -3,7 +3,6 @@ package me.jbusdriver.ui.activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
@@ -93,7 +92,7 @@ class WatchLargeImageActivity : BaseActivity() {
                     .asBitmap()
                     .load((urls[position]).toGlideUrl)
                     .transition(withCrossFade())
-                    .error(R.drawable.ic_image_broken)
+                    .error(R.drawable.ic_image_error)
                     .priority(priority)
                     .into(object : SimpleTarget<Bitmap>() {
 
@@ -102,20 +101,26 @@ class WatchLargeImageActivity : BaseActivity() {
                             view.findViewById<View>(R.id.pb_large_progress).alpha = 1f
                         }
 
-                        override fun onResourceReady(resource: Bitmap?, transition: Transition<in Bitmap>?) {
+                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                             (view.findViewById<MultiTouchZoomableImageView>(R.id.mziv_image_large)).imageBitmap = resource
                             view.findViewById<View>(R.id.pb_large_progress).animate().alpha(0f).setDuration(300).start()
                         }
 
+
                         override fun onLoadFailed(errorDrawable: Drawable?) {
                             super.onLoadFailed(errorDrawable)
                             view.findViewById<View>(R.id.pb_large_progress).animate().alpha(0f).setDuration(500).start()
-                            (view.findViewById<View>(R.id.mziv_image_large) as MultiTouchZoomableImageView).apply {
-                                imageBitmap = BitmapFactory.decodeResource(viewContext.resources, R.drawable.ic_image_broken)
-                                setImageGestureListener(object : ImageGestureListener {
+                            (view.findViewById<View>(R.id.mziv_image_large) as MultiTouchZoomableImageView).also { view ->
+                                //                                imageBitmap = BitmapFactory.decodeResource(viewContext.resources, R.drawable.ic_image_error)
+                                GlideApp.with(view).asBitmap().load(R.drawable.ic_image_error).into(object : SimpleTarget<Bitmap>() {
+                                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                        view.imageBitmap = resource
+                                    }
+                                })
+
+                                view.setImageGestureListener(object : ImageGestureListener {
                                     override fun onImageGestureSingleTapConfirmed() {
                                         KLog.e("onImageGestureSingleTapConfirmed : reload")
-                                        imageBitmap.recycle()
                                         loadImage(view, position)
                                     }
 

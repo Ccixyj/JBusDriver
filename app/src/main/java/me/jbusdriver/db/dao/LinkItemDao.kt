@@ -2,7 +2,7 @@ package me.jbusdriver.db.dao
 
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE
-import com.squareup.sqlbrite2.BriteDatabase
+import com.squareup.sqlbrite3.BriteDatabase
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.getIntByColumn
 import me.jbusdriver.common.getLongByColumn
@@ -20,22 +20,23 @@ class LinkItemDao(private val db: BriteDatabase) {
     fun insert(link: LinkItem): Long? {
         return try {
             KLog.i("LinkItemDao ${db.writableDatabase},$link")
-            db.insert(LinkItemTable.TABLE_NAME, link.cv(true), CONFLICT_IGNORE)
+            ioBlock { db.insert(LinkItemTable.TABLE_NAME, CONFLICT_IGNORE, link.cv(true)) }
         } catch (e: Exception) {
             null
         }
     }
+
     fun update(link: LinkItem): Boolean {
         return try {
             KLog.i("LinkItemDao ${db.writableDatabase},$link")
-            db.update(LinkItemTable.TABLE_NAME, link.cv(false),LinkItemTable.COLUMN_KEY  + " = ? " ,link.key) > 0
+            ioBlock { db.update(LinkItemTable.TABLE_NAME, CONFLICT_IGNORE, link.cv(false), LinkItemTable.COLUMN_KEY + " = ? ", link.key) > 0 }
         } catch (e: Exception) {
             false
         }
     }
 
 
-    fun delete(link: LinkItem) = db.delete(LinkItemTable.TABLE_NAME, "${LinkItemTable.COLUMN_KEY} = ? ", link.key) > 0
+    fun delete(link: LinkItem) = ioBlock { db.delete(LinkItemTable.TABLE_NAME, "${LinkItemTable.COLUMN_KEY} = ? ", link.key) > 0 }
 
     fun listAll(): List<LinkItem> = db.createQuery(LinkItemTable.TABLE_NAME, "SELECT * FROM ${LinkItemTable.TABLE_NAME} ORDER BY ${LinkItemTable.COLUMN_ID} DESC").mapToList {
         LinkItem(it.getIntByColumn(LinkItemTable.COLUMN_DB_TYPE), Date(it.getLongByColumn(LinkItemTable.COLUMN_CREATE_TIME)),
@@ -71,7 +72,7 @@ class LinkItemDao(private val db: BriteDatabase) {
 
     fun updateByCategoryId(id: Int, type: Int) {
         val cv = ContentValues().apply { putNull(LinkItemTable.COLUMN_CATEGORY_ID) }
-        db.update(LinkItemTable.TABLE_NAME, cv, " ${LinkItemTable.COLUMN_CATEGORY_ID} = ? and ${LinkItemTable.COLUMN_DB_TYPE} = ? ", id.toString(), type.toString())
+        db.update(LinkItemTable.TABLE_NAME, CONFLICT_IGNORE, cv, " ${LinkItemTable.COLUMN_CATEGORY_ID} = ? and ${LinkItemTable.COLUMN_DB_TYPE} = ? ", id.toString(), type.toString())
     }
 
 }

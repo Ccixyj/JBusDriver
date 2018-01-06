@@ -1,8 +1,8 @@
 package me.jbusdriver.db
 
-import android.content.Context
+import android.arch.persistence.db.SupportSQLiteDatabase
+import android.arch.persistence.db.SupportSQLiteOpenHelper
 import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper
 import me.jbusdriver.common.KLog
 import me.jbusdriver.db.bean.AllFirstParentDBCategoryGroup
 
@@ -67,55 +67,51 @@ private const val CREATE_LINK_ITEM_SQL = "CREATE TABLE ${LinkItemTable.TABLE_NAM
 //endregion
 
 
-private const val JBUS_DB_NAME = "jbusdriver.db"
+
 private const val JBUS_DB_VERSION = 1
 
-class JBusDBOpenHelper(context: Context) : SQLiteOpenHelper(context, JBUS_DB_NAME, null, JBUS_DB_VERSION) {
+class JBusDBOpenCallBack : SupportSQLiteOpenHelper.Callback(JBUS_DB_VERSION) {
 
-
-    override fun onCreate(db: SQLiteDatabase?) {
-        KLog.d("JBusDBOpenHelper onCreate")
+    override fun onCreate(db: SupportSQLiteDatabase?) {
+        KLog.d("JBusDBOpenCallBack onCreate")
         db?.execSQL(CREATE_HISTORY_SQL)
     }
 
-    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        KLog.d("JBusDBOpenHelper onUpgrade $oldVersion $newVersion")
-        /*for (i in oldVersion..newVersion) {
-            when (i) {
-                JBUS_DB_VERSION_V2 -> up2V2(db)
-            }
-        }*/
+    override fun onUpgrade(db: SupportSQLiteDatabase?, oldVersion: Int, newVersion: Int) {
+        KLog.d("JBusDBOpenCallBack onUpgrade $oldVersion $newVersion")
     }
-
+    /*for (i in oldVersion..newVersion) {
+     when (i) {
+         JBUS_DB_VERSION_V2 -> up2V2(db)
+     }
+ }*/
     /* private fun up2V2(db: SQLiteDatabase?) {
-         KLog.d("JBusDBOpenHelper up2V2 $db")
-         db?.execSQL(CREATE_LINK_ITEM_SQL)
-         db?.execSQL(CREATE_COLLECT_CATEGORY_SQL)
-     }*/
+           KLog.d("JBusDBOpenCallBack up2V2 $db")
+           db?.execSQL(CREATE_LINK_ITEM_SQL)
+           db?.execSQL(CREATE_COLLECT_CATEGORY_SQL)
+       }*/
+
+
 }
 
-private const val COLLECT_DB_NAME = "collect.db"
+
 private const val COLLECT_DB_VERSION = 1
 
-class CollectDBOpenHelper(context: Context) : SQLiteOpenHelper(context, COLLECT_DB_NAME, null, COLLECT_DB_VERSION) {
+class CollectDBCallBack : SupportSQLiteOpenHelper.Callback(COLLECT_DB_VERSION) {
 
-    //插入默认的3种分类
-    override fun onCreate(db: SQLiteDatabase?) {
-        KLog.d("JBusDBOpenHelper onCreate")
+    override fun onCreate(db: SupportSQLiteDatabase?) {
+        KLog.d("JBusDBOpenCallBack onCreate")
         db?.execSQL(CREATE_LINK_ITEM_SQL)
         db?.execSQL(CREATE_COLLECT_CATEGORY_SQL)
         //添加默认的分类
         AllFirstParentDBCategoryGroup.forEach {
-            db?.insertWithOnConflict(CategoryTable.TABLE_NAME, null, it.value.cv(), SQLiteDatabase.CONFLICT_NONE)
+            db?.insert(CategoryTable.TABLE_NAME, SQLiteDatabase.CONFLICT_NONE, it.value.cv())
         }
-
-
     }
 
-    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        KLog.d("JBusDBOpenHelper onUpgrade $oldVersion $newVersion")
+    override fun onUpgrade(db: SupportSQLiteDatabase?, oldVersion: Int, newVersion: Int) {
+        KLog.d("JBusDBOpenCallBack onUpgrade $oldVersion $newVersion")
     }
-
 
 }
 

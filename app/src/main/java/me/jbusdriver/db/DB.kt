@@ -1,7 +1,9 @@
 package me.jbusdriver.db
 
 import android.annotation.SuppressLint
-import com.squareup.sqlbrite2.SqlBrite
+import android.arch.persistence.db.SupportSQLiteOpenHelper
+import android.arch.persistence.db.framework.FrameworkSQLiteOpenHelperFactory
+import com.squareup.sqlbrite3.SqlBrite
 import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.common.AppContext
 import me.jbusdriver.common.KLog
@@ -16,21 +18,25 @@ object DB {
     private val provideSqlBrite: SqlBrite by lazy {
         SqlBrite.Builder().apply {
             if (jbusdriver.me.jbusdriver.BuildConfig.DEBUG) {
-                this.logger { message -> KLog.i(message) }
+                this.logger { message -> KLog.t("DataBase").i(message) }
             }
         }.build()
     }
-
+    private const val JBUS_DB_NAME = "jbusdriver.db"
     private val dataBase by lazy {
-        provideSqlBrite.wrapDatabaseHelper(JBusDBOpenHelper(AppContext.instace), Schedulers.io()).apply {
+        val configuration = SupportSQLiteOpenHelper.Configuration.builder(AppContext.instace)
+                .name(JBUS_DB_NAME).callback(JBusDBOpenCallBack()).build()
+        provideSqlBrite.wrapDatabaseHelper(FrameworkSQLiteOpenHelperFactory().create(configuration), Schedulers.io()).apply {
             setLoggingEnabled(jbusdriver.me.jbusdriver.BuildConfig.DEBUG)
         }
     }
+
+    private const val COLLECT_DB_NAME = "collect.db"
     private val collectDataBase by lazy {
-        provideSqlBrite.wrapDatabaseHelper(CollectDBOpenHelper(
-                object : SDCardDatabaseContext(AppContext.instace) {
-                    override val dir: String = AppContext.instace.packageName + File.separator + "collect"
-                }), Schedulers.io()).apply {
+        val configuration = SupportSQLiteOpenHelper.Configuration.builder(object : SDCardDatabaseContext(AppContext.instace) {
+            override val dir: String = AppContext.instace.packageName + File.separator + "collect"
+        }).name(COLLECT_DB_NAME).callback(CollectDBCallBack()).build()
+        provideSqlBrite.wrapDatabaseHelper(FrameworkSQLiteOpenHelperFactory().create(configuration), Schedulers.io()).apply {
             setLoggingEnabled(jbusdriver.me.jbusdriver.BuildConfig.DEBUG)
         }
     }

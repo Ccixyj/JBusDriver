@@ -62,25 +62,23 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 
                         GlideApp.with(holder.itemView.context).asBitmap().load(actress.avatar.toGlideUrl)
                                 .error(R.drawable.ic_nowprinting).into(object : BitmapImageViewTarget(holder.getView(R.id.iv_actress_avatar)) {
-                            override fun onResourceReady(resource: Bitmap?, transition: Transition<in Bitmap>?) {
-                                resource?.let {
-                                    Flowable.just(it).map {
-                                        Palette.from(it).generate()
-                                    }.compose(SchedulersCompat.io())
-                                            .subscribeWith(object : SimpleSubscriber<Palette>() {
-                                                override fun onNext(t: Palette) {
-                                                    super.onNext(t)
-                                                    val swatch = listOfNotNull(t.lightMutedSwatch, t.lightVibrantSwatch, t.vibrantSwatch, t.mutedSwatch)
-                                                    if (!swatch.isEmpty()) {
-                                                        swatch[randomNum(swatch.size)].let {
-                                                            holder.setBackgroundColor(R.id.tv_actress_name, it.rgb)
-                                                            holder.setTextColor(R.id.tv_actress_name, it.bodyTextColor)
-                                                        }
+                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                Flowable.just(resource).map {
+                                    Palette.from(resource).generate()
+                                }.compose(SchedulersCompat.io())
+                                        .subscribeWith(object : SimpleSubscriber<Palette>() {
+                                            override fun onNext(t: Palette) {
+                                                super.onNext(t)
+                                                val swatch = listOfNotNull(t.lightMutedSwatch, t.lightVibrantSwatch, t.vibrantSwatch, t.mutedSwatch)
+                                                if (!swatch.isEmpty()) {
+                                                    swatch[randomNum(swatch.size)].let {
+                                                        holder.setBackgroundColor(R.id.tv_actress_name, it.rgb)
+                                                        holder.setTextColor(R.id.tv_actress_name, it.bodyTextColor)
                                                     }
                                                 }
-                                            })
-                                            .addTo(rxManager)
-                                }
+                                            }
+                                        })
+                                        .addTo(rxManager)
 
                                 super.onResourceReady(resource, transition)
                             }

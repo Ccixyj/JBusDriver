@@ -2,7 +2,7 @@ package me.jbusdriver.db.dao
 
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import com.squareup.sqlbrite2.BriteDatabase
+import com.squareup.sqlbrite3.BriteDatabase
 import me.jbusdriver.common.getIntByColumn
 import me.jbusdriver.common.getStringByColumn
 import me.jbusdriver.db.CategoryTable
@@ -15,13 +15,13 @@ class CategoryDao(private val db: BriteDatabase) {
 
 
     fun insert(category: Category) = try {
-        db.insert(CategoryTable.TABLE_NAME, category.cv(), SQLiteDatabase.CONFLICT_IGNORE)
+        ioBlock { db.insert(CategoryTable.TABLE_NAME, SQLiteDatabase.CONFLICT_IGNORE, category.cv()) }
     } catch (e: Exception) {
         -1L
     }
 
     fun delete(category: Category) {
-        db.delete(CategoryTable.TABLE_NAME, "${CategoryTable.COLUMN_ID} = ? ", category.id.toString())
+        ioBlock { db.delete(CategoryTable.TABLE_NAME, "${CategoryTable.COLUMN_ID} = ? ", category.id.toString()) }
     }
 
     fun findById(cId: Int): Category {
