@@ -1,9 +1,9 @@
 package me.jbusdriver.mvp.presenter
 
-import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import me.jbusdriver.common.AppContext
+import me.jbusdriver.common.CacheLoader
 import me.jbusdriver.common.SchedulersCompat
 import me.jbusdriver.common.fromJson
 import me.jbusdriver.mvp.MagnetListContract

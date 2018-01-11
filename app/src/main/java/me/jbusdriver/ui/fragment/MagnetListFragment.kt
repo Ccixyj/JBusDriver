@@ -17,11 +17,12 @@ import me.jbusdriver.common.*
 import me.jbusdriver.mvp.MagnetListContract
 import me.jbusdriver.mvp.bean.Magnet
 import me.jbusdriver.mvp.presenter.MagnetListPresenterImpl
+import me.jbusdriver.ui.adapter.BaseAppAdapter
 
 class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListPresenter, MagnetListContract.MagnetListView, Magnet>(), MagnetListContract.MagnetListView {
 
-    private val keyword by lazy { arguments.getString(C.BundleKey.Key_1) ?: error("need keyword") }
-    private val magnetLoaderKey by lazy { arguments.getString(C.BundleKey.Key_2) ?: error("need magnet loaderKey") }
+    private val keyword by lazy { arguments?.getString(C.BundleKey.Key_1) ?: error("need keyword") }
+    private val magnetLoaderKey by lazy { arguments?.getString(C.BundleKey.Key_2) ?: error("need magnet loaderKey") }
     override fun createPresenter() = MagnetListPresenterImpl(magnetLoaderKey, keyword)
 
     override val layoutId: Int = R.layout.layout_swipe_recycle
@@ -32,7 +33,7 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListP
 
     override val adapter: BaseQuickAdapter<Magnet, in BaseViewHolder> by lazy {
 
-        object : BaseQuickAdapter<Magnet, BaseViewHolder>(R.layout.layout_magnet_item) {
+        object : BaseAppAdapter<Magnet, BaseViewHolder>(R.layout.layout_magnet_item) {
 
             override fun convert(helper: BaseViewHolder, item: Magnet) {
                 KLog.d("convert $item")
@@ -80,8 +81,9 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListP
 
     }
 
-    override fun showContents(datas: List<*>?) {
-        super.showContents(datas)
+
+    override fun showContents(data: List<*>) {
+        super.showContents(data)
         if (adapter.getData().isEmpty()) adapter.getEmptyView().visibility = View.VISIBLE
     }
 
