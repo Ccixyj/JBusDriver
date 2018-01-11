@@ -186,13 +186,18 @@ private val urlCache by lazy { mutableMapOf<String, Uri>() }
 
 //string url -> get url host
 val String.urlHost: String
-    get() = (urlCache[this] ?: Uri.parse(this).apply { urlCache[this@urlHost] = this }).let {
+    get() = urlCache.getOrPut(this) {
+        Uri.parse(this)
+    }.let {
         checkNotNull(it)
         "${it.scheme}://${it.host}"
     }
 
+
 val String.urlPath: String
-    get() = (urlCache[this] ?: Uri.parse(this).apply { urlCache[this@urlPath] = this }).let {
+    get() = urlCache.getOrPut(this) {
+        Uri.parse(this)
+    }.let {
         checkNotNull(it)
         it.path
     }
@@ -200,4 +205,4 @@ val String.urlPath: String
 
 /*glide : url ->? custome glideurl */
 val String.toGlideUrl: GlideNoHost
-    inline get() = GlideNoHost(this)
+    inline get() = GlideNoHost(this) /**/

@@ -41,6 +41,7 @@ class AppContext : Application() {
         })
 
         MobclickAgent.setDebugMode(BuildConfig.DEBUG)
+
     }
 
     companion object {

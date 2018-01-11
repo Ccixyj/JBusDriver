@@ -68,6 +68,7 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                                 .setText(R.id.tv_movie_date, item.date)
                                 .setText(R.id.tv_movie_code, item.code)
 
+
                         GlideApp.with(this@AbsMovieListFragment).load(item.imageUrl.toGlideUrl).placeholder(R.drawable.ic_place_holder)
                                 .error(R.drawable.ic_place_holder).centerCrop().into(DrawableImageViewTarget(holder.getView(R.id.iv_movie_img)))
 
