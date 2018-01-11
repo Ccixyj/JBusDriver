@@ -21,6 +21,31 @@ class ActressListHolder(context: Context) : BaseHolder(context) {
             it.inflate(R.layout.layout_detail_actress).apply {
                 rv_recycle_actress.layoutManager = LinearLayoutManager(it, LinearLayoutManager.HORIZONTAL, false)
                 actressAdapter.bindToRecyclerView(rv_recycle_actress)
+                rv_recycle_actress.isNestedScrollingEnabled = true
+                actressAdapter.setOnItemClickListener { _, _, position ->
+                    actressAdapter.data.getOrNull(position)?.let {
+                        item ->
+                        KLog.d("item : $it")
+                        weakRef.get()?.let {
+                            MovieListActivity.start(it, item)
+                        }
+                    }
+                }
+                actressAdapter.setOnItemLongClickListener { _, view, position ->
+                    actressAdapter.data.getOrNull(position)?.let {
+                        act ->
+                        val action = if (ActressCollector.has(act)) actionMap.minus("收藏")
+                        else actionMap.minus("取消收藏")
+
+                        MaterialDialog.Builder(view.context).title(act.name)
+                                .items(action.keys)
+                                .itemsCallback { _, _, _, text ->
+                                    actionMap[text]?.invoke(act)
+                                }
+                                .show()
+                    }
+                    return@setOnItemLongClickListener true
+                }
             }
         } ?: error("context ref is finish")
     }

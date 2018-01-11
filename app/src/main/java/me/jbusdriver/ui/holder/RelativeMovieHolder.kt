@@ -46,6 +46,7 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
             it.inflate(R.layout.layout_detail_relative_movies).apply {
                 rv_recycle_relative_movies.layoutManager = LinearLayoutManager(it, LinearLayoutManager.HORIZONTAL, false)
                 relativeAdapter.bindToRecyclerView(rv_recycle_relative_movies)
+                rv_recycle_relative_movies.isNestedScrollingEnabled = true
                 relativeAdapter.setOnItemClickListener { _, v, position ->
                     relativeAdapter.data.getOrNull(position)?.let {
                         KLog.d("relative  : $it")

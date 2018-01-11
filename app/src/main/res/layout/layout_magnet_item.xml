@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_magnet_item"
+    style="@style/AppTheme.CardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/material_8dp">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tv_magnet_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="2"
+                android:minHeight="@dimen/material_32dp"
+                android:paddingTop="@dimen/material_8dp"
+                android:textColor="?android:textColorPrimary"
+                android:textSize="@dimen/material_16sp"
+                tools:text="titletitletitletitletitletitletitletitletitletitletitletitletitletitletitle" />
+
+            <TextView
+                android:id="@+id/tv_magnet_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/tv_magnet_title"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:minHeight="@dimen/material_24dp"
+                android:textSize="12sp"
+                tools:text="abc123" />
+
+            <TextView
+                android:id="@+id/tv_magnet_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_magnet_size"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:minHeight="@dimen/material_24dp"
+                android:textSize="@dimen/material_12sp"
+                tools:text="2015/01/01" />
+
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/iv_magnet_copy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:minWidth="@dimen/material_48dp"
+            android:padding="@dimen/material_8dp"
+            android:src="@drawable/ic_copy"
+            android:tint="@color/colorPrimary" />
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

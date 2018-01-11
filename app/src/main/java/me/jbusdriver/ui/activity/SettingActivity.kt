@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.Toolbar
+import com.afollestad.materialdialogs.MaterialDialog
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_setting.*
@@ -17,6 +18,7 @@ import me.jbusdriver.mvp.bean.MenuOp
 import me.jbusdriver.mvp.bean.MenuOpHead
 import me.jbusdriver.ui.adapter.MenuOpAdapter
 import me.jbusdriver.ui.data.AppConfiguration
+import me.jbusdriver.ui.data.magnet.MagnetLoaders
 
 class SettingActivity : BaseActivity() {
 
@@ -80,6 +82,39 @@ class SettingActivity : BaseActivity() {
             }
 
         }
+
+        //magnet source
+        tv_magnet_source.text = AppConfiguration.MagnetKeys.joinToString(separator = "   ")
+        ll_magnet_source_config.setOnClickListener {
+
+            val selectedIndices = AppConfiguration.MagnetKeys.map { MagnetLoaders.keys.indexOf(it) }.toTypedArray()
+
+            val disables = if (selectedIndices.size <= 1) selectedIndices else emptyArray()
+
+            MaterialDialog.Builder(viewContext).title("磁力源配置")
+                    .items(MagnetLoaders.keys.toList())
+                    .itemsCallbackMultiChoice(selectedIndices) { dialog, which, _ ->
+                        if (which.size <= 1) {
+                            dialog.builder.itemsDisabledIndices(*which)
+                        } else {
+                            dialog.builder.itemsDisabledIndices()
+                        }
+                        dialog.notifyItemsChanged()
+                        return@itemsCallbackMultiChoice true
+                    }.alwaysCallMultiChoiceCallback()
+                    .itemsDisabledIndices(*disables)
+                    .negativeText("取消")
+                    .negativeColor(R.color.secondText)
+                    .positiveText("配置")
+                    .onPositive { dialog, which ->
+                        AppConfiguration.MagnetKeys.clear()
+                        AppConfiguration.MagnetKeys.addAll(dialog.selectedIndices?.mapNotNull { MagnetLoaders.keys.toList().getOrNull(it) } ?: emptyList())
+                        AppConfiguration.saveMagnetKeys()
+                        tv_magnet_source.text = AppConfiguration.MagnetKeys.joinToString(separator = "   ")
+                    }
+                    .show()
+        }
+
     }
 
     private fun changePageMode(mode: Int) {

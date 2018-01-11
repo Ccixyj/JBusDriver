@@ -12,15 +12,28 @@
         android:layout_marginLeft="@dimen/material_8dp"
         android:layout_marginRight="@dimen/material_8dp"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="@dimen/material_8dp">
 
-        <ImageView
-            android:id="@+id/iv_actress_avatar"
-            android:layout_width="@dimen/material_104dp"
-            android:layout_height="@dimen/material_104dp"
-            android:gravity="center"
-            android:scaleType="fitStart"
-            tools:src="@mipmap/ic_launcher" />
+        <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            style="@style/AppTheme.CardView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/material_8dp">
+
+
+            <ImageView
+                android:id="@+id/iv_actress_avatar"
+                android:layout_width="@dimen/material_104dp"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:gravity="center"
+                android:scaleType="fitStart"
+                tools:src="@mipmap/ic_launcher" />
+
+        </android.support.v7.widget.CardView>
+
 
         <LinearLayout
             android:id="@+id/ll_attr_container"
