@@ -51,7 +51,7 @@ class SettingActivity : BaseActivity() {
                 MenuOpHead("其他").apply { MenuOp.nav_other.forEach { addSubItem(it) } }
         )
         val adapter = MenuOpAdapter(data)
-        rv_menu_op.adapter = adapter
+        adapter.bindToRecyclerView(rv_menu_op)
         rv_menu_op.layoutManager = GridLayoutManager(viewContext, viewContext.spanCount).apply {
             spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int) =

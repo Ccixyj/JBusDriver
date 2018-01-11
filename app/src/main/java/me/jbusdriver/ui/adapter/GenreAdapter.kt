@@ -3,7 +3,6 @@ package me.jbusdriver.ui.adapter
 import android.graphics.drawable.GradientDrawable
 import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
-import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.AppContext
@@ -18,7 +17,7 @@ import me.jbusdriver.ui.data.collect.LinkCollector
 /**
  * Created by Administrator on 2017/7/30.
  */
-open class GenreAdapter : BaseQuickAdapter<Genre, BaseViewHolder>(R.layout.layout_genre_item) {
+open class GenreAdapter : BaseAppAdapter<Genre, BaseViewHolder>(R.layout.layout_genre_item) {
 
     private val actionMap by lazy {
         mapOf("复制" to { genre: Genre ->

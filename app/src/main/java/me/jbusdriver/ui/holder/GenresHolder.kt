@@ -17,7 +17,7 @@ class GenresHolder(context: Context) : BaseHolder(context) {
         weakRef.get()?.let {
             it.inflate(R.layout.layout_detail_genres).apply {
                 rv_recycle_genres.layoutManager = FlowLayoutManager().apply { isAutoMeasureEnabled = true }
-                rv_recycle_genres.adapter = genreAdapter
+                genreAdapter.bindToRecyclerView(rv_recycle_genres)
             }
         } ?: error("context ref is finish")
     }

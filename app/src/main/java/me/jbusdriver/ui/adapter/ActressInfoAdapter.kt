@@ -2,11 +2,11 @@ package me.jbusdriver.ui.adapter
 
 import android.graphics.Bitmap
 import android.support.v7.graphics.Palette
+import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.transition.Transition
-import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import io.reactivex.Flowable
 import io.reactivex.disposables.CompositeDisposable
@@ -18,7 +18,7 @@ import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.data.collect.ActressCollector
 import java.util.*
 
-class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseQuickAdapter<ActressInfo, BaseViewHolder>(R.layout.layout_actress_item) {
+class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseAppAdapter<ActressInfo, BaseViewHolder>(R.layout.layout_actress_item) {
     private val actionMap by lazy {
         mapOf("复制名字" to { act: ActressInfo ->
             AppContext.instace.copy(act.name)
@@ -94,4 +94,8 @@ class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseQuickAdapter<
         }
     }
 
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
+        super.onAttachedToRecyclerView(recyclerView)
+    }
 }

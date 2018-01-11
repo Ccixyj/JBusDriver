@@ -30,6 +30,7 @@ import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.CollectLinkWrapper
 import me.jbusdriver.mvp.presenter.ActressCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieListActivity
+import me.jbusdriver.ui.adapter.BaseAppAdapter
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.collect.ActressCollector
 import me.jbusdriver.ui.helper.CollectCategoryHelper
@@ -51,7 +52,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 
     override val adapter: BaseQuickAdapter<CollectLinkWrapper<ActressInfo>, in BaseViewHolder> by lazy {
 
-        object : BaseQuickAdapter<CollectLinkWrapper<ActressInfo>, BaseViewHolder>(null) {
+        object : BaseAppAdapter<CollectLinkWrapper<ActressInfo>, BaseViewHolder>(null) {
             private val random = Random()
             private fun randomNum(number: Int) = Math.abs(random.nextInt() % number)
 

@@ -9,7 +9,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.request.target.DrawableImageViewTarget
-import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
@@ -17,13 +16,14 @@ import me.jbusdriver.common.*
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.ui.activity.MovieDetailActivity
+import me.jbusdriver.ui.adapter.BaseMultiItemAppAdapter
 import me.jbusdriver.ui.data.AppConfiguration
 
 
 abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
 
     override val adapter: BaseQuickAdapter<Movie, in BaseViewHolder>  by lazy {
-        object : BaseMultiItemQuickAdapter<Movie, BaseViewHolder>(null) {
+        object : BaseMultiItemAppAdapter<Movie, BaseViewHolder>(null) {
 
             init {
                 addItemType(-1, R.layout.layout_pager_section_item)

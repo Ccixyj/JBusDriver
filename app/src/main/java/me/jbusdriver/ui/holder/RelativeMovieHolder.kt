@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.layout_detail_relative_movies.view.*
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.ui.activity.MovieDetailActivity
+import me.jbusdriver.ui.adapter.BaseAppAdapter
 import me.jbusdriver.ui.data.collect.MovieCollector
 import java.util.*
 
@@ -44,8 +45,8 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
         weakRef.get()?.let {
             it.inflate(R.layout.layout_detail_relative_movies).apply {
                 rv_recycle_relative_movies.layoutManager = LinearLayoutManager(it, LinearLayoutManager.HORIZONTAL, false)
-                rv_recycle_relative_movies.adapter = relativeAdapter
-                relativeAdapter.setOnItemClickListener { adapter, v, position ->
+                relativeAdapter.bindToRecyclerView(rv_recycle_relative_movies)
+                relativeAdapter.setOnItemClickListener { _, v, position ->
                     relativeAdapter.data.getOrNull(position)?.let {
                         KLog.d("relative  : $it")
                         MovieDetailActivity.start(v.context, it)
@@ -69,7 +70,7 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
     }
 
     private val relativeAdapter: BaseQuickAdapter<Movie, BaseViewHolder> by lazy {
-        object : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.layout_detail_relative_movies_item) {
+        object : BaseAppAdapter<Movie, BaseViewHolder>(R.layout.layout_detail_relative_movies_item) {
             override fun convert(holder: BaseViewHolder, item: Movie) {
                 GlideApp.with(holder.itemView.context).asBitmap().load(item.imageUrl.toGlideUrl).into(object : BitmapImageViewTarget(holder.getView(R.id.iv_relative_movie_image)) {
                     override fun setResource(resource: Bitmap?) {
@@ -82,7 +83,7 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
                                     .subscribeWith(object : SimpleSubscriber<Palette>() {
                                         override fun onNext(it: Palette) {
                                             super.onNext(it)
-                                            val swatch = listOf(it.lightMutedSwatch, it.lightVibrantSwatch, it.vibrantSwatch, it.mutedSwatch).filterNotNull()
+                                            val swatch = listOfNotNull(it.lightMutedSwatch, it.lightVibrantSwatch, it.vibrantSwatch, it.mutedSwatch)
                                             if (!swatch.isEmpty()) {
                                                 swatch[randomNum(swatch.size)].let {
                                                     holder.setBackgroundColor(R.id.tv_relative_movie_title, it.rgb)

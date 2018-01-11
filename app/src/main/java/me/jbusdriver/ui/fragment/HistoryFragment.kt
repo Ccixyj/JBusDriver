@@ -20,7 +20,9 @@ import me.jbusdriver.db.bean.History
 import me.jbusdriver.mvp.HistoryContract
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.presenter.HistoryPresenterImpl
+import me.jbusdriver.ui.adapter.BaseAppAdapter
 import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Created by Administrator on 2017/9/18 0018.
@@ -57,9 +59,12 @@ class HistoryFragment : AppBaseRecycleFragment<HistoryContract.HistoryPresenter,
 
     override val adapter: BaseQuickAdapter<History, in BaseViewHolder> by lazy {
 
-        object : BaseQuickAdapter<History, BaseViewHolder>(R.layout.layout_history_item) {
-            val format = SimpleDateFormat("yyyy-MM-dd")
+
+        object : BaseAppAdapter<History, BaseViewHolder>(R.layout.layout_history_item) {
+
             val linkCache by lazy { ArrayMap<Int, ILink>() }
+            val format = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
+
             override fun convert(helper: BaseViewHolder, item: History) {
                 val itemLink = linkCache.getOrPut(item.hashCode()) { item.getLinkItem() }
                 val appender = if (itemLink !is Movie && itemLink !is SearchLink) {

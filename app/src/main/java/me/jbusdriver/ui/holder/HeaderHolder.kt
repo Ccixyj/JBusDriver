@@ -8,7 +8,6 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
-import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_header.view.*
@@ -18,6 +17,7 @@ import me.jbusdriver.common.inflate
 import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.bean.Header
 import me.jbusdriver.ui.activity.MovieListActivity
+import me.jbusdriver.ui.adapter.BaseAppAdapter
 import me.jbusdriver.ui.data.collect.LinkCollector
 
 /**
@@ -45,12 +45,12 @@ class HeaderHolder(context: Context) : BaseHolder(context) {
         weakRef.get()?.let {
             it.inflate(R.layout.layout_detail_header, null).apply {
                 rv_recycle_header.layoutManager = LinearLayoutManager(this.context)
-                rv_recycle_header.adapter = headAdapter
+                headAdapter.bindToRecyclerView(rv_recycle_header)
             }
         } ?: error("context ref is finish")
     }
 
-    private val headAdapter = object : BaseQuickAdapter<Header, BaseViewHolder>(R.layout.layout_header_item) {
+    private val headAdapter = object : BaseAppAdapter<Header, BaseViewHolder>(R.layout.layout_header_item) {
         override fun convert(holder: BaseViewHolder, item: Header) {
             holder.getView<TextView>(R.id.tv_head_value)?.apply {
                 if (!TextUtils.isEmpty(item.link)) {

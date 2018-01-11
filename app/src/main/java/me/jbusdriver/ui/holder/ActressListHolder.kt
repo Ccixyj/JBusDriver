@@ -7,13 +7,9 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_actress.view.*
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.copy
 import me.jbusdriver.common.inflate
-import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.ui.adapter.ActressInfoAdapter
-import me.jbusdriver.ui.data.collect.ActressCollector
 
 /**
  * Created by Administrator on 2017/5/9 0009.
@@ -24,7 +20,7 @@ class ActressListHolder(context: Context) : BaseHolder(context) {
         weakRef.get()?.let {
             it.inflate(R.layout.layout_detail_actress).apply {
                 rv_recycle_actress.layoutManager = LinearLayoutManager(it, LinearLayoutManager.HORIZONTAL, false)
-                rv_recycle_actress.adapter = actressAdapter
+                actressAdapter.bindToRecyclerView(rv_recycle_actress)
             }
         } ?: error("context ref is finish")
     }

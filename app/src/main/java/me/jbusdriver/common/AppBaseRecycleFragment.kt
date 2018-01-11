@@ -34,14 +34,16 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
 
     override fun initWidget(rootView: View) {
         recycleView.layoutManager = layoutManager
-        adapter.setOnLoadMoreListener({ mBasePresenter?.onLoadMore() }, recycleView)
+        recycleView.recycledViewPool
+
         adapter.openLoadAnimation {
             arrayOf(ObjectAnimator.ofFloat(it, "alpha", 0.0f, 1.0f),
                     ObjectAnimator.ofFloat(it, "translationY", 120f, 0f))
         }
         swipeView?.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimaryLight)
         swipeView?.setOnRefreshListener { mBasePresenter?.onRefresh() }
-        recycleView.adapter = adapter
+        adapter.bindToRecyclerView(recycleView)
+        adapter.setOnLoadMoreListener({ mBasePresenter?.onLoadMore() }, recycleView)
     }
 
     override fun showLoading() {

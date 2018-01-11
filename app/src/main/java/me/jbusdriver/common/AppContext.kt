@@ -1,6 +1,7 @@
 package me.jbusdriver.common
 
 import android.app.Application
+import android.support.v7.widget.RecyclerView
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import com.orhanobut.logger.AndroidLogAdapter
@@ -16,7 +17,7 @@ import me.jbusdriver.http.JAVBusService
  * Created by Administrator on 2017/4/8.
  */
 class AppContext : Application() {
-
+    val recycledViewPoolHolder by lazy { arrayMapof<String, RecyclerView.RecycledViewPool>() }
     override fun onCreate() {
         super.onCreate()
         instace = this

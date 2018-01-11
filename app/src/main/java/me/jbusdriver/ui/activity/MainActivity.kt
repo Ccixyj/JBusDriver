@@ -32,7 +32,6 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
     private val navigationView by lazy { findViewById<NavigationView>(R.id.nav_view) }
     private var selectMenu: MenuItem? = null
-    private val sharfp by lazy { getSharedPreferences("config", Context.MODE_PRIVATE) }
     private val fragments by lazy { hashMapOf<Int, BaseFragment>() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +39,6 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         initNavigationView()
         initFragments(savedInstanceState)
         bindRx()
-
     }
 
 
@@ -117,7 +115,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         RxBus.toFlowable(MenuChangeEvent::class.java)
                 .delay(100, TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成
                 .compose(SchedulersCompat.computation())
-                .subscribeBy{
+                .subscribeBy {
                     initFragments(null)
                 }
                 .addTo(rxManager)
@@ -198,6 +196,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
     @SuppressLint("ResourceAsColor")
     private fun showNotice(notice: Any?) {
+        val sharfp by lazy { getSharedPreferences("config", Context.MODE_PRIVATE) }
         if (notice != null && notice is NoticeBean && !TextUtils.isEmpty(notice.content) && notice.id > 0 && sharfp.getInt(NoticeIgnoreID, -1) < notice.id) {
             MaterialDialog.Builder(this).title("公告")
                     .content(notice.content!!)

@@ -1,7 +1,6 @@
 package me.jbusdriver.ui.fragment
 
 import android.graphics.Paint
-import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
@@ -23,6 +22,7 @@ import me.jbusdriver.mvp.bean.des
 import me.jbusdriver.mvp.presenter.LinkCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.activity.SearchResultActivity
+import me.jbusdriver.ui.adapter.BaseAppAdapter
 import me.jbusdriver.ui.data.collect.LinkCollector
 
 /**
@@ -39,7 +39,7 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
 
 
     override val adapter: BaseQuickAdapter<ILink, in BaseViewHolder> by lazy {
-        object : BaseQuickAdapter<ILink, BaseViewHolder>(R.layout.layout_header_item) {
+        object : BaseAppAdapter<ILink, BaseViewHolder>(R.layout.layout_header_item) {
 
             override fun convert(holder: BaseViewHolder, item: ILink) {
                 val des = item.des.split(" ")

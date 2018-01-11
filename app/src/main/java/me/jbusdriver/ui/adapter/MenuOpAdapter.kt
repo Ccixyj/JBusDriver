@@ -1,6 +1,5 @@
 package me.jbusdriver.ui.adapter
 
-import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import jbusdriver.me.jbusdriver.R
@@ -13,7 +12,7 @@ import me.jbusdriver.mvp.bean.MenuOpHead
  * Created by Administrator on 2017/9/12 0012.
  */
 
-class MenuOpAdapter(data: List<MultiItemEntity>) : BaseMultiItemQuickAdapter<MultiItemEntity, BaseViewHolder>(data) {
+class MenuOpAdapter(data: List<MultiItemEntity>) : BaseMultiItemAppAdapter<MultiItemEntity, BaseViewHolder>(data) {
 
     init {
         addItemType(Expand_Type_Head, R.layout.layout_menu_op_head)
