@@ -97,7 +97,8 @@ class BtdiggsMagnetLoaderImpl : IMagnetLoader {
 
     override var hasNexPage: Boolean = true
 
-    fun encode(string: String) = Base64.encodeToString(string.toByteArray(), Base64.NO_PADDING or Base64.URL_SAFE)
+    private fun encode(string: String) = Base64.encodeToString(string.toByteArray(), Base64.NO_PADDING or Base64.URL_SAFE)
+
     override fun loadMagnets(key: String, page: Int): List<Magnet> {
         KLog.d("loadMagnets ${search.format(encode(key), page)}")
         val doc = Jsoup.connect(search.format(encode(key).trim(), page)).get()

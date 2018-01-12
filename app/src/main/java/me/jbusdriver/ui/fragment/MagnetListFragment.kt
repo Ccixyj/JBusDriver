@@ -44,14 +44,6 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListP
             }
 
         }.apply {
-            emptyView = TextView(viewContext).apply {
-                text = "没有种子数据"
-                layoutParams = ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, viewContext.dpToPx(36f)).apply {
-                    gravity = Gravity.CENTER
-                }
-            }
-            emptyView.visibility = View.INVISIBLE
-
             setOnItemClickListener { adapter, _, position ->
                 (adapter.data.getOrNull(position) as? Magnet)?.let { magnet ->
                     KLog.d("setOnItemClickListener $magnet")
@@ -79,12 +71,6 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListP
             }
         }
 
-    }
-
-
-    override fun showContents(data: List<*>) {
-        super.showContents(data)
-        if (adapter.getData().isEmpty()) adapter.getEmptyView().visibility = View.VISIBLE
     }
 
     companion object {
