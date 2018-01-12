@@ -33,7 +33,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     //lazy load tag
     private var isLazyLoaded = false
 
-    private var placeDialogHolder: MaterialDialog? = null
+    protected var placeDialogHolder: MaterialDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

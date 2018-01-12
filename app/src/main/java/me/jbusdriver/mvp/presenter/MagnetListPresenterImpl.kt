@@ -13,7 +13,7 @@ import me.jbusdriver.mvp.model.BaseModel
 import me.jbusdriver.ui.data.magnet.MagnetLoaders
 import org.jsoup.nodes.Document
 
-class MagnetListPresenterImpl(val magnetLoaderKey: String, val keyword: String) : AbstractRefreshLoadMorePresenterImpl<MagnetListContract.MagnetListView, Magnet>(), MagnetListContract.MagnetListPresenter {
+class MagnetListPresenterImpl(private val magnetLoaderKey: String, private val keyword: String) : AbstractRefreshLoadMorePresenterImpl<MagnetListContract.MagnetListView, Magnet>(), MagnetListContract.MagnetListPresenter {
 
     private val loader by lazy { MagnetLoaders[magnetLoaderKey] ?: error("not matched magnet loader") }
 

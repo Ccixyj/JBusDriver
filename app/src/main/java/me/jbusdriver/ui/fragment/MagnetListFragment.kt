@@ -4,10 +4,7 @@ import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.Gravity
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
+import com.afollestad.materialdialogs.MaterialDialog
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
@@ -47,7 +44,10 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListP
             setOnItemClickListener { adapter, _, position ->
                 (adapter.data.getOrNull(position) as? Magnet)?.let { magnet ->
                     KLog.d("setOnItemClickListener $magnet")
-                    viewContext.browse(magnet.link)
+                    showMagnetLoading()
+                    viewContext.browse(magnet.link) {
+                        placeDialogHolder?.dismiss()
+                    }
                 }
 
             }
@@ -71,6 +71,16 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListP
             }
         }
 
+    }
+
+
+    private fun showMagnetLoading() {
+        placeDialogHolder = MaterialDialog.Builder(viewContext).content("正在查询磁力信息...").progress(true, 0).show()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        placeDialogHolder?.dismiss()
     }
 
     companion object {
