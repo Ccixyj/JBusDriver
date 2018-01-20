@@ -18,6 +18,7 @@ class GenresHolder(context: Context) : BaseHolder(context) {
             it.inflate(R.layout.layout_detail_genres).apply {
                 rv_recycle_genres.layoutManager = FlowLayoutManager().apply { isAutoMeasureEnabled = true }
                 genreAdapter.bindToRecyclerView(rv_recycle_genres)
+                rv_recycle_genres.isNestedScrollingEnabled = true
             }
         } ?: error("context ref is finish")
     }

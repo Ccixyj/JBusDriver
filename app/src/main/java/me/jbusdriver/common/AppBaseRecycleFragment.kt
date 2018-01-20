@@ -4,7 +4,10 @@ import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.RecyclerView
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import io.reactivex.Flowable
@@ -78,8 +81,18 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
     }
 
     override fun loadMoreEnd(clickable: Boolean) {
+        if (adapter.getEmptyView() == null && adapter.getData().isEmpty()) {
+            adapter.setEmptyView(getEmptyView())
+        }
         adapter.loadMoreEnd()
         adapter.enableLoadMoreEndClick(clickable)
+    }
+
+    protected open fun getEmptyView(): View = TextView(viewContext).apply {
+        text = "没有数据"
+        layoutParams = ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, viewContext.dpToPx(36f)).apply {
+            gravity = Gravity.CENTER
+        }
     }
 
     override fun loadMoreFail() {

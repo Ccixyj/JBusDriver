@@ -9,12 +9,17 @@
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
         app:tabBackground="@color/colorPrimary"
+        app:tabGravity="fill"
         app:tabIndicatorColor="@color/colorAccent"
         app:tabIndicatorHeight="@dimen/material_3dp"
+        app:tabMaxWidth="2000dp"
+        app:tabMode="fixed"
         app:tabSelectedTextColor="@color/white"
         app:tabTextColor="@color/gray"
       />
+
 
     <android.support.v4.view.ViewPager
         android:id="@+id/vp_fragment"

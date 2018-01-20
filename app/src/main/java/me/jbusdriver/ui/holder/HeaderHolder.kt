@@ -46,6 +46,7 @@ class HeaderHolder(context: Context) : BaseHolder(context) {
             it.inflate(R.layout.layout_detail_header, null).apply {
                 rv_recycle_header.layoutManager = LinearLayoutManager(this.context)
                 headAdapter.bindToRecyclerView(rv_recycle_header)
+                rv_recycle_header.isNestedScrollingEnabled = true
             }
         } ?: error("context ref is finish")
     }

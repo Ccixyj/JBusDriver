@@ -24,7 +24,7 @@ abstract class BaseAppAdapter<T, K : BaseViewHolder> : BaseQuickAdapter<T, K> {
                 RecyclerView.RecycledViewPool()
             }
         }
-        KLog.d("bindToRecyclerView ${AppContext.instace.recycledViewPoolHolder.size} : ${AppContext.instace.recycledViewPoolHolder.keys.joinToString()}")
+        KLog.t(Tag).d("bindToRecyclerView ${AppContext.instace.recycledViewPoolHolder.size} : ${AppContext.instace.recycledViewPoolHolder.keys.joinToString()}")
         super.bindToRecyclerView(recyclerView)
     }
 
@@ -44,7 +44,7 @@ abstract class BaseMultiItemAppAdapter<T : MultiItemEntity, K : BaseViewHolder> 
                 RecyclerView.RecycledViewPool()
             }
         }
-        KLog.d("bindToRecyclerView ${AppContext.instace.recycledViewPoolHolder.size} : ${AppContext.instace.recycledViewPoolHolder.keys.joinToString()}")
+        KLog.t(Tag).d("bindToRecyclerView ${AppContext.instace.recycledViewPoolHolder.size} : ${AppContext.instace.recycledViewPoolHolder.keys.joinToString()}")
         super.bindToRecyclerView(recyclerView)
     }
 

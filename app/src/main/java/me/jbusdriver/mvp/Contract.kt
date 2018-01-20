@@ -1,12 +1,10 @@
 package me.jbusdriver.mvp
 
 import me.jbusdriver.mvp.bean.Genre
-import me.jbusdriver.mvp.bean.Magnet
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.MovieDetail
 import me.jbusdriver.mvp.presenter.BasePresenter
 import me.jbusdriver.ui.data.enums.DataSourceType
-import org.jsoup.nodes.Element
 
 /**
  * Created by Administrator on 2017/4/9.
@@ -35,13 +33,12 @@ interface MovieDetailContract {
     interface MovieDetailView : BaseView {
         val movie: Movie
         val detailMovieFromDisk: MovieDetail?
-        fun addMagnet(t: List<Magnet>)
-        fun initMagnetLoad()
+//        fun addMagnet(t: List<Magnet>)
+//        fun initMagnetLoad()
     }
 
     interface MovieDetailPresenter : BasePresenter<MovieDetailView>, BasePresenter.RefreshPresenter {
         fun loadDetail()
-        fun loadMagnets(doc: Element)
     }
 }
 
@@ -91,4 +88,15 @@ interface HistoryContract {
     interface HistoryPresenter : BasePresenter.BaseRefreshLoadMorePresenter<HistoryView>, BasePresenter.LazyLoaderPresenter {
         fun clearHistory()
     }
+}
+
+interface MagnetPagerContract {
+    interface MagnetPagerView : BaseView
+    interface MagnetPagerPresenter : BasePresenter<MagnetPagerView>, BasePresenter.LazyLoaderPresenter
+}
+
+
+interface MagnetListContract {
+    interface MagnetListView : BaseView.BaseListWithRefreshView
+    interface MagnetListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<MagnetListView>, BasePresenter.LazyLoaderPresenter
 }

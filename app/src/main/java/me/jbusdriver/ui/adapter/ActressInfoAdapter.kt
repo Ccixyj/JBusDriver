@@ -2,7 +2,6 @@ package me.jbusdriver.ui.adapter
 
 import android.graphics.Bitmap
 import android.support.v7.graphics.Palette
-import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.request.target.BitmapImageViewTarget
@@ -95,7 +94,4 @@ class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseAppAdapter<Ac
     }
 
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
-        super.onAttachedToRecyclerView(recyclerView)
-    }
 }

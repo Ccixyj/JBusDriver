@@ -174,11 +174,17 @@ fun Cursor.getLongByColumn(colName: String): Long = try {
 //endregion
 
 
-fun Context.browse(url: String) {
-    startActivity(Intent().apply {
-        this.action = "android.intent.action.VIEW"
-        this.data = Uri.parse(url)
-    })
+fun Context.browse(url: String, errorHandler: (Throwable) -> Unit = {}) {
+    try {
+
+        startActivity(Intent().apply {
+            this.action = "android.intent.action.VIEW"
+            this.data = Uri.parse(url)
+        })
+    } catch (e: Exception) {
+        toast("无法处理该类型的链接")
+        errorHandler(e)
+    }
 }
 
 

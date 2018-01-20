@@ -66,10 +66,11 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
         }.onErrorResumeNext(Function {
             return@Function when {
                 (it is HttpException && it.code() == 404) -> {
+                    //404 视为没有数据
                     AndroidSchedulers.mainThread().scheduleDirect {
                         mView?.viewContext?.toast("第${page}页没有数据")
                     }
-                    pageInfo = pageInfo.copy(activePage = pageInfo.nextPage - 1)//重置前一页pageInfo
+                    if (pageInfo.nextPage > 1 && pageInfo.activePage > 0) pageInfo = pageInfo.copy(activePage = pageInfo.nextPage - 1)//重置前一页pageInfo
                     Flowable.just(mutableListOf())
                 }
                 it is TimeoutException -> {
