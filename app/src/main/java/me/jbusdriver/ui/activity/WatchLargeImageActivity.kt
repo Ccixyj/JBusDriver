@@ -23,7 +23,9 @@ import me.jbusdriver.ui.widget.MultiTouchZoomableImageView
 
 class WatchLargeImageActivity : BaseActivity() {
 
-    private val urls by lazy { intent.getStringArrayListExtra(INTENT_IMAGE_URL) ?: emptyList<String>() }
+    private val urls by lazy {
+        intent.getStringArrayListExtra(INTENT_IMAGE_URL) ?: emptyList<String>()
+    }
     private val imageViewList: ArrayList<View> = arrayListOf()
     private val index by lazy { intent.getIntExtra(INDEX, -1) }
 
@@ -136,14 +138,10 @@ class WatchLargeImageActivity : BaseActivity() {
                     })
         }
 
-        override fun getCount(): Int {
-            return imageViewList.size//返回页卡的数量
-        }
+        override fun getCount() = imageViewList.size//返回页卡的数量
 
 
-        override fun isViewFromObject(arg0: View, arg1: Any): Boolean {
-            return arg0 === arg1//官方提示这样写
-        }
+        override fun isViewFromObject(arg0: View, arg1: Any) = arg0 === arg1//官方提示这样写
     }
 
 }

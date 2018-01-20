@@ -44,7 +44,7 @@ class CollectCategoryHelper<T : ICollectCategory> {
             dataWrapperList.clear()
             //添加所有分类
             CategoryService.queryCategoryTreeLike(parentType).forEach {
-                collectGroupMap.put(it, emptyList())
+                collectGroupMap[it] = emptyList()
             }
             if (!data.isEmpty()) collectGroupMap.putAll(data.groupBy { it.categoryId }.mapKeys { CategoryService.getById(it.key) })
 

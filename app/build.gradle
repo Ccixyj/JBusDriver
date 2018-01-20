@@ -14,7 +14,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         flavorDimensions "github"
-
+        vectorDrawables.useSupportLibrary = true
     }
 
     signingConfigs {
@@ -157,7 +157,7 @@ dependencies {
     //sqllite
     implementation "com.squareup.sqlbrite3:sqlbrite:${versions.sqlbrite}"
     implementation "com.squareup.sqlbrite3:sqlbrite-kotlin:${versions.sqlbrite}"
-//    implementation "android.arch.persistence:db-framework:1.0.0"
+    implementation "android.arch.persistence:db-framework:1.0.0"
 
     implementation "com.jaeger.statusbarutil:library:1.4.0"
     implementation "com.xiaofeng.android:flowlayoutmanager:1.2.3.2"

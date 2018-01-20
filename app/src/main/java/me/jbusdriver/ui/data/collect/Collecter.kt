@@ -30,7 +30,7 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
     @Deprecated("since version 1.1.1") protected open val gson: Gson by lazy { AppContext.gson }
     protected val host: String by lazy { JAVBusService.defaultFastUrl }
     protected val imageHost: String by lazy { JAVBusService.defaultImageUrlHost }
-    @Deprecated("since version 1.1.1") protected val collectCache by lazy {
+    @Deprecated("since version 1.1.1") private val collectCache by lazy {
         try {
             if (android.os.Environment.MEDIA_MOUNTED != android.os.Environment.getExternalStorageState()) {
                 error("sd mount state : ${android.os.Environment.getExternalStorageState()}")

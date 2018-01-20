@@ -1,8 +1,8 @@
 package me.jbusdriver.mvp.presenter
 
-import me.jbusdriver.mvp.BaseView
 import io.reactivex.disposables.CompositeDisposable
 import me.jbusdriver.common.KLog
+import me.jbusdriver.mvp.BaseView
 import kotlin.properties.Delegates
 
 /**
@@ -11,7 +11,7 @@ import kotlin.properties.Delegates
 open class BasePresenterImpl<V : BaseView> : BasePresenter<V> {
 
     @JvmField protected var mView: V? = null
-    protected var isFirstStart: Boolean by Delegates.notNull()
+    private var isFirstStart: Boolean by Delegates.notNull()
     protected val rxManager by lazy { CompositeDisposable() }
     protected val TAG: String by lazy { this.javaClass.simpleName }
 

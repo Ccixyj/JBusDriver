@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit
 
 class SplashActivity : BaseActivity() {
 
-    var urls = arrayMapof<String, String>()
+    private var urls = arrayMapof<String, String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,8 +68,7 @@ class SplashActivity : BaseActivity() {
                 }
             }
             val urlsFromNet = Flowable.concat(CacheLoader.justLru(C.Cache.ANNOUNCE_URL), GitHub.INSTANCE.announce().addUserCase()).firstOrError().toFlowable()
-                    .map {
-                        source ->
+                    .map { source ->
                         //放入内存缓存,更新需要
                         CacheLoader.cacheLru(C.Cache.ANNOUNCE_VALUE to source)
                         arrayMapof<String, String>().apply {
@@ -78,7 +77,8 @@ class SplashActivity : BaseActivity() {
                     }
                     .flatMap {
                         urls = it
-                        val mapFlow = AppContext.gson.fromJson<List<String>>(it[DataSourceType.CENSORED.key] ?: "").map {
+                        val mapFlow = AppContext.gson.fromJson<List<String>>(it[DataSourceType.CENSORED.key]
+                                ?: "").map {
                             Flowable.combineLatest(Flowable.just<String>(it),
                                     JAVBusService.INSTANCE.get(it).addUserCase(15).onErrorReturnItem(""),
                                     BiFunction<String, String?, Pair<String, String>> { t1, t2 -> t1 to t2 })
@@ -89,8 +89,7 @@ class SplashActivity : BaseActivity() {
                     .doOnError { CacheLoader.acache.remove(C.Cache.ANNOUNCE_URL) }
                     .map {
                         val ds = DataSourceType.values().takeLast(DataSourceType.values().size - 1).toMutableList()
-                        Jsoup.parse(it.second).select(".navbar-nav a").forEach {
-                            box ->
+                        Jsoup.parse(it.second).select(".navbar-nav a").forEach { box ->
                             ds.find { box.text() == it.key }?.let {
                                 ds.remove(it)
 
@@ -98,17 +97,17 @@ class SplashActivity : BaseActivity() {
                             }
                         }
                         KLog.d("leave : $ds")
-                        urls.get(DataSourceType.XYZ.key)?.let {
+                        urls[DataSourceType.XYZ.key]?.let {
                             //欧美
-                            urls.put(DataSourceType.XYZ_ACTRESSES.key, "$it/${DataSourceType.XYZ_ACTRESSES.key.split("/").last()}")
+                            urls[DataSourceType.XYZ_ACTRESSES.key] = "$it/${DataSourceType.XYZ_ACTRESSES.key.split("/").last()}"
                             urls.put(DataSourceType.XYZ_GENRE.key, "$it/${DataSourceType.XYZ_GENRE.key.split("/").last()}")
                         }
-                        urls.put(DataSourceType.CENSORED.key, it.first)
+                        urls[DataSourceType.CENSORED.key] = it.first
 
                         //change xyz
-                        urls[DataSourceType.XYZ_ACTRESSES.key] =  urls[DataSourceType.XYZ_ACTRESSES.key]?.replace("org" ,"xyz")
-                        urls[DataSourceType.XYZ.key] =  urls[DataSourceType.XYZ.key]?.replace("org" ,"xyz")
-                        urls[DataSourceType.XYZ_GENRE.key] =  urls[DataSourceType.XYZ_GENRE.key]?.replace("org" ,"xyz")
+                        urls[DataSourceType.XYZ_ACTRESSES.key] = urls[DataSourceType.XYZ_ACTRESSES.key]?.replace("org", "xyz")
+                        urls[DataSourceType.XYZ.key] = urls[DataSourceType.XYZ.key]?.replace("org", "xyz")
+                        urls[DataSourceType.XYZ_GENRE.key] = urls[DataSourceType.XYZ_GENRE.key]?.replace("org", "xyz")
 
                         KLog.i("urls : ${it.first} , all urls : $urls , at last $ds")
 

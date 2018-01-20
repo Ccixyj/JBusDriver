@@ -76,7 +76,7 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                         with(holder.getView<LinearLayout>(R.id.ll_movie_hot)) {
                             this.removeAllViews()
                             item.tags.mapIndexed { index, tag ->
-                                (mLayoutInflater.inflate(R.layout.tv_movie_tag, null) as TextView).let {
+                                (viewContext.inflate(R.layout.tv_movie_tag) as TextView).let {
                                     it.text = tag
                                     it.setPadding(padding, 0, padding, 0)
                                     (it.background as? GradientDrawable)?.setColor(colors.getOrNull(index % 3) ?: colors.first())

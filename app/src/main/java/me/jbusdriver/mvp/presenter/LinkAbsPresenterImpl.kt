@@ -21,7 +21,8 @@ import java.util.concurrent.ConcurrentSkipListMap
 abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistory: Boolean = false) : AbstractRefreshLoadMorePresenterImpl<LinkListContract.LinkListView, T>(), LinkListContract.LinkListPresenter {
 
     protected open var IsAll = false
-    private val urlPath by lazy { if (linkData is PageLink) linkData.link.urlPath.replace("/${linkData.page}", "") else linkData.link.urlPath }
+    private val urlPath by lazy { (linkData as? PageLink)?.link?.urlPath?.replace("/${linkData.page}", "")
+            ?: linkData.link.urlPath }
     private val dataPageCache by lazy { ConcurrentSkipListMap<Int, Int>() }
     private val pageModeDisposable = RxBus.toFlowable(PageChangeEvent::class.java)
             .subscribeBy(onNext = {
@@ -100,7 +101,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
                 mView?.moveTo(getJumpIndex(page))
             } else {
                 mView?.moveTo(getJumpIndex(page))
-                pageInfo = pageInfo.copy(page)
+                pageInfo = pageInfo.copy(activePage = page)
                 loadData4Page(page)
             }
         } else {
@@ -151,7 +152,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
                     }
 
                     if (t.isNotEmpty()) {
-                        dataPageCache.put(pageInfo.activePage, t.size - 1)//page item In list
+                        dataPageCache[pageInfo.activePage] = t.size - 1//page item In list
                     } else {
                         //超过最大页数时 ,可以点击加载原本的下一页 ; 或者请求超时,点击重新加载
                         mView?.loadMoreEnd(true)

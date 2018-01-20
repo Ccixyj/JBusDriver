@@ -1,5 +1,6 @@
 package me.jbusdriver.ui.activity
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -32,6 +33,7 @@ class SettingActivity : BaseActivity() {
         initSettingView()
     }
 
+    @SuppressLint("ResourceAsColor")
     private fun initSettingView() {
         //page mode
         changePageMode(AppConfiguration.pageMode)
@@ -75,7 +77,7 @@ class SettingActivity : BaseActivity() {
                     //添加设置
                     synchronized(cb) {
                         cb.isChecked = !cb.isChecked
-                        menuOpValue.put(it.name, cb.isChecked)
+                        menuOpValue[it.name] = cb.isChecked
                         KLog.d("menuConfig ${menuOpValue.filter { it.value }}")
                     }
                 }
@@ -140,7 +142,7 @@ class SettingActivity : BaseActivity() {
     override fun onStop() {
         super.onStop()
         AppConfiguration.pageMode = pageModeHolder
-        if (!AppConfiguration.menuConfig.equals(menuOpValue)) AppConfiguration.saveSaveMenuConfig(menuOpValue) //必须调用equals
+        if (AppConfiguration.menuConfig != menuOpValue) AppConfiguration.saveSaveMenuConfig(menuOpValue) //必须调用equals
     }
 
     companion object {

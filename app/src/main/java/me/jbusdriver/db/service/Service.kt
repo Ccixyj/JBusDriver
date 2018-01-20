@@ -53,7 +53,7 @@ object CategoryService {
     fun insert(category: Category): Category {
         return dao.insert(category).let {
             if (it != -1L) {
-                catCache.put(it.toInt(), category)
+                catCache[it.toInt()] = category
                 category.id = it.toInt()
             } else {
                 KLog.w("save $category error return id : $it")

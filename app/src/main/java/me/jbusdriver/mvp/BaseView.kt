@@ -1,12 +1,7 @@
 package me.jbusdriver.mvp
 
 import android.content.Context
-import com.afollestad.materialdialogs.MaterialDialog
 import io.reactivex.Flowable
-import me.jbusdriver.common.AppContext
-import me.jbusdriver.common.KLog
-import kotlin.properties.ReadOnlyProperty
-import kotlin.properties.ReadWriteProperty
 
 /**
  * Created by Administrator on 2016/7/21 0021.

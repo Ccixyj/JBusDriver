@@ -36,9 +36,7 @@ class AppContext : Application() {
                 .build()
 
         Logger.addLogAdapter(object : AndroidLogAdapter(formatStrategy) {
-            override fun isLoggable(priority: Int, tag: String?): Boolean {
-                return BuildConfig.DEBUG
-            }
+            override fun isLoggable(priority: Int, tag: String?) = BuildConfig.DEBUG
         })
 
         MobclickAgent.setDebugMode(BuildConfig.DEBUG)
@@ -47,6 +45,7 @@ class AppContext : Application() {
 
     companion object {
         @JvmStatic lateinit var instace: AppContext
+
         @JvmStatic
         val gson = GsonBuilder().registerTypeAdapter(Int::class.java, JsonDeserializer<Int> { json, _, _ ->
             if (json.isJsonNull || json.asString.isEmpty()) {

@@ -30,11 +30,9 @@ abstract class BaseAppAdapter<T, K : BaseViewHolder> : BaseQuickAdapter<T, K> {
 
 }
 
-abstract class BaseMultiItemAppAdapter<T : MultiItemEntity, K : BaseViewHolder> : BaseMultiItemQuickAdapter<T, K> {
+abstract class BaseMultiItemAppAdapter<T : MultiItemEntity, K : BaseViewHolder>(data: List<T>?) : BaseMultiItemQuickAdapter<T, K>(data) {
 
     private val Tag by lazy { this::class.java.name ?: error("must have a class name") }
-
-    constructor(data: List<T>?) : super(data)
 
 
     override fun bindToRecyclerView(recyclerView: RecyclerView?) {

@@ -2,7 +2,6 @@ package me.jbusdriver.common
 
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.BackpressureStrategy
-import io.reactivex.Flowable
 
 object RxBus {
     private val mBus = PublishRelay.create<Any>().toSerialized()
@@ -12,11 +11,7 @@ object RxBus {
         mBus.accept(obj)
     }
 
-    fun <T> toFlowable(clz: Class<T>): Flowable<T> {
-        return mBus.ofType(clz).toFlowable(BackpressureStrategy.DROP)
-    }
+    fun <T> toFlowable(clz: Class<T>) = mBus.ofType(clz).toFlowable(BackpressureStrategy.DROP)
 
-    fun hasSubscribers(): Boolean {
-        return mBus.hasObservers()
-    }
+    fun hasSubscribers() = mBus.hasObservers()
 }

@@ -58,13 +58,9 @@ val Context.displayMetrics: DisplayMetrics
     get() = resources.displayMetrics
 
 
-fun Context.dpToPx(dp: Float): Int {
-    return (dp * this.displayMetrics.density + 0.5).toInt()
-}
+fun Context.dpToPx(dp: Float) = (dp * this.displayMetrics.density + 0.5).toInt()
 
-fun Context.pxToDp(px: Float): Int {
-    return (px / this.displayMetrics.density + 0.5).toInt()
-}
+fun Context.pxToDp(px: Float) =  (px / this.displayMetrics.density + 0.5).toInt()
 
 fun Context.toast(str: String, duration: Int = Toast.LENGTH_LONG) {
     Toast.makeText(this, str, duration).show()
@@ -79,8 +75,8 @@ fun Context.inflate(layoutResId: Int, parent: ViewGroup? = null, attachToRoot: B
 //endregion
 
 //region gson
-inline @Nullable
-fun <reified T> Gson.fromJson(json: String) = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
+@Nullable
+inline fun <reified T> Gson.fromJson(json: String) = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
 //inline fun <reified T> Gson.fromJson(json: JsonElement) = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
 //inline fun <reified T> Gson.fromJson(json: Reader) = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
 //inline fun <reified T> Gson.fromJson(json: JsonReader) = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
@@ -107,9 +103,11 @@ val Context.screenWidth: Int
 
 val Context.spanCount: Int
     inline get() = with(this.screenWidth) {
-        if (this <= 1080) 3
-        else if (this <= 1440) 4
-        else 5
+        when {
+            this <= 1080 -> 3
+            this <= 1440 -> 4
+            else -> 5
+        }
     }
 //endregion
 
@@ -128,7 +126,6 @@ fun Context.copy(content: String) {
 /**
  * 实现粘贴功能
  * add by wangqianzhou
- * @param context
  * *
  * @return
  */

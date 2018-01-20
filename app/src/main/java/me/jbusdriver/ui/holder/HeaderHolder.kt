@@ -43,7 +43,7 @@ class HeaderHolder(context: Context) : BaseHolder(context) {
 
     val view by lazy {
         weakRef.get()?.let {
-            it.inflate(R.layout.layout_detail_header, null).apply {
+            it.inflate(R.layout.layout_detail_header).apply {
                 rv_recycle_header.layoutManager = LinearLayoutManager(this.context)
                 headAdapter.bindToRecyclerView(rv_recycle_header)
                 rv_recycle_header.isNestedScrollingEnabled = true

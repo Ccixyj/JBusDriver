@@ -7,10 +7,8 @@ import android.os.Bundle
 import android.support.v4.BuildConfig
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
-import com.jaeger.library.StatusBarUtil
 import com.umeng.analytics.MobclickAgent
 import io.reactivex.disposables.CompositeDisposable
-import jbusdriver.me.jbusdriver.R
 
 /**
  * Created by Administrator on 2016/8/11 0011.
@@ -87,11 +85,11 @@ abstract class BaseActivity : AppCompatActivity() {
 
     val isDestroyedCompatible: Boolean
         get() {
-            if (Build.VERSION.SDK_INT >= 17) {
-                return isDestroyedCompatible17
-            } else {
-                return destroyed || super.isFinishing()
-            }
+            return if (Build.VERSION.SDK_INT >= 17)
+                isDestroyedCompatible17
+            else
+                destroyed || super.isFinishing()
+
         }
 
     private val isDestroyedCompatible17: Boolean

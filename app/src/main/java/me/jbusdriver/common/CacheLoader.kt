@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit
 
 
 object CacheLoader {
-    private val TAG = "CacheLoader"
+    private const val TAG = "CacheLoader"
 
     private fun initMemCache(): LruCache<String, String> {
         val memoryInfo = ActivityManager.MemoryInfo()

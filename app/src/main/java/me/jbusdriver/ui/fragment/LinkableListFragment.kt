@@ -49,9 +49,7 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
                     return true
                 }
 
-                override fun onQueryTextChange(newText: String): Boolean {
-                    return false
-                }
+                override fun onQueryTextChange(newText: String) = false
             })
         }
 
@@ -89,7 +87,9 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
 
 
     /*================================================*/
-    override val type by lazy { arguments?.getSerializable(C.BundleKey.Key_1) as? DataSourceType ?: DataSourceType.CENSORED }
+    override val type by lazy {
+        arguments?.getSerializable(C.BundleKey.Key_1) as? DataSourceType ?: DataSourceType.CENSORED
+    }
 
 
     companion object {

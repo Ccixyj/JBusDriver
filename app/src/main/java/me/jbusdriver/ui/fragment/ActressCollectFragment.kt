@@ -94,7 +94,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                     else -> {
                         KLog.d("type item $item")
                         setFullSpan(holder)
-                        holder.setText(R.id.tv_nav_menu_name, " ${if (item.isExpanded) "👇" else "👆"} " + item.category?.name)
+                        holder.setText(R.id.tv_nav_menu_name, " ${if (item.isExpanded) "👇" else "👆"} " + item.category.name)
                     }
                 }
 

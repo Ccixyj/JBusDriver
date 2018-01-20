@@ -26,7 +26,7 @@ import me.jbusdriver.ui.adapter.GridSpacingItemDecoration
 class ImageSampleHolder(context: Context): BaseHolder(context) {
     val view by lazy {
         weakRef.get()?.let {
-            it.inflate(R.layout.layout_detail_image_samples, null).apply {
+            it.inflate(R.layout.layout_detail_image_samples).apply {
                 val displayMetrics = DisplayMetrics()
                 (this.context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getMetrics(displayMetrics)
                 val spannCount = when (displayMetrics.widthPixels) {

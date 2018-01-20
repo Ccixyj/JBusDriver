@@ -27,7 +27,7 @@ class HistoryPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HistoryContrac
         }
         HistoryService.queryPage(dbPage).toFlowable(BackpressureStrategy.DROP)
                 .doOnNext {
-                    pageInfo = pageInfo.copy(pageInfo.nextPage, pageInfo.nextPage + 1)
+                    pageInfo = pageInfo.copy(activePage = pageInfo.nextPage, nextPage = pageInfo.nextPage + 1)
                 }
                 .compose(SchedulersCompat.io())
                 .subscribeWith(object : ListDefaultSubscriber(page) {

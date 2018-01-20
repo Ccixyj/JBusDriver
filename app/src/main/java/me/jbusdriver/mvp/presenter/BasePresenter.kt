@@ -3,7 +3,7 @@ package me.jbusdriver.mvp.presenter
 /**
  * Created by Administrator on 2016/7/21 0021.
  */
-interface BasePresenter<V> {
+interface BasePresenter<in V> {
 
 
     /**

@@ -7,9 +7,7 @@ import io.reactivex.Flowable
  */
 interface BaseModel<in T, R> {
     //默认请求q
-    fun requestFor(t: T): Flowable<R> {
-        return Flowable.empty()
-    }
+    fun requestFor(t: T): Flowable<R> = Flowable.empty()
     fun requestFromCache(t: T): Flowable<R> //默认请求
 
 }

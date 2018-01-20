@@ -21,9 +21,7 @@ class GenrePagePresenterImpl(val url: String) : BasePresenterImpl<GenrePageContr
     val model: BaseModel<String, Document> = object : AbstractBaseModel<String, Document>({ url ->
         JAVBusService.INSTANCE.get(url).addUserCase().map { Jsoup.parse(it) }
     }) {
-        override fun requestFromCache(t: String): Flowable<Document> {
-            return Flowable.concat(CacheLoader.justLru(url).map { Jsoup.parse(it) }, requestFor(t)).firstOrError().toFlowable()
-        }
+        override fun requestFromCache(t: String) = Flowable.concat(CacheLoader.justLru(url).map { Jsoup.parse(it) }, requestFor(t)).firstOrError().toFlowable()
     }
 
 

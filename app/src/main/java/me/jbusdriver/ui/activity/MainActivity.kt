@@ -85,7 +85,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         MenuOp.Ops.forEach {
             if (it.isHow) {
                 KLog.d("menuConfig $it : show : ${it.isHow}")
-                fragments.put(it.id, it.initializer.invoke())
+                fragments[it.id] = it.initializer.invoke()
             }
             navigationView.menu.findItem(it.id).isVisible = it.isHow
         }

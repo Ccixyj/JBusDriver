@@ -8,7 +8,6 @@ import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.LinkListContract
-import me.jbusdriver.mvp.bean.ActressDBType
 import me.jbusdriver.mvp.presenter.MovieCollectPresenterImpl
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.collect.MovieCollector
