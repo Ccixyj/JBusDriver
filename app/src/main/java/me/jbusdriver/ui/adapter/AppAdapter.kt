@@ -8,6 +8,7 @@ import com.chad.library.adapter.base.BaseViewHolder
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import me.jbusdriver.common.AppContext
 import me.jbusdriver.common.KLog
+import java.lang.ref.WeakReference
 
 abstract class BaseAppAdapter<T, K : BaseViewHolder> : BaseQuickAdapter<T, K> {
 
@@ -20,12 +21,36 @@ abstract class BaseAppAdapter<T, K : BaseViewHolder> : BaseQuickAdapter<T, K> {
     override fun bindToRecyclerView(recyclerView: RecyclerView?) {
         recyclerView?.let {
             (it as? LinearLayoutManager)?.recycleChildrenOnDetach = true
-            it.recycledViewPool = AppContext.instace.recycledViewPoolHolder.getOrPut(Tag) {
-                RecyclerView.RecycledViewPool()
+
+            val ref = AppContext.instace.recycledViewPoolHolder.getOrPut(Tag) {
+                WeakReference(RecyclerView.RecycledViewPool())
             }
+
+            val doGet =  ref.get() ?: RecyclerView.RecycledViewPool().apply {  AppContext.instace.recycledViewPoolHolder.put(Tag, WeakReference(this)) }
+            it.recycledViewPool = doGet
         }
-        KLog.t(Tag).d("bindToRecyclerView ${AppContext.instace.recycledViewPoolHolder.size} : ${AppContext.instace.recycledViewPoolHolder.keys.joinToString()}")
+        KLog.t(Tag).i("bindToRecyclerView ${AppContext.instace.recycledViewPoolHolder.size} : ${AppContext.instace.recycledViewPoolHolder.keys.joinToString()}")
         super.bindToRecyclerView(recyclerView)
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
+        super.onAttachedToRecyclerView(recyclerView)
+        KLog.t(Tag).i("onAttachedToRecyclerView")
+    }
+
+    override fun onViewAttachedToWindow(holder: K) {
+        super.onViewAttachedToWindow(holder)
+        KLog.t(Tag).i("onViewAttachedToWindow")
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView?) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        KLog.t(Tag).i("onDetachedFromRecyclerView")
+    }
+
+    override fun onViewDetachedFromWindow(holder: K) {
+        super.onViewDetachedFromWindow(holder)
+        KLog.t(Tag).i("onViewDetachedFromWindow")
     }
 
 }
@@ -38,11 +63,14 @@ abstract class BaseMultiItemAppAdapter<T : MultiItemEntity, K : BaseViewHolder>(
     override fun bindToRecyclerView(recyclerView: RecyclerView?) {
         recyclerView?.let {
             (it as? LinearLayoutManager)?.recycleChildrenOnDetach = true
-            it.recycledViewPool = AppContext.instace.recycledViewPoolHolder.getOrPut(Tag) {
-                RecyclerView.RecycledViewPool()
+            val ref = AppContext.instace.recycledViewPoolHolder.getOrPut(Tag) {
+                WeakReference(RecyclerView.RecycledViewPool())
             }
+
+            val doGet =  ref.get() ?: RecyclerView.RecycledViewPool().apply {  AppContext.instace.recycledViewPoolHolder.put(Tag, WeakReference(this)) }
+            it.recycledViewPool = doGet
         }
-        KLog.t(Tag).d("bindToRecyclerView ${AppContext.instace.recycledViewPoolHolder.size} : ${AppContext.instace.recycledViewPoolHolder.keys.joinToString()}")
+        KLog.t(Tag).i("bindToRecyclerView ${AppContext.instace.recycledViewPoolHolder.size} : ${AppContext.instace.recycledViewPoolHolder.keys.joinToString()}")
         super.bindToRecyclerView(recyclerView)
     }
 

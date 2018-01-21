@@ -18,8 +18,8 @@ data class MenuOp(@IdRes val id: Int, val name: String, val initializer: () -> B
         get() = AppConfiguration.menuConfig[name] ?: true
 
     companion object {
-        val Ops: List<MenuOp>
-            get() = mine + nav_ma + nav_uncensore + nav_xyz + nav_other
+        val Ops: List<MenuOp> by lazy {  mine + nav_ma + nav_uncensore + nav_xyz + nav_other }
+
 
         val mine by lazy {
             listOf(

@@ -11,13 +11,14 @@ import com.squareup.leakcanary.LeakCanary
 import com.umeng.analytics.MobclickAgent
 import jbusdriver.me.jbusdriver.BuildConfig
 import me.jbusdriver.http.JAVBusService
+import java.lang.ref.WeakReference
 
 
 /**
  * Created by Administrator on 2017/4/8.
  */
 class AppContext : Application() {
-    val recycledViewPoolHolder by lazy { arrayMapof<String, RecyclerView.RecycledViewPool>() }
+    val recycledViewPoolHolder by lazy { arrayMapof<String, WeakReference<RecyclerView.RecycledViewPool>>() }
     override fun onCreate() {
         super.onCreate()
         instace = this
