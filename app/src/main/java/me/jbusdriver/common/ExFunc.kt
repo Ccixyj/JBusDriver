@@ -96,8 +96,7 @@ fun <R> Flowable<R>.addUserCase(sec: Int = 12) =
 val Context.screenWidth: Int
     inline get() {
         val wm = this.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val displayMetrics = DisplayMetrics()
-        wm.defaultDisplay.getMetrics(displayMetrics)
+        wm.defaultDisplay.getMetrics(this.displayMetrics)
         return displayMetrics.widthPixels
     }
 

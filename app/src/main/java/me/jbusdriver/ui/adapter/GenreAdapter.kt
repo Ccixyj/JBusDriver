@@ -49,12 +49,12 @@ open class GenreAdapter : BaseAppAdapter<Genre, BaseViewHolder>(R.layout.layout_
             }
         }
 
-        setOnItemLongClickListener { adapter, _, position ->
+        setOnItemLongClickListener { adapter, view, position ->
             (adapter.data.getOrNull(position) as? Genre)?.let { item ->
                 val action = if (LinkCollector.has(item as ILink)) actionMap.minus("收藏")
                 else actionMap.minus("取消收藏")
 
-                MaterialDialog.Builder(this.mContext).content(item.name)
+                MaterialDialog.Builder(view.context).content(item.name)
                         .items(action.keys)
                         .itemsCallback { _, _, _, text ->
                             action[text]?.invoke(item)

@@ -27,10 +27,12 @@ interface ICollect<T> {
 }
 
 abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
-    @Deprecated("since version 1.1.1") protected open val gson: Gson by lazy { AppContext.gson }
+    @Deprecated("since version 1.1.1")
+    protected open val gson: Gson by lazy { AppContext.gson }
     protected val host: String by lazy { JAVBusService.defaultFastUrl }
     protected val imageHost: String by lazy { JAVBusService.defaultImageUrlHost }
-    @Deprecated("since version 1.1.1") private val collectCache by lazy {
+    @Deprecated("since version 1.1.1")
+    private val collectCache by lazy {
         try {
             if (android.os.Environment.MEDIA_MOUNTED != android.os.Environment.getExternalStorageState()) {
                 error("sd mount state : ${android.os.Environment.getExternalStorageState()}")
@@ -96,11 +98,14 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
         }
     }
 
-    @Deprecated("since version 1.1.1") abstract fun transform(cacheString: String): MutableList<T>
+    @Deprecated("since version 1.1.1")
+    abstract fun transform(cacheString: String): MutableList<T>
+
     abstract fun checkUrls(data: MutableList<T>): MutableList<T>
 
 
-    @Deprecated("since version 1.1.1") abstract val backUpAction: ((File) -> Unit)?
+    @Deprecated("since version 1.1.1")
+    abstract val backUpAction: ((File) -> Unit)?
 
     private fun refreshData(): MutableList<T> {
         KLog.w("refreshData key $key")
@@ -117,12 +122,9 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
             //迁移到db
             if (res.isNotEmpty()) {
                 LinkService.save(res.asReversed())
-                KLog.i("scheduleDirect LinkService $key.save ok;")
                 backUp(key)//生成备份
-                KLog.i("scheduleDirect backUp $key ok;")
-                collectCache?.remove(key)
-                KLog.i("scheduleDirect remove $key ok;")
             }
+            collectCache?.remove(key)
             //返回
             res
         } ?: loadFromDb()
@@ -177,9 +179,9 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
     }
 
     override fun update(data: T): Boolean {
-       return dataList.find { it.uniqueKey == data.uniqueKey }?.let {
-           LinkService.update(data)
-        }  ?: false
+        return dataList.find { it.uniqueKey == data.uniqueKey }?.let {
+            LinkService.update(data)
+        } ?: false
     }
 }
 
@@ -188,7 +190,8 @@ object MovieCollector : AbsCollectorImpl<Movie>() {
     override val key: String = "Movie_Key"
 
 
-    override fun transform(cacheString: String) = gson.fromJson<MutableList<Movie>>(cacheString) ?: mutableListOf()
+    override fun transform(cacheString: String) = gson.fromJson<MutableList<Movie>>(cacheString)
+            ?: mutableListOf()
 
     override fun checkUrls(data: MutableList<Movie>): MutableList<Movie> {
         if (host.endsWith(".xyz")) return data
@@ -217,7 +220,8 @@ object ActressCollector : AbsCollectorImpl<ActressInfo>() {
     override val key: String = "Actress_Key"
 
 
-    override fun transform(cacheString: String) = gson.fromJson<MutableList<ActressInfo>>(cacheString) ?: mutableListOf()
+    override fun transform(cacheString: String) = gson.fromJson<MutableList<ActressInfo>>(cacheString)
+            ?: mutableListOf()
 
     override fun checkUrls(data: MutableList<ActressInfo>): MutableList<ActressInfo> {
         if (host.endsWith(".xyz")) return data
@@ -249,7 +253,8 @@ object LinkCollector : AbsCollectorImpl<ILink>() {
     override val key: String = "Link_Key"
     override val gson: Gson  by lazy { GsonBuilder().registerTypeAdapter(ILink::class.java, ILinkAdapter).create() }
 
-    override fun transform(cacheString: String) = gson.fromJson<MutableList<ILink>>(cacheString) ?: mutableListOf()
+    override fun transform(cacheString: String) = gson.fromJson<MutableList<ILink>>(cacheString)
+            ?: mutableListOf()
 
     override fun checkUrls(data: MutableList<ILink>): MutableList<ILink> {
         if (host.endsWith(".xyz")) return data
@@ -293,7 +298,8 @@ object LinkCollector : AbsCollectorImpl<ILink>() {
         override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ILink {
             KLog.d("ILinkAdapter  deserialize $typeOfT $json ")
             val jsonObject = json.asJsonObject
-            val className = jsonObject.get(CLASSNAME)?.asString ?: throw error("$json cant not find property $CLASSNAME")
+            val className = jsonObject.get(CLASSNAME)?.asString
+                    ?: throw error("$json cant not find property $CLASSNAME")
 
             try {
                 return context.deserialize(jsonObject.get(INSTANCE), Class.forName(className))
