@@ -31,7 +31,7 @@ open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink)
     }
 
     private val loadFromNet = { page: Int ->
-        val urlN = urls.getOrDefault(type.key, "").let { url ->
+        val urlN = urls.getOrElse(type.key) { "" }.let { url ->
             return@let if (page == 1) url else "$url${type.prefix}$page"
         }
         KLog.i("load url :$urlN")
