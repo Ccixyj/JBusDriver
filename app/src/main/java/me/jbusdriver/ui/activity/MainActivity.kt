@@ -4,17 +4,22 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.NavigationView
+import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.view.MenuItem
+import android.view.ViewGroup
+import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import jbusdriver.me.jbusdriver.BuildConfig
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.nav_header_main.view.*
@@ -69,6 +74,27 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                 SettingActivity.start(this@MainActivity)
                 drawer.closeDrawer(GravityCompat.START)
             }
+
+
+            fun tintTextLeftDrawable(parent: ViewGroup) {
+                KLog.d("ViewGroup : ${parent.id} =$parent")
+
+                (0..parent.childCount).forEachIndexed { i, _ ->
+                    //如果是容器,直接查子view
+                    (parent.getChildAt(i) as? ViewGroup)?.let {
+                        tintTextLeftDrawable(it)
+                    } ?: (parent.getChildAt(i) as? TextView)?.compoundDrawables?.forEach {
+                        DrawableCompat.setTint(it, R.color.colorAccent.toColorInt())
+                    }
+                }
+            }
+            if (Build.VERSION.SDK_INT < 23 && this as? ViewGroup != null) {
+                Schedulers.single().scheduleDirect {
+                    tintTextLeftDrawable(this)
+                }.addTo(rxManager)
+            }
+
+
         }
         navigationView.setNavigationItemSelectedListener(this)
 
