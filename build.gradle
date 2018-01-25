@@ -13,7 +13,7 @@ buildscript {
 
             'okhttp'                       : '3.9.1',
             'retrofit'                     : '2.3.0',
-            'rxjava'                       : '2.1.8',
+            'rxjava'                       : '2.1.9',
             'rxandroid'                    : '2.0.1',
             'rxkotlin'                     : '2.2.0',
             'rxrelay'                      : '2.0.0',
