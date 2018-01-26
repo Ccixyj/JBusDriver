@@ -12,10 +12,6 @@ import com.bumptech.glide.module.AppGlideModule
 import me.jbusdriver.http.NetClient
 import java.io.InputStream
 
-
-/**
- * Created by Administrator on 2016/7/22 0022.
- */
 @GlideModule
 open class AppGlideOptions : AppGlideModule() {
     override fun applyOptions(context: Context, builder: GlideBuilder) {
