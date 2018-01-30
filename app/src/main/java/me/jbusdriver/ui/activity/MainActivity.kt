@@ -82,13 +82,15 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                 (0..parent.childCount).forEachIndexed { i, _ ->
                     //如果是容器,直接查子view
                     (parent.getChildAt(i) as? ViewGroup)?.let {
-                        tintTextLeftDrawable(it)
+                        Schedulers.single().scheduleDirect {
+                            tintTextLeftDrawable(it)
+                        }.addTo(rxManager)
                     } ?: (parent.getChildAt(i) as? TextView)?.compoundDrawables?.forEach {
                         DrawableCompat.setTint(it, R.color.colorAccent.toColorInt())
                     }
                 }
             }
-            if (Build.VERSION.SDK_INT < 23 && this as? ViewGroup != null) {
+            if (Build.VERSION.SDK_INT >= 21 && this as? ViewGroup != null) {
                 Schedulers.single().scheduleDirect {
                     tintTextLeftDrawable(this)
                 }.addTo(rxManager)
