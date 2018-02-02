@@ -157,16 +157,16 @@ dependencies {
     //sqllite
     implementation "com.squareup.sqlbrite3:sqlbrite:${versions.sqlbrite}"
     implementation "com.squareup.sqlbrite3:sqlbrite-kotlin:${versions.sqlbrite}"
-    implementation "android.arch.persistence:db-framework:1.0.0"
+    implementation "android.arch.persistence:db-framework:${versions.db_framework}"
 
-    implementation "com.jaeger.statusbarutil:library:1.4.0"
-    implementation "com.xiaofeng.android:flowlayoutmanager:1.2.3.2"
+    implementation "com.jaeger.statusbarutil:library:${versions.statusbarutil}"
+    implementation "com.xiaofeng.android:flowlayoutmanager:${versions.flowlayoutmanager}"
     //https://github.com/xiaofeng-han/AndroidLibs/tree/master/flowlayoutmanager
-    implementation "com.umeng.analytics:analytics:6.1.3"
+    implementation "com.umeng.analytics:analytics:${versions.analytics}"
 
     //leak
-    debugCompile "com.squareup.leakcanary:leakcanary-android:1.5.4"
-    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.5.4"
+    debugCompile "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
+    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:${versions.leakcanary}"
 
 }
 
