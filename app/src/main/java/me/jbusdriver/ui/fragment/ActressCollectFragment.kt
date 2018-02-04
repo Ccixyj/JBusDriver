@@ -16,7 +16,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_menu_op_head.view.*
 import kotlinx.android.synthetic.main.layout_recycle.*
@@ -31,16 +30,12 @@ import me.jbusdriver.mvp.bean.CollectLinkWrapper
 import me.jbusdriver.mvp.presenter.ActressCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.adapter.BaseAppAdapter
-import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.collect.ActressCollector
-import me.jbusdriver.ui.helper.CollectCategoryHelper
 import me.jbusdriver.ui.holder.CollectDirEditHolder
 import java.util.*
 
 
 class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.ActressCollectPresenter, ActressCollectContract.ActressCollectView, CollectLinkWrapper<ActressInfo>>(), ActressCollectContract.ActressCollectView {
-
-
 
 
     override val swipeView: SwipeRefreshLayout? by lazy { sr_refresh }
@@ -99,7 +94,8 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
             }
         }.apply {
             setOnItemClickListener { _, view, position ->
-                val data = this@ActressCollectFragment.adapter.getData().getOrNull(position) ?: return@setOnItemClickListener
+                val data = this@ActressCollectFragment.adapter.getData().getOrNull(position)
+                        ?: return@setOnItemClickListener
                 KLog.d("click data : ${data.isExpanded} ; ${adapter.getData().size} ${adapter.getData()}")
                 data.linkBean?.let {
                     MovieListActivity.start(viewContext, it)
@@ -135,14 +131,15 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
     }
     override val layoutId: Int = R.layout.layout_swipe_recycle
 
-    private val dataHelper by lazy { CollectCategoryHelper<ActressInfo>() }
-    private val holder by lazy { CollectDirEditHolder(viewContext , ActressCategory) }
+
+    private val holder by lazy { CollectDirEditHolder(viewContext, ActressCategory) }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
         menu?.findItem(R.id.action_collect_dir_edit)?.setOnMenuItemClickListener {
 
-            holder.showDialogWithData(dataHelper.getCollectGroup().keys.toList()) { delActionsParams, addActionsParams ->
+            holder.showDialogWithData(mBasePresenter?.collectGroupMap?.keys?.toList()
+                    ?: emptyList()) { delActionsParams, addActionsParams ->
                 KLog.d("$delActionsParams $addActionsParams")
                 if (delActionsParams.isNotEmpty()) {
                     delActionsParams.forEach {
@@ -166,26 +163,19 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
     }
 
     override fun createPresenter() = ActressCollectPresenterImpl(ActressCollector)
+
     override fun showContents(data: List<*>) {
-        val dd = data as List<ActressInfo>
-        Flowable.just(dd).map {
-            dataHelper.initFromData(dd, ActressCategory.id!!)
-        }.compose(SchedulersCompat.io()).subscribeBy({
-            KLog.e(it.message)
-            it.printStackTrace()
-        }, {
-            val delegate = dataHelper.getDelegate()
-            KLog.d("needInjectType : ${delegate.needInjectType}")
-            delegate.needInjectType.onEach {
-                if (it == -1) delegate.registerItemType(it, R.layout.layout_actress_item) //默认注入类型0，即actress
-                else delegate.registerItemType(it, R.layout.layout_menu_op_head) //头部，可以做特化
+        KLog.d("showContents $data")
+        mBasePresenter?.let { p ->
+            p.adapterDelegate.needInjectType.onEach {
+                if (it == -1) p.adapterDelegate.registerItemType(it, R.layout.layout_actress_item) //默认注入类型0，即actress
+                else p.adapterDelegate.registerItemType(it, R.layout.layout_menu_op_head) //头部，可以做特化
             }
+            adapter.setMultiTypeDelegate(p.adapterDelegate)
+        }
 
-            adapter.setMultiTypeDelegate(delegate)
-            adapter.addData(dataHelper.getDataWrapper())
-            if (AppConfiguration.enableCategory) adapter.expand(0)
-        }).addTo(rxManager)
-
+        super.showContents(data)
+        adapter.expand(0)
     }
 
     companion object {

@@ -13,9 +13,6 @@ import me.jbusdriver.mvp.bean.*
 import java.io.File
 import java.lang.reflect.Type
 
-/**
- * Created by Administrator on 2017/9/14.
- */
 interface ICollect<T> {
     val key: String
     val dataList: MutableList<T>
@@ -27,10 +24,18 @@ interface ICollect<T> {
 }
 
 abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
-    @Deprecated("since version 1.1.1")
-    protected open val gson: Gson by lazy { AppContext.gson }
+
     protected val host: String by lazy { JAVBusService.defaultFastUrl }
     protected val imageHost: String by lazy { JAVBusService.defaultImageUrlHost }
+
+
+    init {
+
+    }
+
+
+    @Deprecated("since version 1.1.1")
+    protected open val gson: Gson by lazy { AppContext.gson }
     @Deprecated("since version 1.1.1")
     private val collectCache by lazy {
         try {
@@ -112,6 +117,10 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
         if (getAvailableExternalMemorySize() < MB * 100) {
             AppContext.instace.toast("sd卡可用空间不足100M")
         }
+        return transferDB() ?: loadFromDb()
+    }
+
+    private fun transferDB(): MutableList<T>? {
         return collectCache?.getAsString(key)?.let {
             val res = try {
                 transform(it).let { checkUrls(it) }
@@ -127,7 +136,7 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
             collectCache?.remove(key)
             //返回
             res
-        } ?: loadFromDb()
+        }
     }
 
     abstract fun loadFromDb(): MutableList<T>

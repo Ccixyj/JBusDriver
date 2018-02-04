@@ -2,12 +2,16 @@ package me.jbusdriver.mvp.presenter
 
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.SchedulersCompat
+import io.reactivex.rxkotlin.subscribeBy
+import me.jbusdriver.db.bean.*
+import me.jbusdriver.db.service.CategoryService
+import me.jbusdriver.db.service.LinkService
+import me.jbusdriver.mvp.ActressCollectContract
 import me.jbusdriver.mvp.BaseView
+import me.jbusdriver.mvp.MovieCollectContract
+import me.jbusdriver.mvp.bean.CollectLinkWrapper
 import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.mvp.model.BaseModel
-import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.collect.ICollect
 import org.jsoup.nodes.Document
 
@@ -16,36 +20,83 @@ import org.jsoup.nodes.Document
  */
 
 
-abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T>(private val collector: ICollect<T>) : AbstractRefreshLoadMorePresenterImpl<V, T>() {
+abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T : ICollectCategory>(private val collector: ICollect<T>) : AbstractRefreshLoadMorePresenterImpl<V, T>(), BasePresenter.BaseCollectPresenter<T> {
 
 
-    protected open val pageSize
-        get() = if (AppConfiguration.enableCategory) Int.MAX_VALUE else 20
+    protected open val pageSize = 20
 
-    private val listData by lazy { collector.dataList.toMutableList() }
-    private val pageNum
-        get() = ((listData.size - 1) / pageSize) + 1
+    private val firstCategory by lazy {
+        when {
+            this is MovieCollectContract.MovieCollectPresenter -> MovieCategory
+            this is ActressCollectContract.ActressCollectPresenter -> ActressCategory
+            else -> LinkCategory
+        }
+    }
+
+    override val collectGroupMap: MutableMap<Category, List<T>> = mutableMapOf()
+
+    override val dataWrapperList: MutableList<CollectLinkWrapper<T>> = mutableListOf()
+
+    override val adapterDelegate: BasePresenter.BaseCollectPresenter.CollectMultiTypeDelegate<T> = BasePresenter.BaseCollectPresenter.CollectMultiTypeDelegate()
 
     override fun loadData4Page(page: Int) {
-        val next = if (page < pageNum) page + 1 else pageNum
-        pageInfo = pageInfo.copy(activePage = page, nextPage = next)
-        Flowable.just(pageInfo).map {
-            KLog.d("request page : $it")
-            val start = (pageInfo.activePage - 1) * pageSize
-            val nextSize = start + pageSize
-            val end = if (nextSize <= listData.size) nextSize else listData.size
-            listData.subList(start, end)
-        }.compose(SchedulersCompat.io())
-                .subscribeWith(ListDefaultSubscriber(page))
+        //查询所有的分类 //优化:先查20个
+        mView?.showLoading()
+        mView?.resetList()
+        Flowable.just(firstCategory)
+                .filter { firstCategory.id != null }
+                .flatMap { Flowable.fromIterable(CategoryService.queryCategoryTreeLike(it.id!!)) }
+                .map {
+                    val parent = CollectLinkWrapper<T>(it).apply {
+                        adapterDelegate.needInjectType.add(level)
+                    }
+                    val list = LinkService.queryByCategory(it)
+                    val items = mutableListOf<T>()
+                    list.forEach {
+                        val mapValue = it.getLinkValue() as? T
+                        if (mapValue!= null){
+                            parent.addSubItem(CollectLinkWrapper(null, mapValue).apply {
+                                adapterDelegate.needInjectType.add(level)
+                            })
+                            items.add(mapValue)
+                        }
+                    }
+                    collectGroupMap[it] = items
+                    parent
+                }
+
+                .toList()
+                .doFinally { mView?.dismissLoading() }
+                .subscribeBy({
+                    mView?.showError(it)
+                }, {
+                    mView?.showContents(it)
+                    mView?.loadMoreComplete()
+                    mView?.loadMoreEnd()
+
+                })
                 .addTo(rxManager)
+
+
+//        val next = if (page < pageNum) page + 1 else pageNum
+//        pageInfo = pageInfo.copy(activePage = page, nextPage = next)
+//        Flowable.just(pageInfo).map {
+//            KLog.d("request page : $it")
+//            val start = (pageInfo.activePage - 1) * pageSize
+//            val nextSize = start + pageSize
+//            val end = if (nextSize <= listData.size) nextSize else listData.size
+//            listData.subList(start, end)
+//        }.compose(SchedulersCompat.io())
+//                .subscribeWith(ListDefaultSubscriber(page))
+//                .addTo(rxManager)
 
     }
 
     override fun onRefresh() {
         pageInfo = PageInfo()
-        listData.clear()
-        collector.reload()
-        listData.addAll(collector.dataList)
+//        listData.clear()
+//        collector.reload()
+//        listData.addAll(collector.dataList)
         loadData4Page(1)
     }
 

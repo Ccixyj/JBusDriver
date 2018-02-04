@@ -40,7 +40,7 @@ class CategoryDao(private val db: BriteDatabase) {
     }
 
     fun queryTreeByLike(like: String): List<Category> {
-        return db.createQuery(CategoryTable.TABLE_NAME, "select * from ${CategoryTable.TABLE_NAME}  where ${CategoryTable.COLUMN_TREE} like ? ", like)
+        return db.createQuery(CategoryTable.TABLE_NAME, "select * from ${CategoryTable.TABLE_NAME}  where ${CategoryTable.COLUMN_TREE} like ? ORDER BY ${CategoryTable.COLUMN_ORDER} DESC", like)
                 .mapToList { toCategory(it) }.timeout(6, TimeUnit.SECONDS).blockingFirst()
     }
 

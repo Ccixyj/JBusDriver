@@ -15,9 +15,6 @@ import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.mvp.BaseView
 import me.jbusdriver.mvp.presenter.BasePresenter
 
-/**
- * Created by Administrator on 2017/4/9.
- */
 abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePresenter<V>, V : BaseView.BaseListWithRefreshView, M> : AppBaseFragment<P, V>(), BaseView.BaseListWithRefreshView {
 
     /**
@@ -114,7 +111,7 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
     }
 
     override fun showError(e: Throwable?) {
-
+        adapter.loadMoreFail()
     }
 }
 

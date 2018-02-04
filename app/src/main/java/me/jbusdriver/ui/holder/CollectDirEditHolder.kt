@@ -74,7 +74,7 @@ class CollectDirEditHolder(context: Context, parentCategory: Category) : BaseHol
 
                     if (add) {
                         val category = Category(txt, parentCategory.id
-                                ?: -1, "/${parentCategory.id}/")
+                                ?: -1, "${parentCategory.id}/")
                         addActionsParams.add(category)
                         categoryAdapter.addData(category)
                         categoryAdapter.notifyItemChanged(categoryAdapter.data.size - 1)

@@ -9,9 +9,6 @@ import android.view.View
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-import io.reactivex.Flowable
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_menu_op_head.view.*
 import kotlinx.android.synthetic.main.layout_recycle.*
@@ -26,7 +23,6 @@ import me.jbusdriver.mvp.bean.MovieDBType
 import me.jbusdriver.mvp.presenter.MovieCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.adapter.BaseAppAdapter
-import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.collect.MovieCollector
 import me.jbusdriver.ui.helper.CollectCategoryHelper
 import me.jbusdriver.ui.holder.CollectDirEditHolder
@@ -93,7 +89,7 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
         super.onCreateOptionsMenu(menu, inflater)
         menu?.findItem(R.id.action_collect_dir_edit)?.setOnMenuItemClickListener {
 
-            holder.showDialogWithData(dataHelper.getCollectGroup().keys.toList()) { delActionsParams, addActionsParams ->
+            holder.showDialogWithData(mBasePresenter?.collectGroupMap?.keys?.toList() ?: emptyList()) { delActionsParams, addActionsParams ->
                 KLog.d("$delActionsParams $addActionsParams")
                 if (delActionsParams.isNotEmpty()) {
                     delActionsParams.forEach {
@@ -120,25 +116,17 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
 
 
     override fun showContents(data: List<*>) {
-        val dd = data as List<Movie>
-        Flowable.just(dd).map {
-            dataHelper.initFromData(dd, MovieCategory.id!!)
-        }.compose(SchedulersCompat.io()).subscribeBy({
-            KLog.e(it.message)
-            it.printStackTrace()
-        }, {
-            val delegate = dataHelper.getDelegate()
-            KLog.d("needInjectType : ${delegate.needInjectType}")
-            delegate.needInjectType.onEach {
-                if (it == -1) delegate.registerItemType(it, R.layout.layout_movie_item) //默认注入类型0，即actress
-                else delegate.registerItemType(it, R.layout.layout_menu_op_head) //头部，可以做特化
+        KLog.d("showContents $data")
+        mBasePresenter?.let { p ->
+            p.adapterDelegate.needInjectType.onEach {
+                if (it == -1)  p.adapterDelegate.registerItemType(it, R.layout.layout_movie_item) //默认注入类型0，即actress
+                else  p.adapterDelegate.registerItemType(it, R.layout.layout_menu_op_head) //头部，可以做特化
             }
+            adapter.setMultiTypeDelegate(p.adapterDelegate)
+        }
 
-            adapter.setMultiTypeDelegate(delegate)
-            adapter.addData(dataHelper.getDataWrapper())
-            if (AppConfiguration.enableCategory) adapter.expand(0)
-        }).addTo(rxManager)
-
+        super.showContents(data)
+        adapter.expand(0)
     }
 
     companion object {

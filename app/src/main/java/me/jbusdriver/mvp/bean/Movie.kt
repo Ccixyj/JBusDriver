@@ -4,7 +4,6 @@ import android.text.TextUtils
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import com.google.gson.annotations.SerializedName
 import me.jbusdriver.common.urlHost
-import me.jbusdriver.db.bean.ICollectCategory
 import me.jbusdriver.db.bean.MovieCategory
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.enums.DataSourceType
@@ -22,7 +21,7 @@ data class Movie(
         @SerializedName("detailUrl") override val link: String,
         val tags: List<String> = listOf()//标签,
 
-) : MultiItemEntity, ILink , ICollectCategory {
+) : MultiItemEntity, ILink{
     @Transient
     override var categoryId: Int = MovieCategory.id ?: 1
 

@@ -4,7 +4,7 @@ import android.text.TextUtils
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.urlHost
 import me.jbusdriver.db.bean.ActressCategory
-import me.jbusdriver.db.bean.ICollectCategory
+import me.jbusdriver.db.bean.LinkCategory
 import me.jbusdriver.ui.data.enums.DataSourceType
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -98,9 +98,13 @@ data class MovieDetail(val title: String,
 interface IAttr
 
 
-data class Header(val name: String, val value: String, override val link: String) : ILink
-data class Genre(val name: String, override val link: String) : ILink
-data class ActressInfo(val name: String, val avatar: String, override val link: String, var tag: String? = null) : ILink, ICollectCategory {
+data class Header(val name: String, val value: String, override val link: String) : ILink{
+    @Transient  override var categoryId: Int = LinkCategory.id ?: 10
+}
+data class Genre(val name: String, override val link: String) : ILink{
+    @Transient  override var categoryId: Int = LinkCategory.id ?: 10
+}
+data class ActressInfo(val name: String, val avatar: String, override val link: String, var tag: String? = null) : ILink {
 
     @Transient
     override var categoryId: Int = ActressCategory.id ?: 2
@@ -126,7 +130,9 @@ data class ActressInfo(val name: String, val avatar: String, override val link: 
 
 }
 
-data class Magnet(val name: String, val size: String, val date: String, override val link: String) : ILink
+data class Magnet(val name: String, val size: String, val date: String, override val link: String) : ILink{
+    @Transient  override var categoryId: Int = LinkCategory.id ?: 10
+}
 data class ImageSample(val title: String, val thumb: String, val image: String)
 
 data class ActressAttrs(val title: String, val imageUrl: String, val info: List<String>) : IAttr

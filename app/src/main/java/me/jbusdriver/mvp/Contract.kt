@@ -1,8 +1,6 @@
 package me.jbusdriver.mvp
 
-import me.jbusdriver.mvp.bean.Genre
-import me.jbusdriver.mvp.bean.Movie
-import me.jbusdriver.mvp.bean.MovieDetail
+import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.presenter.BasePresenter
 import me.jbusdriver.ui.data.enums.DataSourceType
 
@@ -55,16 +53,16 @@ interface MineCollectContract {
 
 interface MovieCollectContract {
     interface MovieCollectView : BaseView.BaseListWithRefreshView
-    interface MovieCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<MovieCollectView>, BasePresenter.LazyLoaderPresenter
+    interface MovieCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<MovieCollectView>, BasePresenter.BaseCollectPresenter<Movie>,BasePresenter.LazyLoaderPresenter
 }
 interface ActressCollectContract {
     interface ActressCollectView : BaseView.BaseListWithRefreshView
-    interface ActressCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<ActressCollectView>, BasePresenter.LazyLoaderPresenter
+    interface ActressCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<ActressCollectView>, BasePresenter.BaseCollectPresenter<ActressInfo>, BasePresenter.LazyLoaderPresenter
 }
 
 interface LinkCollectContract {
     interface LinkCollectView : BaseView.BaseListWithRefreshView
-    interface LinkCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<LinkCollectView>, BasePresenter.LazyLoaderPresenter
+    interface LinkCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<LinkCollectView>, BasePresenter.BaseCollectPresenter<ILink>, BasePresenter.LazyLoaderPresenter
 }
 
 interface GenrePageContract {

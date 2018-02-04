@@ -19,7 +19,7 @@ const val Expand_Type_Head = 0
 const val Expand_Type_Item = 1
 
 
-interface ILink : Serializable {
+interface ILink : ICollectCategory , Serializable {
     val link: String
 }
 
@@ -65,7 +65,9 @@ fun ILink.convertDBItem() = LinkItem(this.DBtype, Date(), this.uniqueKey, this.t
             else -> AllFirstParentDBCategoryGroup[this.DBtype]?.id ?: LinkCategory.id ?: -1
         })
 
-data class PageLink(val page: Int, val title: String /*XX类型*/, override val link: String) : ILink
+data class PageLink(val page: Int, val title: String /*XX类型*/, override val link: String) : ILink{
+  @Transient  override var categoryId: Int = LinkCategory.id ?: 10
+}
 
 data class PageInfo(val activePage: Int = 0, val nextPage: Int = 0,
                     val activePath: String = "",
@@ -78,6 +80,9 @@ val PageInfo.hasNext
 
 data class SearchLink(val type: SearchType, var query: String) : ILink {
 
+    @Transient  override var categoryId: Int = LinkCategory.id ?: 10
+
+        set(value) {}
     override val link: String
         get() = "${JAVBusService.defaultFastUrl}${type.urlPathFormater.format(query)}"
 

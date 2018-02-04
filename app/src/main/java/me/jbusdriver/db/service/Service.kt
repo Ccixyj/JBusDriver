@@ -7,6 +7,7 @@ import me.jbusdriver.db.DB
 import me.jbusdriver.db.bean.Category
 import me.jbusdriver.db.bean.DBPage
 import me.jbusdriver.db.bean.History
+import me.jbusdriver.db.bean.LinkItem
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.bean.Movie
@@ -78,7 +79,7 @@ object CategoryService {
      * ....
      * link : 10
      */
-    fun queryCategoryTreeLike(type: Int) = dao.queryTreeByLike("/$type/%").apply {
+    fun queryCategoryTreeLike(type: Int) = dao.queryTreeByLike("$type/%").apply {
         this.forEach { v ->
             v.id?.let { snapShots.put(it, v) }
         }
@@ -126,4 +127,8 @@ object LinkService {
     }
 
     fun update(data: ILink) = dao.update(data.convertDBItem())
+    fun queryByCategory(category: Category): List<LinkItem> {
+        requireNotNull(category.id)
+      return  dao.queryByCategoryId(category.id!!)
+    }
 }

@@ -2,10 +2,9 @@ package me.jbusdriver.db
 
 import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.db.SupportSQLiteOpenHelper
-import io.reactivex.schedulers.Schedulers
+import android.database.sqlite.SQLiteDatabase
 import me.jbusdriver.common.KLog
 import me.jbusdriver.db.bean.AllFirstParentDBCategoryGroup
-import me.jbusdriver.db.service.CategoryService
 
 
 //region history
@@ -31,16 +30,18 @@ object HistoryTable {
 object CategoryTable {
     const val TABLE_NAME = "t_category"
     const val COLUMN_ID = "id"
-    const val COLUMN_P_ID = "p_id"
+    const val COLUMN_P_ID = "pid"
     const val COLUMN_NAME = "name"
     const val COLUMN_TREE = "tree"
+    const val COLUMN_ORDER = "orderIndex"
 }
 
 private const val CREATE_COLLECT_CATEGORY_SQL = "CREATE TABLE ${CategoryTable.TABLE_NAME} ( " +
         " ${CategoryTable.COLUMN_ID} INTEGER PRIMARY KEY AUTOINCREMENT," +
         " ${CategoryTable.COLUMN_P_ID} INTEGER  NOT NULL DEFAULT -1," +
         " ${CategoryTable.COLUMN_NAME} NVARCHAR(100) NOT NULL ," +
-        " ${CategoryTable.COLUMN_TREE} TEXT NOT NULL " +
+        " ${CategoryTable.COLUMN_TREE} TEXT NOT NULL , " +
+        " ${CategoryTable.COLUMN_ORDER}  INTEGER  NOT NULL DEFAULT 0 " +
         ")"
 //endregion
 
@@ -49,7 +50,7 @@ private const val CREATE_COLLECT_CATEGORY_SQL = "CREATE TABLE ${CategoryTable.TA
 object LinkItemTable {
     const val TABLE_NAME = "t_link"
     const val COLUMN_ID = "id"
-    const val COLUMN_CATEGORY_ID = "category_id"
+    const val COLUMN_CATEGORY_ID = "categoryId"
     const val COLUMN_DB_TYPE = "dbType"
     const val COLUMN_CREATE_TIME = "createTime"
     const val COLUMN_KEY = "key"
@@ -99,25 +100,23 @@ private const val COLLECT_DB_VERSION = 1
 
 class CollectDBCallBack : SupportSQLiteOpenHelper.Callback(COLLECT_DB_VERSION) {
 
-    init {
-        //初始化时修改默认分类
-        Schedulers.io().scheduleDirect {
-            AllFirstParentDBCategoryGroup.forEach {
-                try {
-                    CategoryService.insert(it.value)
-                    CategoryService.update(it.value)
-                } catch (e: Exception) {
-
-                }
-            }
-
-        }
-    }
-
     override fun onCreate(db: SupportSQLiteDatabase?) {
         KLog.d("JBusDBOpenCallBack onCreate")
         db?.execSQL(CREATE_LINK_ITEM_SQL)
         db?.execSQL(CREATE_COLLECT_CATEGORY_SQL)
+        AllFirstParentDBCategoryGroup.forEach {
+            db?.insert(CategoryTable.TABLE_NAME, SQLiteDatabase.CONFLICT_NONE, it.value.cv())
+            db?.update(CategoryTable.TABLE_NAME, SQLiteDatabase.CONFLICT_NONE, it.value.cv(),CategoryTable.COLUMN_ID + " = ${it.value.id!!} ",null)
+        }
+//        AllFirstParentDBCategoryGroup.forEach {
+//            try {
+//                CategoryService.insert(it.value)
+//                CategoryService.update(it.value)
+//            } catch (e: Exception) {
+//
+//            }
+//        }
+
     }
 
 
