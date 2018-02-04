@@ -17,7 +17,7 @@ buildscript {
             'rxandroid'                    : '2.0.1',
             'rxkotlin'                     : '2.2.0',
             'rxrelay'                      : '2.0.0',
-            'glide'                        : '4.5.0',
+            'glide'                        : '4.6.0',
             'sqlbrite'                     : '3.1.0',
 
             'logger'                       : '2.1.1',
@@ -25,7 +25,14 @@ buildscript {
 
             'material_dialogs_core'        : '0.9.6.0',
             'BaseRecyclerViewAdapterHelper': '2.9.34',
-            'jsoup'                        : '1.11.2'
+            'jsoup'                        : '1.11.2',
+            'db_framework'                 : '1.0.0',
+            'statusbarutil'                : '1.4.0',
+            'flowlayoutmanager'            : '1.2.3.2',
+            'analytics'                    : '6.1.4',
+
+            'leakcanary'                    : '1.5.4'
+
 
     ]
 
