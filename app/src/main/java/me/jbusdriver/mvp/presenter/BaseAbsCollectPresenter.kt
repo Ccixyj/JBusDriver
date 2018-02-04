@@ -3,6 +3,8 @@ package me.jbusdriver.mvp.presenter
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
+import me.jbusdriver.common.KLog
+import me.jbusdriver.common.SchedulersCompat
 import me.jbusdriver.db.bean.*
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.db.service.LinkService
@@ -11,13 +13,11 @@ import me.jbusdriver.mvp.BaseView
 import me.jbusdriver.mvp.MovieCollectContract
 import me.jbusdriver.mvp.bean.CollectLinkWrapper
 import me.jbusdriver.mvp.bean.PageInfo
+import me.jbusdriver.mvp.bean.hasNext
 import me.jbusdriver.mvp.model.BaseModel
+import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.collect.ICollect
 import org.jsoup.nodes.Document
-
-/**
- * Created by Administrator on 2017/5/10 0010.
- */
 
 
 abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T : ICollectCategory>(private val collector: ICollect<T>) : AbstractRefreshLoadMorePresenterImpl<V, T>(), BasePresenter.BaseCollectPresenter<T> {
@@ -32,6 +32,9 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
             else -> LinkCategory
         }
     }
+    private val listData by lazy { collector.dataList.toMutableList() }
+    private val pageNum
+        get() = ((listData.size - 1) / pageSize) + 1
 
     override val collectGroupMap: MutableMap<Category, List<T>> = mutableMapOf()
 
@@ -43,52 +46,71 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
         //查询所有的分类 //优化:先查20个
         mView?.showLoading()
         mView?.resetList()
-        Flowable.just(firstCategory)
-                .filter { firstCategory.id != null }
-                .flatMap { Flowable.fromIterable(CategoryService.queryCategoryTreeLike(it.id!!)) }
-                .map {
-                    val parent = CollectLinkWrapper<T>(it).apply {
+        if (AppConfiguration.enableCategory) {
+            Flowable.just(firstCategory)
+                    .filter { firstCategory.id != null }
+                    .flatMap { Flowable.fromIterable(CategoryService.queryCategoryTreeLike(it.id!!)) }
+                    .map {
+                        val parent = CollectLinkWrapper<T>(it).apply {
+                            adapterDelegate.needInjectType.add(level)
+                        }
+                        val list = LinkService.queryByCategory(it)
+                        val items = mutableListOf<T>()
+                        list.forEach {
+                            val mapValue = it.getLinkValue()
+
+                                    as? T
+                            if (mapValue != null) {
+                                parent.addSubItem(CollectLinkWrapper(null, mapValue).apply {
+                                    adapterDelegate.needInjectType.add(level)
+                                })
+                                items.add(mapValue)
+                            }
+                        }
+                        collectGroupMap[it] = items
+                        parent
+                    }
+
+                    .toList()
+                    .doFinally { mView?.dismissLoading() }
+                    .subscribeBy({
+                        mView?.showError(it)
+                    }, {
+                        mView?.showContents(it)
+                        mView?.loadMoreComplete()
+                        mView?.loadMoreEnd()
+
+                    })
+                    .addTo(rxManager)
+
+        } else {
+
+            val next = if (page < pageNum) page + 1 else pageNum
+            pageInfo = pageInfo.copy(activePage = page, nextPage = next)
+            Flowable.just(pageInfo).map {
+                KLog.d("request page : $it")
+                val start = (pageInfo.activePage - 1) * pageSize
+                val nextSize = start + pageSize
+                val end = if (nextSize <= listData.size) nextSize else listData.size
+                listData.subList(start, end).map {
+                    CollectLinkWrapper(null, it).apply {
                         adapterDelegate.needInjectType.add(level)
                     }
-                    val list = LinkService.queryByCategory(it)
-                    val items = mutableListOf<T>()
-                    list.forEach {
-                        val mapValue = it.getLinkValue() as? T
-                        if (mapValue!= null){
-                            parent.addSubItem(CollectLinkWrapper(null, mapValue).apply {
-                                adapterDelegate.needInjectType.add(level)
-                            })
-                            items.add(mapValue)
-                        }
-                    }
-                    collectGroupMap[it] = items
-                    parent
                 }
+            }.doFinally { mView?.dismissLoading() }
+                    .compose(SchedulersCompat.io())
+                    .subscribeBy({
+                        mView?.showError(it)
+                    }, {
+                        if (!pageInfo.hasNext) mView?.loadMoreEnd()
+                    }, {
+                        mView?.showContents(it)
+                        mView?.loadMoreComplete()
+                    })
 
-                .toList()
-                .doFinally { mView?.dismissLoading() }
-                .subscribeBy({
-                    mView?.showError(it)
-                }, {
-                    mView?.showContents(it)
-                    mView?.loadMoreComplete()
-                    mView?.loadMoreEnd()
+                    .addTo(rxManager)
+        }
 
-                })
-                .addTo(rxManager)
-
-
-//        val next = if (page < pageNum) page + 1 else pageNum
-//        pageInfo = pageInfo.copy(activePage = page, nextPage = next)
-//        Flowable.just(pageInfo).map {
-//            KLog.d("request page : $it")
-//            val start = (pageInfo.activePage - 1) * pageSize
-//            val nextSize = start + pageSize
-//            val end = if (nextSize <= listData.size) nextSize else listData.size
-//            listData.subList(start, end)
-//        }.compose(SchedulersCompat.io())
-//                .subscribeWith(ListDefaultSubscriber(page))
-//                .addTo(rxManager)
 
     }
 

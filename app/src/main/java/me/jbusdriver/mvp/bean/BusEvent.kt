@@ -14,3 +14,5 @@ data class CollectErrorEvent(val key: String, val msg: String)
 data class PageChangeEvent(val mode: Int)
 
 class MenuChangeEvent
+
+class CategoryChangeEvent

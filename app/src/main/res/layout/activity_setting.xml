@@ -112,6 +112,33 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/material_8dp" />
 
+            <!--收藏分类-->
+            <android.support.v7.widget.CardView
+                style="@style/AppTheme.CardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                app:contentPadding="@dimen/material_8dp">
+
+
+                <LinearLayout
+                    android:id="@+id/ll_collect_category_config"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/material_48dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/cb_collect_category"
+                        style="@style/Base.TextAppearance.AppCompat.Body2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="开启收藏分类"
+                        android:textColor="@color/secondText" />
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
             <!--磁力-->
             <android.support.v7.widget.CardView
                 style="@style/AppTheme.CardView"

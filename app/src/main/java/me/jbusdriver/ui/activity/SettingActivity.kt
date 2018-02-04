@@ -117,6 +117,12 @@ class SettingActivity : BaseActivity() {
                     .show()
         }
 
+        //收藏分类
+        cb_collect_category.isChecked = AppConfiguration.enableCategory
+        cb_collect_category.setOnCheckedChangeListener { _, isChecked ->
+            AppConfiguration.enableCategory = isChecked
+        }
+
     }
 
     private fun changePageMode(mode: Int) {

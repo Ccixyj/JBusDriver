@@ -6,6 +6,7 @@ import me.jbusdriver.common.AppContext
 import me.jbusdriver.common.RxBus
 import me.jbusdriver.common.fromJson
 import me.jbusdriver.common.toJsonString
+import me.jbusdriver.mvp.bean.CategoryChangeEvent
 import me.jbusdriver.mvp.bean.MenuChangeEvent
 import me.jbusdriver.mvp.bean.PageChangeEvent
 import kotlin.properties.Delegates
@@ -64,7 +65,10 @@ object AppConfiguration {
     //region collectCategory
 
     private const val collectCategoryS: String = "collectCategoryS"
-    var enableCategory: Boolean = true
+    var enableCategory: Boolean by Delegates.observable(java.lang.Boolean.parseBoolean(getSp(collectCategoryS))) { _, old, new ->
+        saveSp(collectCategoryS, new.toString())
+        RxBus.post(CategoryChangeEvent())
+    }
 
     //endregion
 
