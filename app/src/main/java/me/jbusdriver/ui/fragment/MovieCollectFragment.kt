@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
+import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
@@ -24,7 +25,7 @@ import me.jbusdriver.mvp.presenter.MovieCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.adapter.BaseAppAdapter
 import me.jbusdriver.ui.data.collect.MovieCollector
-import me.jbusdriver.ui.helper.CollectCategoryHelper
+import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import me.jbusdriver.ui.holder.CollectDirEditHolder
 
 /**
@@ -78,11 +79,38 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
                 }
             }
 
+            setOnItemLongClickListener { adapter, _, position ->
+                (this@MovieCollectFragment.adapter.getData().getOrNull(position)?.linkBean)?.let {
+                    movie->
+                    val action = LinkMenu.movieActions.toMutableMap()
+                    action.remove("收藏")
+                    action["取消收藏"] = {
+                        if (MovieCollector.removeCollect(it)) {
+                            viewContext.toast("取消收藏成功")
+                            adapter.data.removeAt(position)
+                            adapter.notifyItemRemoved(position)
+                        } else {
+                            viewContext.toast("已经取消了")
+                        }
+                    }
+
+                    MaterialDialog.Builder(viewContext).title(movie.code)
+                            .content(movie.title)
+                            .items(action.keys)
+                            .itemsCallback { _, _, _, text ->
+                                action[text]?.invoke(movie)
+                            }
+                            .show()
+
+                }
+                true
+            }
+
+
         }
     }
 
 
-    private val dataHelper by lazy { CollectCategoryHelper<Movie>() }
     private val holder by lazy { CollectDirEditHolder(viewContext, MovieCategory) }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

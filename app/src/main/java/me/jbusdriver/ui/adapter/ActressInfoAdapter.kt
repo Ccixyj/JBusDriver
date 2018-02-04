@@ -15,21 +15,10 @@ import me.jbusdriver.common.*
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.data.collect.ActressCollector
+import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import java.util.*
 
 class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseAppAdapter<ActressInfo, BaseViewHolder>(R.layout.layout_actress_item) {
-    private val actionMap by lazy {
-        mapOf("复制名字" to { act: ActressInfo ->
-            AppContext.instace.copy(act.name)
-            AppContext.instace.toast("已复制")
-        }, "收藏" to { act: ActressInfo ->
-            ActressCollector.addToCollect(act)
-            KLog.d("actress_data:${ActressCollector.dataList}")
-        }, "取消收藏" to { act: ActressInfo ->
-            ActressCollector.removeCollect(act)
-            KLog.d("actress_data:${ActressCollector.dataList}")
-        })
-    }
 
 
     private val random = Random()
@@ -78,13 +67,13 @@ class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseAppAdapter<Ac
 
         setOnItemLongClickListener { _, view, position ->
             data.getOrNull(position)?.let { act ->
-                val action = if (ActressCollector.has(act)) actionMap.minus("收藏")
-                else actionMap.minus("取消收藏")
+                val action = if (ActressCollector.has(act)) LinkMenu.actressActions.minus("收藏")
+                else LinkMenu.actressActions.minus("取消收藏")
 
                 MaterialDialog.Builder(view.context).title(act.name)
                         .items(action.keys)
                         .itemsCallback { _, _, _, text ->
-                            actionMap[text]?.invoke(act)
+                            action[text]?.invoke(act)
                         }
                         .show()
             }

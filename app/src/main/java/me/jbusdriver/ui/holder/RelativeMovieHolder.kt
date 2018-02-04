@@ -18,28 +18,13 @@ import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.adapter.BaseAppAdapter
 import me.jbusdriver.ui.data.collect.MovieCollector
+import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import java.util.*
 
 /**
  * Created by Administrator on 2017/5/9 0009.
  */
 class RelativeMovieHolder(context: Context) : BaseHolder(context) {
-
-    private val actionMap by lazy {
-        mapOf("复制名字" to { movie: Movie ->
-            weakRef.get()?.let {
-                it.copy(movie.title)
-                it.toast("已复制")
-
-            }
-        }, "收藏" to { movie: Movie ->
-            MovieCollector.addToCollect(movie)
-            KLog.d("movie_data:${MovieCollector.dataList}")
-        }, "取消收藏" to { movie: Movie ->
-            MovieCollector.removeCollect(movie)
-            KLog.d("movie_data:${MovieCollector.dataList}")
-        })
-    }
 
     val view by lazy {
         weakRef.get()?.let {
@@ -55,12 +40,12 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
                 }
                 relativeAdapter.setOnItemLongClickListener { adapter, view, position ->
                     relativeAdapter.data.getOrNull(position)?.let { movie ->
-                        val action = if (MovieCollector.has(movie)) actionMap.minus("收藏")
-                        else actionMap.minus("取消收藏")
+                        val action = if (MovieCollector.has(movie)) LinkMenu.movieActions.minus("收藏")
+                        else LinkMenu.movieActions.minus("取消收藏")
                         MaterialDialog.Builder(view.context).title(movie.title)
                                 .items(action.keys)
                                 .itemsCallback { _, _, _, text ->
-                                    actionMap[text]?.invoke(movie)
+                                    action[text]?.invoke(movie)
                                 }
                                 .show()
                     }

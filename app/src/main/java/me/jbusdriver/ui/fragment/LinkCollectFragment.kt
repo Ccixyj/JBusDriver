@@ -29,6 +29,7 @@ import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.adapter.BaseAppAdapter
 import me.jbusdriver.ui.data.collect.LinkCollector
+import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import me.jbusdriver.ui.holder.CollectDirEditHolder
 
 class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkCollectPresenter, LinkCollectContract.LinkCollectView, CollectLinkWrapper<ILink>>(), LinkCollectContract.LinkCollectView {
@@ -37,7 +38,7 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
     override val recycleView: RecyclerView by lazy { rv_recycle }
     override val layoutManager: RecyclerView.LayoutManager by lazy { LinearLayoutManager(viewContext) }
     override val adapter: BaseQuickAdapter<CollectLinkWrapper<ILink>, in BaseViewHolder> by lazy {
-        object : BaseAppAdapter<CollectLinkWrapper<ILink>, BaseViewHolder>(R.layout.layout_header_item) {
+        object : BaseAppAdapter<CollectLinkWrapper<ILink>, BaseViewHolder>(null) {
 
             override fun convert(holder: BaseViewHolder, collect: CollectLinkWrapper<ILink>) {
                  when(holder.itemViewType){
@@ -58,20 +59,6 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
                                  MovieListActivity.start(mContext, item)
                              }
 
-                             //长按操作
-                             setOnLongClickListener {
-                                 KLog.d("setOnLongClickListener text : $item")
-
-                                 MaterialDialog.Builder(holder.itemView.context).content(item.des)
-                                         .items(listOf("取消收藏"))
-                                         .itemsCallback { _, _, _, text ->
-                                             LinkCollector.removeCollect(item)
-                                             mData.removeAt(holder.adapterPosition)
-                                             adapter.notifyItemRemoved(holder.adapterPosition)
-                                         }.show()
-                                 return@setOnLongClickListener true
-
-                             }
                          }
                          val dp8 = mContext.dpToPx(8f)
                          holder.itemView.setPadding(dp8 * 2, dp8, dp8 * 2, dp8)
@@ -101,9 +88,29 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
             }
 
             setOnItemLongClickListener { adapter, _, position ->
+                (this@LinkCollectFragment.adapter.getData().getOrNull(position)?.linkBean)?.let {
+                    link->
+                    val action = LinkMenu.linkActions.toMutableMap()
+                    action.remove("收藏")
+                    action["取消收藏"] = {
+                        if (LinkCollector.removeCollect(it)) {
+                            viewContext.toast("取消收藏成功")
+                            adapter.data.removeAt(position)
+                            adapter.notifyItemRemoved(position)
+                        } else {
+                            viewContext.toast("已经取消了")
+                        }
+                    }
+                    MaterialDialog.Builder(viewContext).content(link.des)
+                            .items(action.keys)
+                            .itemsCallback { _, _, _, text ->
+                                action[text]?.invoke(link)
+                            }.show()
 
+                }
                 true
             }
+
 
 
         }
@@ -147,7 +154,7 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
         KLog.d("showContents $data")
         mBasePresenter?.let { p ->
             p.adapterDelegate.needInjectType.onEach {
-                if (it == -1) p.adapterDelegate.registerItemType(it, R.layout.layout_actress_item) //默认注入类型0，即actress
+                if (it == -1) p.adapterDelegate.registerItemType(it, R.layout.layout_header_item) //默认注入类型0，即actress
                 else p.adapterDelegate.registerItemType(it, R.layout.layout_menu_op_head) //头部，可以做特化
             }
             adapter.setMultiTypeDelegate(p.adapterDelegate)

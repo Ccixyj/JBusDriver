@@ -31,6 +31,7 @@ import me.jbusdriver.mvp.presenter.ActressCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.adapter.BaseAppAdapter
 import me.jbusdriver.ui.data.collect.ActressCollector
+import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import me.jbusdriver.ui.holder.CollectDirEditHolder
 import java.util.*
 
@@ -109,20 +110,26 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 
             setOnItemLongClickListener { adapter, _, position ->
                 (this@ActressCollectFragment.adapter.getData().getOrNull(position)?.linkBean)?.let {
-                    MaterialDialog.Builder(viewContext)
-                            .title(it.name)
-                            .items(listOf("取消收藏"))
-                            .itemsCallback { _, _, _, _ ->
-                                if (ActressCollector.removeCollect(it)) {
-                                    viewContext.toast("取消收藏成功")
-                                    adapter.data.removeAt(position)
-                                    adapter.notifyItemRemoved(position)
-                                } else {
-                                    viewContext.toast("已经取消了")
-                                }
+                    act->
+                    val action = LinkMenu.actressActions.toMutableMap()
+                    action.remove("收藏")
+                    action["取消收藏"] = {
+                        if (ActressCollector.removeCollect(it)) {
+                            viewContext.toast("取消收藏成功")
+                            adapter.data.removeAt(position)
+                            adapter.notifyItemRemoved(position)
+                        } else {
+                            viewContext.toast("已经取消了")
+                        }
+                    }
 
+                    MaterialDialog.Builder(viewContext).title(act.name)
+                            .items(action.keys)
+                            .itemsCallback { _, _, _, text ->
+                                action[text]?.invoke(act)
                             }
                             .show()
+
                 }
                 true
             }

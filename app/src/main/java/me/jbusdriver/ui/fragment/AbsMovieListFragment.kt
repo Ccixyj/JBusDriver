@@ -18,8 +18,8 @@ import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.adapter.BaseMultiItemAppAdapter
 import me.jbusdriver.ui.data.AppConfiguration
-import me.jbusdriver.ui.data.collect.ActressCollector
 import me.jbusdriver.ui.data.collect.MovieCollector
+import me.jbusdriver.ui.data.contextMenu.LinkMenu
 
 
 abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
@@ -97,14 +97,14 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                             it.setOnLongClickListener {
                                 KLog.d("setOnItemLongClickListener $item")
 
-                                val action = if (MovieCollector.has(item)) actionMap.minus("收藏")
-                                else actionMap.minus("取消收藏")
+                                val action = if (MovieCollector.has(item)) LinkMenu.movieActions.minus("收藏")
+                                else LinkMenu.movieActions.minus("取消收藏")
 
                                 MaterialDialog.Builder(viewContext).title(item.code)
                                         .content(item.title)
                                         .items(action.keys)
                                         .itemsCallback { _, _, _, text ->
-                                            actionMap[text]?.invoke(item)
+                                            action[text]?.invoke(item)
                                         }
                                         .show()
                                 return@setOnLongClickListener true
@@ -171,21 +171,6 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
         }.show()
     }
 
-    private val actionMap by lazy {
-        mapOf("复制标题" to { movie: Movie ->
-            AppContext.instace.copy(movie.title)
-            AppContext.instace.toast("已复制")
-        }, "复制番号" to { movie: Movie ->
-            AppContext.instace.copy(movie.code)
-            AppContext.instace.toast("已复制")
-        }, "收藏" to { movie: Movie ->
-            MovieCollector.addToCollect(movie)
-            KLog.d("actress_data:${ActressCollector.dataList}")
-        }, "取消收藏" to { movie: Movie ->
-            MovieCollector.removeCollect(movie)
-            KLog.d("actress_data:${ActressCollector.dataList}")
-        })
-    }
 
 
     override val pageMode: Int
