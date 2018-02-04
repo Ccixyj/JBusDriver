@@ -41,15 +41,13 @@ import java.util.*
 class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.ActressCollectPresenter, ActressCollectContract.ActressCollectView, CollectLinkWrapper<ActressInfo>>(), ActressCollectContract.ActressCollectView {
 
 
-    override fun createPresenter() = ActressCollectPresenterImpl(ActressCollector)
+
 
     override val swipeView: SwipeRefreshLayout? by lazy { sr_refresh }
     override val recycleView: RecyclerView by lazy { rv_recycle }
     override val layoutManager: RecyclerView.LayoutManager by lazy {
         StaggeredGridLayoutManager(viewContext.spanCount, OrientationHelper.VERTICAL)
     }
-
-
     override val adapter: BaseQuickAdapter<CollectLinkWrapper<ActressInfo>, in BaseViewHolder> by lazy {
 
         object : BaseAppAdapter<CollectLinkWrapper<ActressInfo>, BaseViewHolder>(null) {
@@ -118,7 +116,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                     MaterialDialog.Builder(viewContext)
                             .title(it.name)
                             .items(listOf("取消收藏"))
-                            .itemsCallback { _, _, _, text ->
+                            .itemsCallback { _, _, _, _ ->
                                 if (ActressCollector.removeCollect(it)) {
                                     viewContext.toast("取消收藏成功")
                                     adapter.data.removeAt(position)
@@ -135,17 +133,15 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
         }
 
     }
-
-
     override val layoutId: Int = R.layout.layout_swipe_recycle
 
     private val dataHelper by lazy { CollectCategoryHelper<ActressInfo>() }
-
-    private val holder by lazy { CollectDirEditHolder(viewContext) }
+    private val holder by lazy { CollectDirEditHolder(viewContext , ActressCategory) }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
         menu?.findItem(R.id.action_collect_dir_edit)?.setOnMenuItemClickListener {
+
             holder.showDialogWithData(dataHelper.getCollectGroup().keys.toList()) { delActionsParams, addActionsParams ->
                 KLog.d("$delActionsParams $addActionsParams")
                 if (delActionsParams.isNotEmpty()) {
@@ -169,7 +165,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
         }
     }
 
-
+    override fun createPresenter() = ActressCollectPresenterImpl(ActressCollector)
     override fun showContents(data: List<*>) {
         val dd = data as List<ActressInfo>
         Flowable.just(dd).map {
@@ -191,7 +187,6 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
         }).addTo(rxManager)
 
     }
-
 
     companion object {
         fun newInstance() = ActressCollectFragment()

@@ -10,6 +10,7 @@ import me.jbusdriver.common.getStringByColumn
 import me.jbusdriver.db.LinkItemTable
 import me.jbusdriver.db.bean.LinkItem
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by Administrator on 2017/9/18 0018.
@@ -42,7 +43,7 @@ class LinkItemDao(private val db: BriteDatabase) {
         LinkItem(it.getIntByColumn(LinkItemTable.COLUMN_DB_TYPE), Date(it.getLongByColumn(LinkItemTable.COLUMN_CREATE_TIME)),
                 it.getStringByColumn(LinkItemTable.COLUMN_KEY) ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR) ?: ""
         )
-    }.blockingFirst()
+    }.timeout(6, TimeUnit.SECONDS).blockingFirst()
 
 
     companion object {
@@ -61,14 +62,14 @@ class LinkItemDao(private val db: BriteDatabase) {
                     it.getStringByColumn(LinkItemTable.COLUMN_KEY) ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR) ?: "").apply {
                 categoryId = it.getIntByColumn(LinkItemTable.COLUMN_CATEGORY_ID)
             }
-        }.blockingFirst()
+        }.timeout(6, TimeUnit.SECONDS).blockingFirst()
     }
 
     fun queryLink() = db.createQuery(LinkItemTable.TABLE_NAME, "SELECT * FROM ${LinkItemTable.TABLE_NAME} WHERE ${LinkItemTable.COLUMN_DB_TYPE} NOT IN (1,2)  ORDER BY ${LinkItemTable.COLUMN_ID} DESC").mapToList {
         LinkItem(it.getIntByColumn(LinkItemTable.COLUMN_DB_TYPE), Date(it.getLongByColumn(LinkItemTable.COLUMN_CREATE_TIME)),
                 it.getStringByColumn(LinkItemTable.COLUMN_KEY) ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR) ?: ""
         )
-    }.blockingFirst()
+    }.timeout(6, TimeUnit.SECONDS).blockingFirst()
 
     fun updateByCategoryId(id: Int, type: Int) {
         val cv = ContentValues().apply { putNull(LinkItemTable.COLUMN_CATEGORY_ID) }

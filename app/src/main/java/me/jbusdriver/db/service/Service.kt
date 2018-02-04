@@ -4,7 +4,6 @@ import android.text.TextUtils
 import io.reactivex.Observable
 import me.jbusdriver.common.KLog
 import me.jbusdriver.db.DB
-import me.jbusdriver.db.bean.AllFirstParentDBCategoryGroup
 import me.jbusdriver.db.bean.Category
 import me.jbusdriver.db.bean.DBPage
 import me.jbusdriver.db.bean.History
@@ -41,7 +40,7 @@ object HistoryService {
 
 object CategoryService {
     private val dao by lazy { DB.categoryDao }
-    private val catCache = HashMap(AllFirstParentDBCategoryGroup)
+    private val snapShots = HashMap<Int, Category>()
 //    apply {
 //        category = if (it.categoryId > 0) {
 //            cats.getOrPut(it.categoryId) { categoryDao.findById(it.categoryId) ?: ActressCategory }
@@ -53,7 +52,7 @@ object CategoryService {
     fun insert(category: Category): Category {
         return dao.insert(category).let {
             if (it != -1L) {
-                catCache[it.toInt()] = category
+                snapShots[it.toInt()] = category
                 category.id = it.toInt()
             } else {
                 KLog.w("save $category error return id : $it")
@@ -66,11 +65,11 @@ object CategoryService {
      * 删除对应分类
      * 重置所有收藏
      */
-    fun delete(category: Category, actressDBType: Int) {
+    fun delete(category: Category, linkDBType: Int) {
         if (category.id in 1..10) error("cant delete category $category because id is in 1..10")
-        catCache.remove(category.id)
+        snapShots.remove(category.id)
         dao.delete(category)
-        LinkService.resetCategory(category, actressDBType)
+        LinkService.resetCategory(category, linkDBType)
     }
 
     /**
@@ -81,18 +80,24 @@ object CategoryService {
      */
     fun queryCategoryTreeLike(type: Int) = dao.queryTreeByLike("/$type/%").apply {
         this.forEach { v ->
-            v.id?.let { catCache.put(it, v) }
+            v.id?.let { snapShots.put(it, v) }
         }
     }
 
 
     fun getById(cId: Int): Category {
         if (cId < 0) return error("Category id must > 0")
-        return catCache.getOrPut(cId) {
+        return snapShots.getOrPut(cId) {
             return dao.findById(cId)
         }
     }
 
+    fun update(category: Category) {
+        //移除可能的缓存
+        snapShots.remove(category.id)
+        require(category.id!! > 0)
+        dao.update(category)
+    }
 }
 
 object LinkService {
@@ -120,5 +125,5 @@ object LinkService {
 
     }
 
-    fun  update(data: ILink) =  dao.update(data.convertDBItem())
+    fun update(data: ILink) = dao.update(data.convertDBItem())
 }

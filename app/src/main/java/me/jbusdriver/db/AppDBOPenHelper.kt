@@ -2,9 +2,10 @@ package me.jbusdriver.db
 
 import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.db.SupportSQLiteOpenHelper
-import android.database.sqlite.SQLiteDatabase
+import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.common.KLog
 import me.jbusdriver.db.bean.AllFirstParentDBCategoryGroup
+import me.jbusdriver.db.service.CategoryService
 
 
 //region history
@@ -67,7 +68,6 @@ private const val CREATE_LINK_ITEM_SQL = "CREATE TABLE ${LinkItemTable.TABLE_NAM
 //endregion
 
 
-
 private const val JBUS_DB_VERSION = 1
 
 class JBusDBOpenCallBack : SupportSQLiteOpenHelper.Callback(JBUS_DB_VERSION) {
@@ -99,15 +99,27 @@ private const val COLLECT_DB_VERSION = 1
 
 class CollectDBCallBack : SupportSQLiteOpenHelper.Callback(COLLECT_DB_VERSION) {
 
+    init {
+        //初始化时修改默认分类
+        Schedulers.io().scheduleDirect {
+            AllFirstParentDBCategoryGroup.forEach {
+                try {
+                    CategoryService.insert(it.value)
+                    CategoryService.update(it.value)
+                } catch (e: Exception) {
+
+                }
+            }
+
+        }
+    }
+
     override fun onCreate(db: SupportSQLiteDatabase?) {
         KLog.d("JBusDBOpenCallBack onCreate")
         db?.execSQL(CREATE_LINK_ITEM_SQL)
         db?.execSQL(CREATE_COLLECT_CATEGORY_SQL)
-        //添加默认的分类
-        AllFirstParentDBCategoryGroup.forEach {
-            db?.insert(CategoryTable.TABLE_NAME, SQLiteDatabase.CONFLICT_NONE, it.value.cv())
-        }
     }
+
 
     override fun onUpgrade(db: SupportSQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         KLog.d("JBusDBOpenCallBack onUpgrade $oldVersion $newVersion")

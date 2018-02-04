@@ -126,9 +126,9 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
      */
 
     protected open fun doAddData(t: List<T>) {
-        if (t.isNotEmpty()) {
+//        if (t.isNotEmpty()) {
             mView?.showContents(t)
-        }
+//        }
         if (pageInfo.activePage > 1) mView?.loadMoreComplete()
     }
 

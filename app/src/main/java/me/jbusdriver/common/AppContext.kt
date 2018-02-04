@@ -8,6 +8,7 @@ import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
 import com.squareup.leakcanary.LeakCanary
 import com.umeng.analytics.MobclickAgent
+import io.reactivex.plugins.RxJavaPlugins
 import jbusdriver.me.jbusdriver.BuildConfig
 import me.jbusdriver.http.JAVBusService
 
@@ -39,6 +40,13 @@ class AppContext : Application() {
         })
 
         MobclickAgent.setDebugMode(BuildConfig.DEBUG)
+
+        RxJavaPlugins.setErrorHandler {
+            KLog.e("opp: $it")
+            MobclickAgent.reportError(this, it)
+        }
+
+
 
     }
 

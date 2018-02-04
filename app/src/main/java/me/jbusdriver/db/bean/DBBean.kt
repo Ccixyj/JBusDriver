@@ -31,14 +31,17 @@ data class Category(val name: String, val pid: Int = -1, val tree: String) {
 
     override fun equals(other: Any?) =
             other?.let { (it as? Category)?.id == this.id } ?: false
+
+    fun equalAll(other: Category?) = other?.let { it.id == this.id && it.name == this.name && it.pid == this.pid && it.tree == this.tree }
+            ?: false
 }
 
 /**
  * 预留 [3..9]的分类
  */
-val MovieCategory = Category("默认电影分类", -1, "/").apply { id = 1 }
-val ActressCategory = Category("默认演员分类", -1, "/").apply { id = 2 }
-val LinkCategory = Category("默认链接分类", -1, "/").apply { id = 10 }
+val MovieCategory = Category("默认电影分类", -1, "/1").apply { id = 1 }
+val ActressCategory = Category("默认演员分类", -1, "/2").apply { id = 2 }
+val LinkCategory = Category("默认链接分类", -1, "/10").apply { id = 10 }
 val AllFirstParentDBCategoryGroup by lazy { arrayMapof(1 to MovieCategory, 2 to ActressCategory, 10 to LinkCategory) }
 
 

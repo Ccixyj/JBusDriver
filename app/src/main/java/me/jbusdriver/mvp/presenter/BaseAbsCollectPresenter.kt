@@ -1,12 +1,13 @@
 package me.jbusdriver.mvp.presenter
 
-import me.jbusdriver.mvp.BaseView
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.SchedulersCompat
+import me.jbusdriver.mvp.BaseView
 import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.mvp.model.BaseModel
+import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.collect.ICollect
 import org.jsoup.nodes.Document
 
@@ -18,7 +19,9 @@ import org.jsoup.nodes.Document
 abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T>(private val collector: ICollect<T>) : AbstractRefreshLoadMorePresenterImpl<V, T>() {
 
 
-    protected open val pageSize = 20
+    protected open val pageSize
+        get() = if (AppConfiguration.enableCategory) Int.MAX_VALUE else 20
+
     private val listData by lazy { collector.dataList.toMutableList() }
     private val pageNum
         get() = ((listData.size - 1) / pageSize) + 1

@@ -53,7 +53,10 @@ interface MineCollectContract {
     interface MineCollectPresenter : BasePresenter<MineCollectView>, BasePresenter.LazyLoaderPresenter
 }
 
-
+interface MovieCollectContract {
+    interface MovieCollectView : BaseView.BaseListWithRefreshView
+    interface MovieCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<MovieCollectView>, BasePresenter.LazyLoaderPresenter
+}
 interface ActressCollectContract {
     interface ActressCollectView : BaseView.BaseListWithRefreshView
     interface ActressCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<ActressCollectView>, BasePresenter.LazyLoaderPresenter

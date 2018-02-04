@@ -18,6 +18,8 @@ import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.adapter.BaseMultiItemAppAdapter
 import me.jbusdriver.ui.data.AppConfiguration
+import me.jbusdriver.ui.data.collect.ActressCollector
+import me.jbusdriver.ui.data.collect.MovieCollector
 
 
 abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
@@ -30,10 +32,10 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                 addItemType(0, R.layout.layout_page_line_movie_item)
             }
 
-            val padding by lazy { this@AbsMovieListFragment.viewContext.dpToPx(8f) }
-            val colors = listOf(0xff2195f3.toInt(), 0xff4caf50.toInt(), 0xffff0030.toInt()) //蓝,绿,红
+            private val padding by lazy { this@AbsMovieListFragment.viewContext.dpToPx(8f) }
+            private val colors = listOf(0xff2195f3.toInt(), 0xff4caf50.toInt(), 0xffff0030.toInt()) //蓝,绿,红
 
-            val lp by lazy {
+            private val lp by lazy {
                 LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, this@AbsMovieListFragment.viewContext.dpToPx(24f)).apply {
                     leftMargin = padding
                     gravity = Gravity.CENTER_VERTICAL
@@ -46,7 +48,8 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                         holder.setText(R.id.tv_page_num, item.title)
                         val currentPage = item.title.toIntOrNull()
                         if (currentPage != null) {
-                            holder.setGone(R.id.tv_load_prev, mBasePresenter?.isPrevPageLoaded(currentPage) ?: true)
+                            holder.setGone(R.id.tv_load_prev, mBasePresenter?.isPrevPageLoaded(currentPage)
+                                    ?: true)
                             holder.getView<View>(R.id.tv_load_prev)?.setOnClickListener {
                                 mBasePresenter?.jumpToPage(currentPage - 1)
                             }
@@ -79,18 +82,35 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                                 (viewContext.inflate(R.layout.tv_movie_tag) as TextView).let {
                                     it.text = tag
                                     it.setPadding(padding, 0, padding, 0)
-                                    (it.background as? GradientDrawable)?.setColor(colors.getOrNull(index % 3) ?: colors.first())
+                                    (it.background as? GradientDrawable)?.setColor(colors.getOrNull(index % 3)
+                                            ?: colors.first())
                                     it.layoutParams = lp
                                     this.addView(it)
                                 }
                             }
 
                         }
-                        holder.getView<View>(R.id.card_movie_item)?.setOnClickListener {
-                            MovieDetailActivity.start(viewContext, item)
-                        }
+                        holder.getView<View>(R.id.card_movie_item)?.let {
+                            it.setOnClickListener {
+                                MovieDetailActivity.start(viewContext, item)
+                            }
+                            it.setOnLongClickListener {
+                                KLog.d("setOnItemLongClickListener $item")
 
-                        holder.addOnLongClickListener(R.id.card_movie_item)
+                                val action = if (MovieCollector.has(item)) actionMap.minus("收藏")
+                                else actionMap.minus("取消收藏")
+
+                                MaterialDialog.Builder(viewContext).title(item.code)
+                                        .content(item.title)
+                                        .items(action.keys)
+                                        .itemsCallback { _, _, _, text ->
+                                            actionMap[text]?.invoke(item)
+                                        }
+                                        .show()
+                                return@setOnLongClickListener true
+                            }
+
+                        }
                     }
                 }
             }
@@ -151,6 +171,22 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
         }.show()
     }
 
+    private val actionMap by lazy {
+        mapOf("复制标题" to { movie: Movie ->
+            AppContext.instace.copy(movie.title)
+            AppContext.instace.toast("已复制")
+        }, "复制番号" to { movie: Movie ->
+            AppContext.instace.copy(movie.code)
+            AppContext.instace.toast("已复制")
+        }, "收藏" to { movie: Movie ->
+            MovieCollector.addToCollect(movie)
+            KLog.d("actress_data:${ActressCollector.dataList}")
+        }, "取消收藏" to { movie: Movie ->
+            MovieCollector.removeCollect(movie)
+            KLog.d("actress_data:${ActressCollector.dataList}")
+        })
+    }
+
 
     override val pageMode: Int
         get() = AppConfiguration.pageMode
@@ -165,4 +201,5 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
     }
 
     override fun toString(): String = "$type :" + super.toString()
+
 }

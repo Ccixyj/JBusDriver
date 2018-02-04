@@ -69,7 +69,6 @@ class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseAppAdapter<Ac
 
     init {
 
-
         setOnItemClickListener { _, view, position ->
             data.getOrNull(position)?.let { item ->
                 KLog.d("item : $item")

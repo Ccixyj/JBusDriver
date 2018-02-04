@@ -15,7 +15,6 @@ import me.jbusdriver.common.KLog
 import me.jbusdriver.common.inflate
 import me.jbusdriver.common.toColorInt
 import me.jbusdriver.common.toast
-import me.jbusdriver.db.bean.ActressCategory
 import me.jbusdriver.db.bean.Category
 import me.jbusdriver.ui.adapter.BaseAppAdapter
 
@@ -24,7 +23,7 @@ import me.jbusdriver.ui.adapter.BaseAppAdapter
  */
 
 
-class CollectDirEditHolder(context: Context) : BaseHolder(context) {
+class CollectDirEditHolder(context: Context, parentCategory: Category) : BaseHolder(context) {
 
     private val delActionsParams = mutableSetOf<Category>()
     private val addActionsParams = mutableSetOf<Category>()
@@ -74,7 +73,8 @@ class CollectDirEditHolder(context: Context) : BaseHolder(context) {
                     }
 
                     if (add) {
-                        val category = Category(txt, ActressCategory.id ?: -1, "/${ActressCategory.id}/")
+                        val category = Category(txt, parentCategory.id
+                                ?: -1, "/${parentCategory.id}/")
                         addActionsParams.add(category)
                         categoryAdapter.addData(category)
                         categoryAdapter.notifyItemChanged(categoryAdapter.data.size - 1)

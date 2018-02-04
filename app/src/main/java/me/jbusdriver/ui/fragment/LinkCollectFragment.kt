@@ -30,14 +30,9 @@ import me.jbusdriver.ui.data.collect.LinkCollector
  */
 class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkCollectPresenter, LinkCollectContract.LinkCollectView, ILink>(), LinkCollectContract.LinkCollectView {
 
-
-    override fun createPresenter() = LinkCollectPresenterImpl(LinkCollector)
-
     override val swipeView: SwipeRefreshLayout? by lazy { sr_refresh }
     override val recycleView: RecyclerView by lazy { rv_recycle }
     override val layoutManager: RecyclerView.LayoutManager by lazy { LinearLayoutManager(viewContext) }
-
-
     override val adapter: BaseQuickAdapter<ILink, in BaseViewHolder> by lazy {
         object : BaseAppAdapter<ILink, BaseViewHolder>(R.layout.layout_header_item) {
 
@@ -79,9 +74,9 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
             }
         }
     }
-
     override val layoutId: Int = R.layout.layout_swipe_recycle
 
+    override fun createPresenter() = LinkCollectPresenterImpl(LinkCollector)
 
 
     companion object {

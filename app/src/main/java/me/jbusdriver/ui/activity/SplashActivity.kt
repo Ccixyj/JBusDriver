@@ -17,6 +17,8 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.*
+import me.jbusdriver.db.bean.AllFirstParentDBCategoryGroup
+import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.http.GitHub
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.enums.DataSourceType
