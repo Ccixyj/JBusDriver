@@ -1,5 +1,8 @@
-# JBusDriver
-1.受到 https://github.com/SplashCodes/JAViewer 启发写的JAVBUS的APP. 感谢 https://github.com/SplashCodes
+# JBusDriver 
+
+[加入telegram群](https://t.me/joinchat/HBJbEA-ka9TcWzaxjmD4hw) 感谢 [@alexalice](https://github.com/alexalice)
+
+1.受到[JAViewer](https://github.com/SplashCodes/JAViewer) 启发写的JAVBUS的APP. 感谢 原作者[@SplashCodes](https://github.com/SplashCodes)
 
 2.采用流行的 kotlin+mvp+rxjava2+retrofit2+okhttp3 搭建.
 
