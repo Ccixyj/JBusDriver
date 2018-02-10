@@ -60,6 +60,9 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
             ll_git_url.setOnClickListener {
                 browse("https://github.com/Ccixyj/JBusDriver")
             }
+            ll_telegram.setOnClickListener {
+                browse("https://t.me/joinchat/HBJbEA-ka9TcWzaxjmD4hw")
+            }
             ll_click_reload.setOnClickListener {
                 CacheLoader.lru.evictAll()
                 CacheLoader.acache.remove(C.Cache.BUS_URLS)

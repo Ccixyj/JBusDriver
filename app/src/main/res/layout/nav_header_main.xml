@@ -11,7 +11,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-
     <LinearLayout
         android:id="@+id/ll_git_url"
         android:layout_width="match_parent"
@@ -27,6 +26,25 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:text="JbusDriver" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_telegram"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:drawableLeft="@mipmap/ic_github"
+            android:drawableTint="@color/colorAccent"
+            android:drawablePadding="@dimen/material_4dp"
+            style="@style/Base.TextAppearance.AppCompat.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="Telegram Group" />
 
 
     </LinearLayout>
