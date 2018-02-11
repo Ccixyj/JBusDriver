@@ -25,7 +25,7 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
 
     protected open val pageSize = 20
 
-    private val firstCategory by lazy {
+    private val ancestor by lazy {
         when {
             this is MovieCollectContract.MovieCollectPresenter -> MovieCategory
             this is ActressCollectContract.ActressCollectPresenter -> ActressCategory
@@ -45,10 +45,10 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
     override fun loadData4Page(page: Int) {
         //查询所有的分类 //优化:先查20个
         mView?.showLoading()
-        mView?.resetList()
         if (AppConfiguration.enableCategory) {
-            Flowable.just(firstCategory)
-                    .filter { firstCategory.id != null }
+            //一次性加载完成
+            Flowable.just(ancestor)
+                    .filter { ancestor.id != null }
                     .flatMap { Flowable.fromIterable(CategoryService.queryCategoryTreeLike(it.id!!)) }
                     .map {
                         val parent = CollectLinkWrapper<T>(it).apply {
@@ -57,9 +57,7 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
                         val list = LinkService.queryByCategory(it)
                         val items = mutableListOf<T>()
                         list.forEach {
-                            val mapValue = it.getLinkValue()
-
-                                    as? T
+                            val mapValue = it.getLinkValue() as? T
                             if (mapValue != null) {
                                 parent.addSubItem(CollectLinkWrapper(null, mapValue).apply {
                                     adapterDelegate.needInjectType.add(level)
@@ -76,6 +74,7 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
                     .subscribeBy({
                         mView?.showError(it)
                     }, {
+                        mView?.resetList()
                         mView?.showContents(it)
                         mView?.loadMoreComplete()
                         mView?.loadMoreEnd()
@@ -106,9 +105,7 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
                     }, {
                         mView?.showContents(it)
                         mView?.loadMoreComplete()
-                    })
-
-                    .addTo(rxManager)
+                    }).addTo(rxManager)
         }
 
 
@@ -119,6 +116,7 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
 //        listData.clear()
 //        collector.reload()
 //        listData.addAll(collector.dataList)
+        mView?.resetList()
         loadData4Page(1)
     }
 

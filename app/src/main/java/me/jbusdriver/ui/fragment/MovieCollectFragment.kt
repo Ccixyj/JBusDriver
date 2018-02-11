@@ -24,6 +24,7 @@ import me.jbusdriver.mvp.bean.MovieDBType
 import me.jbusdriver.mvp.presenter.MovieCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.adapter.BaseAppAdapter
+import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.collect.MovieCollector
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import me.jbusdriver.ui.holder.CollectDirEditHolder
@@ -154,7 +155,9 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
         }
 
         super.showContents(data)
-        adapter.expand(0)
+        if (AppConfiguration.enableCategory) {
+            adapter.expand(0)
+        }
     }
 
     companion object {

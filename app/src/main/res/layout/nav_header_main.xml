@@ -5,10 +5,10 @@
     android:background="@drawable/side_nav_bar"
     android:gravity="bottom"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/material_8dp"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingTop="@dimen/material_8dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <LinearLayout
@@ -18,17 +18,22 @@
         android:orientation="horizontal">
 
         <android.support.v7.widget.AppCompatTextView
-            android:drawableLeft="@mipmap/ic_github"
-            android:drawableTint="@color/colorAccent"
-            android:drawablePadding="@dimen/material_4dp"
-            style="@style/Base.TextAppearance.AppCompat.Title"
+            style="@style/Base.TextAppearance.AppCompat.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_github"
+            android:drawablePadding="@dimen/material_4dp"
+            android:drawableTint="@color/colorAccent"
             android:gravity="center_vertical"
             android:text="JbusDriver" />
 
 
     </LinearLayout>
+
+
+    <Space
+        android:layout_width="@dimen/material_0dp"
+        android:layout_height="@dimen/material_8dp" />
 
     <LinearLayout
         android:id="@+id/ll_telegram"
@@ -37,12 +42,12 @@
         android:orientation="horizontal">
 
         <android.support.v7.widget.AppCompatTextView
-            android:drawableLeft="@mipmap/ic_github"
-            android:drawableTint="@color/colorAccent"
-            android:drawablePadding="@dimen/material_4dp"
-            style="@style/Base.TextAppearance.AppCompat.Title"
+            style="@style/Base.TextAppearance.AppCompat.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_telegram"
+            android:drawablePadding="@dimen/material_4dp"
+            android:drawableTint="@color/colorAccent"
             android:gravity="center_vertical"
             android:text="Telegram Group" />
 
@@ -61,12 +66,12 @@
 
 
         <TextView
-            android:drawableLeft="@drawable/ic_refresh_black_24dp"
-            android:drawableTint="@color/colorAccent"
-            android:drawablePadding="@dimen/material_4dp"
-            android:gravity="center_vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_refresh_black_24dp"
+            android:drawablePadding="@dimen/material_4dp"
+            android:drawableTint="@color/colorAccent"
+            android:gravity="center_vertical"
             android:text="加载出现问题,尝试点击此处" />
 
 
@@ -82,19 +87,19 @@
 
         <TextView
             android:id="@+id/tv_app_setting"
-            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="设置"
-            android:gravity="center_vertical"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_settings_black_24dp"
             android:drawablePadding="@dimen/material_4dp"
             android:drawableTint="@color/colorAccent"
-            android:drawableLeft="@drawable/ic_settings_black_24dp"/>
+            android:gravity="center_vertical"
+            android:text="设置" />
 
         <Space
-            android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="@dimen/material_0dp" />
+            android:layout_height="@dimen/material_0dp"
+            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/tv_app_version"

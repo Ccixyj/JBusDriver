@@ -28,6 +28,7 @@ import me.jbusdriver.mvp.presenter.LinkCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.adapter.BaseAppAdapter
+import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.collect.LinkCollector
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import me.jbusdriver.ui.holder.CollectDirEditHolder
@@ -41,37 +42,37 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
         object : BaseAppAdapter<CollectLinkWrapper<ILink>, BaseViewHolder>(null) {
 
             override fun convert(holder: BaseViewHolder, collect: CollectLinkWrapper<ILink>) {
-                 when(holder.itemViewType){
-                     -1->{
-                         val item =requireNotNull(collect.linkBean)
-                         val des = item.des.split(" ")
-                         KLog.d("des ${des.joinToString(",")}")
-                         holder.getView<TextView>(R.id.tv_head_value)?.apply {
-                             setTextColor(ResourcesCompat.getColor(this@apply.resources, R.color.colorPrimaryDark, null))
-                             paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
+                when (holder.itemViewType) {
+                    -1 -> {
+                        val item = requireNotNull(collect.linkBean)
+                        val des = item.des.split(" ")
+                        KLog.d("des ${des.joinToString(",")}")
+                        holder.getView<TextView>(R.id.tv_head_value)?.apply {
+                            setTextColor(ResourcesCompat.getColor(this@apply.resources, R.color.colorPrimaryDark, null))
+                            paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
-                             setOnClickListener {
-                                 KLog.d("setOnClickListener text : $item")
-                                 if (item is SearchLink){
-                                     SearchResultActivity.start(mContext,item.query)
-                                     return@setOnClickListener
-                                 }
-                                 MovieListActivity.start(mContext, item)
-                             }
+                            setOnClickListener {
+                                KLog.d("setOnClickListener text : $item")
+                                if (item is SearchLink) {
+                                    SearchResultActivity.start(mContext, item.query)
+                                    return@setOnClickListener
+                                }
+                                MovieListActivity.start(mContext, item)
+                            }
 
-                         }
-                         val dp8 = mContext.dpToPx(8f)
-                         holder.itemView.setPadding(dp8 * 2, dp8, dp8 * 2, dp8)
-                         holder.setText(R.id.tv_head_name, des.firstOrNull())
-                                 .setText(R.id.tv_head_value, des.lastOrNull())
+                        }
+                        val dp8 = mContext.dpToPx(8f)
+                        holder.itemView.setPadding(dp8 * 2, dp8, dp8 * 2, dp8)
+                        holder.setText(R.id.tv_head_name, des.firstOrNull())
+                                .setText(R.id.tv_head_value, des.lastOrNull())
 
-                     }
-                     else -> {
-                         KLog.d("type item $collect")
-                         setFullSpan(holder)
-                         holder.setText(R.id.tv_nav_menu_name, " ${if (collect.isExpanded) "👇" else "👆"} " + collect.category.name)
-                     }
-                 }
+                    }
+                    else -> {
+                        KLog.d("type item $collect")
+                        setFullSpan(holder)
+                        holder.setText(R.id.tv_nav_menu_name, " ${if (collect.isExpanded) "👇" else "👆"} " + collect.category.name)
+                    }
+                }
             }
         }.apply {
             setOnItemClickListener { _, view, position ->
@@ -88,8 +89,7 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
             }
 
             setOnItemLongClickListener { adapter, _, position ->
-                (this@LinkCollectFragment.adapter.getData().getOrNull(position)?.linkBean)?.let {
-                    link->
+                (this@LinkCollectFragment.adapter.getData().getOrNull(position)?.linkBean)?.let { link ->
                     val action = LinkMenu.linkActions.toMutableMap()
                     action.remove("收藏")
                     action["取消收藏"] = {
@@ -110,7 +110,6 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
                 }
                 true
             }
-
 
 
         }
@@ -149,7 +148,6 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
     }
 
 
-
     override fun showContents(data: List<*>) {
         KLog.d("showContents $data")
         mBasePresenter?.let { p ->
@@ -161,7 +159,9 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
         }
 
         super.showContents(data)
-        adapter.expand(0)
+        if (AppConfiguration.enableCategory) {
+            adapter.expand(0)
+        }
     }
 
 

@@ -30,6 +30,7 @@ import me.jbusdriver.mvp.bean.CollectLinkWrapper
 import me.jbusdriver.mvp.presenter.ActressCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.adapter.BaseAppAdapter
+import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.collect.ActressCollector
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import me.jbusdriver.ui.holder.CollectDirEditHolder
@@ -109,8 +110,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 
 
             setOnItemLongClickListener { adapter, _, position ->
-                (this@ActressCollectFragment.adapter.getData().getOrNull(position)?.linkBean)?.let {
-                    act->
+                (this@ActressCollectFragment.adapter.getData().getOrNull(position)?.linkBean)?.let { act ->
                     val action = LinkMenu.actressActions.toMutableMap()
                     action.remove("收藏")
                     action["取消收藏"] = {
@@ -169,20 +169,26 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
         }
     }
 
+    override fun initData() {
+        adapter.setMultiTypeDelegate(mBasePresenter?.adapterDelegate)
+    }
+
     override fun createPresenter() = ActressCollectPresenterImpl(ActressCollector)
 
     override fun showContents(data: List<*>) {
         KLog.d("showContents $data")
+
         mBasePresenter?.let { p ->
             p.adapterDelegate.needInjectType.onEach {
                 if (it == -1) p.adapterDelegate.registerItemType(it, R.layout.layout_actress_item) //默认注入类型0，即actress
                 else p.adapterDelegate.registerItemType(it, R.layout.layout_menu_op_head) //头部，可以做特化
             }
-            adapter.setMultiTypeDelegate(p.adapterDelegate)
+            p.adapterDelegate.needInjectType.clear()
         }
-
         super.showContents(data)
-        adapter.expand(0)
+        if (AppConfiguration.enableCategory) {
+            adapter.expand(0)
+        }
     }
 
     companion object {
