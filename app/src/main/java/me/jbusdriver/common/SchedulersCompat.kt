@@ -20,6 +20,10 @@ object SchedulersCompat {
             FlowableTransformer { it.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io()) }
 
     @JvmStatic
+    fun <T> single(): FlowableTransformer<T, T> =
+            FlowableTransformer { it.subscribeOn(Schedulers.single()).observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.single()) }
+
+    @JvmStatic
     fun <T> newThread(): FlowableTransformer<T, T> =
             FlowableTransformer { it.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io()) }
 

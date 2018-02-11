@@ -128,8 +128,8 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <CheckBox
-                        android:id="@+id/cb_collect_category"
+                    <Switch
+                        android:id="@+id/sw_collect_category"
                         style="@style/Base.TextAppearance.AppCompat.Body2"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -138,6 +138,58 @@
                         android:textColor="@color/secondText" />
                 </LinearLayout>
             </android.support.v7.widget.CardView>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/material_8dp" />
+
+
+            <!--磁力-->
+            <android.support.v7.widget.CardView
+                style="@style/AppTheme.CardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                app:contentPadding="@dimen/material_8dp">
+
+
+                <LinearLayout
+                    android:id="@+id/ll_collect_backup_config"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/TextAppearance.Compat.Notification.Info"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/material_24dp"
+                        android:gravity="center_vertical"
+                        android:text="我的收藏:" />
+
+                    <TextView
+                        android:id="@+id/tv_collect_backup"
+                        style="@style/Base.TextAppearance.AppCompat.Body2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:minHeight="@dimen/material_40dp"
+                        android:text="备份我的收藏"
+                        android:textColor="@color/secondText" />
+
+                    <View style="@style/DividerLine.Horizontal" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_collect_backup_files"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/material_8dp" />
 
             <!--磁力-->
             <android.support.v7.widget.CardView
@@ -177,6 +229,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/material_8dp" />
 
+
             <!--抽屉菜单-->
             <android.support.v7.widget.CardView
                 style="@style/AppTheme.CardView"
@@ -199,7 +252,9 @@
                     android:layout_marginTop="@dimen/material_24dp" />
             </android.support.v7.widget.CardView>
 
-
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/material_8dp" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

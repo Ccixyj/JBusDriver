@@ -71,24 +71,6 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
         }
     }
 
-    private fun createDir(collectDir: String): String? {
-        File(collectDir.trim()).let {
-            try {
-                if (!it.exists() && it.mkdirs()) return collectDir
-                if (it.exists()) {
-                    if (it.isDirectory) {
-                        return collectDir
-                    } else {
-                        it.delete()
-                        createDir(collectDir) //recreate
-                    }
-                }
-            } catch (e: Exception) {
-                MobclickAgent.reportError(AppContext.instace, e)
-            }
-        }
-        return null
-    }
 
 
     private fun getAvailableExternalMemorySize(): Long {

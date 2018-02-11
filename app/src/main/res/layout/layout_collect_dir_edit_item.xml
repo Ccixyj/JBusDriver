@@ -10,16 +10,16 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="收藏夹修改"
-        android:gravity="center_vertical"/>
+        android:gravity="center_vertical"
+        android:text="收藏夹修改" />
 
 
-    <TextView
+    <ImageView
         android:id="@+id/tv_category_delete"
         android:layout_width="@dimen/material_32dp"
         android:layout_height="@dimen/material_32dp"
         android:gravity="center"
-        android:text="✖"
-        android:textSize="@dimen/material_18sp"/>
+        android:padding="@dimen/material_4dp"
+        android:src="@drawable/ic_close" />
 
 </LinearLayout>

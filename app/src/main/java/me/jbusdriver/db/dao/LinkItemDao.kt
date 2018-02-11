@@ -3,6 +3,8 @@ package me.jbusdriver.db.dao
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE
 import com.squareup.sqlbrite3.BriteDatabase
+import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.getIntByColumn
 import me.jbusdriver.common.getLongByColumn
@@ -39,11 +41,14 @@ class LinkItemDao(private val db: BriteDatabase) {
 
     fun delete(link: LinkItem) = ioBlock { db.delete(LinkItemTable.TABLE_NAME, "${LinkItemTable.COLUMN_KEY} = ? ", link.key) > 0 }
 
-    fun listAll(): List<LinkItem> = db.createQuery(LinkItemTable.TABLE_NAME, "SELECT * FROM ${LinkItemTable.TABLE_NAME} ORDER BY ${LinkItemTable.COLUMN_ID} DESC").mapToList {
+    fun listAll(): Flowable<List<LinkItem>> = db.createQuery(LinkItemTable.TABLE_NAME, "SELECT * FROM ${LinkItemTable.TABLE_NAME} ORDER BY ${LinkItemTable.COLUMN_ID} DESC").mapToList {
         LinkItem(it.getIntByColumn(LinkItemTable.COLUMN_DB_TYPE), Date(it.getLongByColumn(LinkItemTable.COLUMN_CREATE_TIME)),
-                it.getStringByColumn(LinkItemTable.COLUMN_KEY) ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR) ?: ""
-        )
-    }.timeout(6, TimeUnit.SECONDS).blockingFirst()
+                it.getStringByColumn(LinkItemTable.COLUMN_KEY)
+                        ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR) ?: ""
+        ).apply {
+            id = it.getIntByColumn(LinkItemTable.COLUMN_ID)
+        }
+    }.timeout(6, TimeUnit.SECONDS).take(1).toFlowable(BackpressureStrategy.DROP)
 
 
     companion object {
@@ -59,7 +64,9 @@ class LinkItemDao(private val db: BriteDatabase) {
     fun listByType(i: Int): List<LinkItem> {
         return db.createQuery(LinkItemTable.TABLE_NAME, "SELECT * FROM ${LinkItemTable.TABLE_NAME} WHERE ${LinkItemTable.COLUMN_DB_TYPE} = ?  ORDER BY ${LinkItemTable.COLUMN_ID} DESC", i.toString()).mapToList {
             LinkItem(it.getIntByColumn(LinkItemTable.COLUMN_DB_TYPE), Date(it.getLongByColumn(LinkItemTable.COLUMN_CREATE_TIME)),
-                    it.getStringByColumn(LinkItemTable.COLUMN_KEY) ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR) ?: "").apply {
+                    it.getStringByColumn(LinkItemTable.COLUMN_KEY)
+                            ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR)
+                    ?: "").apply {
                 categoryId = it.getIntByColumn(LinkItemTable.COLUMN_CATEGORY_ID)
             }
         }.blockingFirst(emptyList()) ?: emptyList()
@@ -67,13 +74,15 @@ class LinkItemDao(private val db: BriteDatabase) {
 
     fun queryLink() = db.createQuery(LinkItemTable.TABLE_NAME, "SELECT * FROM ${LinkItemTable.TABLE_NAME} WHERE ${LinkItemTable.COLUMN_DB_TYPE} NOT IN (1,2)  ORDER BY ${LinkItemTable.COLUMN_ID} DESC").mapToList {
         LinkItem(it.getIntByColumn(LinkItemTable.COLUMN_DB_TYPE), Date(it.getLongByColumn(LinkItemTable.COLUMN_CREATE_TIME)),
-                it.getStringByColumn(LinkItemTable.COLUMN_KEY) ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR) ?: ""
+                it.getStringByColumn(LinkItemTable.COLUMN_KEY)
+                        ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR) ?: ""
         )
     }.timeout(6, TimeUnit.SECONDS).blockingFirst()
 
-    fun queryByCategoryId(id: Int) : List<LinkItem> = db.createQuery(LinkItemTable.TABLE_NAME, "SELECT * FROM ${LinkItemTable.TABLE_NAME} WHERE ${LinkItemTable.COLUMN_CATEGORY_ID} = ?  ORDER BY ${LinkItemTable.COLUMN_ID} DESC" ,id).mapToList {
+    fun queryByCategoryId(id: Int): List<LinkItem> = db.createQuery(LinkItemTable.TABLE_NAME, "SELECT * FROM ${LinkItemTable.TABLE_NAME} WHERE ${LinkItemTable.COLUMN_CATEGORY_ID} = ?  ORDER BY ${LinkItemTable.COLUMN_ID} DESC", id).mapToList {
         LinkItem(it.getIntByColumn(LinkItemTable.COLUMN_DB_TYPE), Date(it.getLongByColumn(LinkItemTable.COLUMN_CREATE_TIME)),
-                it.getStringByColumn(LinkItemTable.COLUMN_KEY) ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR) ?: ""
+                it.getStringByColumn(LinkItemTable.COLUMN_KEY)
+                        ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR) ?: ""
         )
     }.timeout(6, TimeUnit.SECONDS).blockingFirst(emptyList()) ?: emptyList()
 

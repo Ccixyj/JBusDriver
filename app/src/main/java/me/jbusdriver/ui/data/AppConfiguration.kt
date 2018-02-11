@@ -43,6 +43,18 @@ object AppConfiguration {
 
     //endregion
 
+    //region magnet
+    private const val MagnetSourceS: String = "MagnetSourceS"
+    val MagnetKeys: MutableList<String> by lazy {
+        AppContext.gson.fromJson<MutableList<String>>(getSp(MagnetSourceS) ?: "") ?: let {
+            val default = listOf("btso.pw", "btdiggs")
+            saveSp(MagnetSourceS, default.toJsonString())
+            default.toMutableList()
+        }
+    }
+
+    fun saveMagnetKeys() = saveSp(MagnetSourceS, MagnetKeys.toJsonString())
+    //endregion
 
     //region menu
     private const val MenuConfigS: String = "MenuConfig"
@@ -72,22 +84,12 @@ object AppConfiguration {
 
     //endregion
 
+
     private const val HistoryS: String = "HistoryS"
     var enableHistory: Boolean = true
 
 
-    //region magnet
-    private const val MagnetSourceS: String = "MagnetSourceS"
-    val MagnetKeys: MutableList<String> by lazy {
-        AppContext.gson.fromJson<MutableList<String>>(getSp(MagnetSourceS) ?: "") ?: let {
-            val default = listOf("btso.pw", "btdiggs")
-            saveSp(MagnetSourceS, default.toJsonString())
-            default.toMutableList()
-        }
-    }
 
-    fun saveMagnetKeys() = saveSp(MagnetSourceS, MagnetKeys.toJsonString())
-    //endregion
 
 }
 

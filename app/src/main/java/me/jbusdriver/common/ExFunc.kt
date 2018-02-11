@@ -19,13 +19,16 @@ import android.widget.Toast
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.orhanobut.logger.Logger
+import com.umeng.analytics.MobclickAgent
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.annotations.Nullable
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 //region Size
 typealias  KLog = Logger
+
 const val KB = 1024.0
 const val MB = KB * 1024
 const val GB = MB * 1024
@@ -60,7 +63,7 @@ val Context.displayMetrics: DisplayMetrics
 
 fun Context.dpToPx(dp: Float) = (dp * this.displayMetrics.density + 0.5).toInt()
 
-fun Context.pxToDp(px: Float) =  (px / this.displayMetrics.density + 0.5).toInt()
+fun Context.pxToDp(px: Float) = (px / this.displayMetrics.density + 0.5).toInt()
 
 fun Context.toast(str: String, duration: Int = Toast.LENGTH_LONG) {
     Toast.makeText(this, str, duration).show()
@@ -192,20 +195,40 @@ val String.urlHost: String
     get() = urlCache.getOrPut(this) {
         Uri.parse(this)
     }.let {
-        checkNotNull(it)
-        "${it.scheme}://${it.host}"
-    }
+                checkNotNull(it)
+                "${it.scheme}://${it.host}"
+            }
 
 
 val String.urlPath: String
     get() = urlCache.getOrPut(this) {
         Uri.parse(this)
     }.let {
-        checkNotNull(it)
-        it.path
-    }
+                checkNotNull(it)
+                it.path
+            }
 
 
 /*glide : url ->? custome glideurl */
 val String.toGlideUrl: GlideNoHost
     inline get() = GlideNoHost(this) /**/
+
+
+fun createDir(collectDir: String): String? {
+    File(collectDir.trim()).let {
+        try {
+            if (!it.exists() && it.mkdirs()) return collectDir
+            if (it.exists()) {
+                if (it.isDirectory) {
+                    return collectDir
+                } else {
+                    it.delete()
+                    createDir(collectDir) //recreate
+                }
+            }
+        } catch (e: Exception) {
+            MobclickAgent.reportError(AppContext.instace, e)
+        }
+    }
+    return null
+}

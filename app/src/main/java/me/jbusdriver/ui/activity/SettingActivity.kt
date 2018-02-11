@@ -4,27 +4,49 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Environment
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.Toolbar
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.format.DateUtils
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
 import com.chad.library.adapter.base.entity.MultiItemEntity
+import io.reactivex.Flowable
+import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_setting.*
+import kotlinx.android.synthetic.main.layout_collect_back_edit_item.view.*
 import kotlinx.android.synthetic.main.layout_menu_op_item.view.*
-import me.jbusdriver.common.BaseActivity
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.spanCount
+import me.jbusdriver.common.*
+import me.jbusdriver.db.bean.LinkItem
+import me.jbusdriver.db.service.LinkService
 import me.jbusdriver.mvp.bean.Expand_Type_Head
 import me.jbusdriver.mvp.bean.MenuOp
 import me.jbusdriver.mvp.bean.MenuOpHead
 import me.jbusdriver.ui.adapter.MenuOpAdapter
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.magnet.MagnetLoaders
+import java.io.File
 
+@SuppressLint("ValidFragment")
 class SettingActivity : BaseActivity() {
 
     private var pageModeHolder = AppConfiguration.pageMode
     private val menuOpValue by lazy { AppConfiguration.menuConfig.toMutableMap() }
+
+    private val backDir by lazy {
+        val pathSuffix = File.separator + "collect" + File.separator + "backup" + File.separator
+        val dir: String = createDir(Environment.getExternalStorageDirectory().absolutePath + File.separator + AppContext.instace.packageName + pathSuffix)
+                ?: createDir(AppContext.instace.filesDir.absolutePath + pathSuffix)
+                ?: error("cant not create collect dir in anywhere")
+        File(dir)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +93,6 @@ class SettingActivity : BaseActivity() {
         }
         adapter.setOnItemClickListener { adapter, view, position ->
             KLog.d("MenuOpAdapter : setOnItemClickListener ${data[position]}")
-
             (adapter.data.getOrNull(position) as? MenuOp)?.let {
                 view.cb_nav_menu?.let { cb ->
                     //添加设置
@@ -93,6 +114,8 @@ class SettingActivity : BaseActivity() {
 
             val disables = if (selectedIndices.size <= 1) selectedIndices else emptyArray()
 
+
+
             MaterialDialog.Builder(viewContext).title("磁力源配置")
                     .items(MagnetLoaders.keys.toList())
                     .itemsCallbackMultiChoice(selectedIndices) { dialog, which, _ ->
@@ -102,27 +125,128 @@ class SettingActivity : BaseActivity() {
                             dialog.builder.itemsDisabledIndices()
                         }
                         dialog.notifyItemsChanged()
+                        //加入配置项
+                        AppConfiguration.MagnetKeys.clear()
+                        AppConfiguration.MagnetKeys.addAll(dialog.selectedIndices?.mapNotNull { MagnetLoaders.keys.toList().getOrNull(it) }
+                                ?: emptyList())
                         return@itemsCallbackMultiChoice true
                     }.alwaysCallMultiChoiceCallback()
                     .itemsDisabledIndices(*disables)
-                    .negativeText("取消")
-                    .negativeColor(R.color.secondText)
-                    .positiveText("配置")
-                    .onPositive { dialog, which ->
-                        AppConfiguration.MagnetKeys.clear()
-                        AppConfiguration.MagnetKeys.addAll(dialog.selectedIndices?.mapNotNull { MagnetLoaders.keys.toList().getOrNull(it) } ?: emptyList())
+                    .dismissListener {
+                        KLog.d("dismissListener : $it")
+                        //保存
                         AppConfiguration.saveMagnetKeys()
                         tv_magnet_source.text = AppConfiguration.MagnetKeys.joinToString(separator = "   ")
                     }
                     .show()
+
         }
 
         //收藏分类
-        cb_collect_category.isChecked = AppConfiguration.enableCategory
-        cb_collect_category.setOnCheckedChangeListener { _, isChecked ->
+        sw_collect_category.isChecked = AppConfiguration.enableCategory
+        sw_collect_category.setOnCheckedChangeListener { _, isChecked ->
             AppConfiguration.enableCategory = isChecked
         }
 
+        //备份
+        tv_collect_backup.setOnClickListener {
+            val loading = MaterialDialog.Builder(viewContext).content("正在备份...").progress(true, 0).show()
+            Flowable.fromCallable { backDir }
+                    .flatMap { file ->
+                        return@flatMap LinkService.queryAll().doOnNext {
+                            File(file, "backup${System.currentTimeMillis()}.json").writeText(it.toJsonString())
+                        }
+                    }.compose(SchedulersCompat.single())
+                    .doFinally { loading.dismiss() }
+                    .subscribeBy {
+                        toast("备份成功")
+                        loadBackUp()
+                    }
+                    .addTo(rxManager)
+        }
+
+        loadBackUp()
+
+    }
+
+    private fun loadBackUp() {
+        ll_collect_backup_files.removeAllViews()
+        Flowable.fromCallable { backDir }
+                .map {
+                    val list = it.walk().maxDepth(1).filter {
+                        KLog.d("filter ${it.name} : ${it.name.contains("backup.+json".toRegex())}")
+                        it.isFile && it.name.contains("backup.+json".toRegex())
+                    }.toList()
+                    if (list.isEmpty()) {
+                        listOf(inflate(R.layout.layout_collect_back_edit_item).apply {
+                            tv_backup_name.text = "没有备份呢~~"
+                            tv_backup_load.visibility = View.GONE
+                            tv_backup_delete.visibility = View.GONE
+                        }
+                        )
+                    } else {
+                        list.mapIndexedNotNull { index, file ->
+                            inflate(R.layout.layout_collect_back_edit_item).apply {
+                                System.getProperty("line.")
+
+                                val date = DateUtils.formatDateTime(viewContext, file.lastModified(),
+                                        DateUtils.FORMAT_SHOW_YEAR or
+                                                DateUtils.FORMAT_SHOW_DATE or
+                                                DateUtils.FORMAT_SHOW_TIME)
+
+                                tv_backup_name.text = SpannableStringBuilder("${index + 1}. ${file.name}").append(System.getProperty("line.separator"))
+                                        .append("    ")
+                                        .append(SpannableString(date).apply {
+                                            setSpan(RelativeSizeSpan(0.8f), 0, date.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                                            setSpan(ForegroundColorSpan(R.color.secondText.toColorInt()), 0, date.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                                        })
+                                tv_backup_load.setOnClickListener {
+                                    KLog.d("load back up ${file.name}")
+                                    MaterialDialog.Builder(viewContext)
+                                            .title("加载备份")
+                                            .content("${file.name}\n注意:相同文件会被覆盖!!")
+                                            .positiveText("确定")
+                                            .negativeText("取消")
+                                            .negativeColor(R.color.secondText.toColorInt())
+                                            .onPositive { _, _ ->
+                                                Flowable.just(file)
+                                                        .map {
+                                                            val backs = AppContext.gson.fromJson<List<LinkItem>>(file.readText())
+                                                                    ?: emptyList()
+                                                            LinkService.saveOrUpdate(backs)
+                                                        }.subscribeBy(onError = { toast("恢复失败,请重新打开app") }
+                                                                , onNext = { toast("恢复成功") }).addTo(rxManager)
+                                            }
+                                            .show()
+
+
+                                }
+                                tv_backup_delete.setOnClickListener {
+                                    KLog.d("delete back up ${file.name}")
+                                    MaterialDialog.Builder(viewContext)
+                                            .title("注意")
+                                            .content("确定要删除${file.name}吗?")
+                                            .positiveText("确定")
+                                            .negativeText("取消")
+                                            .negativeColor(R.color.secondText.toColorInt())
+                                            .onPositive { _, _ ->
+                                                file.deleteRecursively()
+                                                loadBackUp()
+                                            }
+                                            .show()
+                                }
+                            }
+                        }
+                    }
+
+                }.compose(SchedulersCompat.single())
+                .subscribeBy {
+                    it.forEach {
+                        KLog.d("load : $it")
+                        ll_collect_backup_files.addView(it)
+                    }
+                }
+                .addTo(rxManager)
     }
 
     private fun changePageMode(mode: Int) {

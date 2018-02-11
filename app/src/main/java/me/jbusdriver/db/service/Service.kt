@@ -129,6 +129,13 @@ object LinkService {
     fun update(data: ILink) = dao.update(data.convertDBItem())
     fun queryByCategory(category: Category): List<LinkItem> {
         requireNotNull(category.id)
-      return  dao.queryByCategoryId(category.id!!)
+        return dao.queryByCategoryId(category.id!!)
+    }
+
+    fun queryAll() = dao.listAll()
+    fun saveOrUpdate(backs: List<LinkItem>) {
+        backs.forEach {
+            dao.insert(it) ?: dao.update(it)
+        }
     }
 }
