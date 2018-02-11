@@ -194,7 +194,8 @@ class SettingActivity : BaseActivity() {
                                                 DateUtils.FORMAT_SHOW_DATE or
                                                 DateUtils.FORMAT_SHOW_TIME)
 
-                                tv_backup_name.text = SpannableStringBuilder("${index + 1}. ${file.name}").append(System.getProperty("line.separator"))
+                                tv_backup_name.text = SpannableStringBuilder("${index + 1}. ${file.name}")
+                                        .append(System.getProperty("line.separator"))
                                         .append("    ")
                                         .append(SpannableString(date).apply {
                                             setSpan(RelativeSizeSpan(0.8f), 0, date.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)

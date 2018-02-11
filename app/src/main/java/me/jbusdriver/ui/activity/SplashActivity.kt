@@ -17,8 +17,6 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.*
-import me.jbusdriver.db.bean.AllFirstParentDBCategoryGroup
-import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.http.GitHub
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.enums.DataSourceType
@@ -74,7 +72,14 @@ class SplashActivity : BaseActivity() {
                         //放入内存缓存,更新需要
                         CacheLoader.cacheLru(C.Cache.ANNOUNCE_VALUE to source)
                         arrayMapof<String, String>().apply {
-                            put(DataSourceType.CENSORED.key, AppContext.gson.fromJson<JsonObject>(source)?.get("backUp")?.asJsonArray.toString())
+                            val urls = AppContext.gson.fromJson<JsonObject>(source)?.get("backUp")?.asJsonArray
+                            //赋值一个默认的
+                            urls?.let {
+                                it.shuffled().firstOrNull()?.asString?.let {
+                                    JAVBusService.defaultFastUrl = it.urlHost
+                                }
+                            }
+                            put(DataSourceType.CENSORED.key, urls.toString())
                         }
                     }
                     .flatMap {
