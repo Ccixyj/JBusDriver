@@ -158,10 +158,10 @@ class SettingActivity : BaseActivity() {
                         }
                     }.compose(SchedulersCompat.single())
                     .doFinally { loading.dismiss() }
-                    .subscribeBy {
+                    .subscribeBy(onError = { toast("备份失败,请重新打开app") }, onNext = {
                         toast("备份成功")
                         loadBackUp()
-                    }
+                    })
                     .addTo(rxManager)
         }
 

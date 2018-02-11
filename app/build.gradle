@@ -128,6 +128,8 @@ dependencies {
     implementation "com.android.support:design:${versions.supportLibrary}"
     implementation "com.android.support:cardview-v7:${versions.supportLibrary}"
     implementation "com.android.support:palette-v7:${versions.supportLibrary}"
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     /*============================================added======================================================*/
     implementation "com.google.code.gson:gson:${versions.gson}"
