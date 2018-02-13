@@ -14,6 +14,7 @@ import android.text.format.DateUtils
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.view.View
+import android.widget.ScrollView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import io.reactivex.Flowable
@@ -168,6 +169,9 @@ class SettingActivity : BaseActivity() {
 
         loadBackUp()
 
+        nsc_setting.post {
+            nsc_setting.fullScroll(ScrollView.FOCUS_UP)
+        }
     }
 
     private fun loadBackUp() {

@@ -39,8 +39,10 @@ class SplashActivity : BaseActivity() {
     }
 
     private fun init() {
-        Observable.combineLatest<Boolean, ArrayMap<String, String>, String>(RxPermissions(this).request(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                initUrls(), BiFunction { t1, t2 -> t2.values.firstOrNull() ?: "" })
+        RxPermissions(this).request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .flatMap {
+                    initUrls()
+                }
                 .doOnError {
                     KLog.e("获取可用url错误 :$it")
                     MobclickAgent.reportError(viewContext, it)
@@ -56,15 +58,17 @@ class SplashActivity : BaseActivity() {
                     }
                 }
                 .subscribeBy(onNext = {
-                    KLog.i("success : $it")
-                    JAVBusService.defaultFastUrl = it.urlHost
+                    KLog.w("initsuccess : $it")
+                    it.get(DataSourceType.CENSORED.key)?.let {
+                        JAVBusService.defaultFastUrl = it.urlHost
+                    }
                 }, onError = {
                     it.printStackTrace()
+                }, onComplete = {
+                    KLog.w("onComplete ")
                 })
                 .addTo(rxManager)
 
-        //6s后无论怎样都要完成
-        //  Single.timer(6000, TimeUnit.MILLISECONDS).doFinally { rxManager.clear() }.subscribeBy().addTo(rxManager)
     }
 
     private fun initUrls(): Observable<ArrayMap<String, String>> {
@@ -75,7 +79,7 @@ class SplashActivity : BaseActivity() {
                     KLog.d("load initUrls from disk  $this")
                 }
             }
-            val urlsFromUpdateCache = Flowable.concat(CacheLoader.justLru(C.Cache.ANNOUNCE_URL), GitHub.INSTANCE.announce().addUserCase()).firstOrError().toFlowable()
+            val urlsFromUpdateCache = Flowable.concat(CacheLoader.justLru(C.Cache.ANNOUNCE_URL), GitHub.INSTANCE.announce().addUserCase(4)).firstOrError().toFlowable()
                     .map { source ->
                         //放入内存缓存,更新需要
                         KLog.d("load initUrls from urlsFromUpdateCache $source")
@@ -90,7 +94,7 @@ class SplashActivity : BaseActivity() {
                                     KLog.d("defaultFastUrl ${JAVBusService.defaultFastUrl}")
                                 }
                             }
-                            put(DataSourceType.CENSORED.key, urls.toString())
+                            put(DataSourceType.CENSORED.key, availableUrls.toString())
                         }
                     }
                     .flatMap {
@@ -101,7 +105,7 @@ class SplashActivity : BaseActivity() {
                                     JAVBusService.INSTANCE.get(it).addUserCase(15).onErrorReturnItem(""),
                                     BiFunction<String, String?, Pair<String, String>> { t1, t2 -> t1 to t2 })
                         }
-                        Flowable.mergeDelayError(mapFlow).filter { it.second.isNotBlank() }
+                        Flowable.mergeDelayError(mapFlow).filter { it.second.isNotBlank() }.take(1)
                     }
                     .firstOrError()
                     .doOnError { CacheLoader.acache.remove(C.Cache.ANNOUNCE_URL) }

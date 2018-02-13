@@ -36,10 +36,6 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
     protected val imageHost: String by lazy { JAVBusService.defaultImageUrlHost }
 
 
-    init {
-
-    }
-
 
     @Deprecated("since version 1.1.1")
     protected open val gson: Gson by lazy { AppContext.gson }

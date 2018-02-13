@@ -29,6 +29,7 @@ abstract class SDCardDatabaseContext
      * @param name
      */
     override fun getDatabasePath(name: String): File? {
+
         //判断是否存在sd卡
         val sdExist = android.os.Environment.MEDIA_MOUNTED == android.os.Environment.getExternalStorageState()
         if (!sdExist) {//如果不存在,
