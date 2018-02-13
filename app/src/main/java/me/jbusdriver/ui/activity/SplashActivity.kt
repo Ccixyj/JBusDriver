@@ -7,9 +7,9 @@ import android.os.Bundle
 import android.support.v4.util.ArrayMap
 import com.google.gson.JsonObject
 import com.tbruyelle.rxpermissions2.RxPermissions
+import com.umeng.analytics.MobclickAgent
 import io.reactivex.Flowable
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.addTo
@@ -21,7 +21,6 @@ import me.jbusdriver.http.GitHub
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.enums.DataSourceType
 import org.jsoup.Jsoup
-import java.util.concurrent.TimeUnit
 
 class SplashActivity : BaseActivity() {
 
@@ -36,7 +35,11 @@ class SplashActivity : BaseActivity() {
     private fun init() {
         Observable.combineLatest<Boolean, ArrayMap<String, String>, String>(RxPermissions(this).request(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                 initUrls(), BiFunction { t1, t2 -> t2.values.firstOrNull() ?: "" })
-                .doOnError { CacheLoader.acache.remove(C.Cache.BUS_URLS) }
+                .doOnError {
+                    KLog.e("获取可用url错误 :$it")
+                    MobclickAgent.reportError(viewContext, it)
+                    CacheLoader.acache.remove(C.Cache.BUS_URLS)
+                }
                 .retry(1)
                 .doFinally {
                     KLog.d("doFinally")
@@ -55,28 +58,30 @@ class SplashActivity : BaseActivity() {
                 .addTo(rxManager)
 
         //6s后无论怎样都要完成
-        Single.timer(6000, TimeUnit.MILLISECONDS).doFinally { rxManager.clear() }.subscribeBy().addTo(rxManager)
+        //  Single.timer(6000, TimeUnit.MILLISECONDS).doFinally { rxManager.clear() }.subscribeBy().addTo(rxManager)
     }
 
     private fun initUrls(): Observable<ArrayMap<String, String>> {
         return if (CacheLoader.lru.get(C.Cache.BUS_URLS).isNullOrBlank()) {
-            KLog.d("load initUrls")
             //内存在没有地址时 ,先从disk获取缓存的,没有则从网络下载
             val urlsFromDisk = CacheLoader.justDisk(C.Cache.BUS_URLS).map {
                 AppContext.gson.fromJson<ArrayMap<String, String>>(it).apply {
-                    KLog.i("map urls $this")
+                    KLog.d("load initUrls from disk  $this")
                 }
             }
-            val urlsFromNet = Flowable.concat(CacheLoader.justLru(C.Cache.ANNOUNCE_URL), GitHub.INSTANCE.announce().addUserCase()).firstOrError().toFlowable()
+            val urlsFromUpdateCache = Flowable.concat(CacheLoader.justLru(C.Cache.ANNOUNCE_URL), GitHub.INSTANCE.announce().addUserCase()).firstOrError().toFlowable()
                     .map { source ->
                         //放入内存缓存,更新需要
+                        KLog.d("load initUrls from urlsFromUpdateCache $source")
                         CacheLoader.cacheLru(C.Cache.ANNOUNCE_VALUE to source)
                         arrayMapof<String, String>().apply {
-                            val urls = AppContext.gson.fromJson<JsonObject>(source)?.get("backUp")?.asJsonArray
-                            //赋值一个默认的
-                            urls?.let {
-                                it.shuffled().firstOrNull()?.asString?.let {
-                                    JAVBusService.defaultFastUrl = it.urlHost
+                            val availableUrls = AppContext.gson.fromJson<JsonObject>(source)?.get("backUp")?.asJsonArray
+                            //赋值一个默认的(随机)
+                            availableUrls?.let {
+                                it.mapNotNull { it.asString }.shuffled().firstOrNull()?.let {
+                                    JAVBusService.defaultFastUrl = it
+                                    urls[DataSourceType.CENSORED.key] = it
+                                    KLog.d("defaultFastUrl ${JAVBusService.defaultFastUrl}")
                                 }
                             }
                             put(DataSourceType.CENSORED.key, urls.toString())
@@ -103,7 +108,6 @@ class SplashActivity : BaseActivity() {
                                 urls.put(it.key, box.attr("href").removeSuffix("/"))
                             }
                         }
-                        KLog.d("leave : $ds")
                         urls[DataSourceType.XYZ.key]?.let {
                             //欧美
                             urls[DataSourceType.XYZ_ACTRESSES.key] = "$it/${DataSourceType.XYZ_ACTRESSES.key.split("/").last()}"
@@ -116,14 +120,13 @@ class SplashActivity : BaseActivity() {
                         urls[DataSourceType.XYZ.key] = urls[DataSourceType.XYZ.key]?.replace("org", "xyz")
                         urls[DataSourceType.XYZ_GENRE.key] = urls[DataSourceType.XYZ_GENRE.key]?.replace("org", "xyz")
 
-                        KLog.i("urls : ${it.first} , all urls : $urls , at last $ds")
 
                         CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to urls, C.Cache.DAY * 2) //缓存所有的urls
                         KLog.i("get fast it : $it")
                         CacheLoader.lru.put(DataSourceType.CENSORED.key + "false", it.second) //默认有种的
                         urls
                     }.toFlowable()
-            return Flowable.concat<ArrayMap<String, String>>(urlsFromDisk, urlsFromNet)
+            return Flowable.concat<ArrayMap<String, String>>(urlsFromDisk, urlsFromUpdateCache)
                     .firstElement().toObservable()
                     .subscribeOn(Schedulers.io())
         } else CacheLoader.justLru(C.Cache.BUS_URLS).map {
