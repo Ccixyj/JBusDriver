@@ -14,7 +14,6 @@ import android.text.format.DateUtils
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.view.View
-import android.widget.ScrollView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import io.reactivex.Flowable
@@ -86,13 +85,13 @@ class SettingActivity : BaseActivity() {
             }
         }
         //有选项选中就展开
-        val expandItems = data.filterIndexed { index, multiItemEntity ->
+        val expandItems = data.filterIndexed { _, multiItemEntity ->
             multiItemEntity is MenuOpHead && multiItemEntity.subItems.any { it.isHow }
         }
         expandItems.forEach {
             adapter.expand(data.indexOf(it))
         }
-        adapter.setOnItemClickListener { adapter, view, position ->
+        adapter.setOnItemClickListener { _, view, position ->
             KLog.d("MenuOpAdapter : setOnItemClickListener ${data[position]}")
             (adapter.data.getOrNull(position) as? MenuOp)?.let {
                 view.cb_nav_menu?.let { cb ->
@@ -169,9 +168,6 @@ class SettingActivity : BaseActivity() {
 
         loadBackUp()
 
-        nsc_setting.post {
-            nsc_setting.fullScroll(ScrollView.FOCUS_UP)
-        }
     }
 
     private fun loadBackUp() {
@@ -190,7 +186,7 @@ class SettingActivity : BaseActivity() {
                         }
                         )
                     } else {
-                        list.mapIndexedNotNull { index, file ->
+                        list.mapIndexed { index, file ->
                             inflate(R.layout.layout_collect_back_edit_item).apply {
                                 System.getProperty("line.")
 
