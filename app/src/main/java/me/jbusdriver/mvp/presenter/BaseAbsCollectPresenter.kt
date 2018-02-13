@@ -16,11 +16,10 @@ import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.mvp.bean.hasNext
 import me.jbusdriver.mvp.model.BaseModel
 import me.jbusdriver.ui.data.AppConfiguration
-import me.jbusdriver.ui.data.collect.ICollect
 import org.jsoup.nodes.Document
 
 
-abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T : ICollectCategory>(private val collector: ICollect<T>) : AbstractRefreshLoadMorePresenterImpl<V, T>(), BasePresenter.BaseCollectPresenter<T> {
+abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T : ICollectCategory> : AbstractRefreshLoadMorePresenterImpl<V, T>(), BasePresenter.BaseCollectPresenter<T> {
 
 
     protected open val pageSize = 20
@@ -32,7 +31,14 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
             else -> LinkCategory
         }
     }
-    private val listData by lazy { collector.dataList.toMutableList() }
+    private val listData by lazy {
+        when {
+            this is MovieCollectContract.MovieCollectPresenter -> LinkService.queryMovies()
+            this is ActressCollectContract.ActressCollectPresenter -> LinkService.queryActress()
+            else -> LinkService.queryLink()
+        }
+
+    }
     private val pageNum
         get() = ((listData.size - 1) / pageSize) + 1
 

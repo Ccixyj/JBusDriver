@@ -39,12 +39,13 @@ class LinkItemDao(private val db: BriteDatabase) {
     }
 
 
-    fun delete(link: LinkItem) = ioBlock { db.delete(LinkItemTable.TABLE_NAME, "${LinkItemTable.COLUMN_KEY} = ? ", link.key) > 0 }
+    fun delete(link: LinkItem) = ioBlock { db.delete(LinkItemTable.TABLE_NAME, "${LinkItemTable.COLUMN_DB_TYPE} = ? AND ${LinkItemTable.COLUMN_KEY} = ? ", link.type.toString(), link.key) > 0 }
 
     fun listAll(): Flowable<List<LinkItem>> = db.createQuery(LinkItemTable.TABLE_NAME, "SELECT * FROM ${LinkItemTable.TABLE_NAME} ORDER BY ${LinkItemTable.COLUMN_ID} DESC").mapToList {
         LinkItem(it.getIntByColumn(LinkItemTable.COLUMN_DB_TYPE), Date(it.getLongByColumn(LinkItemTable.COLUMN_CREATE_TIME)),
                 it.getStringByColumn(LinkItemTable.COLUMN_KEY)
-                        ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR) ?: ""
+                        ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR) ?: "",
+                it.getIntByColumn(LinkItemTable.COLUMN_CATEGORY_ID)
         ).apply {
             id = it.getIntByColumn(LinkItemTable.COLUMN_ID)
         }
@@ -89,6 +90,15 @@ class LinkItemDao(private val db: BriteDatabase) {
     fun updateByCategoryId(id: Int, type: Int) {
         val cv = ContentValues().apply { putNull(LinkItemTable.COLUMN_CATEGORY_ID) }
         db.update(LinkItemTable.TABLE_NAME, CONFLICT_IGNORE, cv, " ${LinkItemTable.COLUMN_CATEGORY_ID} = ? and ${LinkItemTable.COLUMN_DB_TYPE} = ? ", id.toString(), type.toString())
+    }
+
+    fun hasByKey(item: LinkItem): Int {
+        return db.query("SELECT count(1) FROM ${LinkItemTable.TABLE_NAME} WHERE ${LinkItemTable.COLUMN_DB_TYPE} = ? AND ${LinkItemTable.COLUMN_KEY} = ?",
+                item.type, item.key).let {
+            if (it.moveToFirst()) {
+                it.getInt(0)
+            } else -1
+        }
     }
 
 }

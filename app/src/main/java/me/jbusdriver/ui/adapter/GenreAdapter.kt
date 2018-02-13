@@ -8,9 +8,10 @@ import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.KLog
 import me.jbusdriver.mvp.bean.Genre
 import me.jbusdriver.mvp.bean.ILink
+import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.bean.des
+import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.activity.MovieListActivity
-import me.jbusdriver.ui.data.collect.LinkCollector
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 
 /**
@@ -38,7 +39,7 @@ open class GenreAdapter : BaseAppAdapter<Genre, BaseViewHolder>(R.layout.layout_
 
         setOnItemLongClickListener { adapter, view, position ->
             (adapter.data.getOrNull(position) as? Genre)?.let { item ->
-                val action = if (LinkCollector.has(item as ILink)) LinkMenu.linkActions.minus("收藏")
+                val action = if (CollectModel.has((item as ILink).convertDBItem())) LinkMenu.linkActions.minus("收藏")
                 else LinkMenu.linkActions.minus("取消收藏")
 
                 MaterialDialog.Builder(view.context).title(item.name).content(item.des)

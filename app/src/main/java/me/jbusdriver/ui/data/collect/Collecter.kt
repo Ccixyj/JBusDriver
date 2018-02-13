@@ -15,14 +15,21 @@ import java.lang.reflect.Type
 
 interface ICollect<T> {
     val key: String
+
+    @Deprecated("since1.2")
     val dataList: MutableList<T>
+
+    @Deprecated("since1.2")
+    fun reload()
+
     fun addToCollect(data: T): Boolean
     fun has(data: T): Boolean
     fun removeCollect(data: T): Boolean
-    fun reload()
+
     fun update(data: T): Boolean
 }
 
+@Deprecated("since 1.2", level = DeprecationLevel.WARNING)
 abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
 
     protected val host: String by lazy { JAVBusService.defaultFastUrl }
@@ -70,7 +77,6 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
             null
         }
     }
-
 
 
     private fun getAvailableExternalMemorySize(): Long {
@@ -177,6 +183,7 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
 }
 
 
+@Deprecated("since 1.2", level = DeprecationLevel.ERROR)
 object MovieCollector : AbsCollectorImpl<Movie>() {
     override val key: String = "Movie_Key"
 
@@ -206,7 +213,7 @@ object MovieCollector : AbsCollectorImpl<Movie>() {
     override fun loadFromDb() = LinkService.queryMovies().toMutableList()
 }
 
-
+@Deprecated("since 1.2", level = DeprecationLevel.ERROR)
 object ActressCollector : AbsCollectorImpl<ActressInfo>() {
     override val key: String = "Actress_Key"
 
@@ -239,6 +246,7 @@ object ActressCollector : AbsCollectorImpl<ActressInfo>() {
 /**
  * header genre searchWord
  */
+@Deprecated("since 1.2", level = DeprecationLevel.ERROR)
 object LinkCollector : AbsCollectorImpl<ILink>() {
 
     override val key: String = "Link_Key"

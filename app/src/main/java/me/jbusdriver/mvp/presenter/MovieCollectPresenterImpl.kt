@@ -2,9 +2,8 @@ package me.jbusdriver.mvp.presenter
 
 import me.jbusdriver.mvp.MovieCollectContract
 import me.jbusdriver.mvp.bean.Movie
-import me.jbusdriver.ui.data.collect.ICollect
 
-class MovieCollectPresenterImpl(collector: ICollect<Movie>) : BaseAbsCollectPresenter<MovieCollectContract.MovieCollectView, Movie>(collector), MovieCollectContract.MovieCollectPresenter {
+class MovieCollectPresenterImpl : BaseAbsCollectPresenter<MovieCollectContract.MovieCollectView, Movie>(), MovieCollectContract.MovieCollectPresenter {
 
 
     override fun lazyLoad() {

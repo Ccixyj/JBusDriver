@@ -11,6 +11,7 @@ import com.umeng.analytics.MobclickAgent
 import io.reactivex.plugins.RxJavaPlugins
 import jbusdriver.me.jbusdriver.BuildConfig
 import me.jbusdriver.http.JAVBusService
+import java.lang.reflect.Modifier.TRANSIENT
 
 
 /**
@@ -55,7 +56,7 @@ class AppContext : Application() {
         lateinit var instace: AppContext
 
         @JvmStatic
-        val gson = GsonBuilder().registerTypeAdapter(Int::class.java, JsonDeserializer<Int> { json, _, _ ->
+        val gson = GsonBuilder().excludeFieldsWithModifiers(TRANSIENT).registerTypeAdapter(Int::class.java, JsonDeserializer<Int> { json, _, _ ->
             if (json.isJsonNull || json.asString.isEmpty()) {
                 return@JsonDeserializer null
             }

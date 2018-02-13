@@ -5,8 +5,9 @@ import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.mvp.bean.convertDBItem
+import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.data.AppConfiguration
-import me.jbusdriver.ui.data.collect.ActressCollector
 import me.jbusdriver.ui.data.enums.DataSourceType
 import org.jsoup.nodes.Document
 
@@ -35,7 +36,8 @@ class MovieLinkPresenterImpl(val link: ILink, isAllFromBundle: Boolean, isHis: B
         return Movie.loadFromDoc(mView?.type ?: DataSourceType.CENSORED, str).let {
             when (mView?.pageMode) {
                 AppConfiguration.PageMode.Page -> {
-                    listOf(Movie.newPageMovie(pageInfo.activePage, pageInfo.pages, mView?.type ?: DataSourceType.CENSORED)) + it
+                    listOf(Movie.newPageMovie(pageInfo.activePage, pageInfo.pages, mView?.type
+                            ?: DataSourceType.CENSORED)) + it
                 }
                 else -> it
             }
@@ -50,7 +52,7 @@ class MovieLinkPresenterImpl(val link: ILink, isAllFromBundle: Boolean, isHis: B
                 Schedulers.single().scheduleDirect {
                     if (link.avatar != attr.imageUrl) {
                         //如果已收藏演员, 需要重新设置头像
-                        ActressCollector.update(link.copy(avatar = attr.imageUrl))
+                        CollectModel.update(link.copy(avatar = attr.imageUrl).convertDBItem())
                     }
                 }
                 attr

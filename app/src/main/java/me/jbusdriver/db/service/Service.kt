@@ -86,8 +86,8 @@ object CategoryService {
     }
 
 
-    fun getById(cId: Int): Category {
-        if (cId < 0) return error("Category id must > 0")
+    fun getById(cId: Int): Category? {
+        if (cId < 0) return null
         return snapShots.getOrPut(cId) {
             return dao.findById(cId)
         }
@@ -113,6 +113,7 @@ object LinkService {
     }
 
     fun remove(data: ILink) = dao.delete(data.convertDBItem())
+    fun remove(data: LinkItem) = dao.delete(data)
     fun queryMovies() = dao.listByType(1).let { it.mapNotNull { it.getLinkValue() as? Movie } }
     fun queryActress() = dao.listByType(2).let { it.mapNotNull { (it.getLinkValue() as? ActressInfo) } }
 
@@ -127,6 +128,7 @@ object LinkService {
     }
 
     fun update(data: ILink) = dao.update(data.convertDBItem())
+    fun update(data: LinkItem) = dao.update(data)
     fun queryByCategory(category: Category): List<LinkItem> {
         requireNotNull(category.id)
         return dao.queryByCategoryId(category.id!!)
@@ -138,4 +140,6 @@ object LinkService {
             dao.insert(it) ?: dao.update(it)
         }
     }
+
+    fun hasByKey(data: LinkItem) = dao.hasByKey(data)
 }

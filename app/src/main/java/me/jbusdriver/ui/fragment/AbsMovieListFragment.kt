@@ -15,10 +15,11 @@ import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.PageInfo
+import me.jbusdriver.mvp.bean.convertDBItem
+import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.adapter.BaseMultiItemAppAdapter
 import me.jbusdriver.ui.data.AppConfiguration
-import me.jbusdriver.ui.data.collect.MovieCollector
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 
 
@@ -97,7 +98,7 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                             it.setOnLongClickListener {
                                 KLog.d("setOnItemLongClickListener $item")
 
-                                val action = if (MovieCollector.has(item)) LinkMenu.movieActions.minus("收藏")
+                                val action = if (CollectModel.has(item.convertDBItem())) LinkMenu.movieActions.minus("收藏")
                                 else LinkMenu.movieActions.minus("取消收藏")
 
                                 MaterialDialog.Builder(viewContext).title(item.code)

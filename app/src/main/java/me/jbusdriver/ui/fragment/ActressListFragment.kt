@@ -14,12 +14,12 @@ import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.mvp.presenter.ActressLinkPresenterImpl
 import me.jbusdriver.mvp.presenter.LinkAbsPresenterImpl
 import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.adapter.ActressInfoAdapter
 import me.jbusdriver.ui.data.AppConfiguration
-import me.jbusdriver.ui.data.collect.LinkCollector
 import me.jbusdriver.ui.data.enums.DataSourceType
 
 class ActressListFragment : LinkableListFragment<ActressInfo>() {
@@ -51,7 +51,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
         super.onCreateOptionsMenu(menu, inflater)
         menu?.findItem(R.id.action_show_all)?.isVisible = false
         if (isSearch) {
-            val isCollect = LinkCollector.has(link as SearchLink)
+            val isCollect = CollectModel.has((link as SearchLink).convertDBItem())
             collectMenu = menu?.add(Menu.NONE, R.id.action_add_movie_collect, 10, "收藏")?.apply {
                 setIcon(R.drawable.ic_star_border_white_24dp)
                 setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -71,7 +71,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
             R.id.action_add_movie_collect -> {
                 //收藏
                 KLog.d("收藏")
-                if (LinkCollector.addToCollect(link)) {
+                if (CollectModel.addToCollect(link.convertDBItem())) {
                     collectMenu?.isVisible = false
                     removeCollectMenu?.isVisible = true
                 }
@@ -79,7 +79,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
             R.id.action_remove_movie_collect -> {
                 //取消收藏
                 KLog.d("取消收藏")
-                if (LinkCollector.removeCollect(link)) {
+                if (CollectModel.removeCollect(link.convertDBItem())) {
                     collectMenu?.isVisible = true
                     removeCollectMenu?.isVisible = false
                 }

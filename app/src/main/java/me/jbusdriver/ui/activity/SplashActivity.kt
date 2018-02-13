@@ -20,6 +20,7 @@ import me.jbusdriver.common.*
 import me.jbusdriver.http.GitHub
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.enums.DataSourceType
+import me.jbusdriver.ui.task.CollectService
 import org.jsoup.Jsoup
 
 class SplashActivity : BaseActivity() {
@@ -30,6 +31,11 @@ class SplashActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
         init()
+        migrate()
+    }
+
+    private fun migrate() {
+        CollectService.startMigrate(this)
     }
 
     private fun init() {

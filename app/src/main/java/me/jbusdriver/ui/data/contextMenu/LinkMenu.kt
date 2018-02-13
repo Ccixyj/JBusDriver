@@ -4,13 +4,8 @@ import me.jbusdriver.common.AppContext
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.copy
 import me.jbusdriver.common.toast
-import me.jbusdriver.mvp.bean.ActressInfo
-import me.jbusdriver.mvp.bean.ILink
-import me.jbusdriver.mvp.bean.Movie
-import me.jbusdriver.mvp.bean.des
-import me.jbusdriver.ui.data.collect.ActressCollector
-import me.jbusdriver.ui.data.collect.LinkCollector
-import me.jbusdriver.ui.data.collect.MovieCollector
+import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.model.CollectModel
 
 /**
  * Created by Administrator on 2018/2/4.
@@ -25,11 +20,9 @@ object LinkMenu {
             AppContext.instace.copy(movie.code)
             AppContext.instace.toast("已复制")
         }, "收藏" to { movie: Movie ->
-            MovieCollector.addToCollect(movie)
-            KLog.d("actress_data:${ActressCollector.dataList}")
+            CollectModel.addToCollect(movie.convertDBItem())
         }, "取消收藏" to { movie: Movie ->
-            MovieCollector.removeCollect(movie)
-            KLog.d("actress_data:${ActressCollector.dataList}")
+            CollectModel.removeCollect(movie.convertDBItem())
         })
     }
 
@@ -39,11 +32,9 @@ object LinkMenu {
             AppContext.instace.copy(act.name)
             AppContext.instace.toast("已复制")
         }, "收藏" to { act: ActressInfo ->
-            ActressCollector.addToCollect(act)
-            KLog.d("actress_data:${ActressCollector.dataList}")
+            CollectModel.addToCollect(act.convertDBItem())
         }, "取消收藏" to { act: ActressInfo ->
-            ActressCollector.removeCollect(act)
-            KLog.d("actress_data:${ActressCollector.dataList}")
+            CollectModel.removeCollect(act.convertDBItem())
         })
 
     }
@@ -55,11 +46,9 @@ object LinkMenu {
             AppContext.instace.copy(link.des.split(" ").last())
             AppContext.instace.toast("已复制")
         }, "收藏" to { link ->
-            LinkCollector.addToCollect(link)
-            KLog.d("link data ${LinkCollector.dataList}")
+            CollectModel.addToCollect(link.convertDBItem())
         }, "取消收藏" to { link ->
-            LinkCollector.removeCollect(link)
-            KLog.d("link data ${LinkCollector.dataList}")
+            CollectModel.removeCollect(link.convertDBItem())
         })
     }
 

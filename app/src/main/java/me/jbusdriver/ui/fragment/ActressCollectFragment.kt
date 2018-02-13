@@ -27,11 +27,12 @@ import me.jbusdriver.mvp.ActressCollectContract
 import me.jbusdriver.mvp.bean.ActressDBType
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.CollectLinkWrapper
+import me.jbusdriver.mvp.bean.convertDBItem
+import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.mvp.presenter.ActressCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.adapter.BaseAppAdapter
 import me.jbusdriver.ui.data.AppConfiguration
-import me.jbusdriver.ui.data.collect.ActressCollector
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import me.jbusdriver.ui.holder.CollectDirEditHolder
 import java.util.*
@@ -114,7 +115,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                     val action = LinkMenu.actressActions.toMutableMap()
                     action.remove("收藏")
                     action["取消收藏"] = {
-                        if (ActressCollector.removeCollect(it)) {
+                        if (CollectModel.removeCollect(it.convertDBItem())) {
                             viewContext.toast("取消收藏成功")
                             adapter.data.removeAt(position)
                             adapter.notifyItemRemoved(position)
@@ -173,7 +174,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
         adapter.setMultiTypeDelegate(mBasePresenter?.adapterDelegate)
     }
 
-    override fun createPresenter() = ActressCollectPresenterImpl(ActressCollector)
+    override fun createPresenter() = ActressCollectPresenterImpl()
 
     override fun showContents(data: List<*>) {
         KLog.d("showContents $data")

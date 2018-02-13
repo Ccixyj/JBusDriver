@@ -13,8 +13,9 @@ import io.reactivex.rxkotlin.addTo
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.bean.ActressInfo
+import me.jbusdriver.mvp.bean.convertDBItem
+import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.activity.MovieListActivity
-import me.jbusdriver.ui.data.collect.ActressCollector
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import java.util.*
 
@@ -67,7 +68,7 @@ class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseAppAdapter<Ac
 
         setOnItemLongClickListener { _, view, position ->
             data.getOrNull(position)?.let { act ->
-                val action = if (ActressCollector.has(act)) LinkMenu.actressActions.minus("收藏")
+                val action = if (CollectModel.has(act.convertDBItem())) LinkMenu.actressActions.minus("收藏")
                 else LinkMenu.actressActions.minus("取消收藏")
 
                 MaterialDialog.Builder(view.context).title(act.name)

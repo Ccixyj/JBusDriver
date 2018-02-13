@@ -24,7 +24,6 @@ import kotlinx.android.synthetic.main.activity_setting.*
 import kotlinx.android.synthetic.main.layout_collect_back_edit_item.view.*
 import kotlinx.android.synthetic.main.layout_menu_op_item.view.*
 import me.jbusdriver.common.*
-import me.jbusdriver.db.bean.LinkItem
 import me.jbusdriver.db.service.LinkService
 import me.jbusdriver.mvp.bean.Expand_Type_Head
 import me.jbusdriver.mvp.bean.MenuOp
@@ -32,6 +31,7 @@ import me.jbusdriver.mvp.bean.MenuOpHead
 import me.jbusdriver.ui.adapter.MenuOpAdapter
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.magnet.MagnetLoaders
+import me.jbusdriver.ui.task.CollectService
 import java.io.File
 
 @SuppressLint("ValidFragment")
@@ -150,6 +150,7 @@ class SettingActivity : BaseActivity() {
 
         //备份
         tv_collect_backup.setOnClickListener {
+
             val loading = MaterialDialog.Builder(viewContext).content("正在备份...").progress(true, 0).show()
             Flowable.fromCallable { backDir }
                     .flatMap { file ->
@@ -205,18 +206,12 @@ class SettingActivity : BaseActivity() {
                                     KLog.d("load back up ${file.name}")
                                     MaterialDialog.Builder(viewContext)
                                             .title("加载备份")
-                                            .content("${file.name}\n注意:相同文件会被覆盖!!")
+                                            .content("${file.name}\n注意:相同文件会被覆盖")
                                             .positiveText("确定")
                                             .negativeText("取消")
                                             .negativeColor(R.color.secondText.toColorInt())
                                             .onPositive { _, _ ->
-                                                Flowable.just(file)
-                                                        .map {
-                                                            val backs = AppContext.gson.fromJson<List<LinkItem>>(file.readText())
-                                                                    ?: emptyList()
-                                                            LinkService.saveOrUpdate(backs)
-                                                        }.subscribeBy(onError = { toast("恢复失败,请重新打开app") }
-                                                                , onNext = { toast("恢复成功") }).addTo(rxManager)
+                                                CollectService.startLoadBackUp(viewContext, file)
                                             }
                                             .show()
 

@@ -16,19 +16,19 @@ import kotlinx.android.synthetic.main.layout_load_all.view.*
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.mvp.presenter.LinkAbsPresenterImpl
 import me.jbusdriver.mvp.presenter.MovieLinkPresenterImpl
 import me.jbusdriver.ui.activity.SearchResultActivity
-import me.jbusdriver.ui.data.collect.ActressCollector
-import me.jbusdriver.ui.data.collect.LinkCollector
-import me.jbusdriver.ui.data.collect.MovieCollector
 
 
 /**
  * ilink 由跳转链接进入的 /历史记录
  */
 class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkListView {
-    private val link by lazy { arguments?.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ") }
+    private val link by lazy {
+        arguments?.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ")
+    }
     private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }
     private val isHistory by lazy { arguments?.getBoolean(C.BundleKey.Key_2, false) ?: false }
     private val attrViews by lazy { mutableListOf<View>() }
@@ -39,12 +39,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
         val isCollect by lazy {
-            when (link) {
-                is Movie -> MovieCollector.has(link as Movie)
-                is ActressInfo -> ActressCollector.has(link as ActressInfo)
-                else -> LinkCollector.has(link)
-            }
-
+            CollectModel.has(link.convertDBItem())
         }
         if (!isHistory || link !is PageLink) { //历史记录隐藏
             collectMenu = menu?.add(Menu.NONE, R.id.action_add_movie_collect, 10, "收藏")?.apply {
@@ -67,13 +62,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
             R.id.action_add_movie_collect -> {
                 //收藏
                 KLog.d("收藏")
-                val res = when (link) {
-                    is Movie -> MovieCollector.addToCollect(link as Movie)
-                    is ActressInfo -> ActressCollector.addToCollect((link as ActressInfo).apply {
-                        tag = null
-                    })
-                    else -> LinkCollector.addToCollect(link)
-                }
+                val res = CollectModel.addToCollect(link.convertDBItem())
                 if (res) {
                     collectMenu?.isVisible = false
                     removeCollectMenu?.isVisible = true
@@ -82,11 +71,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
             R.id.action_remove_movie_collect -> {
                 //取消收藏
                 KLog.d("取消收藏")
-                val res = when (link) {
-                    is Movie -> MovieCollector.removeCollect(link as Movie)
-                    is ActressInfo -> ActressCollector.removeCollect(link as ActressInfo)
-                    else -> LinkCollector.removeCollect(link)
-                }
+                val res = CollectModel.removeCollect(link.convertDBItem())
                 if (res) {
                     collectMenu?.isVisible = true
                     removeCollectMenu?.isVisible = false
@@ -99,7 +84,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
 
     override fun initData() {
         if (isSearch) {
-            RxBus.toFlowable(SearchWord::class.java).subscribeBy{ sea ->
+            RxBus.toFlowable(SearchWord::class.java).subscribeBy { sea ->
                 (mBasePresenter as? LinkAbsPresenterImpl<*>)?.let {
                     (it.linkData as SearchLink).query = sea.query
                     it.onRefresh()
@@ -121,7 +106,8 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         }
     }
 
-    override fun createPresenter() = MovieLinkPresenterImpl(link, arguments?.getBoolean(LinkableListFragment.MENU_SHOW_ALL, false) ?:false , isHistory)
+    override fun createPresenter() = MovieLinkPresenterImpl(link, arguments?.getBoolean(LinkableListFragment.MENU_SHOW_ALL, false)
+            ?: false, isHistory)
 
     override fun <T> showContent(data: T?) {
         KLog.d("parse res :$data")

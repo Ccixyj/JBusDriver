@@ -24,12 +24,12 @@ import me.jbusdriver.db.bean.LinkCategory
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.mvp.LinkCollectContract
 import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.mvp.presenter.LinkCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.adapter.BaseAppAdapter
 import me.jbusdriver.ui.data.AppConfiguration
-import me.jbusdriver.ui.data.collect.LinkCollector
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import me.jbusdriver.ui.holder.CollectDirEditHolder
 
@@ -93,7 +93,7 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
                     val action = LinkMenu.linkActions.toMutableMap()
                     action.remove("收藏")
                     action["取消收藏"] = {
-                        if (LinkCollector.removeCollect(it)) {
+                        if (CollectModel.removeCollect(it.convertDBItem())) {
                             viewContext.toast("取消收藏成功")
                             adapter.data.removeAt(position)
                             adapter.notifyItemRemoved(position)
@@ -116,7 +116,7 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
     }
     override val layoutId: Int = R.layout.layout_swipe_recycle
 
-    override fun createPresenter() = LinkCollectPresenterImpl(LinkCollector)
+    override fun createPresenter() = LinkCollectPresenterImpl()
     private val holder by lazy { CollectDirEditHolder(viewContext, LinkCategory) }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

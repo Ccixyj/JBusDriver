@@ -22,10 +22,11 @@
         <!-- 友盟key -->
         <meta-data
             android:name="UMENG_APPKEY"
-            android:value="${UMENG_KEY}"/>
+            android:value="${UMENG_KEY}" />
         <meta-data
             android:name="UMENG_CHANNEL"
-            android:value="${CHANNEL}"/>
+            android:value="${CHANNEL}" />
+
         <activity
             android:name="me.jbusdriver.ui.activity.MainActivity"
             android:label="@string/app_name"
@@ -58,7 +59,11 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="me.jbusdriver.ui.activity.SettingActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <service
+            android:name="me.jbusdriver.ui.task.CollectService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

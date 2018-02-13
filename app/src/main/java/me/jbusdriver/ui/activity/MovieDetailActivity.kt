@@ -19,12 +19,9 @@ import kotlinx.android.synthetic.main.content_movie_detail.*
 import kotlinx.android.synthetic.main.layout_load_magnet.view.*
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.MovieDetailContract
-import me.jbusdriver.mvp.bean.Movie
-import me.jbusdriver.mvp.bean.MovieDetail
-import me.jbusdriver.mvp.bean.des
-import me.jbusdriver.mvp.bean.detailSaveKey
+import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.mvp.presenter.MovieDetailPresenterImpl
-import me.jbusdriver.ui.data.collect.MovieCollector
 import me.jbusdriver.ui.holder.*
 
 
@@ -63,7 +60,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         menuInflater.inflate(R.menu.menu_movie_detail, menu)
         collectMenu = menu.findItem(R.id.action_add_movie_collect)
         removeCollectMenu = menu.findItem(R.id.action_remove_movie_collect)
-        if (MovieCollector.has(movie)) {
+        if (CollectModel.has(movie.convertDBItem())) {
             collectMenu.isVisible = false
             removeCollectMenu.isVisible = true
         } else {
@@ -83,7 +80,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             R.id.action_add_movie_collect -> {
                 //收藏
                 KLog.d("收藏")
-                if (MovieCollector.addToCollect(movie)) {
+                if (CollectModel.addToCollect(movie.convertDBItem())) {
                     collectMenu.isVisible = false
                     removeCollectMenu.isVisible = true
                 }
@@ -91,7 +88,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             R.id.action_remove_movie_collect -> {
                 //取消收藏
                 KLog.d("取消收藏")
-                if (MovieCollector.removeCollect(movie)) {
+                if (CollectModel.removeCollect(movie.convertDBItem())) {
                     collectMenu.isVisible = true
                     removeCollectMenu.isVisible = false
                 }

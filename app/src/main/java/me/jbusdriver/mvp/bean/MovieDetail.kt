@@ -52,7 +52,8 @@ data class MovieDetail(val title: String,
             headersContainer.select("p[class!=star-show]:has(span:not([class=genre])):has(a)")
                     .mapTo(headers) {
                         val split = it.text().split(":")
-                        Header(split.first(), split.getOrNull(1) ?: "", it.select("p a").attr("href"))
+                        Header(split.first(), split.getOrNull(1)
+                                ?: "", it.select("p a").attr("href"))
                     }//解析附带跳转信息
 
             val geneses = headersContainer.select(".genre:has(a[href*=genre])").map {
@@ -98,12 +99,16 @@ data class MovieDetail(val title: String,
 interface IAttr
 
 
-data class Header(val name: String, val value: String, override val link: String) : ILink{
-    @Transient  override var categoryId: Int = LinkCategory.id ?: 10
+data class Header(val name: String, val value: String, override val link: String) : ILink {
+    @Transient
+    override var categoryId: Int = LinkCategory.id ?: 10
 }
-data class Genre(val name: String, override val link: String) : ILink{
-    @Transient  override var categoryId: Int = LinkCategory.id ?: 10
+
+data class Genre(val name: String, override val link: String) : ILink {
+    @Transient
+    override var categoryId: Int = LinkCategory.id ?: 10
 }
+
 data class ActressInfo(val name: String, val avatar: String, override val link: String, var tag: String? = null) : ILink {
 
     @Transient
@@ -126,13 +131,15 @@ data class ActressInfo(val name: String, val avatar: String, override val link: 
         }
     }
 
-    override fun toString() =  "ActressInfo(name='$name', avatar='$avatar', link='$link', tag=$tag  categoryId $categoryId) "
+    override fun toString() = "ActressInfo(name='$name', avatar='$avatar', link='$link', tag=$tag  categoryId $categoryId) "
 
 }
 
-data class Magnet(val name: String, val size: String, val date: String, override val link: String) : ILink{
-    @Transient  override var categoryId: Int = LinkCategory.id ?: 10
+data class Magnet(val name: String, val size: String, val date: String, override val link: String) : ILink {
+    @Transient
+    override var categoryId: Int = LinkCategory.id ?: 10
 }
+
 data class ImageSample(val title: String, val thumb: String, val image: String)
 
 data class ActressAttrs(val title: String, val imageUrl: String, val info: List<String>) : IAttr

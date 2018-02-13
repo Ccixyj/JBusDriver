@@ -14,10 +14,11 @@ import kotlinx.android.synthetic.main.layout_detail_header.view.*
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.inflate
 import me.jbusdriver.mvp.bean.Header
+import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.bean.des
+import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.adapter.BaseAppAdapter
-import me.jbusdriver.ui.data.collect.LinkCollector
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 
 /**
@@ -59,7 +60,7 @@ class HeaderHolder(context: Context) : BaseHolder(context) {
                     val action =   LinkMenu.linkActions.filter {
                         when {
                             TextUtils.isEmpty(item.link) -> it.key == "复制"
-                            LinkCollector.has(item) -> it.key != "收藏"
+                            CollectModel.has(item.convertDBItem()) -> it.key != "收藏"
                             else -> it.key != "取消收藏"
                         }
                     }

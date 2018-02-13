@@ -21,11 +21,12 @@ import me.jbusdriver.mvp.MovieCollectContract
 import me.jbusdriver.mvp.bean.CollectLinkWrapper
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.MovieDBType
+import me.jbusdriver.mvp.bean.convertDBItem
+import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.mvp.presenter.MovieCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.adapter.BaseAppAdapter
 import me.jbusdriver.ui.data.AppConfiguration
-import me.jbusdriver.ui.data.collect.MovieCollector
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import me.jbusdriver.ui.holder.CollectDirEditHolder
 
@@ -45,7 +46,7 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
                 when (holder.itemViewType) {
                     -1 -> {
 
-                        val movie =  requireNotNull(item.linkBean)
+                        val movie = requireNotNull(item.linkBean)
 
                         holder.setText(R.id.tv_movie_title, movie.title)
                                 .setText(R.id.tv_movie_date, movie.date)
@@ -70,7 +71,8 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
             }
         }.apply {
             setOnItemClickListener { _, view, position ->
-                val data = this@MovieCollectFragment.adapter.getData().getOrNull(position) ?: return@setOnItemClickListener
+                val data = this@MovieCollectFragment.adapter.getData().getOrNull(position)
+                        ?: return@setOnItemClickListener
                 KLog.d("click data : ${data.isExpanded} ; ${adapter.getData().size} ${adapter.getData()}")
                 data.linkBean?.let {
                     MovieDetailActivity.start(viewContext, it)
@@ -81,12 +83,11 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
             }
 
             setOnItemLongClickListener { adapter, _, position ->
-                (this@MovieCollectFragment.adapter.getData().getOrNull(position)?.linkBean)?.let {
-                    movie->
+                (this@MovieCollectFragment.adapter.getData().getOrNull(position)?.linkBean)?.let { movie ->
                     val action = LinkMenu.movieActions.toMutableMap()
                     action.remove("收藏")
                     action["取消收藏"] = {
-                        if (MovieCollector.removeCollect(it)) {
+                        if (CollectModel.removeCollect(it.convertDBItem())) {
                             viewContext.toast("取消收藏成功")
                             adapter.data.removeAt(position)
                             adapter.notifyItemRemoved(position)
@@ -118,7 +119,8 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
         super.onCreateOptionsMenu(menu, inflater)
         menu?.findItem(R.id.action_collect_dir_edit)?.setOnMenuItemClickListener {
 
-            holder.showDialogWithData(mBasePresenter?.collectGroupMap?.keys?.toList() ?: emptyList()) { delActionsParams, addActionsParams ->
+            holder.showDialogWithData(mBasePresenter?.collectGroupMap?.keys?.toList()
+                    ?: emptyList()) { delActionsParams, addActionsParams ->
                 KLog.d("$delActionsParams $addActionsParams")
                 if (delActionsParams.isNotEmpty()) {
                     delActionsParams.forEach {
@@ -141,15 +143,15 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
         }
     }
 
-    override fun createPresenter() = MovieCollectPresenterImpl(MovieCollector)
+    override fun createPresenter() = MovieCollectPresenterImpl()
 
 
     override fun showContents(data: List<*>) {
         KLog.d("showContents $data")
         mBasePresenter?.let { p ->
             p.adapterDelegate.needInjectType.onEach {
-                if (it == -1)  p.adapterDelegate.registerItemType(it, R.layout.layout_movie_item) //默认注入类型0，即actress
-                else  p.adapterDelegate.registerItemType(it, R.layout.layout_menu_op_head) //头部，可以做特化
+                if (it == -1) p.adapterDelegate.registerItemType(it, R.layout.layout_movie_item) //默认注入类型0，即actress
+                else p.adapterDelegate.registerItemType(it, R.layout.layout_menu_op_head) //头部，可以做特化
             }
             adapter.setMultiTypeDelegate(p.adapterDelegate)
         }

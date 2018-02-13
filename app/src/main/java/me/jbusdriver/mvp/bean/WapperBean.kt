@@ -12,7 +12,11 @@ import me.jbusdriver.db.service.CategoryService
 class CollectLinkWrapper<T : ICollectCategory>(private val categoryDec: Category? = null, val linkBean: T? = null) : AbstractExpandableItem<CollectLinkWrapper<T>>() {
 
 
-    val category by lazy { categoryDec ?: CategoryService.getById(subItems?.firstOrNull()?.linkBean?.categoryId ?: error("category exist and  id must > 0")) }
+    val category by lazy {
+        categoryDec ?: CategoryService.getById(subItems?.firstOrNull()?.linkBean?.categoryId
+                ?: error("category exist and  id must > 0"))
+        ?: error("category exist and  id must > 0")
+    }
 
     override fun getLevel(): Int {
         return if (linkBean == null) {

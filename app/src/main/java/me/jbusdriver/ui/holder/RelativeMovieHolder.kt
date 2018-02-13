@@ -15,9 +15,10 @@ import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_relative_movies.view.*
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.mvp.bean.convertDBItem
+import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.adapter.BaseAppAdapter
-import me.jbusdriver.ui.data.collect.MovieCollector
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import java.util.*
 
@@ -40,7 +41,7 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
                 }
                 relativeAdapter.setOnItemLongClickListener { adapter, view, position ->
                     relativeAdapter.data.getOrNull(position)?.let { movie ->
-                        val action = if (MovieCollector.has(movie)) LinkMenu.movieActions.minus("收藏")
+                        val action = if (CollectModel.has(movie.convertDBItem())) LinkMenu.movieActions.minus("收藏")
                         else LinkMenu.movieActions.minus("取消收藏")
                         MaterialDialog.Builder(view.context).title(movie.title)
                                 .items(action.keys)
