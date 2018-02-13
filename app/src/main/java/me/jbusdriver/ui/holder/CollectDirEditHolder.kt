@@ -13,7 +13,6 @@ import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_collect_dir_edit.view.*
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.inflate
-import me.jbusdriver.common.toColorInt
 import me.jbusdriver.common.toast
 import me.jbusdriver.db.bean.Category
 import me.jbusdriver.ui.adapter.BaseAppAdapter
@@ -111,7 +110,7 @@ class CollectDirEditHolder(context: Context, parentCategory: Category) : BaseHol
                                 //删除
                                 categoryAdapter.data.getOrNull(position)?.let {
                                     //具体删除逻辑
-                                    if (it.id in (1..3)) return@setOnItemChildClickListener
+                                    if (it.id in (1..10)) return@setOnItemChildClickListener
                                     categoryAdapter.data.removeAt(position)
                                     categoryAdapter.notifyItemRemoved(position)
                                     delActionsParams.add(it)
@@ -150,10 +149,7 @@ class CollectDirEditHolder(context: Context, parentCategory: Category) : BaseHol
         categoryAdapter.addData(data)
 
         MaterialDialog.Builder(view.context).customView(view, true)
-                .positiveText("提交更改")
-                .negativeText("不提交")
-                .negativeColor(R.color.secondText.toColorInt())
-                .onPositive { _, _ ->
+                .dismissListener {
                     callback.invoke(delActionsParams, addActionsParams)
                 }
                 .show()

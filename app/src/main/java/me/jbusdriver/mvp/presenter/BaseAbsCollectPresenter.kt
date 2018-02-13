@@ -32,13 +32,9 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
         }
     }
     private val listData by lazy {
-        when {
-            this is MovieCollectContract.MovieCollectPresenter -> LinkService.queryMovies()
-            this is ActressCollectContract.ActressCollectPresenter -> LinkService.queryActress()
-            else -> LinkService.queryLink()
-        }
-
+        load().toMutableList()
     }
+
     private val pageNum
         get() = ((listData.size - 1) / pageSize) + 1
 
@@ -47,6 +43,12 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
     override val dataWrapperList: MutableList<CollectLinkWrapper<T>> = mutableListOf()
 
     override val adapterDelegate: BasePresenter.BaseCollectPresenter.CollectMultiTypeDelegate<T> = BasePresenter.BaseCollectPresenter.CollectMultiTypeDelegate()
+
+    private fun load() = when {
+        this is MovieCollectContract.MovieCollectPresenter -> LinkService.queryMovies()
+        this is ActressCollectContract.ActressCollectPresenter -> LinkService.queryActress()
+        else -> LinkService.queryLink()
+    }
 
     override fun loadData4Page(page: Int) {
         //查询所有的分类 //优化:先查20个
@@ -89,7 +91,6 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
                     .addTo(rxManager)
 
         } else {
-
             val next = if (page < pageNum) page + 1 else pageNum
             pageInfo = pageInfo.copy(activePage = page, nextPage = next)
             Flowable.just(pageInfo).map {
@@ -122,6 +123,10 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
 //        listData.clear()
 //        collector.reload()
 //        listData.addAll(collector.dataList)
+        if (!AppConfiguration.enableCategory) {
+            listData.clear()
+            listData.addAll(load())
+        }
         mView?.resetList()
         loadData4Page(1)
     }

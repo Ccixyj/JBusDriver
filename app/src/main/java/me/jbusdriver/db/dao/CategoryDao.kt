@@ -16,7 +16,12 @@ class CategoryDao(private val db: BriteDatabase) {
 
 
     fun insert(category: Category) = try {
-        ioBlock { db.insert(CategoryTable.TABLE_NAME, SQLiteDatabase.CONFLICT_IGNORE, category.cv()) }
+        ioBlock {
+            val id = db.insert(CategoryTable.TABLE_NAME, SQLiteDatabase.CONFLICT_IGNORE, category.cv())
+            require(id > 0)
+            update(category.copy(tree = category.tree + "id"))
+            id
+        }
     } catch (e: Exception) {
         -1L
     }

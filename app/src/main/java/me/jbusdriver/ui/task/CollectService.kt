@@ -46,8 +46,8 @@ class CollectService : IntentService("CollectService") {
                     it.getLinkValue().convertDBItem()
                 } else it
             } ?: emptyList()
-            LinkService.saveOrUpdate(backs)
-            toastForMain("备份成功")
+            LinkService.saveOrUpdate(backs.asReversed())
+            toastForMain("恢复备份成功")
         } catch (e: Exception) {
             toastForMain("恢复失败,请重新打开app")
         }
@@ -100,7 +100,7 @@ class CollectService : IntentService("CollectService") {
 
     private fun toastForMain(string: String) {
         AndroidSchedulers.mainThread().scheduleDirect {
-            applicationContext.toast("恢复成功")
+            applicationContext.toast(string)
         }
     }
 
