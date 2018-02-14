@@ -28,6 +28,9 @@ open class AppGlideOptions : AppGlideModule() {
 
 class GlideNoHost(url: String) : GlideUrl(url) {
 
-    override fun getCacheKey() = toStringUrl().urlPath.apply { KLog.t("GlideNoHost").d(this) }
+    override fun getCacheKey() = let {
+        val url = toStringUrl()
+        ((if (url.urlHost.endsWith("xyz")) "xyz" else "") + url.urlPath).apply { KLog.t("GlideNoHost").d("${toStringUrl()} :$this") }
+    }
 }
 

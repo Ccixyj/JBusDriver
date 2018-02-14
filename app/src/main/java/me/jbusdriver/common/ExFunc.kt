@@ -11,6 +11,7 @@ import android.os.Build
 import android.support.v4.util.ArrayMap
 import android.text.format.Formatter
 import android.util.DisplayMetrics
+import android.util.LruCache
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -188,25 +189,29 @@ fun Context.browse(url: String, errorHandler: (Throwable) -> Unit = {}) {
 }
 
 
-private val urlCache by lazy { mutableMapOf<String, Uri>() }
+private val urlCache by lazy { LruCache<String, Uri>(512) }
 
 //string url -> get url host
 val String.urlHost: String
-    get() = urlCache.getOrPut(this) {
-        Uri.parse(this)
-    }.let {
-                checkNotNull(it)
-                "${it.scheme}://${it.host}"
-            }
+    get() = (urlCache.get(this) ?: let {
+        val uri = Uri.parse(this)
+        urlCache.put(this, uri)
+        uri
+    }).let {
+        checkNotNull(it)
+        "${it.scheme}://${it.host}"
+    }
 
 
 val String.urlPath: String
-    get() = urlCache.getOrPut(this) {
-        Uri.parse(this)
-    }.let {
-                checkNotNull(it)
-                it.path
-            }
+    get() = (urlCache.get(this) ?: let {
+        val uri = Uri.parse(this)
+        urlCache.put(this, uri)
+        uri
+    }).let {
+        checkNotNull(it)
+        it.path
+    }
 
 
 /*glide : url ->? custome glideurl */
