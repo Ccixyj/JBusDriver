@@ -175,7 +175,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:minHeight="@dimen/material_40dp"
-                        android:text="备份我的收藏"
+                        android:text="点击备份"
                         android:textColor="@color/secondText" />
 
                     <View style="@style/DividerLine.Horizontal" />

@@ -188,12 +188,19 @@ class SettingActivity : BaseActivity() {
                     } else {
                         list.mapIndexed { index, file ->
                             inflate(R.layout.layout_collect_back_edit_item).apply {
-                                System.getProperty("line.")
 
                                 val date = DateUtils.formatDateTime(viewContext, file.lastModified(),
                                         DateUtils.FORMAT_SHOW_YEAR or
                                                 DateUtils.FORMAT_SHOW_DATE or
                                                 DateUtils.FORMAT_SHOW_TIME)
+
+                                setOnLongClickListener {
+                                    MaterialDialog.Builder(viewContext)
+                                            .title("文件路径")
+                                            .content(file.absolutePath)
+                                            .show()
+                                    return@setOnLongClickListener true
+                                }
 
                                 tv_backup_name.text = SpannableStringBuilder("${index + 1}. ${file.name}")
                                         .append(System.getProperty("line.separator"))
@@ -214,7 +221,6 @@ class SettingActivity : BaseActivity() {
                                                 CollectService.startLoadBackUp(viewContext, file)
                                             }
                                             .show()
-
 
                                 }
                                 tv_backup_delete.setOnClickListener {
