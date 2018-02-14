@@ -1,6 +1,5 @@
 package me.jbusdriver.mvp.presenter
 
-import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.subscribeBy
 import me.jbusdriver.common.*
@@ -19,10 +18,11 @@ import java.util.concurrent.ConcurrentSkipListMap
 /**
  * Created by Administrator on 2017/5/10 0010.
  */
-abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, val isHistory: Boolean = false) : AbstractRefreshLoadMorePresenterImpl<LinkListContract.LinkListView, T>(), LinkListContract.LinkListPresenter {
+abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistory: Boolean = false) : AbstractRefreshLoadMorePresenterImpl<LinkListContract.LinkListView, T>(), LinkListContract.LinkListPresenter {
 
     protected open var IsAll = false
-    private val urlPath by lazy { if (linkData is PageLink) linkData.link.urlPath.replace("/${linkData.page}", "") else linkData.link.urlPath }
+    private val urlPath by lazy { (linkData as? PageLink)?.link?.urlPath?.replace("/${linkData.page}", "")
+            ?: linkData.link.urlPath }
     private val dataPageCache by lazy { ConcurrentSkipListMap<Int, Int>() }
     private val pageModeDisposable = RxBus.toFlowable(PageChangeEvent::class.java)
             .subscribeBy(onNext = {
@@ -32,7 +32,6 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, val isHistory: Boole
                 //清空dataPageCache
                 dataPageCache.clear()
             })
-    private val historyService by lazy { HistoryService() }
 
     override fun onFirstLoad() {
         val link = when (linkData) {
@@ -65,7 +64,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, val isHistory: Boole
         override fun requestFor(t: Int) =
                 (if (t == 1) linkData.link else "${linkData.link.urlHost}$urlPath/$t").let {
                     KLog.i("fromCallable page $pageInfo requestFor : $it")
-                    JAVBusService.INSTANCE.get(it, if (IsAll) "all" else null).map { Jsoup.parse(it) }
+                    JAVBusService.INSTANCE.get(it, if (IsAll) "all" else null).addUserCase().map { Jsoup.parse(it) }
                 }.doOnNext {
                     if (t == 1) CacheLoader.lru.put("${linkData.link}$IsAll", it.toString())
                 }
@@ -75,7 +74,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, val isHistory: Boole
     }
 
     protected open fun addHistory(link: ILink) {
-        historyService.insert(History(link.DBtype, Date(), link.toJsonString(), IsAll))
+        HistoryService.insert(History(link.DBtype, Date(), link.toJsonString(), IsAll))
     }
 
     override fun onRefresh() {
@@ -102,7 +101,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, val isHistory: Boole
                 mView?.moveTo(getJumpIndex(page))
             } else {
                 mView?.moveTo(getJumpIndex(page))
-                pageInfo = pageInfo.copy(page)
+                pageInfo = pageInfo.copy(activePage = page)
                 loadData4Page(page)
             }
         } else {
@@ -147,13 +146,13 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, val isHistory: Boole
                     }
                     if (dataPageCache.size > 0 && pageInfo.activePage < dataPageCache.lastKey()) {
                         //当前页属于插入页面
-                        mView?.insertDatas(getJumpIndex(pageInfo.activePage), t)
+                        mView?.insertData(getJumpIndex(pageInfo.activePage), t)
                     } else {
                         super.doAddData(t)
                     }
 
                     if (t.isNotEmpty()) {
-                        dataPageCache.put(pageInfo.activePage, t.size - 1)//page item In list
+                        dataPageCache[pageInfo.activePage] = t.size - 1//page item In list
                     } else {
                         //超过最大页数时 ,可以点击加载原本的下一页 ; 或者请求超时,点击重新加载
                         mView?.loadMoreEnd(true)

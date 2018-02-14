@@ -1,7 +1,6 @@
 package me.jbusdriver.mvp.presenter
 
 import android.text.TextUtils
-import com.cfzx.mvp.view.BaseView
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Function
@@ -10,6 +9,7 @@ import me.jbusdriver.common.KLog
 import me.jbusdriver.common.SchedulersCompat
 import me.jbusdriver.common.SimpleSubscriber
 import me.jbusdriver.common.toast
+import me.jbusdriver.mvp.BaseView
 import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.mvp.bean.hasNext
 import me.jbusdriver.mvp.model.BaseModel
@@ -66,10 +66,11 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
         }.onErrorResumeNext(Function {
             return@Function when {
                 (it is HttpException && it.code() == 404) -> {
+                    //404 视为没有数据
                     AndroidSchedulers.mainThread().scheduleDirect {
                         mView?.viewContext?.toast("第${page}页没有数据")
                     }
-                    pageInfo = pageInfo.copy(activePage = pageInfo.nextPage - 1)//重置前一页pageInfo
+                    if (pageInfo.nextPage > 1 && pageInfo.activePage > 0) pageInfo = pageInfo.copy(activePage = pageInfo.nextPage - 1)//重置前一页pageInfo
                     Flowable.just(mutableListOf())
                 }
                 it is TimeoutException -> {
@@ -125,7 +126,9 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
      */
 
     protected open fun doAddData(t: List<T>) {
-        mView?.showContents(t)
+//        if (t.isNotEmpty()) {
+            mView?.showContents(t)
+//        }
         if (pageInfo.activePage > 1) mView?.loadMoreComplete()
     }
 

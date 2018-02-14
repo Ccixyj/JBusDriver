@@ -4,17 +4,16 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.util.ArrayMap
 import android.view.View
-import com.cfzx.utils.CacheLoader
 import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.GenrePageContract
 import me.jbusdriver.mvp.GenrePageContract.GenrePagePresenter
 import me.jbusdriver.mvp.bean.Genre
 import me.jbusdriver.mvp.presenter.GenrePagePresenterImpl
-import me.jbusdriver.ui.data.DataSourceType
+import me.jbusdriver.ui.data.enums.DataSourceType
 
 /**
- * Created by Administrator on 2017/7/17 0017.
+ * 类别分类
  */
 class GenrePagesFragment : TabViewPagerFragment<GenrePagePresenter, GenrePageContract.GenrePageView>(), GenrePageContract.GenrePageView {
 
@@ -25,7 +24,7 @@ class GenrePagesFragment : TabViewPagerFragment<GenrePagePresenter, GenrePageCon
     private val fragmentsBak = mutableListOf<Fragment>()
 
 
-    override fun createPresenter() = GenrePagePresenterImpl(arguments.getString(C.BundleKey.Key_1) ?: error("no url for GenrePagesFragment"))
+    override fun createPresenter() = GenrePagePresenterImpl(arguments?.getString(C.BundleKey.Key_1) ?: error("no url for GenrePagesFragment"))
 
     override val mTitles: List<String>
         get() = titleValues
@@ -34,6 +33,7 @@ class GenrePagesFragment : TabViewPagerFragment<GenrePagePresenter, GenrePageCon
         get() = fragmentsBak
 
     override fun initWidget(rootView: View) {
+        //请求数据完成后再加载
         //super.initWidget(rootView)
     }
 
@@ -46,11 +46,6 @@ class GenrePagesFragment : TabViewPagerFragment<GenrePagePresenter, GenrePageCon
     }
 
     companion object {
-        fun newInstance(url: String) = GenrePagesFragment().apply {
-            arguments = Bundle().apply {
-                putString(C.BundleKey.Key_1, url)
-            }
-        }
 
         fun newInstance(type: DataSourceType) = GenrePagesFragment().apply {
             val urls = CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) } ?: arrayMapof()

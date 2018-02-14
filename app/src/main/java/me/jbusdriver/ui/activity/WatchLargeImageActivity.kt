@@ -3,31 +3,29 @@ package me.jbusdriver.ui.activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
-import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
-import com.bumptech.glide.request.animation.GlideAnimation
+import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
 import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import com.jaeger.library.StatusBarUtil
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_watch_large_image.*
-import me.jbusdriver.common.BaseActivity
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.inflate
-import me.jbusdriver.common.toGlideUrl
+import me.jbusdriver.common.*
 import me.jbusdriver.ui.widget.ImageGestureListener
 import me.jbusdriver.ui.widget.MultiTouchZoomableImageView
-import java.lang.Exception
 
 
 class WatchLargeImageActivity : BaseActivity() {
 
-    private val urls by lazy { intent.getStringArrayListExtra(INTENT_IMAGE_URL) ?: emptyList<String>() }
+    private val urls by lazy {
+        intent.getStringArrayListExtra(INTENT_IMAGE_URL) ?: emptyList<String>()
+    }
     private val imageViewList: ArrayList<View> = arrayListOf()
     private val index by lazy { intent.getIntExtra(INDEX, -1) }
 
@@ -44,7 +42,11 @@ class WatchLargeImageActivity : BaseActivity() {
         }
         vp_largeImage.adapter = MyViewPagerAdapter()
         vp_largeImage.currentItem = if (index == -1) 0 else index
-        StatusBarUtil.setTransparent(this)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            StatusBarUtil.setTransparent(this)
+        }
+
     }
 
 
@@ -70,14 +72,15 @@ class WatchLargeImageActivity : BaseActivity() {
         }
 
 
-        override fun instantiateItem(container: ViewGroup, position: Int): Any? {  //这个方法用来实例化页卡
+        override fun instantiateItem(container: ViewGroup, position: Int): Any {
             return imageViewList.getOrNull(position)?.apply {
                 container.addView(this, 0)//添加页卡
                 loadImage(this, position)
-            }
+            } ?: error("can not instantiateItem for $position in $imageViewList")
         }
 
         private fun loadImage(view: View, position: Int) {
+            view.findViewById<View>(R.id.pb_large_progress).animate().alpha(1f).setDuration(300).start()
             val offset = Math.abs(vp_largeImage.currentItem - position)
             val priority = when (offset) {
                 in 0..1 -> Priority.IMMEDIATE
@@ -87,29 +90,37 @@ class WatchLargeImageActivity : BaseActivity() {
             }
             KLog.d("load $position for ${vp_largeImage.currentItem} offset = $offset : $priority")
 
-            Glide.with(this@WatchLargeImageActivity).load(urls[position].toGlideUrl)
+            GlideApp.with(this@WatchLargeImageActivity)
                     .asBitmap()
-                    .crossFade()
-                    .error(R.drawable.ic_image_broken)
+                    .load((urls[position]).toGlideUrl)
+                    .transition(withCrossFade())
+                    .error(R.drawable.ic_image_error)
                     .priority(priority)
                     .into(object : SimpleTarget<Bitmap>() {
 
                         override fun onLoadStarted(placeholder: Drawable?) {
                             super.onLoadStarted(placeholder)
-                            view.findViewById(R.id.pb_large_progress).alpha = 1f
+                            view.findViewById<View>(R.id.pb_large_progress).alpha = 1f
                         }
 
-                        override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
-                            (view.findViewById(R.id.mziv_image_large) as MultiTouchZoomableImageView).imageBitmap = resource
-                            view.findViewById(R.id.pb_large_progress).animate().alpha(0f).setDuration(300).start()
+                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                            (view.findViewById<MultiTouchZoomableImageView>(R.id.mziv_image_large)).imageBitmap = resource
+                            view.findViewById<View>(R.id.pb_large_progress).animate().alpha(0f).setDuration(300).start()
                         }
 
-                        override fun onLoadFailed(e: Exception?, errorDrawable: Drawable?) {
-                            super.onLoadFailed(e, errorDrawable)
-                            view.findViewById(R.id.pb_large_progress).animate().alpha(0f).setDuration(500).start()
-                            (view.findViewById(R.id.mziv_image_large) as MultiTouchZoomableImageView).apply {
-                                imageBitmap = BitmapFactory.decodeResource(viewContext.resources, R.drawable.ic_image_broken)
-                                setImageGestureListener(object : ImageGestureListener {
+
+                        override fun onLoadFailed(errorDrawable: Drawable?) {
+                            super.onLoadFailed(errorDrawable)
+                            view.findViewById<View>(R.id.pb_large_progress).animate().alpha(0f).setDuration(500).start()
+                            (view.findViewById<View>(R.id.mziv_image_large) as MultiTouchZoomableImageView).also { view ->
+                                //                                imageBitmap = BitmapFactory.decodeResource(viewContext.resources, R.drawable.ic_image_error)
+                                GlideApp.with(view).asBitmap().load(R.drawable.ic_image_error).into(object : SimpleTarget<Bitmap>() {
+                                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                        view.imageBitmap = resource
+                                    }
+                                })
+
+                                view.setImageGestureListener(object : ImageGestureListener {
                                     override fun onImageGestureSingleTapConfirmed() {
                                         KLog.e("onImageGestureSingleTapConfirmed : reload")
                                         loadImage(view, position)
@@ -127,13 +138,10 @@ class WatchLargeImageActivity : BaseActivity() {
                     })
         }
 
-        override fun getCount(): Int {
-            return imageViewList.size//返回页卡的数量
-        }
+        override fun getCount() = imageViewList.size//返回页卡的数量
 
-        override fun isViewFromObject(arg0: View, arg1: Any): Boolean {
-            return arg0 === arg1//官方提示这样写
-        }
+
+        override fun isViewFromObject(arg0: View, arg1: Any) = arg0 === arg1//官方提示这样写
     }
 
 }

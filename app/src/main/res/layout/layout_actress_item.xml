@@ -18,7 +18,6 @@
             android:layout_width="@dimen/material_104dp"
             android:layout_height="@dimen/material_104dp"
             android:gravity="center"
-            android:scaleType="fitStart"
             tools:src="@mipmap/ic_launcher" />
 
         <TextView
@@ -45,6 +44,6 @@
         android:background="@drawable/bg_actress_tag"
         android:alpha="0.9"
         android:textColor="@color/white"
-        android:text="有吗" />
+        tools:text="有吗" />
 
 </android.support.v7.widget.CardView>

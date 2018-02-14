@@ -6,7 +6,6 @@ import android.support.v7.graphics.Palette
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
-import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
@@ -16,8 +15,11 @@ import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_relative_movies.view.*
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.mvp.bean.convertDBItem
+import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.activity.MovieDetailActivity
-import me.jbusdriver.ui.data.collect.MovieCollector
+import me.jbusdriver.ui.adapter.BaseAppAdapter
+import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import java.util.*
 
 /**
@@ -25,27 +27,11 @@ import java.util.*
  */
 class RelativeMovieHolder(context: Context) : BaseHolder(context) {
 
-    private val actionMap by lazy {
-        mapOf("复制名字" to { movie: Movie ->
-            weakRef.get()?.let {
-                it.copy(movie.title)
-                it.toast("已复制")
-
-            }
-        }, "收藏" to { movie: Movie ->
-            MovieCollector.addToCollect(movie)
-            KLog.d("movie_data:${MovieCollector.dataList}")
-        }, "取消收藏" to { movie: Movie ->
-            MovieCollector.removeCollect(movie)
-            KLog.d("movie_data:${MovieCollector.dataList}")
-        })
-    }
-
     val view by lazy {
         weakRef.get()?.let {
             it.inflate(R.layout.layout_detail_relative_movies).apply {
                 rv_recycle_relative_movies.layoutManager = LinearLayoutManager(it, LinearLayoutManager.HORIZONTAL, false)
-                rv_recycle_relative_movies.adapter = relativeAdapter
+                relativeAdapter.bindToRecyclerView(rv_recycle_relative_movies)
                 rv_recycle_relative_movies.isNestedScrollingEnabled = true
                 relativeAdapter.setOnItemClickListener { _, v, position ->
                     relativeAdapter.data.getOrNull(position)?.let {
@@ -55,12 +41,12 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
                 }
                 relativeAdapter.setOnItemLongClickListener { adapter, view, position ->
                     relativeAdapter.data.getOrNull(position)?.let { movie ->
-                        val action = if (MovieCollector.has(movie)) actionMap.minus("收藏")
-                        else actionMap.minus("取消收藏")
+                        val action = if (CollectModel.has(movie.convertDBItem())) LinkMenu.movieActions.minus("收藏")
+                        else LinkMenu.movieActions.minus("取消收藏")
                         MaterialDialog.Builder(view.context).title(movie.title)
                                 .items(action.keys)
                                 .itemsCallback { _, _, _, text ->
-                                    actionMap[text]?.invoke(movie)
+                                    action[text]?.invoke(movie)
                                 }
                                 .show()
                     }
@@ -71,9 +57,9 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
     }
 
     private val relativeAdapter: BaseQuickAdapter<Movie, BaseViewHolder> by lazy {
-        object : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.layout_detail_relative_movies_item) {
+        object : BaseAppAdapter<Movie, BaseViewHolder>(R.layout.layout_detail_relative_movies_item) {
             override fun convert(holder: BaseViewHolder, item: Movie) {
-                Glide.with(holder.itemView.context).load(item.imageUrl.toGlideUrl).asBitmap().into(object : BitmapImageViewTarget(holder.getView(R.id.iv_relative_movie_image)) {
+                GlideApp.with(holder.itemView.context).asBitmap().load(item.imageUrl.toGlideUrl).into(object : BitmapImageViewTarget(holder.getView(R.id.iv_relative_movie_image)) {
                     override fun setResource(resource: Bitmap?) {
                         super.setResource(resource)
                         resource?.let {

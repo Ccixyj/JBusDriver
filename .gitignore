@@ -49,8 +49,5 @@ captures/
 /.idea/
 /gradle/
 /projectFilesBackup/.idea
-/cfzx.android/*.iml
 /gradlew
 /local.properties
-/zob_cfzx_android.iml
-/cfzx.android/cfzx.android.iml

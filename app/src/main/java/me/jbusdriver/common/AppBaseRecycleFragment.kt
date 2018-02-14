@@ -4,17 +4,17 @@ import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.RecyclerView
+import android.view.Gravity
 import android.view.View
-import com.cfzx.mvp.view.BaseView
+import android.view.ViewGroup
+import android.widget.TextView
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import io.reactivex.Flowable
 import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.mvp.BaseView
 import me.jbusdriver.mvp.presenter.BasePresenter
 
-/**
- * Created by Administrator on 2017/4/9.
- */
 abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePresenter<V>, V : BaseView.BaseListWithRefreshView, M> : AppBaseFragment<P, V>(), BaseView.BaseListWithRefreshView {
 
     /**
@@ -34,14 +34,16 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
 
     override fun initWidget(rootView: View) {
         recycleView.layoutManager = layoutManager
-        adapter.setOnLoadMoreListener({ mBasePresenter?.onLoadMore() }, recycleView)
+        recycleView.recycledViewPool
+
         adapter.openLoadAnimation {
             arrayOf(ObjectAnimator.ofFloat(it, "alpha", 0.0f, 1.0f),
                     ObjectAnimator.ofFloat(it, "translationY", 120f, 0f))
         }
         swipeView?.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimaryLight)
         swipeView?.setOnRefreshListener { mBasePresenter?.onRefresh() }
-        recycleView.adapter = adapter
+        adapter.bindToRecyclerView(recycleView)
+        adapter.setOnLoadMoreListener({ mBasePresenter?.onLoadMore() }, recycleView)
     }
 
     override fun showLoading() {
@@ -65,10 +67,9 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
         } ?: super.dismissLoading()
     }
 
-    override fun showContents(datas: List<*>?) {
-        KLog.d("showContents :$datas")
-        adapter.addData(datas as MutableList<M>)
-        //Diffutils
+    override fun showContents(data: List<*>) {
+        KLog.d("showContents :$data")
+        adapter.addData(data as MutableList<M>)
     }
 
     override fun loadMoreComplete() {
@@ -76,8 +77,18 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
     }
 
     override fun loadMoreEnd(clickable: Boolean) {
+        if (adapter.getEmptyView() == null && adapter.getData().isEmpty()) {
+            adapter.setEmptyView(getEmptyView())
+        }
         adapter.loadMoreEnd()
         adapter.enableLoadMoreEndClick(clickable)
+    }
+
+    protected open fun getEmptyView(): View = TextView(viewContext).apply {
+        text = "没有数据"
+        layoutParams = ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, viewContext.dpToPx(36f)).apply {
+            gravity = Gravity.CENTER
+        }
     }
 
     override fun loadMoreFail() {
@@ -100,7 +111,7 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
     }
 
     override fun showError(e: Throwable?) {
-
+        adapter.loadMoreFail()
     }
 }
 

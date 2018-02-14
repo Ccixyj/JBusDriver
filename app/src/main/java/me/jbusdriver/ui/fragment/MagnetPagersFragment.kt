@@ -11,7 +11,7 @@ import me.jbusdriver.ui.data.AppConfiguration
  */
 class MagnetPagersFragment : TabViewPagerFragment<MagnetPagerContract.MagnetPagerPresenter, MagnetPagerContract.MagnetPagerView>(), MagnetPagerContract.MagnetPagerView {
 
-    private val keyword by lazy { arguments.getString(C.BundleKey.Key_1) ?: error("must set keyword") }
+    private val keyword by lazy { arguments?.getString(C.BundleKey.Key_1) ?: error("must set keyword") }
 
 
     override fun createPresenter() = MagnetPagerPresenterImpl()

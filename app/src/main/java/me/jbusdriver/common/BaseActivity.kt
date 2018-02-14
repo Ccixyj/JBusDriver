@@ -24,7 +24,6 @@ abstract class BaseActivity : AppCompatActivity() {
         MobclickAgent.setDebugMode(jbusdriver.me.jbusdriver.BuildConfig.DEBUG)
         MobclickAgent.openActivityDurationTrack(BuildConfig.DEBUG)
         MobclickAgent.setScenarioType(this, MobclickAgent.EScenarioType.E_UM_NORMAL)
-
     }
 
     override fun onStart() {
@@ -86,11 +85,11 @@ abstract class BaseActivity : AppCompatActivity() {
 
     val isDestroyedCompatible: Boolean
         get() {
-            if (Build.VERSION.SDK_INT >= 17) {
-                return isDestroyedCompatible17
-            } else {
-                return destroyed || super.isFinishing()
-            }
+            return if (Build.VERSION.SDK_INT >= 17)
+                isDestroyedCompatible17
+            else
+                destroyed || super.isFinishing()
+
         }
 
     private val isDestroyedCompatible17: Boolean

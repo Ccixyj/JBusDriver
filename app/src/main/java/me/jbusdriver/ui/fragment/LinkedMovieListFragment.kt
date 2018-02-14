@@ -7,8 +7,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
+import com.bumptech.glide.request.target.DrawableImageViewTarget
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
@@ -17,21 +16,22 @@ import kotlinx.android.synthetic.main.layout_load_all.view.*
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.mvp.presenter.LinkAbsPresenterImpl
 import me.jbusdriver.mvp.presenter.MovieLinkPresenterImpl
 import me.jbusdriver.ui.activity.SearchResultActivity
-import me.jbusdriver.ui.data.collect.ActressCollector
-import me.jbusdriver.ui.data.collect.LinkCollector
-import me.jbusdriver.ui.data.collect.MovieCollector
 
 
 /**
  * ilink 由跳转链接进入的 /历史记录
  */
 class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkListView {
-    private val link by lazy { arguments.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ") }
+    private val link by lazy {
+        arguments?.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ")
+    }
+
     private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }
-    private val isHistory by lazy { arguments.getBoolean(C.BundleKey.Key_2, false) }
+    private val isHistory by lazy { arguments?.getBoolean(C.BundleKey.Key_2, false) ?: false }
     private val attrViews by lazy { mutableListOf<View>() }
 
 
@@ -40,12 +40,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
         val isCollect by lazy {
-            when (link) {
-                is Movie -> MovieCollector.has(link as Movie)
-                is ActressInfo -> ActressCollector.has(link as ActressInfo)
-                else -> LinkCollector.has(link)
-            }
-
+            CollectModel.has(link.convertDBItem())
         }
         if (!isHistory || link !is PageLink) { //历史记录隐藏
             collectMenu = menu?.add(Menu.NONE, R.id.action_add_movie_collect, 10, "收藏")?.apply {
@@ -61,9 +56,6 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         }
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?) {
-        super.onPrepareOptionsMenu(menu)
-    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
@@ -71,13 +63,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
             R.id.action_add_movie_collect -> {
                 //收藏
                 KLog.d("收藏")
-                val res = when (link) {
-                    is Movie -> MovieCollector.addToCollect(link as Movie)
-                    is ActressInfo -> ActressCollector.addToCollect((link as ActressInfo).apply {
-                        tag = null
-                    })
-                    else -> LinkCollector.addToCollect(link)
-                }
+                val res = CollectModel.addToCollect(link.convertDBItem())
                 if (res) {
                     collectMenu?.isVisible = false
                     removeCollectMenu?.isVisible = true
@@ -86,11 +72,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
             R.id.action_remove_movie_collect -> {
                 //取消收藏
                 KLog.d("取消收藏")
-                val res = when (link) {
-                    is Movie -> MovieCollector.removeCollect(link as Movie)
-                    is ActressInfo -> ActressCollector.removeCollect(link as ActressInfo)
-                    else -> LinkCollector.removeCollect(link)
-                }
+                val res = CollectModel.removeCollect(link.convertDBItem())
                 if (res) {
                     collectMenu?.isVisible = true
                     removeCollectMenu?.isVisible = false
@@ -103,12 +85,12 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
 
     override fun initData() {
         if (isSearch) {
-            RxBus.toFlowable(SearchWord::class.java).subscribeBy({ sea ->
+            RxBus.toFlowable(SearchWord::class.java).subscribeBy { sea ->
                 (mBasePresenter as? LinkAbsPresenterImpl<*>)?.let {
                     (it.linkData as SearchLink).query = sea.query
                     it.onRefresh()
                 }
-            }).addTo(rxManager)
+            }.addTo(rxManager)
         }
     }
 
@@ -125,12 +107,13 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         }
     }
 
-    override fun createPresenter() = MovieLinkPresenterImpl(link, arguments.getBoolean(LinkableListFragment.MENU_SHOW_ALL, false) , isHistory)
+    override fun createPresenter() = MovieLinkPresenterImpl(link, arguments?.getBoolean(LinkableListFragment.MENU_SHOW_ALL, false)
+            ?: false, isHistory)
 
     override fun <T> showContent(data: T?) {
         KLog.d("parse res :$data")
         if (data is String) {
-            getLoaAllView(data)?.let { attrViews.add(it) }
+            getLoadAllView(data)?.let { attrViews.add(it) }
         }
 
         if (data is IAttr) {
@@ -138,11 +121,11 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         }
     }
 
-    override fun showContents(datas: List<*>?) {
+    override fun showContents(data: List<*>) {
         adapter.removeAllHeaderView()
         attrViews.forEach { adapter.addHeaderView(it) }
         attrViews.clear()
-        super.showContents(datas)
+        super.showContents(data)
 
     }
 
@@ -150,7 +133,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         is ActressAttrs -> {
             this.viewContext.inflate(R.layout.layout_actress_attr).apply {
                 //img
-                Glide.with(this@LinkedMovieListFragment).load(data.imageUrl.toGlideUrl).into(GlideDrawableImageViewTarget(this.iv_actress_avatar))
+                GlideApp.with(this@LinkedMovieListFragment).load(data.imageUrl.toGlideUrl).into(DrawableImageViewTarget(this.iv_actress_avatar))
                 //title
                 this.ll_attr_container.addView(generateTextView().apply {
                     textSize = 16f
@@ -166,7 +149,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         else -> error("current not provide for IAttr $data")
     }
 
-    private fun getLoaAllView(data: String): View? {
+    private fun getLoadAllView(data: String): View? {
         return data.split("：").let { txts ->
             if (txts.size == 2) {
                 this.viewContext.inflate(R.layout.layout_load_all).apply {
@@ -199,8 +182,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
     companion
     object {
         //电影列表,演员,链接,搜索入口
-        fun newInstance(link: ILink, cancelLazyLoad: Boolean? = null) = LinkedMovieListFragment().apply {
-            if (true == cancelLazyLoad) userVisibleHint = true
+        fun newInstance(link: ILink) = LinkedMovieListFragment().apply {
             arguments = Bundle().apply {
                 putSerializable(C.BundleKey.Key_1, link)
             }

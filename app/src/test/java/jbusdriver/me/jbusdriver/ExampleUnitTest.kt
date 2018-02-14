@@ -1,7 +1,6 @@
 package jbusdriver.me.jbusdriver
 
-import io.reactivex.Flowable
-import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import org.junit.Test
 
 
@@ -11,12 +10,13 @@ import org.junit.Test
  * @see [Testing documentation](http://d.android.com/tools/testing)
  */
 class ExampleUnitTest {
-    val TAG = ExampleUnitTest::class.java.simpleName
     @Test
     @Throws(Exception::class)
     fun addition_isCorrect() {
-        Flowable.concat<Int>(Flowable.empty() , Flowable.just(1) )
-                .firstOrError().subscribeBy(onSuccess = { println(it)})
 
+        Schedulers.trampoline().scheduleDirect {
+            println("${Thread.currentThread().name} : start")
+            Thread.sleep(200)
+        }
     }
 }

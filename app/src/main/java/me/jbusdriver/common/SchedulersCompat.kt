@@ -11,23 +11,27 @@ object SchedulersCompat {
     /**
      * Don't break the chain: use RxJava's compose() operator
      */
-    @JvmStatic fun <T> computation(): FlowableTransformer<T, T> {
-        return FlowableTransformer { it.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io()) }
-    }
+    @JvmStatic
+    fun <T> computation(): FlowableTransformer<T, T> =
+            FlowableTransformer { it.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io()) }
 
-    @JvmStatic fun <T> io(): FlowableTransformer<T, T> {
-        return FlowableTransformer { it.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io()) }
-    }
+    @JvmStatic
+    fun <T> io(): FlowableTransformer<T, T> =
+            FlowableTransformer { it.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io()) }
 
-    @JvmStatic fun <T> newThread(): FlowableTransformer<T, T> {
-        return FlowableTransformer { it.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io()) }
-    }
+    @JvmStatic
+    fun <T> single(): FlowableTransformer<T, T> =
+            FlowableTransformer { it.subscribeOn(Schedulers.single()).observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.single()) }
 
-    @JvmStatic fun <T> trampoline(): FlowableTransformer<T, T> {
-        return FlowableTransformer { it.subscribeOn(Schedulers.trampoline()).observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io()) }
-    }
+    @JvmStatic
+    fun <T> newThread(): FlowableTransformer<T, T> =
+            FlowableTransformer { it.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io()) }
 
-    @JvmStatic fun <T> mainThread(): FlowableTransformer<T, T> {
-        return FlowableTransformer { it.observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io()) }
-    }
+    @JvmStatic
+    fun <T> trampoline(): FlowableTransformer<T, T> =
+            FlowableTransformer { it.subscribeOn(Schedulers.trampoline()).observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io()) }
+
+    @JvmStatic
+    fun <T> mainThread(): FlowableTransformer<T, T> =
+            FlowableTransformer { it.observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io()) }
 }

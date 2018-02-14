@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/material_32dp"
+    android:orientation="horizontal"  >
+
+
+    <TextView
+        android:id="@+id/tv_category_name"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:text="收藏夹修改" />
+
+
+    <ImageView
+        android:id="@+id/tv_category_delete"
+        android:layout_width="@dimen/material_32dp"
+        android:layout_height="@dimen/material_32dp"
+        android:gravity="center"
+        android:padding="@dimen/material_4dp"
+        android:src="@drawable/ic_close" />
+
+</LinearLayout>

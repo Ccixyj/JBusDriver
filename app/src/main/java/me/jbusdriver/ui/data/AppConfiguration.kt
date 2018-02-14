@@ -6,6 +6,7 @@ import me.jbusdriver.common.AppContext
 import me.jbusdriver.common.RxBus
 import me.jbusdriver.common.fromJson
 import me.jbusdriver.common.toJsonString
+import me.jbusdriver.mvp.bean.CategoryChangeEvent
 import me.jbusdriver.mvp.bean.MenuChangeEvent
 import me.jbusdriver.mvp.bean.PageChangeEvent
 import kotlin.properties.Delegates
@@ -42,6 +43,18 @@ object AppConfiguration {
 
     //endregion
 
+    //region magnet
+    private const val MagnetSourceS: String = "MagnetSourceS"
+    val MagnetKeys: MutableList<String> by lazy {
+        AppContext.gson.fromJson<MutableList<String>>(getSp(MagnetSourceS) ?: "") ?: let {
+            val default = listOf("btso.pw", "btdiggs")
+            saveSp(MagnetSourceS, default.toJsonString())
+            default.toMutableList()
+        }
+    }
+
+    fun saveMagnetKeys() = saveSp(MagnetSourceS, MagnetKeys.toJsonString())
+    //endregion
 
     //region menu
     private const val MenuConfigS: String = "MenuConfig"
@@ -61,23 +74,22 @@ object AppConfiguration {
     }
     //endregion
 
+    //region collectCategory
+
+    private const val collectCategoryS: String = "collectCategoryS"
+    var enableCategory: Boolean by Delegates.observable(java.lang.Boolean.parseBoolean(getSp(collectCategoryS))) { _, old, new ->
+        saveSp(collectCategoryS, new.toString())
+        RxBus.post(CategoryChangeEvent())
+    }
+
+    //endregion
+
 
     private const val HistoryS: String = "HistoryS"
     var enableHistory: Boolean = true
 
 
-    //region magnet
-    private const val MagnetSourceS: String = "MagnetSourceS"
-    val MagnetKeys: MutableList<String> by lazy {
-        AppContext.gson.fromJson<MutableList<String>>(getSp(MagnetSourceS) ?: "") ?: let {
-            val default = listOf("btso.pw", "btdiggs")
-            saveSp(MagnetSourceS, default.toJsonString())
-            default.toMutableList()
-        }
-    }
 
-    fun saveMagnetKeys() = saveSp(MagnetSourceS, MagnetKeys.toJsonString())
-    //endregion
 
 }
 

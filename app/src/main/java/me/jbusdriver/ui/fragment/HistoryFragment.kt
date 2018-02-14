@@ -8,20 +8,21 @@ import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.common.AppBaseRecycleFragment
+import me.jbusdriver.common.GlideApp
 import me.jbusdriver.common.toGlideUrl
 import me.jbusdriver.db.bean.History
 import me.jbusdriver.mvp.HistoryContract
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.presenter.HistoryPresenterImpl
+import me.jbusdriver.ui.adapter.BaseAppAdapter
 import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Created by Administrator on 2017/9/18 0018.
@@ -58,9 +59,12 @@ class HistoryFragment : AppBaseRecycleFragment<HistoryContract.HistoryPresenter,
 
     override val adapter: BaseQuickAdapter<History, in BaseViewHolder> by lazy {
 
-        object : BaseQuickAdapter<History, BaseViewHolder>(R.layout.layout_history_item) {
-            val format = SimpleDateFormat("yyyy-MM-dd")
+
+        object : BaseAppAdapter<History, BaseViewHolder>(R.layout.layout_history_item) {
+
             val linkCache by lazy { ArrayMap<Int, ILink>() }
+            val format = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
+
             override fun convert(helper: BaseViewHolder, item: History) {
                 val itemLink = linkCache.getOrPut(item.hashCode()) { item.getLinkItem() }
                 val appender = if (itemLink !is Movie && itemLink !is SearchLink) {
@@ -77,7 +81,7 @@ class HistoryFragment : AppBaseRecycleFragment<HistoryContract.HistoryPresenter,
 
                 if (img.isNotBlank()) {
                     helper.setVisible(R.id.iv_history_icon, true)
-                    Glide.with(mContext).load(img.toGlideUrl).asBitmap().into(BitmapImageViewTarget(helper.getView(R.id.iv_history_icon)))
+                    GlideApp.with(mContext).load(img.toGlideUrl).into(helper.getView(R.id.iv_history_icon))
                 } else {
                     helper.setGone(R.id.iv_history_icon, false)
                 }

@@ -20,8 +20,8 @@ import java.util.concurrent.TimeUnit
  * Created by Administrator on 2016/7/22 0022.
  */
 object NetClient {
-    private val TAG = "NetClient"
-    const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36"
+    private const val TAG = "NetClient"
+    private const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36"
     // private val gsonConverterFactory = GsonConverterFactory.create(AppContext.gson)
     private val rxJavaCallAdapterFactory = RxJava2CallAdapterFactory.create()
     private val EXIST_MAGNET_INTERCEPTOR by lazy {
@@ -38,9 +38,7 @@ object NetClient {
 
     fun getRetrofit(baseUrl: String) = Retrofit.Builder().client(okHttpClient).baseUrl(baseUrl)
             .addConverterFactory(object : Converter.Factory() {
-                override fun responseBodyConverter(type: Type?, annotations: Array<out Annotation>?, retrofit: Retrofit?): Converter<ResponseBody, *> {
-                    return Converter<ResponseBody, String> { it.string() }
-                }
+                override fun responseBodyConverter(type: Type?, annotations: Array<out Annotation>?, retrofit: Retrofit?): Converter<ResponseBody, *> = Converter<ResponseBody, String> { it.string() }
             })
             .addCallAdapterFactory(rxJavaCallAdapterFactory).build()!!
 
@@ -62,12 +60,9 @@ object NetClient {
                     private val cookieStore = HashMap<HttpUrl, List<Cookie>>()
 
                     override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
-                        cookieStore.put(url, cookies)
+                        cookieStore[url] = cookies
                     }
-
-                    override fun loadForRequest(url: HttpUrl): List<Cookie> {
-                        return cookieStore[url] ?: ArrayList<Cookie>()
-                    }
+                    override fun loadForRequest(url: HttpUrl) = cookieStore[url] ?: ArrayList()
                 })
         if (BuildConfig.DEBUG) {
             client.addInterceptor(LoggerInterceptor("OK_HTTP"))

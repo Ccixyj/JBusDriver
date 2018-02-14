@@ -1,47 +1,134 @@
 package me.jbusdriver.mvp.presenter
 
-import com.cfzx.mvp.view.BaseView
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.subscribeBy
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.SchedulersCompat
-import me.jbusdriver.mvp.bean.PageInfo
+import me.jbusdriver.db.bean.*
+import me.jbusdriver.db.service.CategoryService
+import me.jbusdriver.db.service.LinkService
+import me.jbusdriver.mvp.ActressCollectContract
+import me.jbusdriver.mvp.BaseView
+import me.jbusdriver.mvp.MovieCollectContract
+import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.model.BaseModel
-import me.jbusdriver.ui.data.collect.ICollect
+import me.jbusdriver.mvp.model.CollectModel
+import me.jbusdriver.ui.data.AppConfiguration
 import org.jsoup.nodes.Document
 
-/**
- * Created by Administrator on 2017/5/10 0010.
- */
+
+abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T : ICollectCategory> : AbstractRefreshLoadMorePresenterImpl<V, T>(), BasePresenter.BaseCollectPresenter<T> {
 
 
-abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T>(private val collector: ICollect<T>) : AbstractRefreshLoadMorePresenterImpl<V, T>() {
+    protected open val pageSize = 20
 
+    private val ancestor by lazy {
+        when {
+            this is MovieCollectContract.MovieCollectPresenter -> MovieCategory
+            this is ActressCollectContract.ActressCollectPresenter -> ActressCategory
+            else -> LinkCategory
+        }
+    }
+    private val listData by lazy {
+        load().toMutableList()
+    }
 
-    private val PageSize = 20
-    private val listData by lazy { collector.dataList.toMutableList() }
     private val pageNum
-        get() = ((listData.size - 1) / PageSize) + 1
+        get() = ((listData.size - 1) / pageSize) + 1
+
+    override val collectGroupMap: MutableMap<Category, List<T>> = mutableMapOf()
+
+    override val adapterDelegate: BasePresenter.BaseCollectPresenter.CollectMultiTypeDelegate<T> = BasePresenter.BaseCollectPresenter.CollectMultiTypeDelegate()
+
+
+    private fun load() = when {
+        this is MovieCollectContract.MovieCollectPresenter -> LinkService.queryMovies()
+        this is ActressCollectContract.ActressCollectPresenter -> LinkService.queryActress()
+        else -> LinkService.queryLink()
+    }
 
     override fun loadData4Page(page: Int) {
-        val next = if (page < pageNum) page + 1 else pageNum
-        pageInfo = pageInfo.copy(activePage = page, nextPage = next)
-        Flowable.just(pageInfo).map {
-            KLog.d("request page : $it")
-            val start = (pageInfo.activePage - 1) * PageSize
-            val nextSize = start + PageSize
-            val end = if (nextSize <= listData.size) nextSize else listData.size
-            listData.subList(start, end)
-        }.compose(SchedulersCompat.io())
-                .subscribeWith(ListDefaultSubscriber(page))
-                .addTo(rxManager)
+        //查询所有的分类 //优化:先查20个
+        mView?.showLoading()
+        if (AppConfiguration.enableCategory) {
+            //一次性加载完成
+            Flowable.just(ancestor)
+                    .filter { ancestor.id != null }
+                    .flatMap { Flowable.fromIterable(CategoryService.queryCategoryTreeLike(it.id!!)) }
+                    .map { cate ->
+                        val parent = CollectLinkWrapper<T>(cate).apply {
+                            adapterDelegate.needInjectType.add(level)
+                        }
+                        val list = LinkService.queryByCategory(cate)
+                        val items = mutableListOf<T>()
+                        list.forEach {
+                            val mapValue = it.getLinkValue() as? T
+                            if (mapValue != null) {
+                                parent.addSubItem(CollectLinkWrapper(cate, mapValue).apply {
+                                    adapterDelegate.needInjectType.add(level)
+                                })
+                                items.add(mapValue)
+                            }
+                        }
+                        collectGroupMap[cate] = items
+                        parent
+                    }
+
+                    .toList()
+                    .doFinally { mView?.dismissLoading() }
+                    .subscribeBy({
+                        mView?.showError(it)
+                    }, {
+                        mView?.resetList()
+                        mView?.showContents(it)
+                        mView?.loadMoreComplete()
+                        mView?.loadMoreEnd()
+
+                    })
+                    .addTo(rxManager)
+
+        } else {
+            val next = if (page < pageNum) page + 1 else pageNum
+            pageInfo = pageInfo.copy(activePage = page, nextPage = next)
+            Flowable.just(pageInfo).map {
+                KLog.d("request page : $it")
+                val start = (pageInfo.activePage - 1) * pageSize
+                val nextSize = start + pageSize
+                val end = if (nextSize <= listData.size) nextSize else listData.size
+                listData.subList(start, end).map {
+                    CollectLinkWrapper(null, it.convertDBItem().getLinkValue()).apply {
+                        adapterDelegate.needInjectType.add(level)
+                    }
+                }
+            }.doFinally { mView?.dismissLoading() }
+                    .compose(SchedulersCompat.io())
+                    .subscribeBy({
+                        mView?.showError(it)
+                    }, {
+                        if (!pageInfo.hasNext) mView?.loadMoreEnd()
+                    }, {
+                        mView?.showContents(it)
+                        mView?.loadMoreComplete()
+                    }).addTo(rxManager)
+        }
+
 
     }
 
     override fun onRefresh() {
         pageInfo = PageInfo()
-        listData.clear()
-        listData.addAll(collector.dataList)
+//        listData.clear()
+//        collector.reload()
+//        listData.addAll(collector.dataList)
+        if (!AppConfiguration.enableCategory) {
+            listData.clear()
+            listData.addAll(load())
+        } else {
+            collectGroupMap.clear()
+        }
+
+        mView?.resetList()
         loadData4Page(1)
     }
 
@@ -53,4 +140,9 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T>(
     }
 
 
+    override fun setCategory(t: T, category: Category) {
+        require(t is ILink && category.id != null)
+        val dbItem = (t as ILink).convertDBItem().apply { categoryId = category.id!! }
+        CollectModel.update(dbItem)
+    }
 }

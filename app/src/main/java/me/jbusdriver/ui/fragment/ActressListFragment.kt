@@ -8,56 +8,68 @@ import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
-import com.cfzx.utils.CacheLoader
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.mvp.presenter.ActressLinkPresenterImpl
 import me.jbusdriver.mvp.presenter.LinkAbsPresenterImpl
-import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.adapter.ActressInfoAdapter
 import me.jbusdriver.ui.data.AppConfiguration
-import me.jbusdriver.ui.data.DataSourceType
-import me.jbusdriver.ui.data.collect.LinkCollector
+import me.jbusdriver.ui.data.enums.DataSourceType
 
 class ActressListFragment : LinkableListFragment<ActressInfo>() {
 
     private val link by lazy {
-        arguments.getSerializable(C.BundleKey.Key_2)  as? ILink ?: error("no link data ")
+        arguments?.getSerializable(C.BundleKey.Key_2)  as? ILink ?: error("no link data ")
     }
-    private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }
 
-    override val layoutManager: RecyclerView.LayoutManager  by lazy { StaggeredGridLayoutManager(viewContext.spanCount, OrientationHelper.VERTICAL) }
-    override val adapter by lazy {
-        ActressInfoAdapter(rxManager).apply {
-            setOnItemClickListener { adapter, _, position ->
-                (adapter.data.getOrNull(position) as? ActressInfo)?.let {
-                    MovieListActivity.start(viewContext, it)
+    override val type: DataSourceType by lazy {
+        arguments?.getSerializable(C.BundleKey.Key_1) as? DataSourceType ?: let {
+            (arguments?.getSerializable(C.BundleKey.Key_1) as? ILink)?.let { link ->
+                if (link is Movie) link.type
+                else {
+                    val urls = CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<Map<String, String>>(it) }
+                            ?: arrayMapof()
+                    val key = urls.filter { link.link.startsWith(it.value) }.values.sortedBy { it.length }.lastOrNull()
+                            ?: DataSourceType.CENSORED.key
+                    val ck = urls.filter { it.value == key }.keys.first()
+                    val ds = DataSourceType.values().firstOrNull { it.key == ck }
+                            ?: DataSourceType.CENSORED
+                    if (link is ActressInfo) {
+                        when (ds) {
+                            DataSourceType.CENSORED -> DataSourceType.ACTRESSES
+                            DataSourceType.UNCENSORED -> DataSourceType.UNCENSORED_ACTRESSES
+                            DataSourceType.XYZ -> DataSourceType.XYZ_ACTRESSES
+                            else -> ds
+                        }
+                    }
+
                 }
-            }
-
+                DataSourceType.CENSORED
+            } ?: DataSourceType.CENSORED
         }
     }
 
-    override fun createPresenter() = ActressLinkPresenterImpl(link)
+    private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }
 
-    override fun initWidget(rootView: View) {
-        super.initWidget(rootView)
-    }
+    override val layoutManager: RecyclerView.LayoutManager  by lazy { StaggeredGridLayoutManager(viewContext.spanCount, OrientationHelper.VERTICAL) }
+    override val adapter by lazy { ActressInfoAdapter(rxManager) }
+
+    override fun createPresenter() = ActressLinkPresenterImpl(link)
 
     override fun initData() {
         if (isSearch) {
-            RxBus.toFlowable(SearchWord::class.java).subscribeBy({ sea ->
+            RxBus.toFlowable(SearchWord::class.java).subscribeBy { sea ->
                 (mBasePresenter as? LinkAbsPresenterImpl<*>)?.let {
                     (it.linkData as SearchLink).query = sea.query
                     it.onRefresh()
                 }
-            }).addTo(rxManager)
+            }.addTo(rxManager)
         }
     }
 
@@ -67,7 +79,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
         super.onCreateOptionsMenu(menu, inflater)
         menu?.findItem(R.id.action_show_all)?.isVisible = false
         if (isSearch) {
-            val isCollect = LinkCollector.has(link as SearchLink)
+            val isCollect = CollectModel.has((link as SearchLink).convertDBItem())
             collectMenu = menu?.add(Menu.NONE, R.id.action_add_movie_collect, 10, "收藏")?.apply {
                 setIcon(R.drawable.ic_star_border_white_24dp)
                 setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -87,7 +99,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
             R.id.action_add_movie_collect -> {
                 //收藏
                 KLog.d("收藏")
-                if (LinkCollector.addToCollect(link)) {
+                if (CollectModel.addToCollect(link.convertDBItem())) {
                     collectMenu?.isVisible = false
                     removeCollectMenu?.isVisible = true
                 }
@@ -95,7 +107,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
             R.id.action_remove_movie_collect -> {
                 //取消收藏
                 KLog.d("取消收藏")
-                if (LinkCollector.removeCollect(link)) {
+                if (CollectModel.removeCollect(link.convertDBItem())) {
                     collectMenu?.isVisible = true
                     removeCollectMenu?.isVisible = false
                 }
@@ -128,8 +140,9 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
         }
 
         fun newInstance(type: DataSourceType) = ActressListFragment().apply {
-            val urls = CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) } ?: arrayMapof()
-            val url = urls[type.key] ?: JAVBusService.defaultFastUrl + "/actresses"
+            val urls = CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) }
+                    ?: arrayMapof()
+            val url = urls[type.key] ?: JAVBusService.defaultFastUrl+"/actresses"
             arguments = Bundle().apply {
                 /*
                 *
@@ -143,7 +156,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
 
     }
 
-    override fun insertDatas(pos: Int, datas: List<*>) {
+    override fun insertData(pos: Int, data: List<*>) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

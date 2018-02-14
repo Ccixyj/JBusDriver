@@ -4,10 +4,7 @@ import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.Gravity
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
+import com.afollestad.materialdialogs.MaterialDialog
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
@@ -17,11 +14,12 @@ import me.jbusdriver.common.*
 import me.jbusdriver.mvp.MagnetListContract
 import me.jbusdriver.mvp.bean.Magnet
 import me.jbusdriver.mvp.presenter.MagnetListPresenterImpl
+import me.jbusdriver.ui.adapter.BaseAppAdapter
 
 class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListPresenter, MagnetListContract.MagnetListView, Magnet>(), MagnetListContract.MagnetListView {
 
-    private val keyword by lazy { arguments.getString(C.BundleKey.Key_1) ?: error("need keyword") }
-    private val magnetLoaderKey by lazy { arguments.getString(C.BundleKey.Key_2) ?: error("need magnet loaderKey") }
+    private val keyword by lazy { arguments?.getString(C.BundleKey.Key_1) ?: error("need keyword") }
+    private val magnetLoaderKey by lazy { arguments?.getString(C.BundleKey.Key_2) ?: error("need magnet loaderKey") }
     override fun createPresenter() = MagnetListPresenterImpl(magnetLoaderKey, keyword)
 
     override val layoutId: Int = R.layout.layout_swipe_recycle
@@ -32,7 +30,7 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListP
 
     override val adapter: BaseQuickAdapter<Magnet, in BaseViewHolder> by lazy {
 
-        object : BaseQuickAdapter<Magnet, BaseViewHolder>(R.layout.layout_magnet_item) {
+        object : BaseAppAdapter<Magnet, BaseViewHolder>(R.layout.layout_magnet_item) {
 
             override fun convert(helper: BaseViewHolder, item: Magnet) {
                 KLog.d("convert $item")
@@ -43,18 +41,13 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListP
             }
 
         }.apply {
-            emptyView = TextView(viewContext).apply {
-                text = "没有种子数据"
-                layoutParams = ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, viewContext.dpToPx(36f)).apply {
-                    gravity = Gravity.CENTER
-                }
-            }
-            emptyView.visibility = View.INVISIBLE
-
             setOnItemClickListener { adapter, _, position ->
                 (adapter.data.getOrNull(position) as? Magnet)?.let { magnet ->
                     KLog.d("setOnItemClickListener $magnet")
-                    viewContext.browse(magnet.link)
+                    showMagnetLoading()
+                    viewContext.browse(magnet.link) {
+                        placeDialogHolder?.dismiss()
+                    }
                 }
 
             }
@@ -80,9 +73,14 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListP
 
     }
 
-    override fun showContents(datas: List<*>?) {
-        super.showContents(datas)
-        if (adapter.getData().isEmpty()) adapter.getEmptyView().visibility = View.VISIBLE
+
+    private fun showMagnetLoading() {
+        placeDialogHolder = MaterialDialog.Builder(viewContext).content("正在查询磁力信息...").progress(true, 0).show()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        placeDialogHolder?.dismiss()
     }
 
     companion object {

@@ -1,7 +1,6 @@
 package me.jbusdriver.mvp.presenter
 
 import android.support.v4.util.ArrayMap
-import com.cfzx.utils.CacheLoader
 import io.reactivex.Flowable
 import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
@@ -11,7 +10,7 @@ import me.jbusdriver.mvp.bean.PageLink
 import me.jbusdriver.mvp.model.AbstractBaseModel
 import me.jbusdriver.mvp.model.BaseModel
 import me.jbusdriver.ui.data.AppConfiguration
-import me.jbusdriver.ui.data.DataSourceType
+import me.jbusdriver.ui.data.enums.DataSourceType
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
@@ -20,15 +19,19 @@ import org.jsoup.nodes.Document
  */
 open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink) : LinkAbsPresenterImpl<Movie>(link) {
 
-    private val urls by lazy { CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) } ?: arrayMapof() }
+    private val urls by lazy {
+        CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) }
+                ?: arrayMapof()
+    }
     private val saveKey: String
         inline get() = "${type.key}$IsAll"
     private val service by lazy {
-        JAVBusService.getInstance(urls[type.key] ?: JAVBusService.defaultFastUrl).apply { JAVBusService.INSTANCE = this }
+        JAVBusService.getInstance(urls[type.key]
+                ?: JAVBusService.defaultFastUrl).apply { JAVBusService.INSTANCE = this }
     }
 
     private val loadFromNet = { page: Int ->
-        val urlN = (urls.get(type.key) ?: "").let { url ->
+        val urlN = urls.getOrElse(type.key) { "" }.let { url ->
             return@let if (page == 1) url else "$url${type.prefix}$page"
         }
         KLog.i("load url :$urlN")
@@ -36,7 +39,7 @@ open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink)
         //add his
         val pageLink = PageLink(page = page, title = type.key, link = urlN)
         addHistory(pageLink)
-        service.get(urlN, if (IsAll) "all" else null).doOnNext {
+        service.get(urlN, if (IsAll) "all" else null).addUserCase().doOnNext {
             if (page == 1) CacheLoader.lru.put(saveKey, it)
         }.map { Jsoup.parse(it) }.doOnError {
             //可能网址被封
@@ -55,10 +58,12 @@ open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink)
     }
 
 
-    override fun stringMap(str: Document) = Movie.loadFromDoc(mView?.type ?: DataSourceType.CENSORED, str).let {
+    override fun stringMap(str: Document) = Movie.loadFromDoc(mView?.type
+            ?: DataSourceType.CENSORED, str).let {
         when (mView?.pageMode) {
             AppConfiguration.PageMode.Page -> {
-                listOf(Movie.newPageMovie(pageInfo.activePage, pageInfo.pages, mView?.type ?: DataSourceType.CENSORED)) + it
+                listOf(Movie.newPageMovie(pageInfo.activePage, pageInfo.pages, mView?.type
+                        ?: DataSourceType.CENSORED)) + it
             }
             else -> it
         }

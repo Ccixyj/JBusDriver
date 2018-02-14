@@ -6,6 +6,7 @@ package me.jbusdriver.mvp.bean
 
 data class SearchWord(val query: String)
 
+@Deprecated("not use ")
 data class CollectErrorEvent(val key: String, val msg: String)
 
 
@@ -13,3 +14,5 @@ data class CollectErrorEvent(val key: String, val msg: String)
 data class PageChangeEvent(val mode: Int)
 
 class MenuChangeEvent
+
+class CategoryChangeEvent

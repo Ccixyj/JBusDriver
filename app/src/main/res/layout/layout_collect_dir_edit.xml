@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/material_16dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/material_48dp">
+
+        <LinearLayout
+            android:id="@+id/ll_add_category"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/material_48dp"
+            tools:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/material_12sp"
+                android:text="收藏夹修改" />
+
+
+            <TextView
+                android:id="@+id/tv_category_add"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text=" ➕ 新建收藏夹"
+                android:textSize="@dimen/material_12sp"
+                android:textColor="@color/colorAccent" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_add_category_edit"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/material_48dp"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/tv_add_category_name"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/material_12sp"
+                android:hint="输入收藏夹名称" />
+
+
+            <TextView
+                android:id="@+id/tv_category_add_confirm"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text=" ✔ 确认"
+                android:textSize="@dimen/material_12sp"
+                android:textColor="@color/colorAccent" />
+        </LinearLayout>
+    </FrameLayout>
+
+
+    <View style="@style/DividerLine.Horizontal" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_category_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

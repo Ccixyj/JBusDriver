@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="me.jbusdriver.ui.activity.MovieDetailActivity">
     <item
-        android:id="@+id/action_collect_info"
+        android:id="@+id/action_collect_dir_edit"
         android:orderInCategory="100"
-        android:icon="@drawable/ic_info_24dp"
-        android:title="错误信息"
+        android:icon="@drawable/ic_edit_24dp"
+        android:title="修改收藏目录"
         app:showAsAction="always" />
 </menu>

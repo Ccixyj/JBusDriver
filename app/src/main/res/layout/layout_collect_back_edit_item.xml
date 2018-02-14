@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="@dimen/material_4dp">
+
+
+    <TextView
+        android:id="@+id/tv_backup_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:lineSpacingMultiplier="1.3"
+        android:minHeight="@dimen/material_32dp"
+        android:text="收藏夹修改 \n 21323" />
+
+    <ImageView
+        android:id="@+id/tv_backup_load"
+        android:layout_width="@dimen/material_32dp"
+        android:layout_height="@dimen/material_32dp"
+        android:gravity="center"
+        android:padding="@dimen/material_4dp"
+        android:src="@drawable/ic_cc_enter" />
+
+    <android.support.v4.widget.Space
+        android:layout_width="@dimen/material_16dp"
+        android:layout_height="0dp" />
+
+    <ImageView
+        android:id="@+id/tv_backup_delete"
+        android:layout_width="@dimen/material_32dp"
+        android:layout_height="@dimen/material_32dp"
+        android:gravity="center"
+        android:padding="@dimen/material_4dp"
+        android:src="@drawable/ic_close" />
+
+    <android.support.v4.widget.Space
+        android:layout_width="@dimen/material_16dp"
+        android:layout_height="0dp" />
+</LinearLayout>

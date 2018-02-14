@@ -20,7 +20,7 @@ public class SampleSizeUtil {
     }
 
     // 将x向上对齐到2的幂指数
-    private static final int roundup2n(int x) {
+    private static int roundup2n(int x) {
         if ((x & (x - 1)) == 0) {
             return x;
         }

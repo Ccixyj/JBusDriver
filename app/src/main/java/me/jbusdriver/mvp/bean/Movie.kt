@@ -3,9 +3,11 @@ package me.jbusdriver.mvp.bean
 import android.text.TextUtils
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import com.google.gson.annotations.SerializedName
+import me.jbusdriver.common.KLog
 import me.jbusdriver.common.urlHost
+import me.jbusdriver.db.bean.MovieCategory
 import me.jbusdriver.http.JAVBusService
-import me.jbusdriver.ui.data.DataSourceType
+import me.jbusdriver.ui.data.enums.DataSourceType
 import org.jsoup.nodes.Document
 
 /**
@@ -21,6 +23,9 @@ data class Movie(
         val tags: List<String> = listOf()//标签,
 
 ) : MultiItemEntity, ILink {
+    @Transient
+    override var categoryId: Int = MovieCategory.id ?: 1
+
 
     override fun getItemType(): Int = if (isInValid) -1 else 0
 
@@ -35,15 +40,19 @@ data class Movie(
                         code = element.select("date").first().text(),
                         date = element.select("date").getOrNull(1)?.text() ?: "",
                         link = element.attr("href"),
-                        tags = element.select(".item-tag").firstOrNull()?.children()?.map { it.text() } ?: emptyList()
+                        tags = element.select(".item-tag").firstOrNull()?.children()?.map { it.text() }
+                                ?: emptyList()
                 )
             }.apply {
-                val host = this.firstOrNull()?.imageUrl?.urlHost ?: ""
-                if (host.isNotBlank() && !host.endsWith(".xyz")) {
-                    JAVBusService.defaultImageUrlHost = host
-                }
 
-            }
+                        val host = this.firstOrNull()?.imageUrl?.urlHost ?: ""
+                        KLog.d("put defaultImageUrlHost  for movie $host ")
+                        if (host.isNotBlank()) {
+                            val key = if (host.endsWith("xyz")) "xyz" else "default"
+                            JAVBusService.defaultImageUrlHosts[key] = host
+                        }
+
+                    }
         }
 
         fun newPageMovie(page: Int, pages: List<Int>, type: DataSourceType = DataSourceType.CENSORED) = Movie(type, page.toString(), pages.joinToString("#"), "", "", "")

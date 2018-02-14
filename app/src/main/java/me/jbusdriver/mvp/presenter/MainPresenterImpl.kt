@@ -1,6 +1,6 @@
 package me.jbusdriver.mvp.presenter
 
-import com.cfzx.utils.CacheLoader
+import me.jbusdriver.common.CacheLoader
 import com.google.gson.JsonObject
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo

@@ -8,50 +8,36 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
-import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_header.view.*
 import me.jbusdriver.common.KLog
-import me.jbusdriver.common.copy
 import me.jbusdriver.common.inflate
-import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.bean.Header
+import me.jbusdriver.mvp.bean.convertDBItem
+import me.jbusdriver.mvp.bean.des
+import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.activity.MovieListActivity
-import me.jbusdriver.ui.data.collect.LinkCollector
+import me.jbusdriver.ui.adapter.BaseAppAdapter
+import me.jbusdriver.ui.data.contextMenu.LinkMenu
 
 /**
  * Created by Administrator on 2017/5/9 0009.
  */
 class HeaderHolder(context: Context) : BaseHolder(context) {
 
-    val actionMap by lazy {
-        mapOf("复制" to { header: Header ->
-            weakRef.get()?.let {
-                it.copy(header.value)
-                it.toast("已复制")
-
-            }
-        }, "收藏" to { header ->
-            LinkCollector.addToCollect(header)
-            KLog.d("link data ${LinkCollector.dataList}")
-        }, "取消收藏" to { header ->
-            LinkCollector.removeCollect(header)
-            KLog.d("link data ${LinkCollector.dataList}")
-        })
-    }
 
     val view by lazy {
         weakRef.get()?.let {
-            it.inflate(R.layout.layout_detail_header, null).apply {
+            it.inflate(R.layout.layout_detail_header).apply {
                 rv_recycle_header.layoutManager = LinearLayoutManager(this.context)
-                rv_recycle_header.adapter = headAdapter
+                headAdapter.bindToRecyclerView(rv_recycle_header)
                 rv_recycle_header.isNestedScrollingEnabled = true
             }
         } ?: error("context ref is finish")
     }
 
-    private val headAdapter = object : BaseQuickAdapter<Header, BaseViewHolder>(R.layout.layout_header_item) {
+    private val headAdapter = object : BaseAppAdapter<Header, BaseViewHolder>(R.layout.layout_header_item) {
         override fun convert(holder: BaseViewHolder, item: Header) {
             holder.getView<TextView>(R.id.tv_head_value)?.apply {
                 if (!TextUtils.isEmpty(item.link)) {
@@ -71,16 +57,16 @@ class HeaderHolder(context: Context) : BaseHolder(context) {
                 //长按操作
                 setOnLongClickListener {
                     KLog.d("setOnLongClickListener text : $item")
-                    val action =   actionMap.filter {
+                    val action =   LinkMenu.linkActions.filter {
                         when {
                             TextUtils.isEmpty(item.link) -> it.key == "复制"
-                            LinkCollector.has(item) -> it.key != "收藏"
+                            CollectModel.has(item.convertDBItem()) -> it.key != "收藏"
                             else -> it.key != "取消收藏"
                         }
                     }
 
 
-                    MaterialDialog.Builder(holder.itemView.context).title(item.name).content(item.value)
+                    MaterialDialog.Builder(holder.itemView.context).title(item.name).content(item.des)
                             .items(action.keys)
                             .itemsCallback { _, _, _, text ->
                                 action[text]?.invoke(item)

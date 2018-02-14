@@ -13,8 +13,7 @@ import org.jsoup.nodes.Document
 
 class HistoryPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HistoryContract.HistoryView, History>(), HistoryContract.HistoryPresenter {
 
-    private val service by lazy { HistoryService() }
-    private val dbPage by lazy { service.page() }
+    private val dbPage by lazy { HistoryService.page() }
 
     override fun onResume() {
         super.onResume()
@@ -26,9 +25,9 @@ class HistoryPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HistoryContrac
             pageInfo = toPageInfo
             lastPage = totalPage
         }
-        service.queryPage(dbPage).toFlowable(BackpressureStrategy.DROP)
+        HistoryService.queryPage(dbPage).toFlowable(BackpressureStrategy.DROP)
                 .doOnNext {
-                    pageInfo = pageInfo.copy(pageInfo.nextPage, pageInfo.nextPage + 1)
+                    pageInfo = pageInfo.copy(activePage = pageInfo.nextPage, nextPage = pageInfo.nextPage + 1)
                 }
                 .compose(SchedulersCompat.io())
                 .subscribeWith(object : ListDefaultSubscriber(page) {
@@ -46,7 +45,7 @@ class HistoryPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HistoryContrac
     }
 
     override fun clearHistory() {
-        service.clearAll()
+        HistoryService.clearAll()
     }
 
     override fun onRefresh() {

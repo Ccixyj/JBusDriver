@@ -14,12 +14,10 @@ import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.common.AppBaseRecycleFragment
-import me.jbusdriver.common.C
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.ui.activity.SearchResultActivity
-import me.jbusdriver.ui.data.DataSourceType
 
 abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract.LinkListPresenter, LinkListContract.LinkListView, T>(), LinkListContract.LinkListView {
 
@@ -29,9 +27,6 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
     override val recycleView: RecyclerView by lazy { rv_recycle }
     override val layoutManager: RecyclerView.LayoutManager  by lazy { LinearLayoutManager(viewContext) }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onRestartInstance(bundle: Bundle) {
         super.onRestartInstance(bundle)
@@ -52,9 +47,7 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
                     return true
                 }
 
-                override fun onQueryTextChange(newText: String): Boolean {
-                    return false
-                }
+                override fun onQueryTextChange(newText: String) = false
             })
         }
 
@@ -85,14 +78,16 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
         return super.onOptionsItemSelected(item)
     }
 
-
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState?.putBoolean(MENU_SHOW_ALL, arguments?.getBoolean(MENU_SHOW_ALL, false) ?: false)
+        outState.putBoolean(MENU_SHOW_ALL, arguments?.getBoolean(MENU_SHOW_ALL, false) ?: false)
     }
 
+
     /*================================================*/
-    override val type by lazy { arguments?.getSerializable(C.BundleKey.Key_1) as? DataSourceType ?: DataSourceType.CENSORED }
+//    override val type by lazy {
+//        arguments?.getSerializable(C.BundleKey.Key_1) as? DataSourceType ?: DataSourceType.CENSORED
+//    }
 
 
     companion object {

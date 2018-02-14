@@ -18,7 +18,10 @@
         android:layout_alignParentRight="true"
         android:layout_toRightOf="@id/iv_movie_relative"
         android:orientation="vertical"
-        android:paddingLeft="@dimen/material_16dp">
+        android:paddingLeft="@dimen/material_16dp"
+        android:layout_toEndOf="@id/iv_movie_relative"
+        android:layout_alignParentEnd="true"
+        android:paddingStart="@dimen/material_16dp">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_recycle_relative_movies"

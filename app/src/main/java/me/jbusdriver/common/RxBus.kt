@@ -1,27 +1,17 @@
 package me.jbusdriver.common
 
-import io.reactivex.Flowable
-import io.reactivex.processors.PublishProcessor
+import com.jakewharton.rxrelay2.PublishRelay
+import io.reactivex.BackpressureStrategy
 
-object RxBus  {
-    private val mBus = PublishProcessor.create<Any>().toSerialized()
-
+object RxBus {
+    private val mBus = PublishRelay.create<Any>().toSerialized()
 
     fun post(obj: Any) {
         KLog.d("post event $obj")
-        mBus.onNext(obj)
+        mBus.accept(obj)
     }
 
-    fun <T> toFlowable(clz: Class<T>): Flowable<T> {
-        return mBus.ofType(clz)
-    }
+    fun <T> toFlowable(clz: Class<T>) = mBus.ofType(clz).toFlowable(BackpressureStrategy.DROP)
 
-    fun unregisterAll() {
-        //解除注册
-        mBus.onComplete()
-    }
-
-    fun hasSubscribers(): Boolean {
-        return mBus.hasSubscribers()
-    }
+    fun hasSubscribers() = mBus.hasObservers()
 }

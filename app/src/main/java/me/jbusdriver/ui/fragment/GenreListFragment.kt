@@ -37,7 +37,7 @@ class GenreListFragment : AppBaseRecycleFragment<GenreListContract.GenreListPres
         }
     }
 */
-    override val data by lazy { arguments?.getString(C.BundleKey.Key_1)?.let { AppContext.gson.fromJson<List<Genre>>(it) } ?: emptyList<Genre>() }
+    override val data by lazy { arguments?.getString(C.BundleKey.Key_1)?.let { AppContext.gson.fromJson<List<Genre>>(it) } ?: emptyList() }
 
 
     companion object {

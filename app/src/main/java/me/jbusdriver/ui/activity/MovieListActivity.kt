@@ -28,13 +28,13 @@ class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setToolBar()
-        supportFragmentManager.beginTransaction().replace(R.id.fl_container, LinkedMovieListFragment.newInstance(linkData, true).apply {
+        supportFragmentManager.beginTransaction().replace(R.id.fl_container, LinkedMovieListFragment.newInstance(linkData).apply {
             arguments = intent.extras
         }).commitAllowingStateLoss()
     }
 
     private fun setToolBar() {
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = linkData.des
@@ -66,6 +66,7 @@ class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter
         is PageLink -> 6
         else -> error(" $this has no matched class for des")
         }
+         不需要加入历史记录
          */
         fun reloadFromHistory(context: Context, his: History) {
             context.startActivity(Intent(context, MovieListActivity::class.java).apply {

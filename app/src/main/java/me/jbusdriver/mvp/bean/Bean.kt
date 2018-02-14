@@ -1,16 +1,15 @@
 package me.jbusdriver.mvp.bean
 
-import android.support.annotation.IdRes
-import com.chad.library.adapter.base.entity.AbstractExpandableItem
-import com.chad.library.adapter.base.entity.MultiItemEntity
-import jbusdriver.me.jbusdriver.R
-import me.jbusdriver.common.BaseFragment
+import me.jbusdriver.common.toJsonString
+import me.jbusdriver.common.urlPath
+import me.jbusdriver.db.bean.AllFirstParentDBCategoryGroup
+import me.jbusdriver.db.bean.ICollectCategory
+import me.jbusdriver.db.bean.LinkCategory
+import me.jbusdriver.db.bean.LinkItem
 import me.jbusdriver.http.JAVBusService
-import me.jbusdriver.ui.data.AppConfiguration
-import me.jbusdriver.ui.data.DataSourceType
-import me.jbusdriver.ui.data.SearchType
-import me.jbusdriver.ui.fragment.*
+import me.jbusdriver.ui.data.enums.SearchType
 import java.io.Serializable
+import java.util.*
 
 /**
  * Created by Administrator on 2017/4/9.
@@ -20,10 +19,8 @@ const val Expand_Type_Head = 0
 const val Expand_Type_Item = 1
 
 
-interface ILink : Serializable {
+interface ILink : ICollectCategory , Serializable {
     val link: String
-
-
 }
 
 val ILink.des: String
@@ -37,19 +34,41 @@ val ILink.des: String
         else -> error(" $this has no matched class for des")
     }
 
+const val MovieDBType = 1
+const val ActressDBType = 2
+const val HeaderDBType = 3
+const val GenreDBType = 4
+const val SearchLinkDBType = 5
+const val PageLinkDBType = 6
+
+val AllDBType by lazy { listOf(MovieDBType, ActressDBType, HeaderDBType, GenreDBType, SearchLinkDBType, PageLinkDBType) }
+
 val ILink.DBtype: Int
     inline get() = when (this) {
-        is Movie -> 1
-        is ActressInfo -> 2
-        is Header -> 3
-        is Genre -> 4
-        is SearchLink -> 5
-        is PageLink -> 6
+        is Movie -> MovieDBType
+        is ActressInfo -> ActressDBType
+        is Header -> HeaderDBType
+        is Genre -> GenreDBType
+        is SearchLink -> SearchLinkDBType
+        is PageLink -> PageLinkDBType
         else -> error(" $this has no matched class for des")
     }
+val ILink.uniqueKey: String
+    inline get() = when (this) {
+        is SearchLink -> query
+        else -> link.urlPath
+    }
 
+fun ILink.convertDBItem() = LinkItem(this.DBtype, Date(), this.uniqueKey, this.toJsonString(),
+        when {
+            this is ICollectCategory && this.categoryId > 0 -> categoryId
+            else -> AllFirstParentDBCategoryGroup[this.DBtype]?.id ?: LinkCategory.id ?: -1
+        })
 
-data class PageLink(val page: Int, val title: String /*XX类型*/, override val link: String) : ILink
+data class PageLink(val page: Int, val title: String /*XX类型*/, override val link: String) : ILink {
+    @Transient
+    override var categoryId: Int = LinkCategory.id ?: 10
+}
 
 data class PageInfo(val activePage: Int = 0, val nextPage: Int = 0,
                     val activePath: String = "",
@@ -61,7 +80,10 @@ val PageInfo.hasNext
 
 
 data class SearchLink(val type: SearchType, var query: String) : ILink {
+    @Transient
+    override var categoryId: Int = LinkCategory.id ?: 10
 
+        set(value) {}
     override val link: String
         get() = "${JAVBusService.defaultFastUrl}${type.urlPathFormater.format(query)}"
 
@@ -72,61 +94,3 @@ data class UpdateBean(val versionCode: Int, val versionName: String, val url: St
 data class NoticeBean(val id: Int, val content: String? = null)
 
 
-/*首页菜单配置化*/
-data class MenuOp(@IdRes val id: Int, val name: String, val initializer: () -> BaseFragment) : MultiItemEntity {
-
-    override fun getItemType() = Expand_Type_Item
-
-    var isHow: Boolean = true
-        get() = AppConfiguration.menuConfig[name] ?: true
-
-    companion object {
-        val Ops: List<MenuOp>
-            get() = mine + nav_ma + nav_uncensore + nav_xyz + nav_other
-
-        val mine by lazy {
-            listOf(
-                    MenuOp(R.id.mine_collect, "收藏夹") { MineCollectFragment.newInstance() },
-                    MenuOp(R.id.mine_history, "最近") { HistoryFragment.newInstance() }
-            )
-        }
-
-        val nav_ma by lazy {
-            listOf(
-                    MenuOp(R.id.movie_ma, "有碼") { HomeMovieListFragment.newInstance(DataSourceType.CENSORED) },
-                    MenuOp(R.id.movie_ma_actress, "有碼女優") { ActressListFragment.newInstance(DataSourceType.ACTRESSES) },
-                    MenuOp(R.id.movie_ma_genre, "有碼類別") { GenrePagesFragment.newInstance(DataSourceType.GENRE) }
-
-            )
-        }
-
-        val nav_uncensore by lazy {
-            listOf(
-                    MenuOp(R.id.movie_uncensored, "無碼") { HomeMovieListFragment.newInstance(DataSourceType.UNCENSORED) },
-                    MenuOp(R.id.movie_uncensored_actress, "無碼女優") { ActressListFragment.newInstance(DataSourceType.UNCENSORED_ACTRESSES) },
-                    MenuOp(R.id.movie_uncensored_genre, "無碼類別") { GenrePagesFragment.newInstance(DataSourceType.UNCENSORED_GENRE) }
-
-            )
-        }
-        val nav_xyz by lazy {
-            listOf(
-                    MenuOp(R.id.movie_xyz, "欧美") { HomeMovieListFragment.newInstance(DataSourceType.XYZ) },
-                    MenuOp(R.id.movie_xyz_actress, "欧美演员") { ActressListFragment.newInstance(DataSourceType.XYZ_ACTRESSES) },
-                    MenuOp(R.id.movie_xyz_genre, "欧美類別") { GenrePagesFragment.newInstance(DataSourceType.XYZ_GENRE) }
-
-            )
-        }
-
-        val nav_other by lazy {
-            listOf(
-                    MenuOp(R.id.movie_hd, "高清") { HomeMovieListFragment.newInstance(DataSourceType.GENRE_HD) },
-                    MenuOp(R.id.movie_sub, "字幕") { HomeMovieListFragment.newInstance(DataSourceType.Sub) }
-            )
-        }
-    }
-}
-
-data class MenuOpHead(val name: String) : AbstractExpandableItem<MenuOp>(), MultiItemEntity {
-    override fun getItemType(): Int = Expand_Type_Head
-    override fun getLevel() = 0
-}

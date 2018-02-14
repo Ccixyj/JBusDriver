@@ -1,17 +1,19 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'//kapt3插件
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion versions.compileSdk
+    buildToolsVersion versions.buildTools
     defaultConfig {
         applicationId "me.jbusdriver"
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion versions.targetSdk
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        flavorDimensions "github"
     }
 
     signingConfigs {
@@ -37,28 +39,39 @@ android {
     lintOptions {
         abortOnError false
     }
+    kapt {
+        generateStubs = true
+        useBuildCache = true
+    }
+    aaptOptions {
+        additionalParameters "--no-version-vectors"
+    }
     buildTypes {
         release {
             signingConfig signingConfigs.release
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            applicationVariants.all { variant ->
+            android.applicationVariants.all { variant ->
                 if (variant.buildType.name == 'release') {
                     variant.mergedFlavor.versionName = VersionName()
                     variant.mergedFlavor.versionCode = VersionCode()
-                    renameArtifact(variant)
+                    variant.outputs.all { output ->
+                        output.setVersionNameOverride(VersionName())
+                        output.setVersionCodeOverride(VersionCode())
+                        outputFileName = "JubsDriver[v${variant.versionName}]_(code_${variant.versionCode}).apk"
+                    }
                 }
 
             }
 
         }
 
-        debug {
-            signingConfig signingConfigs.release
-        }
+
     }
     productFlavors {
         gayhub {
+            dimension "github"
             manifestPlaceholders = [UMENG_KEY: "58e8ecaa7666134a5a001740",
                                     CHANNEL  : "gayhub"]
         }
@@ -67,15 +80,6 @@ android {
 
 def releaseTime() {
     return new Date().format("yyyyMMdd_HHmmss")
-}
-
-//"HelloWord-${variant.buildType.name}-v${variant.versionName}-${variant.productFlavors[0].name}-${releaseTime()}.apk".toLowerCase())
-def renameArtifact(variant) {
-    variant.outputs.each { output ->
-        output.outputFile = new File(
-                (String) output.outputFile.parent,
-                (String) "JubsDriver[v${variant.versionName}]_(code_${variant.versionCode}).apk")
-    }
 }
 
 //使用git的Tag来自动定制Version
@@ -113,48 +117,68 @@ def VersionName() {
 }
 
 
-
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
+    implementation fileTree(include: ["*.jar"], dir: "libs")
+    androidTestImplementation("com.android.support.test.espresso:espresso-core:2.3-alpha", {
+        exclude group: "com.android.support", module: "support-annotations"
     })
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.android.support:cardview-v7:25.3.1'
-    compile 'com.android.support:palette-v7:25.3.1'
-    testCompile 'junit:junit:4.12'
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testImplementation "junit:junit:4.12"
+
+    implementation "com.android.support:appcompat-v7:${versions.supportLibrary}"
+    implementation "com.android.support:design:${versions.supportLibrary}"
+    implementation "com.android.support:cardview-v7:${versions.supportLibrary}"
+    implementation "com.android.support:palette-v7:${versions.supportLibrary}"
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     /*============================================added======================================================*/
-    compile 'com.google.code.gson:gson:2.8.0'
-    compile 'com.afollestad.material-dialogs:core:0.9.4.4'
-    compile 'com.orhanobut:logger:1.15'
-    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.+'
-    compile group: 'org.jsoup', name: 'jsoup', version: '1.10.2'
+    implementation "com.google.code.gson:gson:${versions.gson}"
+    implementation "com.afollestad.material-dialogs:core:${versions.material_dialogs_core}"
+    implementation "com.orhanobut:logger:${versions.logger}"
+    implementation "com.github.CymChad:BaseRecyclerViewAdapterHelper:${versions.BaseRecyclerViewAdapterHelper}"
+    implementation "org.jsoup:jsoup:${versions.jsoup}"
+    //group: "org.jsoup", name: "jsoup", version: "1.11.1"
 
-    compile 'com.squareup.okhttp3:okhttp:3.8.0'
-    compile 'com.github.bumptech.glide:glide:3.8.0'
-    compile 'com.github.bumptech.glide:okhttp3-integration:1.5.0@jar'
+    implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
+    implementation "com.squareup.retrofit2:retrofit:${versions.retrofit}"
+//    implementation "com.squareup.retrofit2:converter-gson:${versions.retrofit}"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}"
 
-    compile 'com.squareup.retrofit2:retrofit:2.2.0'
-//    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
-    compile 'com.squareup.retrofit2:adapter-rxjava2:2.2.0'
+    implementation ("com.github.bumptech.glide:glide:${versions.glide}"){
+        exclude group: "com.android.support"
+    }
+    kapt "com.github.bumptech.glide:compiler:${versions.glide}"
+    implementation "com.github.bumptech.glide:okhttp3-integration:${versions.glide}"
 
 
-    compile 'io.reactivex.rxjava2:rxjava:2.1.0'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'io.reactivex.rxjava2:rxkotlin:2.0.2'
-    compile 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.3@aar'
+    implementation "io.reactivex.rxjava2:rxjava:${versions.rxjava}"
+    implementation "io.reactivex.rxjava2:rxandroid:${versions.rxandroid}"
+    implementation "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"
+    implementation "com.jakewharton.rxrelay2:rxrelay:${versions.rxrelay}"
+    implementation "com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar"
 
     //sqllite
-    compile 'com.squareup.sqlbrite2:sqlbrite:2.0.0'
-    compile 'com.squareup.sqlbrite2:sqlbrite-kotlin:2.0.0'
+    implementation "com.squareup.sqlbrite3:sqlbrite:${versions.sqlbrite}"
+    implementation "com.squareup.sqlbrite3:sqlbrite-kotlin:${versions.sqlbrite}"
+    implementation "android.arch.persistence:db-framework:${versions.db_framework}"
 
-    compile 'com.jaeger.statusbarutil:library:1.4.0'
-    compile 'com.xiaofeng.android:flowlayoutmanager:1.2.3.2'
-    compile 'com.umeng.analytics:analytics:latest.integration'
+    implementation "com.jaeger.statusbarutil:library:${versions.statusbarutil}"
+    implementation "com.xiaofeng.android:flowlayoutmanager:${versions.flowlayoutmanager}"
+    //https://github.com/xiaofeng-han/AndroidLibs/tree/master/flowlayoutmanager
+    implementation "com.umeng.analytics:analytics:${versions.analytics}"
+
+    //leak
+    debugCompile "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
+    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:${versions.leakcanary}"
 
 }
-repositories {
-    mavenCentral()
+
+configurations.all { config ->
+    if (config.name.contains('UnitTest')) {
+        config.resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'com.squareup.leakcanary' && details.requested.name == 'leakcanary-android') {
+                details.useTarget(group: details.requested.group, name: 'leakcanary-android-no-op', version: details.requested.version)
+            }
+        }
+    }
 }

@@ -5,7 +5,8 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.Loader
-import com.cfzx.mvp.view.BaseView
+import com.afollestad.materialdialogs.MaterialDialog
+import me.jbusdriver.mvp.BaseView
 import me.jbusdriver.mvp.presenter.BasePresenter
 import me.jbusdriver.mvp.presenter.loader.PresenterFactory
 import me.jbusdriver.mvp.presenter.loader.PresenterLoader
@@ -15,25 +16,25 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * Created by Administrator on 2016/7/21 0021.
  */
-abstract class AppBaseActivity<P : BasePresenter<V>, V : BaseView> : BaseActivity(), LoaderManager.LoaderCallbacks<P>, PresenterFactory<P> {
+abstract class AppBaseActivity<P : BasePresenter<V>, V : BaseView> : BaseActivity(), LoaderManager.LoaderCallbacks<P>, PresenterFactory<P>, BaseView {
     /**
      * Do we need to call [.doStart] from the [.onLoadFinished] method.
      * Will be true if SPresenter wasn't loaded when [.onStart] is reached
      */
     private val mNeedToCallStart = AtomicBoolean(false)
-    protected var mFirstStart: Boolean = false//Is this the first start of the activity (after onCreate)
+    private var mFirstStart: Boolean = false//Is this the first start of the activity (after onCreate)
     protected var mBasePresenter: P? = null
-
     private var mUniqueLoaderIdentifier: Int = 0//Unique identifier for the loader, persisted across re-creation
+
+    private var placeDialogHolder: MaterialDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //  UIHelper.$optimizeBackgroundOverdraw(this);
         mFirstStart = savedInstanceState == null || savedInstanceState.getBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE)
         mUniqueLoaderIdentifier = savedInstanceState?.getInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE) ?: AppBaseActivity.sViewCounter.incrementAndGet()
-        setContentView(layoutInflater.inflate(layoutId, null))
+        setContentView(this.inflate(layoutId))
         supportLoaderManager.initLoader(mUniqueLoaderIdentifier, savedInstanceState, this@AppBaseActivity)
-
     }
 
     override fun onStart() {
@@ -93,9 +94,7 @@ abstract class AppBaseActivity<P : BasePresenter<V>, V : BaseView> : BaseActivit
     }
 
 
-    override fun onCreateLoader(id: Int, args: Bundle?): Loader<P> {
-        return PresenterLoader(this, this)
-    }
+    override fun onCreateLoader(id: Int, args: Bundle?) = PresenterLoader(this, this)
 
     override fun onLoadFinished(loader: Loader<P>, data: P) {
         mBasePresenter = data
@@ -108,6 +107,17 @@ abstract class AppBaseActivity<P : BasePresenter<V>, V : BaseView> : BaseActivit
         mBasePresenter = null
     }
 
+
+
+   override fun showLoading() {
+        if (viewContext is AppContext) return
+        placeDialogHolder = MaterialDialog.Builder(viewContext).content("正在加载...").progress(true, 0).show()
+    }
+
+    override fun dismissLoading() {
+        placeDialogHolder?.dismiss()
+        placeDialogHolder = null
+    }
 
     companion object {
         val sViewCounter = AtomicInteger(Integer.MIN_VALUE)

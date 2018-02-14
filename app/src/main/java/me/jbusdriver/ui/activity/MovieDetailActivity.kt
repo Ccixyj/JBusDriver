@@ -3,6 +3,7 @@ package me.jbusdriver.ui.activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.res.ResourcesCompat
@@ -10,9 +11,7 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
-import com.cfzx.utils.CacheLoader
+import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.jaeger.library.StatusBarUtil
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_movie_detail.*
@@ -20,12 +19,9 @@ import kotlinx.android.synthetic.main.content_movie_detail.*
 import kotlinx.android.synthetic.main.layout_load_magnet.view.*
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.MovieDetailContract
-import me.jbusdriver.mvp.bean.Movie
-import me.jbusdriver.mvp.bean.MovieDetail
-import me.jbusdriver.mvp.bean.des
-import me.jbusdriver.mvp.bean.detailSaveKey
+import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.mvp.presenter.MovieDetailPresenterImpl
-import me.jbusdriver.ui.data.collect.MovieCollector
 import me.jbusdriver.ui.holder.*
 
 
@@ -43,24 +39,28 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        val fab = findViewById(R.id.fab) as FloatingActionButton
+        val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener {
             mBasePresenter?.onRefresh()
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = movie.des
 
-        StatusBarUtil.setTransparent(this)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //忽略4.4.4以下版本状态栏的问题
+            StatusBarUtil.setTranslucentForImageView(this, 30, toolbar)
+        }
         initWidget()
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_movie_detail, menu)
         collectMenu = menu.findItem(R.id.action_add_movie_collect)
         removeCollectMenu = menu.findItem(R.id.action_remove_movie_collect)
-        if (MovieCollector.has(movie)) {
+        if (CollectModel.has(movie.convertDBItem())) {
             collectMenu.isVisible = false
             removeCollectMenu.isVisible = true
         } else {
@@ -80,7 +80,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             R.id.action_add_movie_collect -> {
                 //收藏
                 KLog.d("收藏")
-                if (MovieCollector.addToCollect(movie)) {
+                if (CollectModel.addToCollect(movie.convertDBItem())) {
                     collectMenu.isVisible = false
                     removeCollectMenu.isVisible = true
                 }
@@ -88,7 +88,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             R.id.action_remove_movie_collect -> {
                 //取消收藏
                 KLog.d("取消收藏")
-                if (MovieCollector.removeCollect(movie)) {
+                if (CollectModel.removeCollect(movie.convertDBItem())) {
                     collectMenu.isVisible = true
                     removeCollectMenu.isVisible = false
                 }
@@ -139,7 +139,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             KLog.d("date : $data")
             //cover fixme
             iv_movie_cover.setOnClickListener { WatchLargeImageActivity.startShow(this, listOf(data.cover) + data.imageSamples.map { it.image }) }
-            Glide.with(this).load(data.cover.toGlideUrl).thumbnail(0.1f).into(GlideDrawableImageViewTarget(iv_movie_cover))
+            GlideApp.with(this).load(data.cover.toGlideUrl).thumbnail(0.1f).into(DrawableImageViewTarget(iv_movie_cover))
             //animation
             ll_movie_detail.y = ll_movie_detail.y + 120
             ll_movie_detail.alpha = 0f
