@@ -3,6 +3,7 @@ package me.jbusdriver.db.dao
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.squareup.sqlbrite3.BriteDatabase
+import me.jbusdriver.common.KLog
 import me.jbusdriver.common.getIntByColumn
 import me.jbusdriver.common.getStringByColumn
 import me.jbusdriver.db.CategoryTable
@@ -17,10 +18,10 @@ class CategoryDao(private val db: BriteDatabase) {
 
     fun insert(category: Category) = try {
         ioBlock {
-            val id = db.insert(CategoryTable.TABLE_NAME, SQLiteDatabase.CONFLICT_IGNORE, category.cv())
-            require(id > 0)
-            update(category.copy(tree = category.tree + "id"))
-            id
+            val rid = db.insert(CategoryTable.TABLE_NAME, SQLiteDatabase.CONFLICT_IGNORE, category.cv())
+            require(rid > 0)
+            update(category.copy(tree = "${category.tree}$rid/").apply { this.id = rid.toInt() })
+            rid
         }
     } catch (e: Exception) {
         -1L
@@ -50,9 +51,11 @@ class CategoryDao(private val db: BriteDatabase) {
     }
 
     fun update(category: Category): Boolean {
+        KLog.d("update $category")
         return try {
-            ioBlock { db.update(CategoryTable.TABLE_NAME, SQLiteDatabase.CONFLICT_IGNORE, category.cv(), CategoryTable.COLUMN_ID + " = ${category.id!!} ") > 0 }
+            ioBlock { db.update(CategoryTable.TABLE_NAME, SQLiteDatabase.CONFLICT_REPLACE, category.cv(true), CategoryTable.COLUMN_ID + " = ${category.id!!} ") > 0 }
         } catch (e: Exception) {
+            e.printStackTrace()
             false
         }
 

@@ -18,8 +18,8 @@ data class Category(val name: String, val pid: Int = -1, val tree: String, var o
     @delegate:Transient
     val depth: Int by lazy { tree.split("/").filter { it.isNotBlank() }.size }
 
-    fun cv(): ContentValues = ContentValues().also {
-        if (id != null) it.put(CategoryTable.COLUMN_ID, id)
+    fun cv(update: Boolean = false): ContentValues = ContentValues().also {
+        if (id != null || update) it.put(CategoryTable.COLUMN_ID, id)
         it.put(CategoryTable.COLUMN_NAME, name)
         it.put(CategoryTable.COLUMN_P_ID, pid)
         it.put(CategoryTable.COLUMN_TREE, tree)
