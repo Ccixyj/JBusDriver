@@ -9,6 +9,7 @@ import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.activity.MovieListActivity
+import me.jbusdriver.ui.data.enums.DataSourceType
 import java.util.*
 
 
@@ -77,23 +78,27 @@ private fun doGet(type: Int, jsonStr: String) = when (type) {
     6 -> AppContext.gson.fromJson<PageLink>(jsonStr)
     else -> error("$type : $jsonStr has no matched class ")
 }.let { data ->
+    val isXyz = if (data is Movie) data.type == DataSourceType.XYZ else data.link.urlHost.endsWith("xyz")
+    if (isXyz) return@let data
+    KLog.d("check type : $type  #$data hosts: ${JAVBusService.defaultImageUrlHosts}")
     val host: String by lazy { JAVBusService.defaultFastUrl }
-    val imageHost: String by lazy { JAVBusService.defaultImageUrlHost }
-    if (host.endsWith(".xyz")) return data
-
-    when (data) {
+    val imageHost: String by lazy {
+        if (!isXyz) JAVBusService.defaultImageUrlHosts["default"]
+                ?: JAVBusService.defaultFastUrl else JAVBusService.defaultImageUrlHosts["xyz"] ?: ""
+    }
+    return@let when (data) {
         is Movie -> {
-            val linkChange = data.link.urlHost != host && !data.link.urlHost.endsWith(".xyz")
+            val linkChange = data.link.urlHost != host
             val imageChange = !TextUtils.isEmpty(imageHost) && data.imageUrl.urlHost != imageHost
             data.copy(link = if (linkChange) data.link.replace(data.link.urlHost, host) else data.link, imageUrl = if (imageChange) data.imageUrl.replace(data.imageUrl.urlHost, imageHost) else data.imageUrl)
         }
         is ActressInfo -> {
-            val linkChange = data.link.urlHost != host && !data.link.urlHost.endsWith(".xyz")
+            val linkChange = data.link.urlHost != host
             val imageChange = !TextUtils.isEmpty(imageHost) && data.avatar.urlHost != imageHost && !data.avatar.endsWith("nowprinting.gif")
             data.copy(link = if (linkChange) data.link.replace(data.link.urlHost, host) else data.link, avatar = if (imageChange) data.avatar.replace(data.avatar.urlHost, imageHost) else data.avatar)
         }
         else -> {
-            val linkChange = data.link.urlHost != host && !data.link.urlHost.endsWith(".xyz")
+            val linkChange = data.link.urlHost != host
             if (linkChange) {
                 when (data) {
                     is Header -> data.copy(link = data.link.replace(data.link.urlHost, host))
@@ -101,8 +106,9 @@ private fun doGet(type: Int, jsonStr: String) = when (type) {
                     else -> data
                 }
             } else data
-
         }
+    }.apply {
+        KLog.d("check link : $this")
     }
 
 }

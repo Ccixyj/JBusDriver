@@ -11,10 +11,9 @@ import me.jbusdriver.db.service.LinkService
 import me.jbusdriver.mvp.ActressCollectContract
 import me.jbusdriver.mvp.BaseView
 import me.jbusdriver.mvp.MovieCollectContract
-import me.jbusdriver.mvp.bean.CollectLinkWrapper
-import me.jbusdriver.mvp.bean.PageInfo
-import me.jbusdriver.mvp.bean.hasNext
+import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.model.BaseModel
+import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.data.AppConfiguration
 import org.jsoup.nodes.Document
 
@@ -40,9 +39,8 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
 
     override val collectGroupMap: MutableMap<Category, List<T>> = mutableMapOf()
 
-    override val dataWrapperList: MutableList<CollectLinkWrapper<T>> = mutableListOf()
-
     override val adapterDelegate: BasePresenter.BaseCollectPresenter.CollectMultiTypeDelegate<T> = BasePresenter.BaseCollectPresenter.CollectMultiTypeDelegate()
+
 
     private fun load() = when {
         this is MovieCollectContract.MovieCollectPresenter -> LinkService.queryMovies()
@@ -58,22 +56,22 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
             Flowable.just(ancestor)
                     .filter { ancestor.id != null }
                     .flatMap { Flowable.fromIterable(CategoryService.queryCategoryTreeLike(it.id!!)) }
-                    .map {
-                        val parent = CollectLinkWrapper<T>(it).apply {
+                    .map { cate ->
+                        val parent = CollectLinkWrapper<T>(cate).apply {
                             adapterDelegate.needInjectType.add(level)
                         }
-                        val list = LinkService.queryByCategory(it)
+                        val list = LinkService.queryByCategory(cate)
                         val items = mutableListOf<T>()
                         list.forEach {
                             val mapValue = it.getLinkValue() as? T
                             if (mapValue != null) {
-                                parent.addSubItem(CollectLinkWrapper(null, mapValue).apply {
+                                parent.addSubItem(CollectLinkWrapper(cate, mapValue).apply {
                                     adapterDelegate.needInjectType.add(level)
                                 })
                                 items.add(mapValue)
                             }
                         }
-                        collectGroupMap[it] = items
+                        collectGroupMap[cate] = items
                         parent
                     }
 
@@ -99,7 +97,7 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
                 val nextSize = start + pageSize
                 val end = if (nextSize <= listData.size) nextSize else listData.size
                 listData.subList(start, end).map {
-                    CollectLinkWrapper(null, it).apply {
+                    CollectLinkWrapper(null, it.convertDBItem().getLinkValue()).apply {
                         adapterDelegate.needInjectType.add(level)
                     }
                 }
@@ -126,7 +124,10 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
         if (!AppConfiguration.enableCategory) {
             listData.clear()
             listData.addAll(load())
+        } else {
+            collectGroupMap.clear()
         }
+
         mView?.resetList()
         loadData4Page(1)
     }
@@ -139,4 +140,9 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
     }
 
 
+    override fun setCategory(t: T, category: Category) {
+        require(t is ILink && category.id != null)
+        val dbItem = (t as ILink).convertDBItem().apply { categoryId = category.id!! }
+        CollectModel.update(dbItem)
+    }
 }

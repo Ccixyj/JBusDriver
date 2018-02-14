@@ -29,6 +29,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
     private val link by lazy {
         arguments?.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ")
     }
+
     private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }
     private val isHistory by lazy { arguments?.getBoolean(C.BundleKey.Key_2, false) ?: false }
     private val attrViews by lazy { mutableListOf<View>() }

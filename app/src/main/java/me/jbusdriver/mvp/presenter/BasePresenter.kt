@@ -106,11 +106,13 @@ interface BasePresenter<in V> {
         fun lazyLoad()
     }
 
-    interface BaseCollectPresenter<T : ICollectCategory>{
+    interface BaseCollectPresenter<T : ICollectCategory> {
 
-         val collectGroupMap : MutableMap<Category, List<T>>
-         val dataWrapperList : MutableList<CollectLinkWrapper<T>>
-         val adapterDelegate :CollectMultiTypeDelegate<T>
+        val collectGroupMap: MutableMap<Category, List<T>>
+        val adapterDelegate: CollectMultiTypeDelegate<T>
+
+
+        fun setCategory(t: T, category: Category)
 
         class CollectMultiTypeDelegate<T : ICollectCategory> : com.chad.library.adapter.base.util.MultiTypeDelegate<CollectLinkWrapper<T>>() {
 
@@ -120,7 +122,7 @@ interface BasePresenter<in V> {
             val needInjectType = ConcurrentSkipListSet<Int>()
 
             override fun getItemType(t: CollectLinkWrapper<T>): Int {
-                require(needInjectType.isEmpty()) { "needInjectType must all inject" }
+                //require(needInjectType.isEmpty() || this. ) { "needInjectType must all inject" }
                 return t.level
             }
 

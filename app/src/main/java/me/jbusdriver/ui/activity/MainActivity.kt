@@ -65,7 +65,8 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
             }
             ll_click_reload.setOnClickListener {
                 CacheLoader.lru.evictAll()
-                CacheLoader.acache.remove(C.Cache.BUS_URLS)
+                CacheLoader.acache.clear()
+                AppContext.JBusInstances.clear()
                 SplashActivity.start(this@MainActivity)
                 finish()
             }

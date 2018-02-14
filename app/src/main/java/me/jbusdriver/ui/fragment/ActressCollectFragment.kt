@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.common.*
 import me.jbusdriver.db.bean.ActressCategory
+import me.jbusdriver.db.bean.Category
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.mvp.ActressCollectContract
 import me.jbusdriver.mvp.bean.ActressDBType
@@ -114,6 +115,29 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                 (this@ActressCollectFragment.adapter.getData().getOrNull(position)?.linkBean)?.let { act ->
                     val action = LinkMenu.actressActions.toMutableMap()
                     action.remove("收藏")
+                    if (AppConfiguration.enableCategory) {
+                        val category = CategoryService.getById(act.categoryId)
+                        if (category != null) {
+                            val all = mBasePresenter?.collectGroupMap?.keys ?: emptyList<Category>()
+                            val last = all - category
+                            if (last.isNotEmpty()) {
+                                action.put("移到分类...", { link ->
+                                    KLog.d("移到分类 : $last")
+                                    MaterialDialog.Builder(viewContext).title("选择目录")
+                                            .items(last.map { it.name })
+                                            .itemsCallbackSingleChoice(-1) { _, _, w, _ ->
+                                                KLog.d("选择 : $w")
+                                                last.getOrNull(w)?.let {
+                                                    mBasePresenter?.setCategory(link, it)
+                                                    mBasePresenter?.onRefresh()
+                                                }
+                                                return@itemsCallbackSingleChoice true
+                                            }.show()
+                                })
+                            }
+                        }
+                    }
+
                     action["取消收藏"] = {
                         if (CollectModel.removeCollect(it.convertDBItem())) {
                             viewContext.toast("取消收藏成功")

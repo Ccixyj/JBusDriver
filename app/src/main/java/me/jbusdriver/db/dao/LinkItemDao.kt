@@ -76,20 +76,24 @@ class LinkItemDao(private val db: BriteDatabase) {
     fun queryLink() = db.createQuery(LinkItemTable.TABLE_NAME, "SELECT * FROM ${LinkItemTable.TABLE_NAME} WHERE ${LinkItemTable.COLUMN_DB_TYPE} NOT IN (1,2)  ORDER BY ${LinkItemTable.COLUMN_ID} DESC").mapToList {
         LinkItem(it.getIntByColumn(LinkItemTable.COLUMN_DB_TYPE), Date(it.getLongByColumn(LinkItemTable.COLUMN_CREATE_TIME)),
                 it.getStringByColumn(LinkItemTable.COLUMN_KEY)
-                        ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR) ?: ""
+                        ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR) ?: "",
+                it.getIntByColumn(LinkItemTable.COLUMN_CATEGORY_ID)
         )
     }.timeout(6, TimeUnit.SECONDS).blockingFirst()
 
     fun queryByCategoryId(id: Int): List<LinkItem> = db.createQuery(LinkItemTable.TABLE_NAME, "SELECT * FROM ${LinkItemTable.TABLE_NAME} WHERE ${LinkItemTable.COLUMN_CATEGORY_ID} = ?  ORDER BY ${LinkItemTable.COLUMN_ID} DESC", id).mapToList {
         LinkItem(it.getIntByColumn(LinkItemTable.COLUMN_DB_TYPE), Date(it.getLongByColumn(LinkItemTable.COLUMN_CREATE_TIME)),
                 it.getStringByColumn(LinkItemTable.COLUMN_KEY)
-                        ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR) ?: ""
+                        ?: "", it.getStringByColumn(LinkItemTable.COLUMN_JSON_STR) ?: "",
+                it.getIntByColumn(LinkItemTable.COLUMN_CATEGORY_ID)
         )
     }.timeout(6, TimeUnit.SECONDS).blockingFirst(emptyList()) ?: emptyList()
 
-    fun updateByCategoryId(id: Int, type: Int) {
-        val cv = ContentValues().apply { putNull(LinkItemTable.COLUMN_CATEGORY_ID) }
-        db.update(LinkItemTable.TABLE_NAME, CONFLICT_IGNORE, cv, " ${LinkItemTable.COLUMN_CATEGORY_ID} = ? and ${LinkItemTable.COLUMN_DB_TYPE} = ? ", id.toString(), type.toString())
+    fun updateByCategoryId(id: Int, type: Int, setId: Int) {
+        KLog.d("updateByCategoryId $id $type -> set $setId")
+        val cv = ContentValues().apply { put(LinkItemTable.COLUMN_CATEGORY_ID, setId) }
+        val res = db.update(LinkItemTable.TABLE_NAME, CONFLICT_IGNORE, cv, " ${LinkItemTable.COLUMN_CATEGORY_ID} = ? and ${LinkItemTable.COLUMN_DB_TYPE} = ? ", id.toString(), type.toString())
+        KLog.d("updateByCategoryId affected $res")
     }
 
     fun hasByKey(item: LinkItem): Int {

@@ -33,7 +33,7 @@ interface ICollect<T> {
 abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
 
     protected val host: String by lazy { JAVBusService.defaultFastUrl }
-    protected val imageHost: String by lazy { JAVBusService.defaultImageUrlHost }
+    protected val imageHost: String by lazy { JAVBusService.defaultFastUrl }
 
 
 

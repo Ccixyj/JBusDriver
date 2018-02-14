@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.layout_menu_op_head.view.*
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.common.*
+import me.jbusdriver.db.bean.Category
 import me.jbusdriver.db.bean.MovieCategory
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.mvp.MovieCollectContract
@@ -85,6 +86,29 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
             setOnItemLongClickListener { adapter, _, position ->
                 (this@MovieCollectFragment.adapter.getData().getOrNull(position)?.linkBean)?.let { movie ->
                     val action = LinkMenu.movieActions.toMutableMap()
+                    if (AppConfiguration.enableCategory) {
+                        val category = CategoryService.getById(movie.categoryId)
+                        if (category != null) {
+                            val all = mBasePresenter?.collectGroupMap?.keys ?: emptyList<Category>()
+                            val last = all - category
+                            if (last.isNotEmpty()) {
+                                action.put("移到分类...", { link ->
+                                    KLog.d("移到分类 : $last")
+                                    MaterialDialog.Builder(viewContext).title("选择目录")
+                                            .items(last.map { it.name })
+                                            .itemsCallbackSingleChoice(-1) { _, _, w, _ ->
+                                                KLog.d("选择 : $w")
+                                                last.getOrNull(w)?.let {
+                                                    mBasePresenter?.setCategory(link, it)
+                                                    mBasePresenter?.onRefresh()
+                                                }
+                                                return@itemsCallbackSingleChoice true
+                                            }.show()
+                                })
+                            }
+                        }
+                    }
+
                     action.remove("收藏")
                     action["取消收藏"] = {
                         if (CollectModel.removeCollect(it.convertDBItem())) {

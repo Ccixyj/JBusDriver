@@ -3,6 +3,7 @@ package me.jbusdriver.http
 import io.reactivex.Flowable
 import me.jbusdriver.common.AppContext.Companion.JBusInstances
 import me.jbusdriver.common.KLog
+import me.jbusdriver.common.arrayMapof
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Url
@@ -31,6 +32,6 @@ interface JAVBusService {
 
         private fun createService(url: String) = NetClient.getRetrofit(if (!url.endsWith("/")) "$url/" else url).create(JAVBusService::class.java)
 
-        var defaultImageUrlHost = ""
+        val defaultImageUrlHosts by lazy { arrayMapof<String, String>() }
     }
 }

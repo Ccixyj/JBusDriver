@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.layout_collect_dir_edit.view.*
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.inflate
 import me.jbusdriver.common.toast
+import me.jbusdriver.db.bean.AllFirstParentDBCategoryGroup
 import me.jbusdriver.db.bean.Category
 import me.jbusdriver.ui.adapter.BaseAppAdapter
 
@@ -59,7 +60,7 @@ class CollectDirEditHolder(context: Context, parentCategory: Category) : BaseHol
                 }
 
                 tv_category_add_confirm.setOnClickListener {
-                    val txt = tv_add_category_name.text.toString()
+                    val txt = tv_add_category_name.text.toString().trim()
                     val add = if (txt.isNotBlank()) {
                         if (collectDirs.any { it.name == txt }) {
                             context.toast("$txt 分类已存在")
@@ -128,9 +129,10 @@ class CollectDirEditHolder(context: Context, parentCategory: Category) : BaseHol
 
     private val categoryAdapter by lazy {
         object : BaseAppAdapter<Category, BaseViewHolder>(R.layout.layout_collect_dir_edit_item) {
+            private val exclude = AllFirstParentDBCategoryGroup.mapNotNull { it.value.id }
             override fun convert(holder: BaseViewHolder, item: Category) {
                 holder.setText(R.id.tv_category_name, item.name)
-                        .setVisible(R.id.tv_category_delete, item.depth != 0)
+                        .setVisible(R.id.tv_category_delete, item.id !in exclude)
                         .addOnClickListener(R.id.tv_category_delete)
             }
         }

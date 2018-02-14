@@ -121,8 +121,11 @@ object LinkService {
 
     fun resetCategory(category: Category, dBType: Int) {
         KLog.d("reset $category")
-        category.id?.let {
-            dao.updateByCategoryId(it, dBType)
+        val pc = CategoryService.getById(category.pid)
+        if (pc?.id != null) {
+            category.id?.let {
+                dao.updateByCategoryId(it, dBType, pc.id!!)
+            }
         }
 
     }

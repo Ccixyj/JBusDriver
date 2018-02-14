@@ -14,12 +14,10 @@ import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.common.AppBaseRecycleFragment
-import me.jbusdriver.common.C
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.ui.activity.SearchResultActivity
-import me.jbusdriver.ui.data.enums.DataSourceType
 
 abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract.LinkListPresenter, LinkListContract.LinkListView, T>(), LinkListContract.LinkListView {
 
@@ -87,9 +85,9 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
 
 
     /*================================================*/
-    override val type by lazy {
-        arguments?.getSerializable(C.BundleKey.Key_1) as? DataSourceType ?: DataSourceType.CENSORED
-    }
+//    override val type by lazy {
+//        arguments?.getSerializable(C.BundleKey.Key_1) as? DataSourceType ?: DataSourceType.CENSORED
+//    }
 
 
     companion object {

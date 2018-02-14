@@ -27,6 +27,34 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
     private val link by lazy {
         arguments?.getSerializable(C.BundleKey.Key_2)  as? ILink ?: error("no link data ")
     }
+
+    override val type: DataSourceType by lazy {
+        arguments?.getSerializable(C.BundleKey.Key_1) as? DataSourceType ?: let {
+            (arguments?.getSerializable(C.BundleKey.Key_1) as? ILink)?.let { link ->
+                if (link is Movie) link.type
+                else {
+                    val urls = CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<Map<String, String>>(it) }
+                            ?: arrayMapof()
+                    val key = urls.filter { link.link.startsWith(it.value) }.values.sortedBy { it.length }.lastOrNull()
+                            ?: DataSourceType.CENSORED.key
+                    val ck = urls.filter { it.value == key }.keys.first()
+                    val ds = DataSourceType.values().firstOrNull { it.key == ck }
+                            ?: DataSourceType.CENSORED
+                    if (link is ActressInfo) {
+                        when (ds) {
+                            DataSourceType.CENSORED -> DataSourceType.ACTRESSES
+                            DataSourceType.UNCENSORED -> DataSourceType.UNCENSORED_ACTRESSES
+                            DataSourceType.XYZ -> DataSourceType.XYZ_ACTRESSES
+                            else -> ds
+                        }
+                    }
+
+                }
+                DataSourceType.CENSORED
+            } ?: DataSourceType.CENSORED
+        }
+    }
+
     private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }
 
     override val layoutManager: RecyclerView.LayoutManager  by lazy { StaggeredGridLayoutManager(viewContext.spanCount, OrientationHelper.VERTICAL) }
@@ -112,8 +140,9 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
         }
 
         fun newInstance(type: DataSourceType) = ActressListFragment().apply {
-            val urls = CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) } ?: arrayMapof()
-            val url = urls[type.key] ?: JAVBusService.defaultFastUrl + "/actresses"
+            val urls = CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) }
+                    ?: arrayMapof()
+            val url = urls[type.key] ?: JAVBusService.defaultFastUrl+"/actresses"
             arguments = Bundle().apply {
                 /*
                 *

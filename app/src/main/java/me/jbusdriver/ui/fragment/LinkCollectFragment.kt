@@ -19,6 +19,7 @@ import me.jbusdriver.common.AppBaseRecycleFragment
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.dpToPx
 import me.jbusdriver.common.toast
+import me.jbusdriver.db.bean.Category
 import me.jbusdriver.db.bean.LinkCategory
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.mvp.LinkCollectContract
@@ -50,15 +51,6 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
                             setTextColor(ResourcesCompat.getColor(this@apply.resources, R.color.colorPrimaryDark, null))
                             paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
-                            setOnClickListener {
-                                KLog.d("setOnClickListener text : $item")
-                                if (item is SearchLink) {
-                                    SearchResultActivity.start(mContext, item.query)
-                                    return@setOnClickListener
-                                }
-                                MovieListActivity.start(mContext, item)
-                            }
-
                         }
                         val dp8 = mContext.dpToPx(8f)
                         holder.itemView.setPadding(dp8 * 2, dp8, dp8 * 2, dp8)
@@ -79,7 +71,10 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
                         ?: return@setOnItemClickListener
                 KLog.d("click data : ${data.isExpanded} ; ${adapter.getData().size} ${adapter.getData()}")
                 data.linkBean?.let {
-                    MovieListActivity.start(viewContext, it)
+                    if (it is SearchLink) {
+                        SearchResultActivity.start(viewContext, it.query)
+                    } else MovieListActivity.start(viewContext, it)
+
                 } ?: apply {
                     view.tv_nav_menu_name.text = " ${if (data.isExpanded) "👇" else "👆"} " + data.category.name
                     if (data.isExpanded) collapse(adapter.getHeaderLayoutCount() + position) else expand(adapter.getHeaderLayoutCount() + position)
@@ -90,6 +85,29 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
                 (this@LinkCollectFragment.adapter.getData().getOrNull(position)?.linkBean)?.let { link ->
                     val action = LinkMenu.linkActions.toMutableMap()
                     action.remove("收藏")
+                    if (AppConfiguration.enableCategory) {
+                        val category = CategoryService.getById(link.categoryId)
+                        if (category != null) {
+                            val all = mBasePresenter?.collectGroupMap?.keys ?: emptyList<Category>()
+                            val last = all - category
+                            if (last.isNotEmpty()) {
+                                action.put("移到分类...", { link ->
+                                    KLog.d("移到分类 : $last")
+                                    MaterialDialog.Builder(viewContext).title("选择目录")
+                                            .items(last.map { it.name })
+                                            .itemsCallbackSingleChoice(-1) { _, _, w, _ ->
+                                                KLog.d("选择 : $w")
+                                                last.getOrNull(w)?.let {
+                                                    mBasePresenter?.setCategory(link, it)
+                                                    mBasePresenter?.onRefresh()
+                                                }
+                                                return@itemsCallbackSingleChoice true
+                                            }.show()
+                                })
+                            }
+                        }
+                    }
+
                     action["取消收藏"] = {
                         if (CollectModel.removeCollect(it.convertDBItem())) {
                             viewContext.toast("取消收藏成功")
@@ -127,7 +145,7 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
                 if (delActionsParams.isNotEmpty()) {
                     delActionsParams.forEach {
                         try {
-                            CategoryService.delete(it, ActressDBType)
+                            CategoryService.delete(it, 3) //link 数据库中默认为3 具体可以有3..6
                         } catch (e: Exception) {
                             viewContext.toast("不能删除默认分类")
                         }

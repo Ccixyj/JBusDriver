@@ -13,17 +13,43 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.*
-import me.jbusdriver.mvp.bean.Movie
-import me.jbusdriver.mvp.bean.PageInfo
-import me.jbusdriver.mvp.bean.convertDBItem
+import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.adapter.BaseMultiItemAppAdapter
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
+import me.jbusdriver.ui.data.enums.DataSourceType
 
 
 abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
+
+    override val type: DataSourceType by lazy {
+        arguments?.getSerializable(C.BundleKey.Key_1) as? DataSourceType ?: let {
+            (arguments?.getSerializable(C.BundleKey.Key_1) as? ILink)?.let { link ->
+                if (link is Movie) link.type
+                else {
+                    val urls = CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<Map<String, String>>(it) }
+                            ?: arrayMapof()
+                    val key = urls.filter { link.link.startsWith(it.value) }.values.sortedBy { it.length }.lastOrNull()
+                            ?: DataSourceType.CENSORED.key
+                    val ck = urls.filter { it.value == key }.keys.first()
+                    val ds = DataSourceType.values().firstOrNull { it.key == ck }
+                            ?: DataSourceType.CENSORED
+                    if (link is ActressInfo) {
+                        when (ds) {
+                            DataSourceType.CENSORED -> DataSourceType.ACTRESSES
+                            DataSourceType.UNCENSORED -> DataSourceType.UNCENSORED_ACTRESSES
+                            DataSourceType.XYZ -> DataSourceType.XYZ_ACTRESSES
+                            else -> ds
+                        }
+                    }
+                }
+                DataSourceType.CENSORED
+            } ?: DataSourceType.CENSORED
+        }
+    }
+
 
     override val adapter: BaseQuickAdapter<Movie, in BaseViewHolder>  by lazy {
         object : BaseMultiItemAppAdapter<Movie, BaseViewHolder>(null) {
@@ -173,7 +199,6 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
     }
 
 
-
     override val pageMode: Int
         get() = AppConfiguration.pageMode
 
@@ -187,5 +212,6 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
     }
 
     override fun toString(): String = "$type :" + super.toString()
+
 
 }
