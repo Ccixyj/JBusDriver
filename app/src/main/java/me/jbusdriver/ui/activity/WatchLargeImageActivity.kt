@@ -80,7 +80,7 @@ class WatchLargeImageActivity : BaseActivity() {
         }
 
         private fun loadImage(view: View, position: Int) {
-            view.findViewById<View>(R.id.pb_large_progress).animate().alpha(1f).setDuration(300).start()
+            view.findViewById<View>(R.id.pb_large_progress)?.animate()?.alpha(1f)?.setDuration(300)?.start()
             val offset = Math.abs(vp_largeImage.currentItem - position)
             val priority = when (offset) {
                 in 0..1 -> Priority.IMMEDIATE
