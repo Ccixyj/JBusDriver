@@ -5,6 +5,7 @@ import android.content.ContextWrapper
 import android.database.DatabaseErrorHandler
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteDatabase.CursorFactory
+import com.umeng.analytics.MobclickAgent
 import me.jbusdriver.common.KLog
 import java.io.File
 import java.io.IOException
@@ -60,7 +61,7 @@ abstract class SDCardDatabaseContext
                     fileDb.copyTo(dbFile)
                     fileDb.delete()
                     isFileCreateSuccess = true
-                }else{
+                } else {
                     isFileCreateSuccess = dbFile.createNewFile()//创建文件
                 }
             } catch (e: IOException) {
@@ -78,14 +79,16 @@ abstract class SDCardDatabaseContext
                 return fileDb
             }
 
-        } else
-            isFileCreateSuccess = true
+        }
 
         //返回数据库文件对象
         return if (isFileCreateSuccess)
             dbFile
-        else
+        else {
+            MobclickAgent.reportError(this.applicationContext, "无法创建数据库数据${dbFile.absolutePath}")
             null
+        }
+
     }
 
     override fun openOrCreateDatabase(name: String, mode: Int, factory: CursorFactory?) = SQLiteDatabase.openOrCreateDatabase(getDatabasePath(name), null)
