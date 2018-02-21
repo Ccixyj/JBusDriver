@@ -27,7 +27,10 @@ import me.jbusdriver.ui.activity.SearchResultActivity
  */
 class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkListView {
     private val link by lazy {
-        arguments?.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ")
+        val link = arguments?.getSerializable(C.BundleKey.Key_1)  as? ILink
+                ?: error("no link data ")
+        KLog.i("link data : $link")
+        link
     }
 
     private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }

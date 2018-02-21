@@ -58,12 +58,10 @@ open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink)
     }
 
 
-    override fun stringMap(str: Document) = Movie.loadFromDoc(mView?.type
-            ?: DataSourceType.CENSORED, str).let {
+    override fun stringMap(str: Document) = Movie.loadFromDoc( str).let {
         when (mView?.pageMode) {
             AppConfiguration.PageMode.Page -> {
-                listOf(Movie.newPageMovie(pageInfo.activePage, pageInfo.pages, mView?.type
-                        ?: DataSourceType.CENSORED)) + it
+                listOf(Movie.newPageMovie(pageInfo.activePage, pageInfo.pages)) + it
             }
             else -> it
         }

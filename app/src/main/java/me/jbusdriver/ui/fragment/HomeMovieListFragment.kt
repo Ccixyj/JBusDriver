@@ -1,7 +1,6 @@
 package me.jbusdriver.ui.fragment
 
 import android.os.Bundle
-import me.jbusdriver.common.C
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.PageLink
@@ -18,7 +17,7 @@ class HomeMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkListV
     /*================================================*/
     companion object {
         fun newInstance(type: DataSourceType) = HomeMovieListFragment().apply {
-            arguments = Bundle().apply { putSerializable(C.BundleKey.Key_1, type) }
+            arguments = Bundle().apply { putSerializable(MOVIE_LIST_DATA_TYPE, type) }
         }
     }
 

@@ -8,7 +8,6 @@ import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.data.AppConfiguration
-import me.jbusdriver.ui.data.enums.DataSourceType
 import org.jsoup.nodes.Document
 
 /**
@@ -33,11 +32,10 @@ class MovieLinkPresenterImpl(val link: ILink, isAllFromBundle: Boolean, isHis: B
             }
         }
 
-        return Movie.loadFromDoc(mView?.type ?: DataSourceType.CENSORED, str).let {
+        return Movie.loadFromDoc( str).let {
             when (mView?.pageMode) {
                 AppConfiguration.PageMode.Page -> {
-                    listOf(Movie.newPageMovie(pageInfo.activePage, pageInfo.pages, mView?.type
-                            ?: DataSourceType.CENSORED)) + it
+                    listOf(Movie.newPageMovie(pageInfo.activePage, pageInfo.pages)) + it
                 }
                 else -> it
             }

@@ -25,32 +25,53 @@ import me.jbusdriver.ui.data.enums.DataSourceType
 class ActressListFragment : LinkableListFragment<ActressInfo>() {
 
     private val link by lazy {
-        arguments?.getSerializable(C.BundleKey.Key_2)  as? ILink ?: error("no link data ")
+       val link =  arguments?.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ")
+        KLog.i("link data : $link")
+        link
     }
 
     override val type: DataSourceType by lazy {
-        arguments?.getSerializable(C.BundleKey.Key_1) as? DataSourceType ?: let {
+        arguments?.getSerializable(ACTRESS_LIST_DATA_TYPE) as? DataSourceType ?: let {
             (arguments?.getSerializable(C.BundleKey.Key_1) as? ILink)?.let { link ->
-                if (link is Movie) link.type
-                else {
-                    val urls = CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<Map<String, String>>(it) }
-                            ?: arrayMapof()
-                    val key = urls.filter { link.link.startsWith(it.value) }.values.sortedBy { it.length }.lastOrNull()
-                            ?: DataSourceType.CENSORED.key
-                    val ck = urls.filter { it.value == key }.keys.first()
-                    val ds = DataSourceType.values().firstOrNull { it.key == ck }
-                            ?: DataSourceType.CENSORED
-                    if (link is ActressInfo) {
-                        when (ds) {
-                            DataSourceType.CENSORED -> DataSourceType.ACTRESSES
-                            DataSourceType.UNCENSORED -> DataSourceType.UNCENSORED_ACTRESSES
-                            DataSourceType.XYZ -> DataSourceType.XYZ_ACTRESSES
-                            else -> ds
+                val path = link.link.urlPath
+                KLog.d("link data urlPath :$path ")
+                val type = when {
+                    link.link.urlHost.endsWith("xyz") -> {
+                        //xyz
+                        when {
+                            path.startsWith("genre") -> DataSourceType.GENRE
+                            path.startsWith("star") -> DataSourceType.ACTRESSES
+                            else -> DataSourceType.CENSORED
                         }
+
+                    }
+                    else -> {
+                        when {
+                            path.startsWith("uncensored") -> {
+                                //无码
+
+                                when {
+                                    path.startsWith("uncensored/genre") -> DataSourceType.GENRE
+                                    path.startsWith("uncensored/star") -> DataSourceType.ACTRESSES
+                                    else -> DataSourceType.CENSORED
+                                }
+                            }
+                            else -> {
+                                //有码
+                                when {
+                                    path.startsWith("genre") -> DataSourceType.GENRE
+                                    path.startsWith("star") -> DataSourceType.ACTRESSES
+                                    else -> DataSourceType.CENSORED
+                                }
+                            }
+                        }
+
                     }
 
                 }
-                DataSourceType.CENSORED
+                KLog.d("link data type :$type ")
+                type
+
             } ?: DataSourceType.CENSORED
         }
     }
@@ -132,10 +153,13 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
 
 
     companion object {
+
+        const val ACTRESS_LIST_DATA_TYPE = "actress:list:data:type"
+
         //需要处理搜索的特殊情况
         fun newInstance(link: ILink) = ActressListFragment().apply {
             arguments = Bundle().apply {
-                putSerializable(C.BundleKey.Key_2, link)
+                putSerializable(C.BundleKey.Key_1, link)
             }
         }
 
@@ -149,8 +173,8 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
                 * object : ILink {
                     override val link: String = url
                 }*/
-                putSerializable(C.BundleKey.Key_2, PageLink(1, type.key, url))
-                putSerializable(C.BundleKey.Key_1, type)
+                putSerializable(C.BundleKey.Key_1, PageLink(1, type.key, url))
+                putSerializable(ACTRESS_LIST_DATA_TYPE, type)
             }
         }
 
@@ -163,5 +187,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
     override fun moveTo(pos: Int) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
+
 
 }

@@ -15,7 +15,6 @@ import me.jbusdriver.mvp.bean.checkUrl
 import me.jbusdriver.mvp.bean.detailSaveKey
 import me.jbusdriver.mvp.model.AbstractBaseModel
 import me.jbusdriver.mvp.model.BaseModel
-import me.jbusdriver.ui.data.enums.DataSourceType
 import org.jsoup.Jsoup
 import java.util.*
 
@@ -25,7 +24,7 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
     private val loadFromNet = { s: String ->
         KLog.d("request for : $s")
         mView?.let { view ->
-            JAVBusService.INSTANCE.get(view.movie.link).addUserCase().map { MovieDetail.parseDetails(Jsoup.parse(it), view.movie.type) }
+            JAVBusService.INSTANCE.get(view.movie.link).addUserCase().map { MovieDetail.parseDetails(Jsoup.parse(it)) }
                     .doOnNext { mView?.movie?.detailSaveKey?.let { key -> CacheLoader.cacheDisk(key to it) } }
         } ?: Flowable.empty()
     }
@@ -35,7 +34,7 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
                 mView?.let { view ->
                     CacheLoader.acache.getAsString(view.movie.detailSaveKey)?.let {
                         val old = AppContext.gson.fromJson<MovieDetail>(it)
-                        val res = if (old != null && mView?.movie?.type != DataSourceType.XYZ) {
+                        val res = if (old != null && mView?.movie?.link?.endsWith("xyz") == false) {
                             val new = old.checkUrl(JAVBusService.defaultFastUrl)
                             if (old != new) CacheLoader.cacheDisk(view.movie.detailSaveKey to new)
                             new

@@ -13,7 +13,10 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.*
-import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.bean.ILink
+import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.mvp.bean.PageInfo
+import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.adapter.BaseMultiItemAppAdapter
@@ -24,28 +27,57 @@ import me.jbusdriver.ui.data.enums.DataSourceType
 
 abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
 
+    /*
+        CENSORED("有碼", "/page/"), //有码
+
+    GENRE("有碼類別"), //类别
+
+    ACTRESSES("有碼女優"), //女优
+
+     */
     override val type: DataSourceType by lazy {
-        arguments?.getSerializable(C.BundleKey.Key_1) as? DataSourceType ?: let {
+        arguments?.getSerializable(MOVIE_LIST_DATA_TYPE) as? DataSourceType ?: let {
             (arguments?.getSerializable(C.BundleKey.Key_1) as? ILink)?.let { link ->
-                if (link is Movie) link.type
-                else {
-                    val urls = CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<Map<String, String>>(it) }
-                            ?: arrayMapof()
-                    val key = urls.filter { link.link.startsWith(it.value) }.values.sortedBy { it.length }.lastOrNull()
-                            ?: DataSourceType.CENSORED.key
-                    val ck = urls.filter { it.value == key }.keys.first()
-                    val ds = DataSourceType.values().firstOrNull { it.key == ck }
-                            ?: DataSourceType.CENSORED
-                    if (link is ActressInfo) {
-                        when (ds) {
-                            DataSourceType.CENSORED -> DataSourceType.ACTRESSES
-                            DataSourceType.UNCENSORED -> DataSourceType.UNCENSORED_ACTRESSES
-                            DataSourceType.XYZ -> DataSourceType.XYZ_ACTRESSES
-                            else -> ds
+
+                val path = link.link.urlPath
+                KLog.d("link data urlPath :$path ")
+                val type = when {
+                    link.link.urlHost.endsWith("xyz") -> {
+                        //xyz
+                        when {
+                            path.startsWith("genre") -> DataSourceType.GENRE
+                            path.startsWith("star") -> DataSourceType.ACTRESSES
+                            else -> DataSourceType.CENSORED
                         }
+
                     }
+                    else -> {
+                        when {
+                            path.startsWith("uncensored") -> {
+                                //无码
+
+                                when {
+                                    path.startsWith("uncensored/genre") -> DataSourceType.GENRE
+                                    path.startsWith("uncensored/star") -> DataSourceType.ACTRESSES
+                                    else -> DataSourceType.CENSORED
+                                }
+                            }
+                            else -> {
+                                //有码
+                                when {
+                                    path.startsWith("genre") -> DataSourceType.GENRE
+                                    path.startsWith("star") -> DataSourceType.ACTRESSES
+                                    else -> DataSourceType.CENSORED
+                                }
+                            }
+                        }
+
+                    }
+
                 }
-                DataSourceType.CENSORED
+                KLog.d("link data type :$type ")
+                type
+
             } ?: DataSourceType.CENSORED
         }
     }
@@ -211,7 +243,10 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
         layoutManager.scrollToPosition(adapter.getHeaderLayoutCount() + pos)
     }
 
-    override fun toString(): String = "$type :" + super.toString()
+//    override fun toString(): String = "$type :" + super.toString()
 
+    companion object {
+        const val MOVIE_LIST_DATA_TYPE = "movie:list:data:type"
+    }
 
 }

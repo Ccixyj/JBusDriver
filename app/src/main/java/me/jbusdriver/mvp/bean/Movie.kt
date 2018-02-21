@@ -7,14 +7,12 @@ import me.jbusdriver.common.KLog
 import me.jbusdriver.common.urlHost
 import me.jbusdriver.db.bean.MovieCategory
 import me.jbusdriver.http.JAVBusService
-import me.jbusdriver.ui.data.enums.DataSourceType
 import org.jsoup.nodes.Document
 
 /**
  * Created by Administrator on 2017/4/16.
  */
 data class Movie(
-        val type: DataSourceType,
         val title: String,
         val imageUrl: String,
         val code: String, //番号
@@ -31,10 +29,9 @@ data class Movie(
 
     companion object {
         //图片url host 设置
-        fun loadFromDoc(type: DataSourceType, str: Document): List<Movie> {
+        fun loadFromDoc( str: Document): List<Movie> {
             return str.select(".movie-box").mapIndexed { _, element ->
                 Movie(
-                        type = type,
                         title = element.select("img").attr("title"),
                         imageUrl = element.select("img").attr("src"),
                         code = element.select("date").first().text(),
@@ -55,7 +52,7 @@ data class Movie(
                     }
         }
 
-        fun newPageMovie(page: Int, pages: List<Int>, type: DataSourceType = DataSourceType.CENSORED) = Movie(type, page.toString(), pages.joinToString("#"), "", "", "")
+        fun newPageMovie(page: Int, pages: List<Int>) = Movie( page.toString(), pages.joinToString("#"), "", "", "")
     }
 }
 

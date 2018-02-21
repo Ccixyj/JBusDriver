@@ -31,7 +31,7 @@ data class MovieDetail(val title: String,
         //  val magnets: MutableList<Magnet> = mutableListOf() //磁力链接
 ) {
     companion object {
-        fun parseDetails(doc: Document, type: DataSourceType): MovieDetail {
+        fun parseDetails(doc: Document): MovieDetail {
             KLog.d("start parseDetails ")
             val roeMovie = doc.select("[class=row movie]")
             val title = doc.select(".container h3").text()
@@ -73,7 +73,7 @@ data class MovieDetail(val title: String,
 
             val relatedMovies = doc.select("#related-waterfall .movie-box").map {
                 val url = it.attr("href")
-                Movie(type, it.attr("title"), it.select("img").attr("src"), url.split("/").last(), "", url)
+                Movie( it.attr("title"), it.select("img").attr("src"), url.split("/").last(), "", url)
             }
 
             return MovieDetail(title, content, cover, headers, geneses, actresses, samples, relatedMovies).apply {

@@ -23,13 +23,15 @@ class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter
 
     override val layoutId = R.layout.activity_moive_list
 
-    private val linkData by lazy { intent.getSerializableExtra(C.BundleKey.Key_1) as? ILink ?: error("no link data") }
+    private val linkData by lazy {
+        intent.getSerializableExtra(C.BundleKey.Key_1) as? ILink ?: error("no link data")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setToolBar()
         supportFragmentManager.beginTransaction().replace(R.id.fl_container, LinkedMovieListFragment.newInstance(linkData).apply {
-            arguments = intent.extras
+            arguments?.putAll(intent.extras)
         }).commitAllowingStateLoss()
     }
 
@@ -66,7 +68,7 @@ class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter
         is PageLink -> 6
         else -> error(" $this has no matched class for des")
         }
-         不需要加入历史记录
+        不需要加入历史记录
          */
         fun reloadFromHistory(context: Context, his: History) {
             context.startActivity(Intent(context, MovieListActivity::class.java).apply {

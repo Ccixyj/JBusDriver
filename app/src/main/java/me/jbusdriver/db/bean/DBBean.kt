@@ -9,7 +9,6 @@ import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.activity.MovieListActivity
-import me.jbusdriver.ui.data.enums.DataSourceType
 import java.util.*
 
 
@@ -78,7 +77,7 @@ private fun doGet(type: Int, jsonStr: String) = when (type) {
     6 -> AppContext.gson.fromJson<PageLink>(jsonStr)
     else -> error("$type : $jsonStr has no matched class ")
 }.let { data ->
-    val isXyz = if (data is Movie) data.type == DataSourceType.XYZ else data.link.urlHost.endsWith("xyz")
+    val isXyz =  data.link.urlHost.endsWith("xyz")
     if (isXyz) return@let data
     KLog.d("check type : $type  #$data hosts: ${JAVBusService.defaultImageUrlHosts}")
     val host: String by lazy { JAVBusService.defaultFastUrl }
