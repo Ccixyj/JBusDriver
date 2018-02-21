@@ -92,7 +92,16 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
     }
 
     override fun loadMoreFail() {
+        if (adapter.getData().isEmpty()){
+            adapter.setEmptyView(getEmptyView().apply {
+                (this as? TextView)?.text = "加载错误"
+                setOnClickListener {
+                    mBasePresenter?.onRefresh()
+                }
+            })
+        }
         adapter.loadMoreFail()
+
     }
 
     override fun enableRefresh(bool: Boolean) {

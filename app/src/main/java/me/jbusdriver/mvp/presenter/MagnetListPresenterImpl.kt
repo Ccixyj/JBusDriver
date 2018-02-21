@@ -48,7 +48,11 @@ class MagnetListPresenterImpl(private val magnetLoaderKey: String, private val k
         onFirstLoad()
     }
 
-    override fun hasLoadNext(): Boolean = loader.hasNexPage
+    override fun hasLoadNext(): Boolean = loader.hasNexPage.also {
+        if (!it){
+            lastPage = pageInfo.activePage
+        }
+    }
 
     override fun onRefresh() {
         (0..Math.max(pageInfo.activePage, pageInfo.nextPage)).onEach {

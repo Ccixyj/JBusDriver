@@ -24,7 +24,7 @@ const val MagnetFormatPrefix = "magnet:?xt=urn:btih:"
 /**  "btso.pw" to BtsoPWMagnetLoaderImpl()
  */
 val MagnetLoaders: Map<String, IMagnetLoader> by lazy {
-    mapOf("btdiggs" to BtdiggsMagnetLoaderImpl(), "BTSOW" to BTSOWMagnetLoaderImpl(), "Btanv" to BtanvMagnetLoaderImpl())
+    mapOf("btdiggs" to BtdiggsMagnetLoaderImpl(), "TorrentKitty" to TorrentKittyImpl(), "BTSOW" to BTSOWMagnetLoaderImpl(), "CNBtkitty" to CNBtkittyImpl(), "Btanv" to BtanvMagnetLoaderImpl())
 }
 
 
@@ -79,7 +79,7 @@ class BtdiggsMagnetLoaderImpl : IMagnetLoader {
     private fun encode(string: String) = Base64.encodeToString(string.toByteArray(), Base64.NO_PADDING or Base64.URL_SAFE)
 
     override fun loadMagnets(key: String, page: Int): List<Magnet> {
-        KLog.d("loadMagnets ${search.format(encode(key), page)}")
+        KLog.d("loadMagnets ${search.format(encode(key).trim(), page)}")
         val doc = Jsoup.connect(search.format(encode(key).trim(), page)).get()
         hasNexPage = doc.select(".page-split :last-child[title]").size > 0
         return doc.select(".list dl").map {
@@ -92,6 +92,57 @@ class BtdiggsMagnetLoaderImpl : IMagnetLoader {
     }
 }
 
+class CNBtkittyImpl : IMagnetLoader {
+
+    private var search = "http://cnbtkitty.com"
+
+    override var hasNexPage: Boolean = true
+
+    override fun loadMagnets(key: String, page: Int): List<Magnet> {
+        val doc = if (page == 1) {
+            Jsoup.connect("http://cnbtkitty.com/").cookie("bk_lan", "zh-cn").data("keyword", key).post()
+        } else {
+            Jsoup.connect(search).get()
+        }
+        val nextPages = doc.select(".pagination strong~a")
+        hasNexPage = nextPages.size > 0
+        if (hasNexPage) {
+            search = nextPages.first().attr("href")
+        }
+
+        return doc.select(".content .list-con").map {
+            val title = it.select("dt").text()
+            val ops = it.select(".option span")
+
+            val magent = ops.removeAt(0).select("a").attr("href")
+
+            val date = ops.removeAt(0).text()
+            Magnet(title, ops.text(), date, magent)
+        }
+
+
+    }
+}
+
+class TorrentKittyImpl : IMagnetLoader {
+
+    private var search = "https://www.torrentkitty.tv/search/%s/%s"
+
+    override var hasNexPage: Boolean = true
+
+
+    override fun loadMagnets(key: String, page: Int): List<Magnet> {
+        val doc = Jsoup.connect(search.format(key, page)).get()
+        hasNexPage = (doc.select(".pagination").firstOrNull()?.select(".current~a")?.size ?: 0) > 0
+        val mag = doc.select("#archiveResult tr").drop(1)
+        return mag.map {
+            val link = it.select(".action a[rel=magnet]")
+            Magnet(it.select(".name").text(), it.select(".size").text(),
+                    it.select(".date").text(), link.attr("href"))
+        }
+
+    }
+}
 
 //==================================================================================================
 
