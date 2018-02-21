@@ -32,38 +32,60 @@ abstract class SDCardDatabaseContext
 
         //判断是否存在sd卡
         val sdExist = android.os.Environment.MEDIA_MOUNTED == android.os.Environment.getExternalStorageState()
-        if (!sdExist) {//如果不存在,
-            KLog.e("SD卡管理：", "SD卡不存在，请加载SD卡")
-            return null
+        val dir = if (!sdExist) {//如果不存在,
+            KLog.e("SD卡不存在，请加载SD卡")
+            filesDir.absolutePath
         } else {//如果存在
             //获取sd卡路径
-            val dbDir = android.os.Environment.getExternalStorageDirectory().toString() + File.separator + dir + File.separator
-            val dbPath = dbDir + name//数据库路径
-            //判断目录是否存在，不存在则创建该目录
-            val dirFile = File(dbDir)
-            if (!dirFile.exists())
-                dirFile.mkdirs()
-
-            //数据库文件是否创建成功
-            var isFileCreateSuccess = false
-            //判断文件是否存在，不存在则创建该文件
-            val dbFile = File(dbPath)
-            if (!dbFile.exists()) {
-                try {
-                    isFileCreateSuccess = dbFile.createNewFile()//创建文件
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-
-            } else
-                isFileCreateSuccess = true
-
-            //返回数据库文件对象
-            return if (isFileCreateSuccess)
-                dbFile
-            else
-                null
+            android.os.Environment.getExternalStorageDirectory().toString()
         }
+        val dbDir = dir + File.separator + dir + File.separator
+        val dbPath = dbDir + name//数据库路径
+        //判断目录是否存在，不存在则创建该目录
+        val dirFile = File(dbDir)
+        if (!dirFile.exists())
+            dirFile.mkdirs()
+
+        //数据库文件是否创建成功
+        var isFileCreateSuccess = false
+        //判断文件是否存在，不存在则创建该文件
+        val dbFile = File(dbPath)
+        if (!dbFile.exists()) {
+            val fileDb = File(filesDir.absolutePath + File.separator + dir + File.separator + name)
+            try {
+                //检查filedir下是否存在
+
+                if (sdExist && fileDb.exists() && fileDb.isFile) {
+                    //存在 移动
+                    fileDb.copyTo(dbFile)
+                    fileDb.delete()
+                    isFileCreateSuccess = true
+                }else{
+                    isFileCreateSuccess = dbFile.createNewFile()//创建文件
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+                //fall back
+                try {
+                    if (!fileDb.exists()) {
+                        fileDb.parentFile?.let {
+                            if (!it.exists()) it.mkdirs()
+                        }
+                        fileDb.createNewFile()
+                    }
+                } catch (e: Exception) {
+                }
+                return fileDb
+            }
+
+        } else
+            isFileCreateSuccess = true
+
+        //返回数据库文件对象
+        return if (isFileCreateSuccess)
+            dbFile
+        else
+            null
     }
 
     override fun openOrCreateDatabase(name: String, mode: Int, factory: CursorFactory?) = SQLiteDatabase.openOrCreateDatabase(getDatabasePath(name), null)

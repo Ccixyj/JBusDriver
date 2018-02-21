@@ -9,6 +9,7 @@ import me.jbusdriver.common.toJsonString
 import me.jbusdriver.mvp.bean.CategoryChangeEvent
 import me.jbusdriver.mvp.bean.MenuChangeEvent
 import me.jbusdriver.mvp.bean.PageChangeEvent
+import me.jbusdriver.ui.data.magnet.MagnetLoaders
 import kotlin.properties.Delegates
 
 /**
@@ -47,7 +48,7 @@ object AppConfiguration {
     private const val MagnetSourceS: String = "MagnetSourceS"
     val MagnetKeys: MutableList<String> by lazy {
         AppContext.gson.fromJson<MutableList<String>>(getSp(MagnetSourceS) ?: "") ?: let {
-            val default = listOf("btso.pw", "btdiggs")
+            val default = MagnetLoaders.keys.take(2)
             saveSp(MagnetSourceS, default.toJsonString())
             default.toMutableList()
         }

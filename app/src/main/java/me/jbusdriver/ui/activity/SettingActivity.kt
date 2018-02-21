@@ -107,7 +107,8 @@ class SettingActivity : BaseActivity() {
         }
 
         //magnet source
-        tv_magnet_source.text = AppConfiguration.MagnetKeys.joinToString(separator = "   ")
+        val allKeys = MagnetLoaders.keys
+        tv_magnet_source.text = AppConfiguration.MagnetKeys.filter { allKeys.contains(it) }.joinToString(separator = "   ")
         ll_magnet_source_config.setOnClickListener {
 
             val selectedIndices = AppConfiguration.MagnetKeys.map { MagnetLoaders.keys.indexOf(it) }.toTypedArray()
