@@ -6,14 +6,13 @@
     "https://www.javbus.info"
   ],
   "update": {
-    "versionCode": 187,
+    "versionCode": 188,
     "versionName": "1.2.1",
-    "url": "http://git.oschina.net/751762476/jbusfile/raw/master/JubsDriver_v1.2build293.apk",
-    "desc": "JBusDriver 1.2 新年版本!
-1.新的收藏机制, 收藏可以分类.进入设置-我的收藏进行设置
-2.收藏可以本地备份.之后将会考虑与网站的收藏对接
-3.加入telegram链接.
-4.修复了已知的bug,优化了apk大小
+    "url": "http://git.oschina.net/751762476/jbusfile/raw/master/JubsDriver_v1.2.1build302.apk",
+    "desc": "JBusDriver 1.2.1 已更新!
+1.移除失效的磁力链接,添加了两个新的磁力解析站点.
+2.修复收藏收据路径的问题.
+3.修复了已知的bug.
 "
   },
   "notice": {
