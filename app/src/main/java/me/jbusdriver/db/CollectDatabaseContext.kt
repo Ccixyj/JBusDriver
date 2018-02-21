@@ -33,14 +33,14 @@ abstract class SDCardDatabaseContext
 
         //判断是否存在sd卡
         val sdExist = android.os.Environment.MEDIA_MOUNTED == android.os.Environment.getExternalStorageState()
-        val dir = if (!sdExist) {//如果不存在,
+        val parentDir = if (!sdExist) {//如果不存在,
             KLog.e("SD卡不存在，请加载SD卡")
             filesDir.absolutePath
         } else {//如果存在
             //获取sd卡路径
             android.os.Environment.getExternalStorageDirectory().toString()
         }
-        val dbDir = dir + File.separator + dir + File.separator
+        val dbDir = parentDir + File.separator + dir + File.separator
         val dbPath = dbDir + name//数据库路径
         //判断目录是否存在，不存在则创建该目录
         val dirFile = File(dbDir)
@@ -79,7 +79,7 @@ abstract class SDCardDatabaseContext
                 return fileDb
             }
 
-        }
+        }else isFileCreateSuccess = true
 
         //返回数据库文件对象
         return if (isFileCreateSuccess)
