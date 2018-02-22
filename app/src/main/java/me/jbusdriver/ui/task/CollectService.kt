@@ -123,6 +123,7 @@ class CollectService : IntentService("CollectService") {
     }
 
     override fun onCreate() {
+        KLog.t("CollectService").e(" before onCreate")
         super.onCreate()
         KLog.t("CollectService").e("onCreate")
     }

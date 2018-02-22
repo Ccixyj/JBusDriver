@@ -100,27 +100,27 @@ class WatchLargeImageActivity : BaseActivity() {
 
                         override fun onLoadStarted(placeholder: Drawable?) {
                             super.onLoadStarted(placeholder)
-                            view.findViewById<View>(R.id.pb_large_progress).alpha = 1f
+                            view.findViewById<View>(R.id.pb_large_progress)?.alpha = 1f
                         }
 
                         override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                            (view.findViewById<MultiTouchZoomableImageView>(R.id.mziv_image_large)).imageBitmap = resource
-                            view.findViewById<View>(R.id.pb_large_progress).animate().alpha(0f).setDuration(300).start()
+                            (view.findViewById<MultiTouchZoomableImageView>(R.id.mziv_image_large))?.imageBitmap = resource
+                            view.findViewById<View>(R.id.pb_large_progress)?.animate()?.alpha(0f)?.setDuration(300)?.start()
                         }
 
 
                         override fun onLoadFailed(errorDrawable: Drawable?) {
                             super.onLoadFailed(errorDrawable)
-                            view.findViewById<View>(R.id.pb_large_progress).animate().alpha(0f).setDuration(500).start()
-                            (view.findViewById<View>(R.id.mziv_image_large) as MultiTouchZoomableImageView).also { view ->
+                            view.findViewById<View>(R.id.pb_large_progress)?.animate()?.alpha(0f)?.setDuration(500)?.start()
+                            (view.findViewById<View>(R.id.mziv_image_large) as? MultiTouchZoomableImageView)?.also { iv ->
                                 //                                imageBitmap = BitmapFactory.decodeResource(viewContext.resources, R.drawable.ic_image_error)
                                 GlideApp.with(view).asBitmap().load(R.drawable.ic_image_error).into(object : SimpleTarget<Bitmap>() {
                                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                        view.imageBitmap = resource
+                                        iv.imageBitmap = resource
                                     }
                                 })
 
-                                view.setImageGestureListener(object : ImageGestureListener {
+                                iv.setImageGestureListener(object : ImageGestureListener {
                                     override fun onImageGestureSingleTapConfirmed() {
                                         KLog.e("onImageGestureSingleTapConfirmed : reload")
                                         loadImage(view, position)
