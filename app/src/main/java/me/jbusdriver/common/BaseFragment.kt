@@ -71,6 +71,6 @@ open class BaseFragment : Fragment() {
 
     //region other
     val viewContext: Context
-        get() = activity ?: AppContext.instace
+        get() = activity ?: appContext
     //endregion
 }

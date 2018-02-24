@@ -4,8 +4,8 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.text.TextUtils
 import jbusdriver.me.jbusdriver.BuildConfig
-import me.jbusdriver.common.AppContext
 import me.jbusdriver.common.KLog
+import me.jbusdriver.common.appContext
 import okhttp3.*
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -46,7 +46,7 @@ object NetClient {
 
     val okHttpClient by lazy {
         //设置缓存路径
-        val httpCacheDirectory = File(AppContext.Companion.instace.cacheDir, "OK_HTTP_CACHE")
+        val httpCacheDirectory = File(appContext.cacheDir, "OK_HTTP_CACHE")
         //设置缓存 100M
         val cache = Cache(httpCacheDirectory, 100 * 1024 * 1024.toLong())
 

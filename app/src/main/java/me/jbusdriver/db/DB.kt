@@ -5,8 +5,8 @@ import android.arch.persistence.db.SupportSQLiteOpenHelper
 import android.arch.persistence.db.framework.FrameworkSQLiteOpenHelperFactory
 import com.squareup.sqlbrite3.SqlBrite
 import io.reactivex.schedulers.Schedulers
-import me.jbusdriver.common.AppContext
 import me.jbusdriver.common.KLog
+import me.jbusdriver.common.appContext
 import me.jbusdriver.db.dao.CategoryDao
 import me.jbusdriver.db.dao.HistoryDao
 import me.jbusdriver.db.dao.LinkItemDao
@@ -24,7 +24,7 @@ object DB {
     }
     private const val JBUS_DB_NAME = "jbusdriver.db"
     private val dataBase by lazy {
-        val configuration = SupportSQLiteOpenHelper.Configuration.builder(AppContext.instace)
+        val configuration = SupportSQLiteOpenHelper.Configuration.builder(appContext)
                 .name(JBUS_DB_NAME).callback(JBusDBOpenCallBack()).build()
         provideSqlBrite.wrapDatabaseHelper(FrameworkSQLiteOpenHelperFactory().create(configuration), Schedulers.io()).apply {
             setLoggingEnabled(jbusdriver.me.jbusdriver.BuildConfig.DEBUG)
@@ -33,8 +33,8 @@ object DB {
 
     private const val COLLECT_DB_NAME = "collect.db"
     private val collectDataBase by lazy {
-        val configuration = SupportSQLiteOpenHelper.Configuration.builder(object : SDCardDatabaseContext(AppContext.instace) {
-            override val dir: String = AppContext.instace.packageName + File.separator + "collect"
+        val configuration = SupportSQLiteOpenHelper.Configuration.builder(object : SDCardDatabaseContext(appContext) {
+            override val dir: String = appContext.packageName + File.separator + "collect"
         }).name(COLLECT_DB_NAME).callback(CollectDBCallBack()).build()
         provideSqlBrite.wrapDatabaseHelper(FrameworkSQLiteOpenHelperFactory().create(configuration), Schedulers.io()).apply {
             setLoggingEnabled(jbusdriver.me.jbusdriver.BuildConfig.DEBUG)

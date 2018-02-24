@@ -35,7 +35,7 @@ const val MB = KB * 1024
 const val GB = MB * 1024
 const val TB = GB * 1024
 
-fun Long.formatFileSize(): String = Formatter.formatFileSize(AppContext.instace, this)
+fun Long.formatFileSize(): String = Formatter.formatFileSize(appContext, this)
 //endregion
 
 //region array map
@@ -49,8 +49,8 @@ fun Int.toColorInt() = getColor(this)
 
 private fun getColor(id: Int): Int {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        AppContext.instace.resources.getColor(id, null)
-    } else AppContext.instace.resources.getColor(id)
+        appContext.resources.getColor(id, null)
+    } else appContext.resources.getColor(id)
 }
 //endregion
 
@@ -145,8 +145,8 @@ fun Context.paste(): String? {
 //region package info
 val Context.packageInfo: PackageInfo?
     get() = try {
-        AppContext.instace.packageManager.getPackageInfo(
-                AppContext.instace.packageName, 0)
+        appContext.packageManager.getPackageInfo(
+                appContext.packageName, 0)
     } catch (e: Exception) {
         e.printStackTrace()
         null
@@ -232,7 +232,7 @@ fun createDir(collectDir: String): String? {
                 }
             }
         } catch (e: Exception) {
-            MobclickAgent.reportError(AppContext.instace, e)
+            MobclickAgent.reportError(appContext, e)
         }
     }
     return null

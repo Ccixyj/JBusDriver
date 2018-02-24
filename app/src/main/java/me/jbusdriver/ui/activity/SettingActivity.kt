@@ -42,8 +42,8 @@ class SettingActivity : BaseActivity() {
 
     private val backDir by lazy {
         val pathSuffix = File.separator + "collect" + File.separator + "backup" + File.separator
-        val dir: String = createDir(Environment.getExternalStorageDirectory().absolutePath + File.separator + AppContext.instace.packageName + pathSuffix)
-                ?: createDir(AppContext.instace.filesDir.absolutePath + pathSuffix)
+        val dir: String = createDir(Environment.getExternalStorageDirectory().absolutePath + File.separator + appContext.packageName + pathSuffix)
+                ?: createDir(appContext.filesDir.absolutePath + pathSuffix)
                 ?: error("cant not create collect dir in anywhere")
         File(dir)
     }

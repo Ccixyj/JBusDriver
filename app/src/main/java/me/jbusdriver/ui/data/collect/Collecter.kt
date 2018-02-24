@@ -47,8 +47,8 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
             }
 
             val pathSuffix = File.separator + "collect" + File.separator
-            val dir: String = createDir(Environment.getExternalStorageDirectory().absolutePath + File.separator + AppContext.instace.packageName + pathSuffix)
-                    ?: createDir(AppContext.instace.filesDir.absolutePath + pathSuffix)
+            val dir: String = createDir(Environment.getExternalStorageDirectory().absolutePath + File.separator + appContext.packageName + pathSuffix)
+                    ?: createDir(appContext.filesDir.absolutePath + pathSuffix)
                     ?: error("cant not create collect dir in anywhere")
 
             //可能存在旧的,复制到新的目录下去并删除
@@ -59,7 +59,7 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
                 if (dir.contains(Environment.getExternalStorageDirectory().absolutePath)) {
                     if ((this.list()?.size ?: -1) > 0) return@apply
 
-                    val fileOld = File(AppContext.instace.filesDir.absolutePath + pathSuffix)
+                    val fileOld = File(appContext.filesDir.absolutePath + pathSuffix)
                     if (fileOld.exists() && (fileOld.list()?.size ?: -1) > 0) {
                         fileOld.copyRecursively(this)
                         fileOld.deleteRecursively()
@@ -68,8 +68,8 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
 
             })
         } catch (e: Exception) {
-            MobclickAgent.reportError(AppContext.instace, e)
-            AppContext.instace.toast("收藏目录创建失败,请检查app是否有sd卡操作权限")
+            MobclickAgent.reportError(appContext, e)
+            appContext.toast("收藏目录创建失败,请检查app是否有sd卡操作权限")
             null
         }
     }
@@ -99,7 +99,7 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
     private fun refreshData(): MutableList<T> {
         KLog.w("refreshData key $key")
         if (getAvailableExternalMemorySize() < MB * 100) {
-            AppContext.instace.toast("sd卡可用空间不足100M")
+            appContext.toast("sd卡可用空间不足100M")
         }
         return transferDB() ?: loadFromDb()
     }
@@ -141,7 +141,7 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
         if (!has(data)) {
             dataList.add(0, data)
             save(data)
-            AppContext.instace.toast("${data.des}收藏成功")
+            appContext.toast("${data.des}收藏成功")
             return true
         }
         return false
@@ -154,7 +154,7 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
     override fun removeCollect(data: T): Boolean {
         val d = dataList.remove(dataList.find { it.uniqueKey == data.uniqueKey })
         if (d) {
-            if (LinkService.remove(data)) AppContext.instace.toast("已取消收藏")
+            if (LinkService.remove(data)) appContext.toast("已取消收藏")
             return true
         }
         return false

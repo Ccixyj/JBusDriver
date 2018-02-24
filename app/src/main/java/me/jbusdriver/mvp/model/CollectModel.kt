@@ -1,6 +1,6 @@
 package me.jbusdriver.mvp.model
 
-import me.jbusdriver.common.AppContext
+import me.jbusdriver.common.appContext
 import me.jbusdriver.common.toast
 import me.jbusdriver.db.bean.LinkItem
 import me.jbusdriver.db.service.LinkService
@@ -19,14 +19,14 @@ object CollectModel : ICollect<LinkItem> {
 
     override fun addToCollect(data: LinkItem): Boolean {
         LinkService.saveOrUpdate(listOf(data))
-        AppContext.instace.toast("收藏成功")
+        appContext.toast("收藏成功")
         return true
     }
 
     override fun has(data: LinkItem) = LinkService.hasByKey(data) >= 1
 
     override fun removeCollect(data: LinkItem) = LinkService.remove(data).also {
-        AppContext.instace.toast("已经取消收藏")
+        appContext.toast("已经取消收藏")
     }
 
     override fun reload() {

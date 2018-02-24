@@ -58,10 +58,10 @@ class CollectService : IntentService("CollectService") {
         KLog.d("handleMigrate")
         try {
             val pathSuffix = File.separator + "collect" + File.separator
-            var cacheDir = File(Environment.getExternalStorageDirectory().absolutePath + File.separator + AppContext.instace.packageName + pathSuffix)
+            var cacheDir = File(Environment.getExternalStorageDirectory().absolutePath + File.separator + appContext.packageName + pathSuffix)
             //迁移可能存在的
             migrate(cacheDir)
-            cacheDir = File(AppContext.instace.filesDir.absolutePath + pathSuffix)
+            cacheDir = File(appContext.filesDir.absolutePath + pathSuffix)
             //迁移可能存在的
             migrate(cacheDir)
         } catch (e: Exception) {

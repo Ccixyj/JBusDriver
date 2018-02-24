@@ -13,15 +13,13 @@ import jbusdriver.me.jbusdriver.BuildConfig
 import me.jbusdriver.http.JAVBusService
 import java.lang.reflect.Modifier.TRANSIENT
 
+lateinit var appContext: AppContext
 
-/**
- * Created by Administrator on 2017/4/8.
- */
 class AppContext : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        instace = this
+        appContext = this
         if (LeakCanary.isInAnalyzerProcess(this)) {
             // This process is dedicated to LeakCanary for heap analysis.
             // You should not init your app in this process.
@@ -52,8 +50,6 @@ class AppContext : Application() {
     }
 
     companion object {
-        @JvmStatic
-        lateinit var instace: AppContext
 
         @JvmStatic
         val gson = GsonBuilder().excludeFieldsWithModifiers(TRANSIENT).registerTypeAdapter(Int::class.java, JsonDeserializer<Int> { json, _, _ ->
