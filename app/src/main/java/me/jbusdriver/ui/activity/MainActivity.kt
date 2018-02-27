@@ -34,7 +34,6 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
     private val navigationView by lazy { findViewById<NavigationView>(R.id.nav_view) }
     private var selectMenu: MenuItem? = null
-    private val fragments by lazy { hashMapOf<Int, BaseFragment>() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,17 +110,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
     private fun initFragments() {
         KLog.d("init menuConfig : ${AppConfiguration.menuConfig.filter { it.value }}")
-        if (fragments.isNotEmpty()) {
-            val ft = supportFragmentManager.beginTransaction()
-            fragments.forEach {
-                supportFragmentManager.findFragmentByTag(it.key.toString())?.let {
-                    ft.remove(it)
-                }
-                ft.remove(it.value)
-            }
-            fragments.clear()
-            ft.commitAllowingStateLoss()
-        }
+
         MenuOp.Ops.forEach {
             navigationView.menu.findItem(it.id).isVisible = it.isHow
         }
@@ -157,7 +146,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                 .debounce(500, TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成
                 .compose(SchedulersCompat.computation())
                 .subscribeBy {
-                    fragments.remove(R.id.mine_collect)?.let {
+                    supportFragmentManager.findFragmentByTag(R.id.mine_collect.toString())?.let {
                         KLog.d("remove :$it $selectMenu")
                         supportFragmentManager.beginTransaction().remove(it).commitNowAllowingStateLoss()
                     }
@@ -195,7 +184,8 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
     private fun switchFragment(itemId: Int) {
         val ft = supportFragmentManager.beginTransaction()
-        val replace = fragments.getOrPut(itemId) {
+
+        val replace = supportFragmentManager.findFragmentByTag(itemId.toString()) ?: let {
             MenuOp.Ops.find { it.id == itemId }?.initializer?.invoke()?.apply {
                 ft.add(R.id.content_main, this, itemId.toString())
             } ?: error("no matched fragment")

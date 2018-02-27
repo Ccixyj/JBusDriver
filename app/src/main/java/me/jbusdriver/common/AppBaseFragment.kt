@@ -37,13 +37,16 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        KLog.t(TAG).d("onCreate : $savedInstanceState")
         mFirstStart = savedInstanceState == null || savedInstanceState.getBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE)
         mUniqueLoaderIdentifier = savedInstanceState?.getInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE) ?: AppBaseActivity.sViewCounter.incrementAndGet()
-
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        KLog.t(TAG).d("onActivityCreated :$savedInstanceState")
+        require(activity != null)
+        activity!!.intent.putExtra(C.SavedInstanceState.LOADER_SAVED_STATES + mUniqueLoaderIdentifier, savedInstanceState)
         loaderManager.initLoader(mUniqueLoaderIdentifier, null, this).startLoading()
     }
 
@@ -60,16 +63,15 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
             }
         }
         KLog.t(TAG).d("onCreateView ok: ${rootViewWeakRef?.get()}")
-        if (savedInstanceState != null)
-            onRestartInstance(savedInstanceState)
+        savedInstanceState?.let {
+            restoreState(it)
+        }
         return rootViewWeakRef?.get()
     }
 
     protected abstract val layoutId: Int
 
     protected abstract fun initWidget(rootView: View)
-
-    protected open fun onRestartInstance(bundle: Bundle) {}
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -83,14 +85,15 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
         KLog.t(TAG).d("doStart : mFirstStart :" + mFirstStart, "mUniqueLoaderIdentifier :" + mUniqueLoaderIdentifier, "instance = " + this)
         requireNotNull(mBasePresenter)
         mBasePresenter?.onViewAttached(this as V)
-        mBasePresenter?.onStart(mFirstStart)
+        mBasePresenter?.onStart(mFirstStart || mViewReCreate)
         if (mFirstStart || mViewReCreate) {
             initData()
         }
         KLog.d("doStart lazyLoad $TAG $mFirstStart $isLazyLoaded $userVisibleHint")
-        if (mFirstStart && !isLazyLoaded && userVisibleHint) {
+        if ((mFirstStart || mViewReCreate) && !isLazyLoaded && userVisibleHint) {
             lazyLoad()
         }
+
         mFirstStart = false
         mViewReCreate = false
     }
@@ -145,7 +148,6 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
         if (isLazyLoaded) {
             return
         }
-        KLog.w("lazyLoad :$TAG")
         if (mBasePresenter is BasePresenter.LazyLoaderPresenter) (mBasePresenter as? BasePresenter.LazyLoaderPresenter)?.lazyLoad()
         isLazyLoaded = true
     }
@@ -178,7 +180,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE, true)
+        outState.putBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE, mFirstStart)
         outState.putInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE, mUniqueLoaderIdentifier)
     }
 
@@ -197,6 +199,9 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
         //fragment中会赋值两次，可以设置flag。
         KLog.t(TAG).d("onLoadFinished")
         mBasePresenter = data
+        activity!!.intent.getBundleExtra(C.SavedInstanceState.LOADER_SAVED_STATES + mUniqueLoaderIdentifier)?.let {
+            restoreState(it)
+        }
         if (mNeedToCallStart.compareAndSet(true, false)) {
             doStart()
         }
@@ -214,6 +219,10 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     override fun dismissLoading() {
         placeDialogHolder?.dismiss()
         placeDialogHolder = null
+    }
+
+    protected open fun restoreState(bundle: Bundle) {
+        KLog.d("restoreState : $bundle")
     }
 
 }

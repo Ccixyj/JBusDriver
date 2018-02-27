@@ -163,9 +163,10 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
                     tv_change_b.text = spans[1]
                     tv_change_b.paintFlags = tv_change_b.paintFlags or Paint.UNDERLINE_TEXT_FLAG
                     tv_change_b.setOnClickListener {
-                        val showAll = arguments?.getBoolean(MENU_SHOW_ALL) ?: false
-                        mBasePresenter?.loadAll(!showAll)
-                        arguments?.putBoolean(MENU_SHOW_ALL, !showAll)
+                        val showAll = tempSaveBundle.getBoolean(MENU_SHOW_ALL)
+                        mBasePresenter?.setAll(!showAll)
+                        mBasePresenter?.loadData4Page(1)
+                        tempSaveBundle.putBoolean(MENU_SHOW_ALL, !showAll)
                     }
                 }
             } else null

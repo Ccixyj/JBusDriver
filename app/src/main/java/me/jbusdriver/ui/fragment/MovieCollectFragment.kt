@@ -31,9 +31,6 @@ import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import me.jbusdriver.ui.holder.CollectDirEditHolder
 
-/**
- * Created by Administrator on 2017/7/17 0017.
- */
 class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCollectPresenter, MovieCollectContract.MovieCollectView, CollectLinkWrapper<Movie>>(), MovieCollectContract.MovieCollectView {
 
     override val swipeView: SwipeRefreshLayout? by lazy { sr_refresh }

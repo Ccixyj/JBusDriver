@@ -21,6 +21,7 @@ interface BaseView {
 
 
 
+
     interface BaseListView : BaseView {
         fun showContents(data: List<*>)
         //加载更多完成

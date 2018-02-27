@@ -18,7 +18,7 @@ import me.jbusdriver.mvp.presenter.BasePresenter
 abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePresenter<V>, V : BaseView.BaseListWithRefreshView, M> : AppBaseFragment<P, V>(), BaseView.BaseListWithRefreshView {
 
     /**
-     * view 销毁后获取时要从view中重新获取;
+     * view 销毁后获取时要从view中重新获取; ex : 切换横竖屏
      * 重复使用fragment是不推荐lazy方式初始化.可能到时view引用的对象还是老对象.
      */
     abstract val swipeView: SwipeRefreshLayout?

@@ -19,7 +19,7 @@ abstract class BaseActivity : AppCompatActivity() {
     protected val TAG: String by lazy { this::class.java.simpleName }
     private var destroyed = false
     override fun onCreate(savedInstanceState: Bundle?) {
-        KLog.t(TAG).d("onCreate")
+        KLog.t(TAG).d("onCreate $savedInstanceState")
         super.onCreate(savedInstanceState)
         MobclickAgent.setDebugMode(jbusdriver.me.jbusdriver.BuildConfig.DEBUG)
         MobclickAgent.openActivityDurationTrack(BuildConfig.DEBUG)

@@ -149,7 +149,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
         }
     }
 
-    override val pageMode: Int = AppConfiguration.PageMode.Normal
+    override val pageMode: Int = AppConfiguration.PageMode.Page
 
 
     companion object {

@@ -18,19 +18,24 @@ import me.jbusdriver.common.KLog
 import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.ui.activity.SearchResultActivity
+import me.jbusdriver.ui.data.AppConfiguration
 
 abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract.LinkListPresenter, LinkListContract.LinkListView, T>(), LinkListContract.LinkListView {
 
     override val layoutId: Int = R.layout.layout_swipe_recycle
 
-    override val swipeView: SwipeRefreshLayout?  by lazy { sr_refresh }
-    override val recycleView: RecyclerView by lazy { rv_recycle }
+    override val swipeView: SwipeRefreshLayout? get() = sr_refresh
+    override val recycleView: RecyclerView get() = rv_recycle
     override val layoutManager: RecyclerView.LayoutManager  by lazy { LinearLayoutManager(viewContext) }
 
 
-    override fun onRestartInstance(bundle: Bundle) {
-        super.onRestartInstance(bundle)
-        arguments?.putBoolean(MENU_SHOW_ALL, bundle.getBoolean(MENU_SHOW_ALL, false))
+    override fun restoreState(bundle: Bundle) {
+        super.restoreState(bundle)
+        val all = bundle.getBoolean(MENU_SHOW_ALL, false)
+        tempSaveBundle.putBoolean(MENU_SHOW_ALL, all)
+        if (all) {
+            mBasePresenter?.setAll(true)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -55,7 +60,10 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
         super.onPrepareOptionsMenu(menu) //menu before show
-        menu?.findItem(R.id.action_show_all)?.isChecked = arguments?.getBoolean(MENU_SHOW_ALL, false) ?: false
+        menu?.findItem(R.id.action_show_all)?.isChecked = tempSaveBundle.getBoolean(MENU_SHOW_ALL, false)
+        menu?.findItem(R.id.action_jump)?.let {
+            it.isVisible = AppConfiguration.pageMode == AppConfiguration.PageMode.Page
+        }
     }
 
     protected open fun gotoSearchResult(query: String) {
@@ -71,8 +79,12 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
             R.id.action_show_all -> {
                 item.isChecked = !item.isChecked
                 if (item.isChecked) item.title = "已发布" else item.title = "全部电影"  /*false : 已发布的 ,true :全部*/
-                mBasePresenter?.loadAll(item.isChecked)
-                arguments?.putBoolean(MENU_SHOW_ALL, item.isChecked)
+                mBasePresenter?.setAll(item.isChecked)
+                mBasePresenter?.loadData4Page(1)
+                tempSaveBundle.putBoolean(MENU_SHOW_ALL, item.isChecked)
+            }
+            R.id.action_jump -> {
+
             }
         }
         return super.onOptionsItemSelected(item)
@@ -80,7 +92,7 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putBoolean(MENU_SHOW_ALL, arguments?.getBoolean(MENU_SHOW_ALL, false) ?: false)
+        outState.putBoolean(MENU_SHOW_ALL, tempSaveBundle.getBoolean(MENU_SHOW_ALL, false))
     }
 
 

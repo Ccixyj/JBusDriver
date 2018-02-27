@@ -19,6 +19,7 @@ public class C {
     public static class SavedInstanceState {
         public static final String RECREATION_SAVED_STATE = "RECREATION_SAVED_STATE";
         public static final String LOADER_ID_SAVED_STATE = "LOADER_ID_SAVED_STATE";
+        public static final String LOADER_SAVED_STATES = "LOADER_SAVED_STATES:";
     }
 
     public static class BundleKey {
