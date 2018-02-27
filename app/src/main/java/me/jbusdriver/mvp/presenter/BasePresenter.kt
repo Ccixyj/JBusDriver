@@ -58,6 +58,13 @@ interface BasePresenter<in V> {
     fun onPresenterDestroyed()
 
 
+    /**
+     * ex:旋转屏幕后恢复
+     */
+    fun restoreFromState()
+
+
+
     //region 封装的接口
 
 

@@ -63,9 +63,6 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
             }
         }
         KLog.t(TAG).d("onCreateView ok: ${rootViewWeakRef?.get()}")
-        savedInstanceState?.let {
-            restoreState(it)
-        }
         return rootViewWeakRef?.get()
     }
 
@@ -85,7 +82,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
         KLog.t(TAG).d("doStart : mFirstStart :" + mFirstStart, "mUniqueLoaderIdentifier :" + mUniqueLoaderIdentifier, "instance = " + this)
         requireNotNull(mBasePresenter)
         mBasePresenter?.onViewAttached(this as V)
-        mBasePresenter?.onStart(mFirstStart || mViewReCreate)
+        mBasePresenter?.onStart(mFirstStart)
         if (mFirstStart || mViewReCreate) {
             initData()
         }
@@ -223,6 +220,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
 
     protected open fun restoreState(bundle: Bundle) {
         KLog.d("restoreState : $bundle")
+        mBasePresenter?.restoreFromState()
     }
 
 }

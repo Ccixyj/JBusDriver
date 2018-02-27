@@ -57,8 +57,10 @@ abstract class AppBaseActivity<P : BasePresenter<V>, in V : BaseView> : BaseActi
         /**
          * 恢复状态 @see  onSaveInstanceState
          */
+        if (!mFirstStart) mBasePresenter?.restoreFromState()
         intent.getBundleExtra(C.SavedInstanceState.LOADER_SAVED_STATES + mUniqueLoaderIdentifier)?.let {
             restoreState(it)
+
         }
         mFirstStart = false
     }

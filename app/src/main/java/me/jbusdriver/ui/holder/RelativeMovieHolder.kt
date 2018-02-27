@@ -39,7 +39,7 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
                         MovieDetailActivity.start(v.context, it)
                     }
                 }
-                relativeAdapter.setOnItemLongClickListener { adapter, view, position ->
+                relativeAdapter.setOnItemLongClickListener { _, view, position ->
                     relativeAdapter.data.getOrNull(position)?.let { movie ->
                         val action = if (CollectModel.has(movie.convertDBItem())) LinkMenu.movieActions.minus("收藏")
                         else LinkMenu.movieActions.minus("取消收藏")

@@ -140,7 +140,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
                 //title
                 this.ll_attr_container.addView(generateTextView().apply {
                     textSize = 16f
-                    setTextColor(resources.getColor(R.color.primaryText))
+                    setTextColor(R.color.primaryText.toColorInt())
                     text = data.title
                 })
 
@@ -177,7 +177,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
 
     private fun generateTextView() = TextView(this.viewContext).apply {
         textSize = 11.5f
-        setTextColor(resources.getColor(R.color.secondText))
+        setTextColor(R.color.secondText.toColorInt())
     }
 
 

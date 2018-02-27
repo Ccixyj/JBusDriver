@@ -138,6 +138,11 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                 .delay(100, TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成
                 .compose(SchedulersCompat.computation())
                 .subscribeBy {
+                    val ft = supportFragmentManager.beginTransaction()
+                    supportFragmentManager.fragments.forEach {
+                        ft.remove(it)
+                    }
+                    ft.commitAllowingStateLoss()
                     initFragments()
                 }
                 .addTo(rxManager)

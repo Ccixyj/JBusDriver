@@ -92,4 +92,9 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
 
     }
 
+    override fun restoreFromState() {
+        super.restoreFromState()
+        loadDetail()
+    }
+
 }

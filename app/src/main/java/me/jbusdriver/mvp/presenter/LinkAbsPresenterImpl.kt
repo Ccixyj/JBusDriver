@@ -36,6 +36,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
             })
 
     override fun onFirstLoad() {
+        dataPageCache.clear()
         val link = when (linkData) {
             is PageLink -> {
                 pageInfo = PageInfo(linkData.page, linkData.page + 1)
@@ -193,4 +194,11 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
         super.onPresenterDestroyed()
         pageModeDisposable.dispose()
     }
+
+//    override fun restoreFromState() {
+//        super.restoreFromState()
+//        KLog.d("restoreFromState :dataPageCache : $dataPageCache")
+//        dataPageCache.clear()
+//        loadData4Page(1)
+//    }
 }

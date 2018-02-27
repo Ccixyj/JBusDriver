@@ -41,7 +41,7 @@ class CollectService : IntentService("CollectService") {
         if (!file.exists()) return
         try {
             val backs = AppContext.gson.fromJson<List<LinkItem>>(file.readText())?.map {
-                if (it.categoryId < 0) it
+                if (it.categoryId < 0)  return@map it
                 if (CategoryService.getById(it.categoryId) == null) {
                     it.getLinkValue().convertDBItem()
                 } else it

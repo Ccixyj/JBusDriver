@@ -24,8 +24,8 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
 
     override val layoutId: Int = R.layout.layout_swipe_recycle
 
-    override val swipeView: SwipeRefreshLayout? get() = sr_refresh
-    override val recycleView: RecyclerView get() = rv_recycle
+    override val swipeView: SwipeRefreshLayout? by lazy { sr_refresh }
+    override val recycleView: RecyclerView  by lazy { rv_recycle }
     override val layoutManager: RecyclerView.LayoutManager  by lazy { LinearLayoutManager(viewContext) }
 
 

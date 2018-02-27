@@ -69,4 +69,8 @@ open class BasePresenterImpl<V : BaseView> : BasePresenter<V> {
         rxManager.dispose()
     }
 
+    override fun restoreFromState() {
+        //no op
+        KLog.t(TAG).e("restoreFromState:")
+    }
 }
