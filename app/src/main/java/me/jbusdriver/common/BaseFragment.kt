@@ -13,8 +13,8 @@ import io.reactivex.disposables.CompositeDisposable
  */
 open class BaseFragment : Fragment() {
     protected val TAG: String by lazy { this::class.java.simpleName }
-    val rxManager by lazy {  CompositeDisposable() }
-
+    val rxManager by lazy { CompositeDisposable() }
+    protected val tempSaveBundle: Bundle by lazy { Bundle() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,9 +58,10 @@ open class BaseFragment : Fragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        KLog.t(TAG).d("onSaveInstanceState $outState")
         super.onSaveInstanceState(outState)
+        KLog.t(TAG).d("onSaveInstanceState $outState")
     }
+
 
     override fun onDestroy() {
         super.onDestroy()

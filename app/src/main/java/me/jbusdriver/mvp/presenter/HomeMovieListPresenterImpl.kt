@@ -47,10 +47,6 @@ open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink)
         }
     }
 
-    override fun onFirstLoad() {
-        loadData4Page(1)//主页列表内容在每次加载页面加入历史
-    }
-
 
     override val model: BaseModel<Int, Document> = object : AbstractBaseModel<Int, Document>(loadFromNet) {
         override fun requestFromCache(t: Int): Flowable<Document> =

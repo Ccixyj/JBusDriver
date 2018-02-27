@@ -9,7 +9,15 @@
         android:orderInCategory="1"
         android:title="搜索"
         app:actionViewClass="android.support.v7.widget.SearchView"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
+
+
+    <item
+        android:id="@+id/action_jump"
+        android:icon="@drawable/ic_curved_arrow"
+        android:orderInCategory="2"
+        android:title="跳页"
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/action_show_all"

@@ -20,9 +20,11 @@ import java.util.concurrent.ConcurrentSkipListMap
  */
 abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistory: Boolean = false) : AbstractRefreshLoadMorePresenterImpl<LinkListContract.LinkListView, T>(), LinkListContract.LinkListPresenter {
 
-    protected open var IsAll = false
-    private val urlPath by lazy { (linkData as? PageLink)?.link?.urlPath?.replace("/${linkData.page}", "")
-            ?: linkData.link.urlPath }
+    open var IsAll = false
+    private val urlPath by lazy {
+        (linkData as? PageLink)?.link?.urlPath?.replace("/${linkData.page}", "")
+                ?: linkData.link.urlPath
+    }
     private val dataPageCache by lazy { ConcurrentSkipListMap<Int, Int>() }
     private val pageModeDisposable = RxBus.toFlowable(PageChangeEvent::class.java)
             .subscribeBy(onNext = {
@@ -48,10 +50,9 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
         if (!isHistory) addHistory(link)
     }
 
-    override fun loadAll(iaAll: Boolean) {
+    override fun setAll(iaAll: Boolean) {
         IsAll = iaAll
         dataPageCache.clear()
-        loadData4Page(1)
         val link = when (linkData) {
             is PageLink -> linkData.copy(1, mView?.type?.key ?: "")
             else -> linkData
@@ -66,8 +67,8 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
                     KLog.i("fromCallable page $pageInfo requestFor : $it")
                     JAVBusService.INSTANCE.get(it, if (IsAll) "all" else null).addUserCase().map { Jsoup.parse(it) }
                 }.doOnNext {
-                    if (t == 1) CacheLoader.lru.put("${linkData.link}$IsAll", it.toString())
-                }
+                            if (t == 1) CacheLoader.lru.put("${linkData.link}$IsAll", it.toString())
+                        }
 
         override fun requestFromCache(t: Int) = Flowable.concat(CacheLoader.justLru(linkData.link).map { Jsoup.parse(it) }, requestFor(t))
                 .firstOrError().toFlowable()
