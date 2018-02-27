@@ -25,7 +25,7 @@ open class SimpleSubscriber<T> : DisposableSubscriber<T>() {
         KLog.t(TAG).e("onError >> code = info : ${e.message}")
         if (e is HttpException){
             when (e.code()){
-                404 -> AppContext.instace.toast("没有结果")
+                404 -> JBus.toast("没有结果")
             }
         }
     }

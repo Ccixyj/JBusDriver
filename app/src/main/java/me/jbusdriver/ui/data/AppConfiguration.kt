@@ -2,10 +2,7 @@ package me.jbusdriver.ui.data
 
 import android.content.Context
 import io.reactivex.schedulers.Schedulers
-import me.jbusdriver.common.AppContext
-import me.jbusdriver.common.RxBus
-import me.jbusdriver.common.fromJson
-import me.jbusdriver.common.toJsonString
+import me.jbusdriver.common.*
 import me.jbusdriver.mvp.bean.CategoryChangeEvent
 import me.jbusdriver.mvp.bean.MenuChangeEvent
 import me.jbusdriver.mvp.bean.PageChangeEvent
@@ -19,8 +16,8 @@ import kotlin.properties.Delegates
 
 object AppConfiguration {
 
-    private fun getSp(key: String): String? = AppContext.instace.getSharedPreferences("config", Context.MODE_PRIVATE).getString(key, null)
-    private fun saveSp(key: String, value: String) = Schedulers.io().scheduleDirect { AppContext.instace.getSharedPreferences("config", Context.MODE_PRIVATE).edit().putString(key, value).apply() }
+    private fun getSp(key: String): String? = JBus.getSharedPreferences("config", Context.MODE_PRIVATE).getString(key, null)
+    private fun saveSp(key: String, value: String) = Schedulers.io().scheduleDirect { JBus.getSharedPreferences("config", Context.MODE_PRIVATE).edit().putString(key, value).apply() }
 
     //region pageMode value
     object PageMode {

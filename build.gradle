@@ -31,8 +31,8 @@ buildscript {
             'flowlayoutmanager'            : '1.2.3.2',
             'analytics'                    : '6.1.4',
 
-            'leakcanary'                   : '1.5.4'
-
+            'leakcanary'                   : '1.5.4',
+            'stetho'                       : '1.5.0'
 
     ]
 

@@ -3,8 +3,9 @@ package me.jbusdriver.http
 import android.content.Context
 import android.net.ConnectivityManager
 import android.text.TextUtils
+import com.facebook.stetho.okhttp3.StethoInterceptor
 import jbusdriver.me.jbusdriver.BuildConfig
-import me.jbusdriver.common.AppContext
+import me.jbusdriver.common.JBus
 import me.jbusdriver.common.KLog
 import okhttp3.*
 import retrofit2.Converter
@@ -46,7 +47,7 @@ object NetClient {
 
     val okHttpClient by lazy {
         //设置缓存路径
-        val httpCacheDirectory = File(AppContext.Companion.instace.cacheDir, "OK_HTTP_CACHE")
+        val httpCacheDirectory = File(JBus.cacheDir, "OK_HTTP_CACHE")
         //设置缓存 100M
         val cache = Cache(httpCacheDirectory, 100 * 1024 * 1024.toLong())
 
@@ -56,6 +57,7 @@ object NetClient {
                 .connectTimeout((15 * 1000).toLong(), TimeUnit.MILLISECONDS)
                 .cache(cache)
                 .addNetworkInterceptor(EXIST_MAGNET_INTERCEPTOR)
+                .addNetworkInterceptor(StethoInterceptor())
                 .cookieJar(object : CookieJar {
                     private val cookieStore = HashMap<HttpUrl, List<Cookie>>()
 
