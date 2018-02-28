@@ -44,7 +44,7 @@ object NetClient {
             KLog.t(TAG).i("progress start ")
             val request = chain.request()
             val response = chain.proceed(request)
-             response.newBuilder()
+             return@Interceptor response.newBuilder()
                     .body(ProgressResponseBody(request.url().toString(), response.body(), GlideProgressListener))
                     .build()
         }

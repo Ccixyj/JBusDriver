@@ -104,7 +104,11 @@ class WatchLargeImageActivity : BaseActivity() {
                                 KLog.d("progress ${imageUrl.toGlideUrl}: ${(bytesRead * 1.0f / totalBytes * 100.0f).toInt()}")
                                 if (totalBytes == 0L) return
                                 if (url != imageUrl) return
-                                view.findViewById<ProgressBar>(R.id.pb_large_progress)?.progress = (bytesRead * 1.0f / totalBytes * 100.0f).toInt()
+                                view.findViewById<ProgressBar>(R.id.pb_large_progress)?.apply {
+                                    isIndeterminate = false
+                                    max = 100
+                                    progress = (bytesRead * 1.0f / totalBytes * 100.0f).toInt()
+                                }
                                 if (isDone) {
                                     removeProgressListener(this)
                                 }
