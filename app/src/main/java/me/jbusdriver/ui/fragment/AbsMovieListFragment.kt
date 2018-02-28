@@ -1,7 +1,6 @@
 package me.jbusdriver.ui.fragment
 
 import android.graphics.drawable.GradientDrawable
-import android.text.InputType
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +14,6 @@ import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.common.*
 import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.bean.Movie
-import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.activity.MovieDetailActivity
@@ -178,9 +176,10 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                 (adapter.data.getOrNull(position) as? Movie)?.let {
                     when (it.itemType) {
                         -1 -> {
-                            KLog.d("change page view")
-                            val pages = it.imageUrl.split("#").mapNotNull { it.toIntOrNull() }
-                            if (pages.isNotEmpty()) showPageDialog(PageInfo(activePage = it.title.toInt(), pages = pages))
+                            mBasePresenter?.currentPageInfo?.let {
+                                if (it.pages.isNotEmpty()) showPageDialog(it)
+                            }
+
                         }
                         else -> {
 
@@ -193,46 +192,8 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
         }
     }
 
-    private fun showPageDialog(info: PageInfo) {
-        MaterialDialog.Builder(viewContext).title("跳转:").items(info.pages.map {
-            "${if (it > info.activePage) " 👇 跳至" else if (it == info.activePage) " 👉 当前" else " 👆 跳至"} 第 $it 页"
-        }).itemsCallback { _, _, position, _ ->
-            info.pages.getOrNull(position)?.let {
-                mBasePresenter?.jumpToPage(it)
-                adapter.notifyLoadMoreToLoading()
-            }
-        }.neutralText("输入页码").onNeutral { dialog, _ ->
-            showEditDialog(info)
-            dialog.dismiss()
-        }.show()
-    }
-
-    private fun showEditDialog(info: PageInfo) {
-        MaterialDialog.Builder(viewContext).title("输入页码:")
-                .input("输入跳转页码", null, false, { dialog, input ->
-                    KLog.d("page $input")
-                    input.toString().toIntOrNull()?.let {
-                        if (it < 1) {
-                            viewContext.toast("必须输入大于0的整数!")
-                            return@input
-                        }
-                        mBasePresenter?.jumpToPage(it)
-                        dialog.dismiss()
-                    } ?: let {
-                        viewContext.toast("必须输入数字!")
-                    }
-                })
-                .autoDismiss(false)
-                .inputType(InputType.TYPE_CLASS_NUMBER)
-                .neutralText("选择页码").onNeutral { dialog, _ ->
-            showPageDialog(info)
-            dialog.dismiss()
-        }.show()
-    }
 
 
-    override val pageMode: Int
-        get() = AppConfiguration.pageMode
 
 
     override fun insertData(pos: Int, data: List<*>) {

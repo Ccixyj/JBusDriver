@@ -14,11 +14,14 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.util.*
 import java.util.concurrent.ConcurrentSkipListMap
+import java.util.concurrent.locks.ReentrantReadWriteLock
 
 /**
  * Created by Administrator on 2017/5/10 0010.
  */
 abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistory: Boolean = false) : AbstractRefreshLoadMorePresenterImpl<LinkListContract.LinkListView, T>(), LinkListContract.LinkListPresenter {
+
+    private val lock by lazy { ReentrantReadWriteLock() }
 
     open var IsAll = false
     private val urlPath by lazy {
@@ -137,7 +140,8 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
 
     override fun doAddData(t: List<T>) {
 
-        synchronized(pageInfo) {
+        lock.readLock().lock()
+        try {
             when (mView?.pageMode) {
                 AppConfiguration.PageMode.Page -> {
                     //需要判断数据
@@ -165,6 +169,8 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
                     super.doAddData(t)
                 }
             }
+        } finally {
+            lock.readLock().unlock()
         }
     }
 
@@ -189,6 +195,14 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
         return jumpIndex
     }
 
+    override val currentPageInfo: PageInfo
+        get() {
+            lock.readLock().lock()
+            KLog.d("last last $lastPage : $pageInfo ")
+            return pageInfo.copy(pages = (1..(pageInfo.pages.lastOrNull() ?: 0)).toList()).apply {
+                lock.readLock().unlock()
+            }
+        }
 
     override fun onPresenterDestroyed() {
         super.onPresenterDestroyed()

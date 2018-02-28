@@ -24,6 +24,7 @@ interface LinkListContract {
         fun setAll(iaAll: Boolean)
         fun jumpToPage(page: Int)
         fun isPrevPageLoaded(currentPage: Int): Boolean
+        val currentPageInfo: PageInfo
     }
 }
 

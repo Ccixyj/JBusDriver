@@ -57,7 +57,7 @@ class AppContext : Application() {
                 override fun isLoggable(priority: Int, tag: String?) = BuildConfig.DEBUG
             })
 
-            initializeStetho(this)
+            initializeStetho(this) //chrome://inspect/#devices
         }
 
         MobclickAgent.setDebugMode(BuildConfig.DEBUG)

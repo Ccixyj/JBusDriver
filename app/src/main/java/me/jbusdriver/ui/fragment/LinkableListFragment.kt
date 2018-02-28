@@ -6,17 +6,22 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
+import android.text.InputType
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import com.afollestad.materialdialogs.MaterialDialog
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
+import kotlinx.android.synthetic.main.layout_seek_page.view.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.common.AppBaseRecycleFragment
 import me.jbusdriver.common.KLog
+import me.jbusdriver.common.inflate
 import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.LinkListContract
+import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.data.AppConfiguration
 
@@ -101,6 +106,70 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
 //        arguments?.getSerializable(C.BundleKey.Key_1) as? DataSourceType ?: DataSourceType.CENSORED
 //    }
 
+    protected fun showPageDialog(info: PageInfo) {
+        if (info.pages.isEmpty()) return
+        val seekView = viewContext.inflate(R.layout.layout_seek_page)
+        seekView.bsb_seek_page?.apply {
+            val max = this.javaClass.getDeclaredField("mMax")
+            max?.isAccessible = true
+            max?.setFloat(this, info.pages.last().toFloat())
+
+            setProgress(info.activePage.toFloat())
+
+            this.post {
+                this.invalidate()
+                this.requestLayout()
+            }
+        }
+        MaterialDialog.Builder(viewContext).customView(seekView, false)
+                .neutralText("输入页码").onNeutral { dialog, _ ->
+            showEditDialog(info)
+            dialog.dismiss()
+        }.positiveText("跳转").onPositive { _, _ ->
+            seekView.bsb_seek_page?.progress?.let {
+                mBasePresenter?.jumpToPage(it)
+                adapter.notifyLoadMoreToLoading()
+            }
+        }.show()
+//        MaterialDialog.Builder(viewContext).title("跳转:").items(info.pages.map {
+//            "${if (it > info.activePage) " 👇 跳至" else if (it == info.activePage) " 👉 当前" else " 👆 跳至"} 第 $it 页"
+//        }).itemsCallback { _, _, position, _ ->
+//            info.pages.getOrNull(position)?.let {
+//                mBasePresenter?.jumpToPage(it)
+//                adapter.notifyLoadMoreToLoading()
+//            }
+//        }.neutralText("输入页码").onNeutral { dialog, _ ->
+//            showEditDialog(info)
+//            dialog.dismiss()
+//        }.show()
+    }
+
+    private fun showEditDialog(info: PageInfo) {
+        MaterialDialog.Builder(viewContext).title("输入页码:")
+                .input("输入跳转页码", null, false, { dialog, input ->
+                    KLog.d("page $input")
+                    input.toString().toIntOrNull()?.let {
+                        if (it < 1) {
+                            viewContext.toast("必须输入大于0的整数!")
+                            return@input
+                        }
+                        mBasePresenter?.jumpToPage(it)
+                        dialog.dismiss()
+                    } ?: let {
+                        viewContext.toast("必须输入数字!")
+                    }
+                })
+                .autoDismiss(false)
+                .inputType(InputType.TYPE_CLASS_NUMBER)
+                .neutralText("选择页码").onNeutral { dialog, _ ->
+            showPageDialog(info)
+            dialog.dismiss()
+        }.show()
+    }
+
+
+    override val pageMode: Int
+        get() = AppConfiguration.pageMode
 
     companion object {
         const val MENU_SHOW_ALL = "action_show_all"

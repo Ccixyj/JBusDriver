@@ -138,6 +138,7 @@ dependencies {
     implementation "com.github.CymChad:BaseRecyclerViewAdapterHelper:${versions.BaseRecyclerViewAdapterHelper}"
     implementation "org.jsoup:jsoup:${versions.jsoup}"
     //group: "org.jsoup", name: "jsoup", version: "1.11.1"
+    compile "com.xw.repo:bubbleseekbar:${versions.bubbleseekbar}-lite"
 
     implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
     implementation "com.squareup.retrofit2:retrofit:${versions.retrofit}"
