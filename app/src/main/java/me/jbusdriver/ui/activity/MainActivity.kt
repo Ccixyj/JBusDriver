@@ -124,9 +124,9 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                     return
                 }
         val menuId = intent.getIntExtra("MenuSelectedItemId", id)
-        selectMenu = navigationView.menu.findItem(menuId)
-        KLog.d("selectMenu $selectMenu")
-        selectMenu?.let {
+        val select = navigationView.menu.findItem(menuId)
+        KLog.d("selectMenu $select : prev :$selectMenu")
+        select?.let {
             navigationView.setCheckedItem(it.itemId)
             onNavigationItemSelected(it)
         }
@@ -138,11 +138,13 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                 .delay(100, TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成
                 .compose(SchedulersCompat.computation())
                 .subscribeBy {
-                    val ft = supportFragmentManager.beginTransaction()
+
+                    KLog.d("supportFragmentManager.fragments ${supportFragmentManager.fragments}")
                     supportFragmentManager.fragments.forEach {
-                        ft.remove(it)
+                        KLog.d("supportFragmentManager. remove  ${it}")
+                        supportFragmentManager.beginTransaction().remove(it).commitNowAllowingStateLoss()
                     }
-                    ft.commitAllowingStateLoss()
+
                     initFragments()
                 }
                 .addTo(rxManager)
@@ -179,6 +181,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         switchFragment(item.itemId)
+        //更新当前选择菜单
         selectMenu = item
         KLog.d("onNavigationItemSelected $item ")
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
@@ -195,8 +198,11 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                 ft.add(R.id.content_main, this, itemId.toString())
             } ?: error("no matched fragment")
         }
-        supportFragmentManager.findFragmentByTag(selectMenu?.itemId.toString())?.let {
-            ft.hide(it)
+        //如果id 与 selectMenu的id不一致则隐藏前一个选择菜单
+        if (itemId != selectMenu?.itemId) {
+            supportFragmentManager.findFragmentByTag(selectMenu?.itemId.toString())?.let {
+                ft.hide(it)
+            }
         }
         ft.show(replace)
         ft.commitAllowingStateLoss()
