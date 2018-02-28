@@ -27,6 +27,7 @@ import me.jbusdriver.common.*
 import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.presenter.MainPresenterImpl
+import me.jbusdriver.ui.data.AppConfiguration
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.MainView>(), NavigationView.OnNavigationItemSelectedListener, MainContract.MainView {
@@ -123,7 +124,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                 }
         val menuId = intent.getIntExtra("MenuSelectedItemId", id)
         val select = navigationView.menu.findItem(menuId)
-
+        KLog.d("all : ${AppConfiguration.menuConfig.filter { it.value }} selectMenu $select : prev :$selectMenu")
         select?.let {
             navigationView.setCheckedItem(it.itemId)
             onNavigationItemSelected(it)
