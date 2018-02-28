@@ -1,6 +1,5 @@
 package me.jbusdriver.mvp.presenter
 
-import me.jbusdriver.common.CacheLoader
 import com.google.gson.JsonObject
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
@@ -19,14 +18,14 @@ class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContra
     }
 
     private fun fetchUpdate() {
-        Flowable.concat<JsonObject>(CacheLoader.justLru(C.Cache.ANNOUNCE_VALUE).map { AppContext.gson.fromJson<JsonObject>(it) },
+        Flowable.concat<JsonObject>(CacheLoader.justLru(C.Cache.ANNOUNCE_VALUE).map { GSON.fromJson<JsonObject>(it) },
                 GitHub.INSTANCE.announce().addUserCase()
-                        .map { AppContext.gson.fromJson<JsonObject>(it) } //
+                        .map { GSON.fromJson<JsonObject>(it) } //
                         )
                 .firstOrError()
                 .map {
-                    AppContext.gson.fromJson(it.get("update"), UpdateBean::class.java) to
-                            AppContext.gson.fromJson(it.get("notice"), NoticeBean::class.java)
+                    GSON.fromJson(it.get("update"), UpdateBean::class.java) to
+                            GSON.fromJson(it.get("notice"), NoticeBean::class.java)
                 }
                 .retry(1)
                 .toFlowable()

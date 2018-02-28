@@ -27,7 +27,6 @@ import me.jbusdriver.common.*
 import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.presenter.MainPresenterImpl
-import me.jbusdriver.ui.data.AppConfiguration
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.MainView>(), NavigationView.OnNavigationItemSelectedListener, MainContract.MainView {
@@ -109,7 +108,6 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
 
     private fun initFragments() {
-        KLog.d("init menuConfig : ${AppConfiguration.menuConfig.filter { it.value }}")
 
         MenuOp.Ops.forEach {
             navigationView.menu.findItem(it.id).isVisible = it.isHow
@@ -125,7 +123,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                 }
         val menuId = intent.getIntExtra("MenuSelectedItemId", id)
         val select = navigationView.menu.findItem(menuId)
-        KLog.d("selectMenu $select : prev :$selectMenu")
+
         select?.let {
             navigationView.setCheckedItem(it.itemId)
             onNavigationItemSelected(it)
@@ -138,10 +136,8 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                 .delay(100, TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成
                 .compose(SchedulersCompat.computation())
                 .subscribeBy {
-
-                    KLog.d("supportFragmentManager.fragments ${supportFragmentManager.fragments}")
-                    supportFragmentManager.fragments.forEach {
-                        KLog.d("supportFragmentManager. remove  ${it}")
+                    val mayAdded = MenuOp.Ops.map { it.id.toString() }
+                    supportFragmentManager.fragments.filter { it.tag in mayAdded }.forEach {
                         supportFragmentManager.beginTransaction().remove(it).commitNowAllowingStateLoss()
                     }
 
@@ -246,14 +242,14 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
     @SuppressLint("ResourceAsColor")
     private fun showNotice(notice: Any?) {
-        val sharfp by lazy { getSharedPreferences("config", Context.MODE_PRIVATE) }
-        if (notice != null && notice is NoticeBean && !TextUtils.isEmpty(notice.content) && notice.id > 0 && sharfp.getInt(NoticeIgnoreID, -1) < notice.id) {
+        val shared by lazy { getSharedPreferences("config", Context.MODE_PRIVATE) }
+        if (notice != null && notice is NoticeBean && !TextUtils.isEmpty(notice.content) && notice.id > 0 && shared.getInt(NoticeIgnoreID, -1) < notice.id) {
             MaterialDialog.Builder(this).title("公告")
                     .content(notice.content!!)
                     .neutralText("忽略该提示")
                     .neutralColor(R.color.secondText)
                     .onNeutral { _, _ ->
-                        sharfp.edit().putInt(NoticeIgnoreID, notice.id).apply()
+                        shared.edit().putInt(NoticeIgnoreID, notice.id).apply()
                     }
                     .positiveText("知道了")
                     .show()

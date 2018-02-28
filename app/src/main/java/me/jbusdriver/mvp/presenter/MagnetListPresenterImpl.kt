@@ -2,8 +2,8 @@ package me.jbusdriver.mvp.presenter
 
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
-import me.jbusdriver.common.AppContext
 import me.jbusdriver.common.CacheLoader
+import me.jbusdriver.common.GSON
 import me.jbusdriver.common.SchedulersCompat
 import me.jbusdriver.common.fromJson
 import me.jbusdriver.mvp.MagnetListContract
@@ -29,7 +29,7 @@ class MagnetListPresenterImpl(private val magnetLoaderKey: String, private val k
     override fun loadData4Page(page: Int) {
         pageInfo = PageInfo(page, page + 1)
         //page 1
-        val cache = Flowable.concat(CacheLoader.justLru(cacheKey), CacheLoader.justDisk(cacheKey)).firstElement().map { AppContext.gson.fromJson<List<Magnet>>(it) }.toFlowable()
+        val cache = Flowable.concat(CacheLoader.justLru(cacheKey), CacheLoader.justDisk(cacheKey)).firstElement().map { GSON.fromJson<List<Magnet>>(it) }.toFlowable()
         val loaderFormNet = Flowable.fromCallable {
             loader.loadMagnets(keyword, page)
         }.doOnNext {

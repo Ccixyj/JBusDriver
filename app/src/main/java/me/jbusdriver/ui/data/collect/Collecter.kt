@@ -38,7 +38,7 @@ abstract class AbsCollectorImpl<T : ILink> : ICollect<T> {
 
 
     @Deprecated("since version 1.1.1")
-    protected open val gson: Gson by lazy { AppContext.gson }
+    protected open val gson: Gson by lazy { GSON }
     @Deprecated("since version 1.1.1")
     private val collectCache by lazy {
         try {

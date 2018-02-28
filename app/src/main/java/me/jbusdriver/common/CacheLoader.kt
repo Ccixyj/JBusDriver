@@ -53,12 +53,13 @@ object CacheLoader {
     }
 
     /*============================cache====================================*/
-    fun cacheLruAndDisk(pair: Pair<String, Any>, seconds: Int? = null) = with(AppContext.gson.toJson(pair.second)) {
+    fun cacheLruAndDisk(pair: Pair<String, Any>, seconds: Int? = null) = with(GSON.toJson(pair.second)) {
         lru.put(pair.first, this)
-        seconds?.let { acache.put(pair.first, AppContext.gson.toJson(pair.second), seconds) } ?: acache.put(pair.first, AppContext.gson.toJson(pair.second))
+        seconds?.let { acache.put(pair.first, GSON.toJson(pair.second), seconds) }
+                ?: acache.put(pair.first, GSON.toJson(pair.second))
     }
 
-    fun cacheLru(pair: Pair<String, Any>) = lru.put(pair.first, AppContext.gson.toJson(pair.second))
+    fun cacheLru(pair: Pair<String, Any>) = lru.put(pair.first, GSON.toJson(pair.second))
     fun cacheDisk(pair: Pair<String, Any>, seconds: Int? = null) = seconds?.let { acache.put(pair.first, v2Str(pair.second), seconds) } ?: acache.put(pair.first, v2Str(pair.second))
 
     private fun v2Str(obj: Any): String = when (obj) {

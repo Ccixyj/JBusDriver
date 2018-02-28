@@ -75,7 +75,7 @@ class SplashActivity : BaseActivity() {
         return if (CacheLoader.lru.get(C.Cache.BUS_URLS).isNullOrBlank()) {
             //内存在没有地址时 ,先从disk获取缓存的,没有则从网络下载
             val urlsFromDisk = CacheLoader.justDisk(C.Cache.BUS_URLS).map {
-                AppContext.gson.fromJson<ArrayMap<String, String>>(it).apply {
+                GSON.fromJson<ArrayMap<String, String>>(it).apply {
                     KLog.d("load initUrls from disk  $this")
                 }
             }
@@ -85,7 +85,7 @@ class SplashActivity : BaseActivity() {
                         KLog.d("load initUrls from urlsFromUpdateCache $source")
                         CacheLoader.cacheLru(C.Cache.ANNOUNCE_VALUE to source)
                         arrayMapof<String, String>().apply {
-                            val availableUrls = AppContext.gson.fromJson<JsonObject>(source)?.get("backUp")?.asJsonArray
+                            val availableUrls = GSON.fromJson<JsonObject>(source)?.get("backUp")?.asJsonArray
                             //赋值一个默认的(随机)
                             availableUrls?.let {
                                 it.mapNotNull { it.asString }.shuffled().firstOrNull()?.let {
@@ -99,7 +99,7 @@ class SplashActivity : BaseActivity() {
                     }
                     .flatMap {
                         urls = it
-                        val mapFlow = AppContext.gson.fromJson<List<String>>(it[DataSourceType.CENSORED.key]
+                        val mapFlow = GSON.fromJson<List<String>>(it[DataSourceType.CENSORED.key]
                                 ?: "").map {
                             Flowable.combineLatest(Flowable.just<String>(it),
                                     JAVBusService.INSTANCE.get(it).addUserCase(15).onErrorReturnItem(""),
@@ -140,7 +140,7 @@ class SplashActivity : BaseActivity() {
                     .firstElement().toObservable()
                     .subscribeOn(Schedulers.io())
         } else CacheLoader.justLru(C.Cache.BUS_URLS).map {
-            AppContext.gson.fromJson<ArrayMap<String, String>>(it).apply {
+            GSON.fromJson<ArrayMap<String, String>>(it).apply {
                 KLog.i("map urls $this")
             }
         }.toObservable()

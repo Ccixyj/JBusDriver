@@ -164,7 +164,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
         }
 
         fun newInstance(type: DataSourceType) = ActressListFragment().apply {
-            val urls = CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) }
+            val urls = CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { GSON.fromJson<ArrayMap<String, String>>(it) }
                     ?: arrayMapof()
             val url = urls[type.key] ?: JAVBusService.defaultFastUrl+"/actresses"
             arguments = Bundle().apply {

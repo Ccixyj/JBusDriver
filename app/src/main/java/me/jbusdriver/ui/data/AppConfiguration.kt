@@ -44,7 +44,7 @@ object AppConfiguration {
     //region magnet
     private const val MagnetSourceS: String = "MagnetSourceS"
     val MagnetKeys: MutableList<String> by lazy {
-        AppContext.gson.fromJson<MutableList<String>>(getSp(MagnetSourceS) ?: "") ?: let {
+        GSON.fromJson<MutableList<String>>(getSp(MagnetSourceS) ?: "") ?: let {
             val default = MagnetLoaders.keys.take(2)
             saveSp(MagnetSourceS, default.toJsonString())
             default.toMutableList()
@@ -58,7 +58,7 @@ object AppConfiguration {
     private const val MenuConfigS: String = "MenuConfig"
 
     val menuConfig: MutableMap<String, Boolean> by lazy {
-        AppContext.gson.fromJson<MutableMap<String, Boolean>>(
+        GSON.fromJson<MutableMap<String, Boolean>>(
                 getSp(MenuConfigS) ?: hashMapOf("最近" to false).toJsonString().apply {
                     saveSp(MenuConfigS, this)
                 })

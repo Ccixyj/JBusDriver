@@ -40,7 +40,7 @@ class CollectService : IntentService("CollectService") {
     private fun handleLoadBakUp(file: File) {
         if (!file.exists()) return
         try {
-            val backs = AppContext.gson.fromJson<List<LinkItem>>(file.readText())?.map {
+            val backs = GSON.fromJson<List<LinkItem>>(file.readText())?.map {
                 if (it.categoryId < 0)  return@map it
                 if (CategoryService.getById(it.categoryId) == null) {
                     it.getLinkValue().convertDBItem()

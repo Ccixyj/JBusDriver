@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit
 object NetClient {
     private const val TAG = "NetClient"
     private const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36"
-    // private val gsonConverterFactory = GsonConverterFactory.create(AppContext.gson)
+    // private val gsonConverterFactory = GsonConverterFactory.create(GSON)
     private val rxJavaCallAdapterFactory = RxJava2CallAdapterFactory.create()
     private val EXIST_MAGNET_INTERCEPTOR by lazy {
         Interceptor { chain ->

@@ -85,7 +85,7 @@ inline fun <reified T> Gson.fromJson(json: String) = this.fromJson<T>(json, obje
 //inline fun <reified T> Gson.fromJson(json: Reader) = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
 //inline fun <reified T> Gson.fromJson(json: JsonReader) = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
 
-fun Any?.toJsonString() = AppContext.gson.toJson(this)
+fun Any?.toJsonString() = GSON.toJson(this)
 //endregion
 
 //region http
