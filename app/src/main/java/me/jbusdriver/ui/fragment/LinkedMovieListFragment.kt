@@ -35,7 +35,6 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
 
     private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }
     private val isHistory by lazy { arguments?.getBoolean(C.BundleKey.Key_2, false) ?: false }
-    private val attrViews by lazy { mutableListOf<View>() }
 
 
     private var collectMenu: MenuItem? = null
@@ -114,20 +113,30 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
             ?: false, isHistory)
 
     override fun <T> showContent(data: T?) {
-        KLog.d("parse res :$data")
         if (data is String) {
-            getLoadAllView(data)?.let { attrViews.add(it) }
+            //  getLoadAllView(data)?.let { attrViews.put(data,it) }
+            tempSaveBundle.putString("temp:load:all", data)
         }
 
         if (data is IAttr) {
-            attrViews.add(getMovieAttrView(data))
+            //attrViews.add(getMovieAttrView(data))
+            tempSaveBundle.putSerializable("temp:IAttr", data)
         }
     }
 
     override fun showContents(data: List<*>) {
         adapter.removeAllHeaderView()
-        attrViews.forEach { adapter.addHeaderView(it) }
-        attrViews.clear()
+        KLog.d("tempSaveBundle : $tempSaveBundle")
+        //load all
+        tempSaveBundle.getString("temp:load:all")?.let {
+            getLoadAllView(it)?.let { adapter.addHeaderView(it) }
+        }
+
+        // movie attr
+        (tempSaveBundle.getSerializable("temp:IAttr") as? IAttr)?.let {
+            adapter.addHeaderView(getMovieAttrView(it))
+        }
+        KLog.d("tempSaveBundle add : ${data.size}")
         super.showContents(data)
 
     }

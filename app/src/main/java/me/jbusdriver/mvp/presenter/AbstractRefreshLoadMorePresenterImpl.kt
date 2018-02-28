@@ -35,14 +35,13 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
 
     override fun onLoadMore() {
         KLog.i("onLoadMore :${hasLoadNext()} ; page :$pageInfo")
-        if (hasLoadNext()) loadData4Page(pageInfo.nextPage)
-        else if (pageInfo.nextPage == pageInfo.activePage) {
-            if (pageInfo.pages.isEmpty() || (pageInfo.pages.isNotEmpty() && pageInfo.activePage <= pageInfo.pages.last())) {
+        when {
+            hasLoadNext() -> loadData4Page(pageInfo.nextPage)
+            pageInfo.nextPage >= Math.max(pageInfo.activePage,pageInfo.pages.lastOrNull() ?: 1) -> {
                 lastPage = pageInfo.activePage
                 mView?.loadMoreEnd()
             }
-        } else {
-
+            else -> Unit
         }
     }
 

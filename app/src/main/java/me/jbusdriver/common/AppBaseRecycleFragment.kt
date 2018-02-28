@@ -116,6 +116,7 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
 
 
     override fun resetList() {
+        KLog.d("resetList")
         adapter.setNewData(null)
     }
 

@@ -23,6 +23,16 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
  */
 abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistory: Boolean = false) : AbstractRefreshLoadMorePresenterImpl<LinkListContract.LinkListView, T>(), LinkListContract.LinkListPresenter {
 
+    /**
+    ReentrantReadWriteLock会使用两把锁来解决问题，一个读锁，一个写锁
+    线程进入读锁的前提条件：
+    没有其他线程的写锁，
+    没有写请求或者有写请求，但调用线程和持有锁的线程是同一个
+
+    线程进入写锁的前提条件：
+    没有其他线程的读锁
+    没有其他线程的写锁
+     */
     private val lock by lazy { ReentrantReadWriteLock() }
     protected var reachableMaxPage = 1
 
@@ -89,7 +99,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
     }
 
     override fun jumpToPage(page: Int) {
-        KLog.i("jumpToPage $page in $dataPageCache")
+        KLog.i("jumpToPage $page ($lastPage)in $dataPageCache")
         if (page >= 1) {
 
             if (page > lastPage) {
@@ -136,12 +146,19 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
 
     override fun doAddData(t: List<T>) {
 
-        lock.readLock().lock()
+        lock.readLock().lock() //加读锁
         try {
             when (mView?.pageMode) {
                 AppConfiguration.PageMode.Page -> {
-                    KLog.i("doAddData page Ino $dataPageCache $pageInfo $t")
+                    KLog.i("doAddData page Ino $dataPageCache ${pageInfo.hashCode()} $t")
                     reachableMaxPage = Math.max(reachableMaxPage, pageInfo.pages.lastOrNull() ?: 1)
+
+                    if (pageInfo.activePage == 1) {
+                        //第一页:正常加载 ,因为会重置列表,不需要考虑其他情况
+                        dataPageCache[pageInfo.activePage] = t.size - 1//page item In list
+                        super.doAddData(t)
+                        return
+                    }
 
                     //需要判断数据
                     if (dataPageCache.keys.contains(pageInfo.activePage)) {
