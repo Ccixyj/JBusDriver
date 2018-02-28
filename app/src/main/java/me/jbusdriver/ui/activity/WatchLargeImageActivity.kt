@@ -9,7 +9,9 @@ import android.os.Bundle
 import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import com.bumptech.glide.Priority
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
@@ -89,28 +91,42 @@ class WatchLargeImageActivity : BaseActivity() {
                 else -> Priority.LOW
             }
             KLog.d("load $position for ${vp_largeImage.currentItem} offset = $offset : $priority")
-
+            val url = urls[position]
             GlideApp.with(this@WatchLargeImageActivity)
                     .asBitmap()
-                    .load((urls[position]).toGlideUrl)
+                    .load(url.toGlideUrl)
                     .transition(withCrossFade())
                     .error(R.drawable.ic_image_error)
                     .priority(priority)
                     .into(object : SimpleTarget<Bitmap>() {
+                        val listener = object : OnProgressListener {
+                            override fun onProgress(imageUrl: String, bytesRead: Long, totalBytes: Long, isDone: Boolean, exception: GlideException?) {
+                                KLog.d("progress ${imageUrl.toGlideUrl}: ${(bytesRead * 1.0f / totalBytes * 100.0f).toInt()}")
+                                if (totalBytes == 0L) return
+                                if (url != imageUrl) return
+                                view.findViewById<ProgressBar>(R.id.pb_large_progress)?.progress = (bytesRead * 1.0f / totalBytes * 100.0f).toInt()
+                                if (isDone) {
+                                    removeProgressListener(this)
+                                }
+                            }
+                        }
 
                         override fun onLoadStarted(placeholder: Drawable?) {
                             super.onLoadStarted(placeholder)
                             view.findViewById<View>(R.id.pb_large_progress)?.alpha = 1f
+                            addProgressListener(listener)
                         }
 
                         override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                             (view.findViewById<MultiTouchZoomableImageView>(R.id.mziv_image_large))?.imageBitmap = resource
                             view.findViewById<View>(R.id.pb_large_progress)?.animate()?.alpha(0f)?.setDuration(300)?.start()
+                            removeProgressListener(listener)
                         }
 
 
                         override fun onLoadFailed(errorDrawable: Drawable?) {
                             super.onLoadFailed(errorDrawable)
+                            removeProgressListener(listener)
                             view.findViewById<View>(R.id.pb_large_progress)?.animate()?.alpha(0f)?.setDuration(500)?.start()
                             (view.findViewById<View>(R.id.mziv_image_large) as? MultiTouchZoomableImageView)?.also { iv ->
                                 //                                imageBitmap = BitmapFactory.decodeResource(viewContext.resources, R.drawable.ic_image_error)
@@ -143,5 +159,6 @@ class WatchLargeImageActivity : BaseActivity() {
 
         override fun isViewFromObject(arg0: View, arg1: Any) = arg0 === arg1//官方提示这样写
     }
+
 
 }

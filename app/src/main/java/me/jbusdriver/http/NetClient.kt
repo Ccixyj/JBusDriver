@@ -5,8 +5,10 @@ import android.net.ConnectivityManager
 import android.text.TextUtils
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import jbusdriver.me.jbusdriver.BuildConfig
+import me.jbusdriver.common.GlideProgressListener
 import me.jbusdriver.common.JBus
 import me.jbusdriver.common.KLog
+import me.jbusdriver.common.ProgressResponseBody
 import okhttp3.*
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -37,6 +39,18 @@ object NetClient {
         }
     }
 
+    private val PROGRESS_INTERCEPTOR by lazy {
+        Interceptor { chain ->
+            KLog.t(TAG).i("progress start ")
+            val request = chain.request()
+            val response = chain.proceed(request)
+             response.newBuilder()
+                    .body(ProgressResponseBody(request.url().toString(), response.body(), GlideProgressListener))
+                    .build()
+        }
+    }
+
+
     fun getRetrofit(baseUrl: String) = Retrofit.Builder().client(okHttpClient).baseUrl(baseUrl)
             .addConverterFactory(object : Converter.Factory() {
                 override fun responseBodyConverter(type: Type?, annotations: Array<out Annotation>?, retrofit: Retrofit?): Converter<ResponseBody, *> = Converter<ResponseBody, String> { it.string() }
@@ -64,8 +78,21 @@ object NetClient {
                     override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
                         cookieStore[url] = cookies
                     }
+
                     override fun loadForRequest(url: HttpUrl) = cookieStore[url] ?: ArrayList()
                 })
+        if (BuildConfig.DEBUG) {
+            client.addInterceptor(LoggerInterceptor("OK_HTTP"))
+        }
+        client.build()
+    }
+
+    val glideOkHttpClient by lazy {
+        val client = OkHttpClient.Builder()
+                .readTimeout((20 * 1000).toLong(), TimeUnit.MILLISECONDS)
+                .connectTimeout((15 * 1000).toLong(), TimeUnit.MILLISECONDS)
+                .addNetworkInterceptor(StethoInterceptor())
+                .addNetworkInterceptor(PROGRESS_INTERCEPTOR)
         if (BuildConfig.DEBUG) {
             client.addInterceptor(LoggerInterceptor("OK_HTTP"))
         }
