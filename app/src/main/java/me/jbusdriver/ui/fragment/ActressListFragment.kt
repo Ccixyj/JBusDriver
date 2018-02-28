@@ -181,11 +181,11 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
     }
 
     override fun insertData(pos: Int, data: List<*>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        adapter.addData(pos, data as List<ActressInfo>)
     }
 
     override fun moveTo(pos: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        layoutManager.scrollToPosition(adapter.headerLayoutCount + pos)
     }
 
 

@@ -14,7 +14,7 @@
         android:minHeight="@dimen/material_64dp"
         app:bsb_bubble_color="@color/colorAccent"
         app:bsb_bubble_text_color="@color/white"
-        app:bsb_max="100"
+        app:bsb_max="10"
         app:bsb_min="1"
         app:bsb_progress="10"
         app:bsb_section_text_position="bottom_sides"
@@ -25,6 +25,7 @@
         app:bsb_thumb_text_color="@color/colorPrimaryDark"
         app:bsb_thumb_text_size="@dimen/material_16dp"
         app:bsb_track_color="@color/divider"
+        app:bsb_section_count="1"
         app:bsb_track_size="@dimen/material_4dp" />
 
 </FrameLayout>

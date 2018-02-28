@@ -52,7 +52,7 @@ data class Movie(
                     }
         }
 
-        fun newPageMovie(page: Int, pages: List<Int>) = Movie(page.toString(), "", "", "", "")
+        fun newPageMovie(page: Int, pages: List<Int>) = Movie(page.toString(), pages.joinToString("#"), "", "", "")
     }
 }
 

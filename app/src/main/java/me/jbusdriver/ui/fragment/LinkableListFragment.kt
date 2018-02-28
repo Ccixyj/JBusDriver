@@ -12,15 +12,15 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import com.afollestad.materialdialogs.MaterialDialog
+import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_seek_page.view.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
-import me.jbusdriver.common.AppBaseRecycleFragment
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.inflate
-import me.jbusdriver.common.toast
+import me.jbusdriver.common.*
 import me.jbusdriver.mvp.LinkListContract
+import me.jbusdriver.mvp.bean.PageChangeEvent
 import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.data.AppConfiguration
@@ -32,6 +32,20 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
     override val swipeView: SwipeRefreshLayout? by lazy { sr_refresh }
     override val recycleView: RecyclerView  by lazy { rv_recycle }
     override val layoutManager: RecyclerView.LayoutManager  by lazy { LinearLayoutManager(viewContext) }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        bindRx()
+    }
+
+    private fun bindRx() {
+        RxBus.toFlowable(PageChangeEvent::class.java)
+                .subscribeBy(onNext = {
+                    KLog.d("PageChangeEvent $it")
+                    activity?.invalidateOptionsMenu() //刷新菜单
+                    mBasePresenter?.onRefresh()
+                }).addTo(rxManager)
+    }
 
 
     override fun restoreState(bundle: Bundle) {
@@ -65,6 +79,7 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
         super.onPrepareOptionsMenu(menu) //menu before show
+        KLog.d("onPrepareOptionsMenu ${AppConfiguration.pageMode}")
         menu?.findItem(R.id.action_show_all)?.isChecked = tempSaveBundle.getBoolean(MENU_SHOW_ALL, false)
         menu?.findItem(R.id.action_jump)?.let {
             it.isVisible = AppConfiguration.pageMode == AppConfiguration.PageMode.Page
@@ -89,7 +104,9 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
                 tempSaveBundle.putBoolean(MENU_SHOW_ALL, item.isChecked)
             }
             R.id.action_jump -> {
-
+                mBasePresenter?.currentPageInfo?.let {
+                    showPageDialog(it)
+                }
             }
         }
         return super.onOptionsItemSelected(item)
@@ -110,15 +127,29 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
         if (info.pages.isEmpty()) return
         val seekView = viewContext.inflate(R.layout.layout_seek_page)
         seekView.bsb_seek_page?.apply {
-            val max = this.javaClass.getDeclaredField("mMax")
-            max?.isAccessible = true
-            max?.setFloat(this, info.pages.last().toFloat())
+            try {
+                val max = this.javaClass.getDeclaredField("mMax")
+                max?.isAccessible = true
+                max?.setFloat(this, info.pages.last().toFloat())
 
-            setProgress(info.activePage.toFloat())
+//                this.javaClass.declaredMethods.forEach { KLog.d(it) }
+                this.javaClass.getDeclaredMethod("initConfigByPriority").also {
+                    it.isAccessible = true
+                    it.invoke(this)
+                }
 
-            this.post {
-                this.invalidate()
-                this.requestLayout()
+//                this.javaClass.getDeclaredMethod("calculateRadiusOfBubble").also {
+//                    it.isAccessible = true
+//                    it.invoke(this)
+//                }
+
+                setProgress(info.activePage.toFloat())
+                this.post {
+                    this.invalidate()
+                    this.requestLayout()
+                }
+            } catch (e: Exception) {
+                KLog.e(e, e.message)
             }
         }
         MaterialDialog.Builder(viewContext).customView(seekView, false)

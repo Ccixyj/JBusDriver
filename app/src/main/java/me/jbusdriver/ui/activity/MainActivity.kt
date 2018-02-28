@@ -38,9 +38,36 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState != null) intent.putExtras(savedInstanceState)
+        bindRx()
         initNavigationView()
         initFragments()
-        bindRx()
+    }
+    private fun bindRx() {
+        RxBus.toFlowable(MenuChangeEvent::class.java)
+                .delay(100, TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成
+                .compose(SchedulersCompat.computation())
+                .subscribeBy {
+                    val mayAdded = MenuOp.Ops.map { it.id.toString() }
+                    supportFragmentManager.fragments.filter { it.tag in mayAdded }.forEach {
+                        supportFragmentManager.beginTransaction().remove(it).commitNowAllowingStateLoss()
+                    }
+
+                    initFragments()
+                }
+                .addTo(rxManager)
+
+        RxBus.toFlowable(CategoryChangeEvent::class.java)
+                .debounce(500, TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成
+                .compose(SchedulersCompat.computation())
+                .subscribeBy {
+                    supportFragmentManager.findFragmentByTag(R.id.mine_collect.toString())?.let {
+                        KLog.d("remove :$it $selectMenu")
+                        supportFragmentManager.beginTransaction().remove(it).commitNowAllowingStateLoss()
+                    }
+                    if (selectMenu?.itemId == R.id.mine_collect) setNavSelected()
+
+                }.addTo(rxManager)
+
     }
 
 
@@ -132,33 +159,6 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
     }
 
-    private fun bindRx() {
-        RxBus.toFlowable(MenuChangeEvent::class.java)
-                .delay(100, TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成
-                .compose(SchedulersCompat.computation())
-                .subscribeBy {
-                    val mayAdded = MenuOp.Ops.map { it.id.toString() }
-                    supportFragmentManager.fragments.filter { it.tag in mayAdded }.forEach {
-                        supportFragmentManager.beginTransaction().remove(it).commitNowAllowingStateLoss()
-                    }
-
-                    initFragments()
-                }
-                .addTo(rxManager)
-
-        RxBus.toFlowable(CategoryChangeEvent::class.java)
-                .debounce(500, TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成
-                .compose(SchedulersCompat.computation())
-                .subscribeBy {
-                    supportFragmentManager.findFragmentByTag(R.id.mine_collect.toString())?.let {
-                        KLog.d("remove :$it $selectMenu")
-                        supportFragmentManager.beginTransaction().remove(it).commitNowAllowingStateLoss()
-                    }
-                    if (selectMenu?.itemId == R.id.mine_collect) setNavSelected()
-
-                }.addTo(rxManager)
-
-    }
 
 
     override fun onBackPressed() {
