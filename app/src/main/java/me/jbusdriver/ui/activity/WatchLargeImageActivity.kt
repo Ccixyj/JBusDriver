@@ -6,10 +6,11 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
@@ -18,9 +19,9 @@ import com.bumptech.glide.request.transition.Transition
 import com.jaeger.library.StatusBarUtil
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_watch_large_image.*
+import kotlinx.android.synthetic.main.layout_large_image_item.view.*
 import me.jbusdriver.common.*
 import me.jbusdriver.ui.widget.ImageGestureListener
-import me.jbusdriver.ui.widget.MultiTouchZoomableImageView
 
 
 class WatchLargeImageActivity : BaseActivity() {
@@ -68,6 +69,7 @@ class WatchLargeImageActivity : BaseActivity() {
     }
 
     inner class MyViewPagerAdapter : PagerAdapter() {
+        private val handler by lazy { Handler(Looper.getMainLooper()) }
 
         override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
             container.removeView(imageViewList[position])//删除页卡
@@ -101,14 +103,15 @@ class WatchLargeImageActivity : BaseActivity() {
                     .into(object : SimpleTarget<Bitmap>() {
                         val listener = object : OnProgressListener {
                             override fun onProgress(imageUrl: String, bytesRead: Long, totalBytes: Long, isDone: Boolean, exception: GlideException?) {
-                                KLog.d("progress ${imageUrl.toGlideUrl}: ${(bytesRead * 1.0f / totalBytes * 100.0f).toInt()}")
                                 if (totalBytes == 0L) return
                                 if (url != imageUrl) return
-                                view.findViewById<ProgressBar>(R.id.pb_large_progress)?.apply {
-                                    isIndeterminate = false
-                                    max = 100
-                                    progress = (bytesRead * 1.0f / totalBytes * 100.0f).toInt()
+                                handler.post {
+                                    view.pb_hor_progress.visibility = View.GONE
+                                    view.pb_large_progress?.apply {
+                                        progress = (bytesRead * 1.0f / totalBytes * 100.0f).toInt()
+                                    }
                                 }
+
                                 if (isDone) {
                                     removeProgressListener(this)
                                 }
@@ -116,14 +119,15 @@ class WatchLargeImageActivity : BaseActivity() {
                         }
 
                         override fun onLoadStarted(placeholder: Drawable?) {
-                            super.onLoadStarted(placeholder)
-                            view.findViewById<View>(R.id.pb_large_progress)?.alpha = 1f
+                            view.pb_large_progress?.animate()?.alpha(1f)?.setDuration(300)?.start()
                             addProgressListener(listener)
+                            super.onLoadStarted(placeholder)
                         }
 
                         override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                            (view.findViewById<MultiTouchZoomableImageView>(R.id.mziv_image_large))?.imageBitmap = resource
-                            view.findViewById<View>(R.id.pb_large_progress)?.animate()?.alpha(0f)?.setDuration(300)?.start()
+                            view.mziv_image_large?.imageBitmap = resource
+                            view.pb_hor_progress.visibility = View.GONE
+                            view.pb_large_progress?.animate()?.alpha(0f)?.setDuration(300)?.start()
                             removeProgressListener(listener)
                         }
 
@@ -131,8 +135,9 @@ class WatchLargeImageActivity : BaseActivity() {
                         override fun onLoadFailed(errorDrawable: Drawable?) {
                             super.onLoadFailed(errorDrawable)
                             removeProgressListener(listener)
-                            view.findViewById<View>(R.id.pb_large_progress)?.animate()?.alpha(0f)?.setDuration(500)?.start()
-                            (view.findViewById<View>(R.id.mziv_image_large) as? MultiTouchZoomableImageView)?.also { iv ->
+                            view.pb_hor_progress.visibility = View.GONE
+                            view.pb_large_progress?.animate()?.alpha(0f)?.setDuration(300)?.start()
+                            (view.mziv_image_large)?.also { iv ->
                                 //                                imageBitmap = BitmapFactory.decodeResource(viewContext.resources, R.drawable.ic_image_error)
                                 GlideApp.with(view).asBitmap().load(R.drawable.ic_image_error).into(object : SimpleTarget<Bitmap>() {
                                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {

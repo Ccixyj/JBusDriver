@@ -41,7 +41,6 @@ object NetClient {
 
     private val PROGRESS_INTERCEPTOR by lazy {
         Interceptor { chain ->
-            KLog.t(TAG).i("progress start ")
             val request = chain.request()
             val response = chain.proceed(request)
              return@Interceptor response.newBuilder()
