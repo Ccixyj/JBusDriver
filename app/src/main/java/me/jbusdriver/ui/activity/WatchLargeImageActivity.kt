@@ -86,14 +86,14 @@ class WatchLargeImageActivity : BaseActivity() {
         }
 
         private fun loadImage(view: View, position: Int) {
-            view.findViewById<View>(R.id.pb_large_progress)?.animate()?.alpha(1f)?.setDuration(300)?.start()
+            view.findViewById<View>(R.id.pb_hor_progress)?.animate()?.alpha(1f)?.setDuration(300)?.start()
             val offset = Math.abs(vp_largeImage.currentItem - position)
             val priority = when (offset) {
                 in 0..1 -> Priority.IMMEDIATE
                 in 2..5 -> Priority.HIGH
                 in 6..10 -> Priority.NORMAL
                 else -> Priority.LOW
-            }
+             }
             KLog.d("load $position for ${vp_largeImage.currentItem} offset = $offset : $priority")
             val url = urls[position]
             GlideApp.with(this@WatchLargeImageActivity)
@@ -108,8 +108,9 @@ class WatchLargeImageActivity : BaseActivity() {
                                 if (totalBytes == 0L) return
                                 if (url != imageUrl) return
                                 handler.post {
-                                    view.pb_hor_progress.visibility = View.GONE
-                                    view.pb_large_progress?.apply {
+                                    //                                    view.pb_hor_progress.visibility = View.GONE
+                                    view.pb_hor_progress.isIndeterminate = false
+                                    view.pb_hor_progress?.apply {
                                         progress = (bytesRead * 1.0f / totalBytes * 100.0f).toInt()
                                     }
                                 }
@@ -121,15 +122,14 @@ class WatchLargeImageActivity : BaseActivity() {
                         }
 
                         override fun onLoadStarted(placeholder: Drawable?) {
-                            view.pb_large_progress?.animate()?.alpha(1f)?.setDuration(300)?.start()
+                            view.pb_hor_progress?.animate()?.alpha(1f)?.setDuration(300)?.start()
                             addProgressListener(listener)
                             super.onLoadStarted(placeholder)
                         }
 
                         override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                             view.mziv_image_large?.imageBitmap = resource
-                            view.pb_hor_progress.visibility = View.GONE
-                            view.pb_large_progress?.animate()?.alpha(0f)?.setDuration(300)?.start()
+                            view.pb_hor_progress?.animate()?.alpha(0f)?.setDuration(300)?.start()
                             removeProgressListener(listener)
                         }
 
@@ -137,8 +137,7 @@ class WatchLargeImageActivity : BaseActivity() {
                         override fun onLoadFailed(errorDrawable: Drawable?) {
                             super.onLoadFailed(errorDrawable)
                             removeProgressListener(listener)
-                            view.pb_hor_progress.visibility = View.GONE
-                            view.pb_large_progress?.animate()?.alpha(0f)?.setDuration(300)?.start()
+                            view.pb_hor_progress?.animate()?.alpha(0f)?.setDuration(300)?.start()
                             (view.mziv_image_large)?.also { iv ->
                                 //                                imageBitmap = BitmapFactory.decodeResource(viewContext.resources, R.drawable.ic_image_error)
                                 GlideApp.with(view).asBitmap().load(R.drawable.ic_image_error).into(object : SimpleTarget<Bitmap>() {
