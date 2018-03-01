@@ -125,8 +125,13 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
 
     protected fun showPageDialog(info: PageInfo) {
         if (info.pages.isEmpty()) return
+        if (info.pages.size == 1 && info.pages.first() == 1) {
+            viewContext.toast("当前共一页")
+            return
+        }
         val seekView = viewContext.inflate(R.layout.layout_seek_page)
         seekView.bsb_seek_page?.apply {
+
             try {
                 val max = this.javaClass.getDeclaredField("mMax")
                 max?.isAccessible = true

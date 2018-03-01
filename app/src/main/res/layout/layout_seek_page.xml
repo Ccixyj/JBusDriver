@@ -16,7 +16,7 @@
         app:bsb_bubble_text_color="@color/white"
         app:bsb_max="10"
         app:bsb_min="1"
-        app:bsb_progress="10"
+        app:bsb_progress="1"
         app:bsb_section_text_position="bottom_sides"
         app:bsb_show_progress_in_float="false"
         app:bsb_show_section_mark="false"

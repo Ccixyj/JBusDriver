@@ -215,7 +215,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
         get() {
             lock.readLock().lock()
             KLog.d("last last $lastPage : $pageInfo ")
-            return pageInfo.copy(pages = (1..reachableMaxPage).toList()).apply {
+            return pageInfo.copy(activePage = Math.max(1, pageInfo.activePage), pages = (1..reachableMaxPage).toList()).apply {
                 lock.readLock().unlock()
             }
         }
