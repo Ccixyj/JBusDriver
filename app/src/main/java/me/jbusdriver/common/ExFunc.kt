@@ -66,8 +66,12 @@ fun Context.dpToPx(dp: Float) = (dp * this.displayMetrics.density + 0.5).toInt()
 
 fun Context.pxToDp(px: Float) = (px / this.displayMetrics.density + 0.5).toInt()
 
+private val TOAST: Toast by lazy { Toast.makeText(JBus, "", Toast.LENGTH_LONG) }
+
 fun Context.toast(str: String, duration: Int = Toast.LENGTH_LONG) {
-    Toast.makeText(this, str, duration).show()
+    TOAST.setText(str)
+    TOAST.duration = duration
+    TOAST.show()
 }
 
 private fun inflateView(context: Context, layoutResId: Int, parent: ViewGroup?,
