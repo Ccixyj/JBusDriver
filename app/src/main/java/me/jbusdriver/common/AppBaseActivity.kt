@@ -57,10 +57,10 @@ abstract class AppBaseActivity<P : BasePresenter<V>, in V : BaseView> : BaseActi
         /**
          * 恢复状态 @see  onSaveInstanceState
          */
-        if (!mFirstStart) mBasePresenter?.restoreFromState()
-        intent.getBundleExtra(C.SavedInstanceState.LOADER_SAVED_STATES + mUniqueLoaderIdentifier)?.let {
+        val bundleKey = C.SavedInstanceState.LOADER_SAVED_STATES + mUniqueLoaderIdentifier
+        intent.getBundleExtra(bundleKey)?.let {
             restoreState(it)
-
+            intent.removeExtra(bundleKey)
         }
         mFirstStart = false
     }
@@ -88,10 +88,10 @@ abstract class AppBaseActivity<P : BasePresenter<V>, in V : BaseView> : BaseActi
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
-        KLog.d("onSaveInstanceState $outState")
         super.onSaveInstanceState(outState)
         outState?.putBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE, mFirstStart)
         outState?.putInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE, mUniqueLoaderIdentifier)
+        KLog.d("$TAG onSaveInstanceState $outState")
     }
 
     protected abstract val layoutId: Int
@@ -130,7 +130,8 @@ abstract class AppBaseActivity<P : BasePresenter<V>, in V : BaseView> : BaseActi
     }
 
     protected open fun restoreState(bundle: Bundle) {
-        KLog.d("restoreState : $bundle")
+        KLog.d("$TAG restoreState : $bundle")
+        mBasePresenter?.restoreFromState()
     }
 
     companion object {

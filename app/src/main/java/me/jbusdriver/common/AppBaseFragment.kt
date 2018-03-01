@@ -79,7 +79,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     }
 
     private fun doStart() {
-        KLog.t(TAG).d("doStart : mFirstStart :" + mFirstStart, "mUniqueLoaderIdentifier :" + mUniqueLoaderIdentifier, "instance = " + this)
+        KLog.t(TAG).d("doStart : mFirstStart :" + mFirstStart +" mUniqueLoaderIdentifier :" + mUniqueLoaderIdentifier+ " instance = " + this)
         requireNotNull(mBasePresenter)
         mBasePresenter?.onViewAttached(this as V)
         mBasePresenter?.onStart(mFirstStart)
@@ -179,6 +179,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
         super.onSaveInstanceState(outState)
         outState.putBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE, mFirstStart)
         outState.putInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE, mUniqueLoaderIdentifier)
+        KLog.d("$TAG onSaveInstanceState $outState")
     }
 
 
@@ -196,8 +197,10 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
         //fragment中会赋值两次，可以设置flag。
         KLog.t(TAG).d("onLoadFinished")
         mBasePresenter = data
-        activity!!.intent.getBundleExtra(C.SavedInstanceState.LOADER_SAVED_STATES + mUniqueLoaderIdentifier)?.let {
+        val bundleKey  = C.SavedInstanceState.LOADER_SAVED_STATES + mUniqueLoaderIdentifier
+        activity!!.intent.getBundleExtra(bundleKey)?.let {
             restoreState(it)
+            activity!!.intent.removeExtra(bundleKey)
         }
         if (mNeedToCallStart.compareAndSet(true, false)) {
             doStart()
@@ -219,7 +222,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     }
 
     protected open fun restoreState(bundle: Bundle) {
-        KLog.d("restoreState : $bundle")
+        KLog.d("$TAG restoreState : $bundle")
         mBasePresenter?.restoreFromState()
     }
 

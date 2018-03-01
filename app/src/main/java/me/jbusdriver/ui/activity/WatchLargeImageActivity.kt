@@ -41,7 +41,9 @@ class WatchLargeImageActivity : BaseActivity() {
 
     private fun initWidget() {
         urls.mapTo(imageViewList) {
-            this@WatchLargeImageActivity.inflate(R.layout.layout_large_image_item)
+            this@WatchLargeImageActivity.inflate(R.layout.layout_large_image_item).apply {
+                this.mziv_image_large.setViewPager(vp_largeImage)
+            }
         }
         vp_largeImage.adapter = MyViewPagerAdapter()
         vp_largeImage.currentItem = if (index == -1) 0 else index
