@@ -45,7 +45,7 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
         adapter.bindToRecyclerView(recycleView)
         adapter.setOnLoadMoreListener({ mBasePresenter?.onLoadMore() }, recycleView)
         adapter.setLoadMoreView(SimpleLoadMoreView())
-        adapter.setEmptyView(EmptyState.NoData(viewContext).getEmptyView())
+
 
     }
 
@@ -80,6 +80,9 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
     }
 
     override fun loadMoreEnd(clickable: Boolean) {
+        if (adapter.getEmptyView() == null && adapter.getData().isEmpty()) {
+            adapter.setEmptyView(EmptyState.NoData(viewContext).getEmptyView())
+        }
         adapter.loadMoreEnd()
         adapter.enableLoadMoreEndClick(clickable)
     }
