@@ -129,7 +129,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
     }
     //详情不怎么变化,所以直接缓存到disk
     override val detailMovieFromDisk: MovieDetail? by lazy {
-        CacheLoader.acache.getAsString(movie.detailSaveKey)?.let { AppContext.gson.fromJson<MovieDetail>(it) }
+        CacheLoader.acache.getAsString(movie.detailSaveKey)?.let { GSON.fromJson<MovieDetail>(it) }
     }
 
 

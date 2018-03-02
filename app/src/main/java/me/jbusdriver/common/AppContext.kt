@@ -10,62 +10,66 @@ import com.squareup.leakcanary.LeakCanary
 import com.umeng.analytics.MobclickAgent
 import io.reactivex.plugins.RxJavaPlugins
 import jbusdriver.me.jbusdriver.BuildConfig
+import me.jbusdriver.debug.stetho.initializeStetho
 import me.jbusdriver.http.JAVBusService
 import java.lang.reflect.Modifier.TRANSIENT
 
 
-/**
- * Created by Administrator on 2017/4/8.
- */
+lateinit var JBus: AppContext
+
+val GSON by lazy {
+    GsonBuilder().excludeFieldsWithModifiers(TRANSIENT).registerTypeAdapter(Int::class.java, JsonDeserializer<Int> { json, _, _ ->
+        if (json.isJsonNull || json.asString.isEmpty()) {
+            return@JsonDeserializer null
+        }
+        try {
+            return@JsonDeserializer json.asInt
+        } catch (e: NumberFormatException) {
+            return@JsonDeserializer null
+        }
+    }).serializeNulls().create()
+}
+
 class AppContext : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        instace = this
+        JBus = this
+
         if (LeakCanary.isInAnalyzerProcess(this)) {
             // This process is dedicated to LeakCanary for heap analysis.
             // You should not init your app in this process.
             return
         }
-        LeakCanary.install(this)
-        val formatStrategy = PrettyFormatStrategy.newBuilder()
-                .showThreadInfo(true)  // (Optional) Whether to show thread info or not. Default true
-                .methodCount(2)         // (Optional) How many method line to show. Default 2
-                .methodOffset(0)        // (Optional) Hides internal method calls up to offset. Default 5
-                // .logStrategy(customLog) // (Optional) Changes the log strategy to print out. Default LogCat
-                .tag("old_driver")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
-                .build()
 
-        Logger.addLogAdapter(object : AndroidLogAdapter(formatStrategy) {
-            override fun isLoggable(priority: Int, tag: String?) = BuildConfig.DEBUG
-        })
+        if (BuildConfig.DEBUG) {
+            LeakCanary.install(this)
+
+            val formatStrategy = PrettyFormatStrategy.newBuilder()
+                    .showThreadInfo(true)  // (Optional) Whether to show thread info or not. Default true
+                    .methodCount(2)         // (Optional) How many method line to show. Default 2
+                    .methodOffset(0)        // (Optional) Hides internal method calls up to offset. Default 5
+                    // .logStrategy(customLog) // (Optional) Changes the log strategy to print out. Default LogCat
+                    .tag("old_driver")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
+                    .build()
+
+            Logger.addLogAdapter(object : AndroidLogAdapter(formatStrategy) {
+                override fun isLoggable(priority: Int, tag: String?) = BuildConfig.DEBUG
+            })
+
+            initializeStetho(this) //chrome://inspect/#devices
+        }
 
         MobclickAgent.setDebugMode(BuildConfig.DEBUG)
 
         RxJavaPlugins.setErrorHandler {
-            KLog.e("opp: $it")
-            MobclickAgent.reportError(this, it)
+            if (!BuildConfig.DEBUG) MobclickAgent.reportError(this, it)
         }
-
-
-
     }
 
-    companion object {
-        @JvmStatic
-        lateinit var instace: AppContext
 
-        @JvmStatic
-        val gson = GsonBuilder().excludeFieldsWithModifiers(TRANSIENT).registerTypeAdapter(Int::class.java, JsonDeserializer<Int> { json, _, _ ->
-            if (json.isJsonNull || json.asString.isEmpty()) {
-                return@JsonDeserializer null
-            }
-            try {
-                return@JsonDeserializer json.asInt
-            } catch (e: NumberFormatException) {
-                return@JsonDeserializer null
-            }
-        }).serializeNulls().create()
+    companion object {
+
         val JBusInstances by lazy { arrayMapof<String, JAVBusService>() }
     }
 }

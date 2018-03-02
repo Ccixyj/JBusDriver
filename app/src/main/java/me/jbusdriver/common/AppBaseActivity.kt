@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * Created by Administrator on 2016/7/21 0021.
  */
-abstract class AppBaseActivity<P : BasePresenter<V>, V : BaseView> : BaseActivity(), LoaderManager.LoaderCallbacks<P>, PresenterFactory<P>, BaseView {
+abstract class AppBaseActivity<P : BasePresenter<V>, in V : BaseView> : BaseActivity(), LoaderManager.LoaderCallbacks<P>, PresenterFactory<P>, BaseView {
     /**
      * Do we need to call [.doStart] from the [.onLoadFinished] method.
      * Will be true if SPresenter wasn't loaded when [.onStart] is reached
@@ -35,6 +35,9 @@ abstract class AppBaseActivity<P : BasePresenter<V>, V : BaseView> : BaseActivit
         mUniqueLoaderIdentifier = savedInstanceState?.getInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE) ?: AppBaseActivity.sViewCounter.incrementAndGet()
         setContentView(this.inflate(layoutId))
         supportLoaderManager.initLoader(mUniqueLoaderIdentifier, savedInstanceState, this@AppBaseActivity)
+        if (savedInstanceState != null) {
+            intent.putExtra(C.SavedInstanceState.LOADER_SAVED_STATES + mUniqueLoaderIdentifier, savedInstanceState)
+        }
     }
 
     override fun onStart() {
@@ -51,6 +54,14 @@ abstract class AppBaseActivity<P : BasePresenter<V>, V : BaseView> : BaseActivit
         requireNotNull(mBasePresenter)
         mBasePresenter?.onViewAttached(this as V)
         mBasePresenter?.onStart(mFirstStart)
+        /**
+         * 恢复状态 @see  onSaveInstanceState
+         */
+        val bundleKey = C.SavedInstanceState.LOADER_SAVED_STATES + mUniqueLoaderIdentifier
+        intent.getBundleExtra(bundleKey)?.let {
+            restoreState(it)
+            intent.removeExtra(bundleKey)
+        }
         mFirstStart = false
     }
 
@@ -77,10 +88,10 @@ abstract class AppBaseActivity<P : BasePresenter<V>, V : BaseView> : BaseActivit
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
-        KLog.d("onSaveInstanceState $outState")
         super.onSaveInstanceState(outState)
-        outState?.putBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE, true)
+        outState?.putBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE, mFirstStart)
         outState?.putInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE, mUniqueLoaderIdentifier)
+        KLog.d("$TAG onSaveInstanceState $outState")
     }
 
     protected abstract val layoutId: Int
@@ -108,8 +119,7 @@ abstract class AppBaseActivity<P : BasePresenter<V>, V : BaseView> : BaseActivit
     }
 
 
-
-   override fun showLoading() {
+    override fun showLoading() {
         if (viewContext is AppContext) return
         placeDialogHolder = MaterialDialog.Builder(viewContext).content("正在加载...").progress(true, 0).show()
     }
@@ -117,6 +127,11 @@ abstract class AppBaseActivity<P : BasePresenter<V>, V : BaseView> : BaseActivit
     override fun dismissLoading() {
         placeDialogHolder?.dismiss()
         placeDialogHolder = null
+    }
+
+    protected open fun restoreState(bundle: Bundle) {
+        KLog.d("$TAG restoreState : $bundle")
+        mBasePresenter?.restoreFromState()
     }
 
     companion object {

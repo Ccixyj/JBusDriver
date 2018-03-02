@@ -3,9 +3,12 @@ package me.jbusdriver.http
 import android.content.Context
 import android.net.ConnectivityManager
 import android.text.TextUtils
+import com.facebook.stetho.okhttp3.StethoInterceptor
 import jbusdriver.me.jbusdriver.BuildConfig
-import me.jbusdriver.common.AppContext
+import me.jbusdriver.common.GlideProgressListener
+import me.jbusdriver.common.JBus
 import me.jbusdriver.common.KLog
+import me.jbusdriver.common.ProgressResponseBody
 import okhttp3.*
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -22,7 +25,7 @@ import java.util.concurrent.TimeUnit
 object NetClient {
     private const val TAG = "NetClient"
     private const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36"
-    // private val gsonConverterFactory = GsonConverterFactory.create(AppContext.gson)
+    // private val gsonConverterFactory = GsonConverterFactory.create(GSON)
     private val rxJavaCallAdapterFactory = RxJava2CallAdapterFactory.create()
     private val EXIST_MAGNET_INTERCEPTOR by lazy {
         Interceptor { chain ->
@@ -36,6 +39,17 @@ object NetClient {
         }
     }
 
+    private val PROGRESS_INTERCEPTOR by lazy {
+        Interceptor { chain ->
+            val request = chain.request()
+            val response = chain.proceed(request)
+             return@Interceptor response.newBuilder()
+                    .body(ProgressResponseBody(request.url().toString(), response.body(), GlideProgressListener))
+                    .build()
+        }
+    }
+
+
     fun getRetrofit(baseUrl: String) = Retrofit.Builder().client(okHttpClient).baseUrl(baseUrl)
             .addConverterFactory(object : Converter.Factory() {
                 override fun responseBodyConverter(type: Type?, annotations: Array<out Annotation>?, retrofit: Retrofit?): Converter<ResponseBody, *> = Converter<ResponseBody, String> { it.string() }
@@ -46,7 +60,7 @@ object NetClient {
 
     val okHttpClient by lazy {
         //设置缓存路径
-        val httpCacheDirectory = File(AppContext.Companion.instace.cacheDir, "OK_HTTP_CACHE")
+        val httpCacheDirectory = File(JBus.cacheDir, "OK_HTTP_CACHE")
         //设置缓存 100M
         val cache = Cache(httpCacheDirectory, 100 * 1024 * 1024.toLong())
 
@@ -56,14 +70,28 @@ object NetClient {
                 .connectTimeout((15 * 1000).toLong(), TimeUnit.MILLISECONDS)
                 .cache(cache)
                 .addNetworkInterceptor(EXIST_MAGNET_INTERCEPTOR)
+                .addNetworkInterceptor(StethoInterceptor())
                 .cookieJar(object : CookieJar {
                     private val cookieStore = HashMap<HttpUrl, List<Cookie>>()
 
                     override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
                         cookieStore[url] = cookies
                     }
+
                     override fun loadForRequest(url: HttpUrl) = cookieStore[url] ?: ArrayList()
                 })
+        if (BuildConfig.DEBUG) {
+            client.addInterceptor(LoggerInterceptor("OK_HTTP"))
+        }
+        client.build()
+    }
+
+    val glideOkHttpClient by lazy {
+        val client = OkHttpClient.Builder()
+                .readTimeout((20 * 1000).toLong(), TimeUnit.MILLISECONDS)
+                .connectTimeout((15 * 1000).toLong(), TimeUnit.MILLISECONDS)
+                .addNetworkInterceptor(StethoInterceptor())
+                .addNetworkInterceptor(PROGRESS_INTERCEPTOR)
         if (BuildConfig.DEBUG) {
             client.addInterceptor(LoggerInterceptor("OK_HTTP"))
         }

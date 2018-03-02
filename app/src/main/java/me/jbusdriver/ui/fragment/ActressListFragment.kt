@@ -149,7 +149,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
         }
     }
 
-    override val pageMode: Int = AppConfiguration.PageMode.Normal
+    override val pageMode: Int = AppConfiguration.PageMode.Page
 
 
     companion object {
@@ -164,7 +164,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
         }
 
         fun newInstance(type: DataSourceType) = ActressListFragment().apply {
-            val urls = CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) }
+            val urls = CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { GSON.fromJson<ArrayMap<String, String>>(it) }
                     ?: arrayMapof()
             val url = urls[type.key] ?: JAVBusService.defaultFastUrl+"/actresses"
             arguments = Bundle().apply {
@@ -181,11 +181,11 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
     }
 
     override fun insertData(pos: Int, data: List<*>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        adapter.addData(pos, data as List<ActressInfo>)
     }
 
     override fun moveTo(pos: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        layoutManager.scrollToPosition(adapter.headerLayoutCount + pos)
     }
 
 

@@ -28,17 +28,18 @@
             android:icon="@drawable/ic_movie_ma_24dp"
             android:title="有碼"
             android:visible="false"/>
-        <item
-            android:id="@+id/movie_ma_genre"
-            android:icon="@drawable/ic_near_me_black_24dp"
-            android:title="有碼類別"
-            android:visible="false"/>
 
         <item
             android:id="@+id/movie_ma_actress"
             android:icon="@drawable/ic_insert_emoticon_black_24dp"
             android:title="有碼女優"
             android:visible="false"/>
+
+        <item
+            android:id="@+id/movie_ma_genre"
+            android:icon="@drawable/ic_near_me_black_24dp"
+            android:title="有碼類別"
+            android:visible="false" />
     </group>
 
     <group
@@ -50,17 +51,18 @@
             android:icon="@drawable/ic_movie_no_ma_24dp"
             android:title="無碼"
             android:visible="false"/>
-        <item
-            android:id="@+id/movie_uncensored_genre"
-            android:icon="@drawable/ic_near_me_black_24dp"
-            android:title="無碼類別"
-            android:visible="false"/>
 
         <item
             android:id="@+id/movie_uncensored_actress"
             android:icon="@drawable/ic_insert_emoticon_black_24dp"
             android:title="無碼女優"
             android:visible="false"/>
+
+        <item
+            android:id="@+id/movie_uncensored_genre"
+            android:icon="@drawable/ic_near_me_black_24dp"
+            android:title="無碼類別"
+            android:visible="false" />
     </group>
 
     <group
@@ -72,16 +74,17 @@
             android:icon="@drawable/ic_public_black_24dp"
             android:title="欧美"
             android:visible="false"/>
-        <item
-            android:id="@+id/movie_xyz_genre"
-            android:icon="@drawable/ic_near_me_black_24dp"
-            android:title="欧美類別"
-            android:visible="false"/>
 
         <item
             android:id="@+id/movie_xyz_actress"
             android:icon="@drawable/ic_insert_emoticon_black_24dp"
             android:title="欧美演员"
+            android:visible="false" />
+
+        <item
+            android:id="@+id/movie_xyz_genre"
+            android:icon="@drawable/ic_near_me_black_24dp"
+            android:title="欧美類別"
             android:visible="false"/>
     </group>
 

@@ -14,15 +14,15 @@ object CacheLoader {
 
     private fun initMemCache(): LruCache<String, String> {
         val memoryInfo = ActivityManager.MemoryInfo()
-        val myActivityManager = AppContext.instace.getSystemService(Activity.ACTIVITY_SERVICE) as ActivityManager
+        val myActivityManager = JBus.getSystemService(Activity.ACTIVITY_SERVICE) as ActivityManager
         //获得系统可用内存，保存在MemoryInfo对象上
         myActivityManager.getMemoryInfo(memoryInfo)
         val memSize = memoryInfo.availMem.formatFileSize()
         KLog.t(TAG).d("memoryInfo -> $memoryInfo")
         KLog.t(TAG).d("max availMem = $memSize")
         if (memoryInfo.lowMemory) {
-            MobclickAgent.reportError(AppContext.instace, "可能的内存不足")
-            AppContext.instace.toast("当前可用内存:$memSize,请注意释放内存")
+            MobclickAgent.reportError(JBus, "可能的内存不足")
+            JBus.toast("当前可用内存:$memSize,请注意释放内存")
         }
         val cacheSize = if (memoryInfo.availMem > 32 * 1024 * 1024) 4 * 1024 * 1024 else 2 * 1024 * 1024
         KLog.t(TAG).d("max cacheSize = ${cacheSize.toLong().formatFileSize()}")
@@ -49,16 +49,17 @@ object CacheLoader {
 
     @JvmStatic
     val acache: ACache  by lazy {
-        ACache.get(AppContext.instace)
+        ACache.get(JBus)
     }
 
     /*============================cache====================================*/
-    fun cacheLruAndDisk(pair: Pair<String, Any>, seconds: Int? = null) = with(AppContext.gson.toJson(pair.second)) {
+    fun cacheLruAndDisk(pair: Pair<String, Any>, seconds: Int? = null) = with(GSON.toJson(pair.second)) {
         lru.put(pair.first, this)
-        seconds?.let { acache.put(pair.first, AppContext.gson.toJson(pair.second), seconds) } ?: acache.put(pair.first, AppContext.gson.toJson(pair.second))
+        seconds?.let { acache.put(pair.first, GSON.toJson(pair.second), seconds) }
+                ?: acache.put(pair.first, GSON.toJson(pair.second))
     }
 
-    fun cacheLru(pair: Pair<String, Any>) = lru.put(pair.first, AppContext.gson.toJson(pair.second))
+    fun cacheLru(pair: Pair<String, Any>) = lru.put(pair.first, GSON.toJson(pair.second))
     fun cacheDisk(pair: Pair<String, Any>, seconds: Int? = null) = seconds?.let { acache.put(pair.first, v2Str(pair.second), seconds) } ?: acache.put(pair.first, v2Str(pair.second))
 
     private fun v2Str(obj: Any): String = when (obj) {

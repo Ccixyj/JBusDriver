@@ -12,6 +12,7 @@ import com.bumptech.glide.module.AppGlideModule
 import me.jbusdriver.http.NetClient
 import java.io.InputStream
 
+
 @GlideModule
 open class AppGlideOptions : AppGlideModule() {
     override fun applyOptions(context: Context, builder: GlideBuilder) {
@@ -20,7 +21,7 @@ open class AppGlideOptions : AppGlideModule() {
 
     override fun registerComponents(context: Context, glide: Glide, registry: Registry) {
         registry.replace(GlideUrl::class.java, InputStream::class.java,
-                OkHttpUrlLoader.Factory(NetClient.okHttpClient))
+                OkHttpUrlLoader.Factory(NetClient.glideOkHttpClient))
     }
 
 

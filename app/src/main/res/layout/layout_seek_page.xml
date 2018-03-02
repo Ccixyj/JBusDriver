@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/material_80dp"
+    android:padding="@dimen/material_16dp">
+
+    <com.xw.repo.BubbleSeekBar
+        android:id="@+id/bsb_seek_page"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:minHeight="@dimen/material_64dp"
+        app:bsb_bubble_color="@color/colorAccent"
+        app:bsb_bubble_text_color="@color/white"
+        app:bsb_max="10"
+        app:bsb_min="1"
+        app:bsb_progress="1"
+        app:bsb_section_text_position="bottom_sides"
+        app:bsb_show_progress_in_float="false"
+        app:bsb_show_section_mark="false"
+        app:bsb_show_section_text="true"
+        app:bsb_show_thumb_text="true"
+        app:bsb_thumb_text_color="@color/colorPrimaryDark"
+        app:bsb_thumb_text_size="@dimen/material_16dp"
+        app:bsb_track_color="@color/divider"
+        app:bsb_section_count="1"
+        app:bsb_track_size="@dimen/material_4dp" />
+
+</FrameLayout>

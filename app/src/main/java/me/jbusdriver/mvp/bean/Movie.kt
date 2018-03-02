@@ -29,7 +29,7 @@ data class Movie(
 
     companion object {
         //图片url host 设置
-        fun loadFromDoc( str: Document): List<Movie> {
+        fun loadFromDoc(str: Document): List<Movie> {
             return str.select(".movie-box").mapIndexed { _, element ->
                 Movie(
                         title = element.select("img").attr("title"),
@@ -52,7 +52,7 @@ data class Movie(
                     }
         }
 
-        fun newPageMovie(page: Int, pages: List<Int>) = Movie( page.toString(), pages.joinToString("#"), "", "", "")
+        fun newPageMovie(page: Int, pages: List<Int>) = Movie(page.toString(), pages.joinToString("#"), "", "", "")
     }
 }
 

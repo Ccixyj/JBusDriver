@@ -1,39 +1,51 @@
 package me.jbusdriver.mvp.presenter
 
 import io.reactivex.Flowable
-import io.reactivex.rxkotlin.subscribeBy
 import me.jbusdriver.common.*
 import me.jbusdriver.db.bean.History
 import me.jbusdriver.db.service.HistoryService
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.LinkListContract
-import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.bean.DBtype
+import me.jbusdriver.mvp.bean.ILink
+import me.jbusdriver.mvp.bean.PageInfo
+import me.jbusdriver.mvp.bean.PageLink
 import me.jbusdriver.mvp.model.BaseModel
 import me.jbusdriver.ui.data.AppConfiguration
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.util.*
 import java.util.concurrent.ConcurrentSkipListMap
+import java.util.concurrent.locks.ReentrantReadWriteLock
 
 /**
  * Created by Administrator on 2017/5/10 0010.
  */
 abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistory: Boolean = false) : AbstractRefreshLoadMorePresenterImpl<LinkListContract.LinkListView, T>(), LinkListContract.LinkListPresenter {
 
-    protected open var IsAll = false
-    private val urlPath by lazy { (linkData as? PageLink)?.link?.urlPath?.replace("/${linkData.page}", "")
-            ?: linkData.link.urlPath }
-    private val dataPageCache by lazy { ConcurrentSkipListMap<Int, Int>() }
-    private val pageModeDisposable = RxBus.toFlowable(PageChangeEvent::class.java)
-            .subscribeBy(onNext = {
-                KLog.d("PageChangeEvent $it")
+    /**
+    ReentrantReadWriteLock会使用两把锁来解决问题，一个读锁，一个写锁
+    线程进入读锁的前提条件：
+    没有其他线程的写锁，
+    没有写请求或者有写请求，但调用线程和持有锁的线程是同一个
 
-                onRefresh()
-                //清空dataPageCache
-                dataPageCache.clear()
-            })
+    线程进入写锁的前提条件：
+    没有其他线程的读锁
+    没有其他线程的写锁
+     */
+    private val lock by lazy { ReentrantReadWriteLock() }
+    protected var reachableMaxPage = 1
+
+    open var IsAll = false
+    private val urlPath by lazy {
+        (linkData as? PageLink)?.link?.urlPath?.replace("/${linkData.page}", "")
+                ?: linkData.link.urlPath
+    }
+    private val dataPageCache by lazy { ConcurrentSkipListMap<Int, Int>() }
+
 
     override fun onFirstLoad() {
+        dataPageCache.clear()
         val link = when (linkData) {
             is PageLink -> {
                 pageInfo = PageInfo(linkData.page, linkData.page + 1)
@@ -48,10 +60,9 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
         if (!isHistory) addHistory(link)
     }
 
-    override fun loadAll(iaAll: Boolean) {
+    override fun setAll(iaAll: Boolean) {
         IsAll = iaAll
         dataPageCache.clear()
-        loadData4Page(1)
         val link = when (linkData) {
             is PageLink -> linkData.copy(1, mView?.type?.key ?: "")
             else -> linkData
@@ -66,8 +77,8 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
                     KLog.i("fromCallable page $pageInfo requestFor : $it")
                     JAVBusService.INSTANCE.get(it, if (IsAll) "all" else null).addUserCase().map { Jsoup.parse(it) }
                 }.doOnNext {
-                    if (t == 1) CacheLoader.lru.put("${linkData.link}$IsAll", it.toString())
-                }
+                            if (t == 1) CacheLoader.lru.put("${linkData.link}$IsAll", it.toString())
+                        }
 
         override fun requestFromCache(t: Int) = Flowable.concat(CacheLoader.justLru(linkData.link).map { Jsoup.parse(it) }, requestFor(t))
                 .firstOrError().toFlowable()
@@ -88,7 +99,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
     }
 
     override fun jumpToPage(page: Int) {
-        KLog.i("jumpToPage $page in $dataPageCache")
+        KLog.i("jumpToPage $page ($lastPage)in $dataPageCache")
         if (page >= 1) {
 
             if (page > lastPage) {
@@ -135,9 +146,20 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
 
     override fun doAddData(t: List<T>) {
 
-        synchronized(pageInfo) {
+        lock.readLock().lock() //加读锁
+        try {
             when (mView?.pageMode) {
                 AppConfiguration.PageMode.Page -> {
+                    KLog.i("doAddData page Ino $dataPageCache ${pageInfo.hashCode()} $t")
+                    reachableMaxPage = Math.max(reachableMaxPage, pageInfo.pages.lastOrNull() ?: 1)
+
+                    if (pageInfo.activePage == 1) {
+                        //第一页:正常加载 ,因为会重置列表,不需要考虑其他情况
+                        dataPageCache[pageInfo.activePage] = t.size - 1//page item In list
+                        super.doAddData(t)
+                        return
+                    }
+
                     //需要判断数据
                     if (dataPageCache.keys.contains(pageInfo.activePage)) {
                         mView?.loadMoreComplete() //直接加载完成
@@ -157,12 +179,14 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
                         //超过最大页数时 ,可以点击加载原本的下一页 ; 或者请求超时,点击重新加载
                         mView?.loadMoreEnd(true)
                     }
-                    KLog.i("doAddData page Ino $dataPageCache $pageInfo $t")
+
                 }
                 else -> {
                     super.doAddData(t)
                 }
             }
+        } finally {
+            lock.readLock().unlock()
         }
     }
 
@@ -187,9 +211,19 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
         return jumpIndex
     }
 
+    override val currentPageInfo: PageInfo
+        get() {
+            lock.readLock().lock()
+            KLog.d("last last $lastPage : $pageInfo ")
+            return pageInfo.copy(activePage = Math.max(1, pageInfo.activePage), pages = (1..reachableMaxPage).toList()).apply {
+                lock.readLock().unlock()
+            }
+        }
 
-    override fun onPresenterDestroyed() {
-        super.onPresenterDestroyed()
-        pageModeDisposable.dispose()
-    }
+//    override fun restoreFromState() {
+//        super.restoreFromState()
+//        KLog.d("restoreFromState :dataPageCache : $dataPageCache")
+//        dataPageCache.clear()
+//        loadData4Page(1)
+//    }
 }

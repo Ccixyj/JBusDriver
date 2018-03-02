@@ -1,6 +1,5 @@
 package me.jbusdriver.mvp.presenter
 
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.ILink
@@ -20,16 +19,12 @@ class MovieLinkPresenterImpl(val link: ILink, isAllFromBundle: Boolean, isHis: B
     override fun stringMap(str: Document): List<Movie> {
         //处理alert
         parseMoviesAlert(str).let {
-            AndroidSchedulers.mainThread().scheduleDirect {
-                mView?.showContent(it)
-            }
+            mView?.showContent(it)
         }
 
         //处理ilink : actress collect
         parseAttrs(linkData, str)?.let {
-            AndroidSchedulers.mainThread().scheduleDirect {
-                mView?.showContent(it)
-            }
+            mView?.showContent(it)
         }
 
         return Movie.loadFromDoc( str).let {

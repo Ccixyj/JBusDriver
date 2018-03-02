@@ -1,49 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     style="@style/AppTheme.CardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
     app:contentPadding="@dimen/material_8dp">
 
-    <TextView
-        android:id="@+id/tv_info_title"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/material_24dp"
-        android:gravity="center"
-        android:text="123456"
-        style="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@color/primaryText"
-        android:textSize="@dimen/material_14sp" />
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_marginTop="@dimen/material_32dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+       <TextView
+           android:id="@+id/tv_info_title"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:minHeight="@dimen/material_24dp"
+           android:gravity="center"
+           tools:text="123456\n12333\n12333\n12333"
+           android:maxLines="3"
+           style="@style/TextAppearance.AppCompat.Medium"
+           android:textColor="@color/primaryText"
+           android:textSize="@dimen/material_14sp" />
 
-        <TextView
-            android:id="@+id/tv_change_a"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="@dimen/material_24dp"
-            android:gravity="center"
-            android:text="123456"
-            />
+       <LinearLayout
+           android:layout_marginTop="@dimen/material_8dp"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:gravity="center_vertical"
+           android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tv_change_b"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="@dimen/material_24dp"
-            android:gravity="center"
-            android:textColor="@color/colorPrimary"
-            android:text="123456"
-             />
+           <TextView
+               android:id="@+id/tv_change_a"
+               android:layout_width="0dp"
+               android:layout_weight="1"
+               android:layout_height="@dimen/material_24dp"
+               android:gravity="center"
+               tools:text="123456"
+               />
 
-    </LinearLayout>
+           <TextView
+               android:id="@+id/tv_change_b"
+               android:layout_width="0dp"
+               android:layout_weight="1"
+               android:layout_height="@dimen/material_24dp"
+               android:gravity="center"
+               android:textColor="@color/colorPrimary"
+               tools:text="123456"
+               />
+
+       </LinearLayout>
+   </LinearLayout>
 
 
 </android.support.v7.widget.CardView>

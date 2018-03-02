@@ -33,7 +33,7 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
             val disk = Flowable.create({ emitter: FlowableEmitter<MovieDetail> ->
                 mView?.let { view ->
                     CacheLoader.acache.getAsString(view.movie.detailSaveKey)?.let {
-                        val old = AppContext.gson.fromJson<MovieDetail>(it)
+                        val old = GSON.fromJson<MovieDetail>(it)
                         val res = if (old != null && mView?.movie?.link?.endsWith("xyz") == false) {
                             val new = old.checkUrl(JAVBusService.defaultFastUrl)
                             if (old != new) CacheLoader.cacheDisk(view.movie.detailSaveKey to new)
@@ -90,6 +90,11 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
                     .addTo(rxManager)
         }
 
+    }
+
+    override fun restoreFromState() {
+        super.restoreFromState()
+        loadDetail()
     }
 
 }

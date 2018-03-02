@@ -8,6 +8,7 @@ import me.jbusdriver.db.bean.LinkCategory
 import me.jbusdriver.ui.data.enums.DataSourceType
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import java.io.Serializable
 
 /**
  * Created by Administrator on 2017/4/16.
@@ -96,7 +97,7 @@ data class MovieDetail(val title: String,
 }
 
 
-interface IAttr
+interface IAttr : Serializable
 
 
 data class Header(val name: String, val value: String, override val link: String) : ILink {

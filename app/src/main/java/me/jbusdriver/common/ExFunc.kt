@@ -35,7 +35,7 @@ const val MB = KB * 1024
 const val GB = MB * 1024
 const val TB = GB * 1024
 
-fun Long.formatFileSize(): String = Formatter.formatFileSize(AppContext.instace, this)
+fun Long.formatFileSize(): String = Formatter.formatFileSize(JBus, this)
 //endregion
 
 //region array map
@@ -49,8 +49,8 @@ fun Int.toColorInt() = getColor(this)
 
 private fun getColor(id: Int): Int {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        AppContext.instace.resources.getColor(id, null)
-    } else AppContext.instace.resources.getColor(id)
+        JBus.resources.getColor(id, null)
+    } else JBus.resources.getColor(id)
 }
 //endregion
 
@@ -66,8 +66,12 @@ fun Context.dpToPx(dp: Float) = (dp * this.displayMetrics.density + 0.5).toInt()
 
 fun Context.pxToDp(px: Float) = (px / this.displayMetrics.density + 0.5).toInt()
 
+private val TOAST: Toast by lazy { Toast.makeText(JBus, "", Toast.LENGTH_LONG) }
+
 fun Context.toast(str: String, duration: Int = Toast.LENGTH_LONG) {
-    Toast.makeText(this, str, duration).show()
+    TOAST.setText(str)
+    TOAST.duration = duration
+    TOAST.show()
 }
 
 private fun inflateView(context: Context, layoutResId: Int, parent: ViewGroup?,
@@ -85,7 +89,7 @@ inline fun <reified T> Gson.fromJson(json: String) = this.fromJson<T>(json, obje
 //inline fun <reified T> Gson.fromJson(json: Reader) = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
 //inline fun <reified T> Gson.fromJson(json: JsonReader) = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
 
-fun Any?.toJsonString() = AppContext.gson.toJson(this)
+fun Any?.toJsonString() = GSON.toJson(this)
 //endregion
 
 //region http
@@ -145,8 +149,8 @@ fun Context.paste(): String? {
 //region package info
 val Context.packageInfo: PackageInfo?
     get() = try {
-        AppContext.instace.packageManager.getPackageInfo(
-                AppContext.instace.packageName, 0)
+        JBus.packageManager.getPackageInfo(
+                JBus.packageName, 0)
     } catch (e: Exception) {
         e.printStackTrace()
         null
@@ -232,7 +236,7 @@ fun createDir(collectDir: String): String? {
                 }
             }
         } catch (e: Exception) {
-            MobclickAgent.reportError(AppContext.instace, e)
+            MobclickAgent.reportError(JBus, e)
         }
     }
     return null

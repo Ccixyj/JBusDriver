@@ -42,8 +42,8 @@ class SettingActivity : BaseActivity() {
 
     private val backDir by lazy {
         val pathSuffix = File.separator + "collect" + File.separator + "backup" + File.separator
-        val dir: String = createDir(Environment.getExternalStorageDirectory().absolutePath + File.separator + AppContext.instace.packageName + pathSuffix)
-                ?: createDir(AppContext.instace.filesDir.absolutePath + pathSuffix)
+        val dir: String = createDir(Environment.getExternalStorageDirectory().absolutePath + File.separator + JBus.packageName + pathSuffix)
+                ?: createDir(JBus.filesDir.absolutePath + pathSuffix)
                 ?: error("cant not create collect dir in anywhere")
         File(dir)
     }
@@ -159,7 +159,7 @@ class SettingActivity : BaseActivity() {
                             File(file, "backup${System.currentTimeMillis()}.json").writeText(it.toJsonString())
                         }
                     }.compose(SchedulersCompat.single())
-                    .doFinally { loading.dismiss() }
+                    .doAfterTerminate { loading.dismiss() }
                     .subscribeBy(onError = { toast("备份失败,请重新打开app") }, onNext = {
                         toast("备份成功")
                         loadBackUp()

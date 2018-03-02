@@ -34,14 +34,40 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
     private val navigationView by lazy { findViewById<NavigationView>(R.id.nav_view) }
     private var selectMenu: MenuItem? = null
-    private val fragments by lazy { hashMapOf<Int, BaseFragment>() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState != null) intent.putExtras(savedInstanceState)
+        bindRx()
         initNavigationView()
         initFragments()
-        bindRx()
+    }
+    private fun bindRx() {
+        RxBus.toFlowable(MenuChangeEvent::class.java)
+                .delay(100, TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成
+                .compose(SchedulersCompat.computation())
+                .subscribeBy {
+                    val mayAdded = MenuOp.Ops.map { it.id.toString() }
+                    supportFragmentManager.fragments.filter { it.tag in mayAdded }.forEach {
+                        supportFragmentManager.beginTransaction().remove(it).commitNowAllowingStateLoss()
+                    }
+
+                    initFragments()
+                }
+                .addTo(rxManager)
+
+        RxBus.toFlowable(CategoryChangeEvent::class.java)
+                .debounce(500, TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成
+                .compose(SchedulersCompat.computation())
+                .subscribeBy {
+                    supportFragmentManager.findFragmentByTag(R.id.mine_collect.toString())?.let {
+                        KLog.d("remove :$it $selectMenu")
+                        supportFragmentManager.beginTransaction().remove(it).commitNowAllowingStateLoss()
+                    }
+                    if (selectMenu?.itemId == R.id.mine_collect) setNavSelected()
+
+                }.addTo(rxManager)
+
     }
 
 
@@ -110,18 +136,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
 
     private fun initFragments() {
-        KLog.d("init menuConfig : ${AppConfiguration.menuConfig.filter { it.value }}")
-        if (fragments.isNotEmpty()) {
-            val ft = supportFragmentManager.beginTransaction()
-            fragments.forEach {
-                supportFragmentManager.findFragmentByTag(it.key.toString())?.let {
-                    ft.remove(it)
-                }
-                ft.remove(it.value)
-            }
-            fragments.clear()
-            ft.commitAllowingStateLoss()
-        }
+
         MenuOp.Ops.forEach {
             navigationView.menu.findItem(it.id).isVisible = it.isHow
         }
@@ -135,37 +150,15 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                     return
                 }
         val menuId = intent.getIntExtra("MenuSelectedItemId", id)
-        selectMenu = navigationView.menu.findItem(menuId)
-        KLog.d("selectMenu $selectMenu")
-        selectMenu?.let {
+        val select = navigationView.menu.findItem(menuId)
+        KLog.d("all : ${AppConfiguration.menuConfig.filter { it.value }} selectMenu $select : prev :$selectMenu")
+        select?.let {
             navigationView.setCheckedItem(it.itemId)
             onNavigationItemSelected(it)
         }
 
     }
 
-    private fun bindRx() {
-        RxBus.toFlowable(MenuChangeEvent::class.java)
-                .delay(100, TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成
-                .compose(SchedulersCompat.computation())
-                .subscribeBy {
-                    initFragments()
-                }
-                .addTo(rxManager)
-
-        RxBus.toFlowable(CategoryChangeEvent::class.java)
-                .debounce(500, TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成
-                .compose(SchedulersCompat.computation())
-                .subscribeBy {
-                    fragments.remove(R.id.mine_collect)?.let {
-                        KLog.d("remove :$it $selectMenu")
-                        supportFragmentManager.beginTransaction().remove(it).commitNowAllowingStateLoss()
-                    }
-                    if (selectMenu?.itemId == R.id.mine_collect) setNavSelected()
-
-                }.addTo(rxManager)
-
-    }
 
 
     override fun onBackPressed() {
@@ -185,6 +178,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         switchFragment(item.itemId)
+        //更新当前选择菜单
         selectMenu = item
         KLog.d("onNavigationItemSelected $item ")
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
@@ -195,13 +189,17 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
     private fun switchFragment(itemId: Int) {
         val ft = supportFragmentManager.beginTransaction()
-        val replace = fragments.getOrPut(itemId) {
+
+        val replace = supportFragmentManager.findFragmentByTag(itemId.toString()) ?: let {
             MenuOp.Ops.find { it.id == itemId }?.initializer?.invoke()?.apply {
                 ft.add(R.id.content_main, this, itemId.toString())
             } ?: error("no matched fragment")
         }
-        supportFragmentManager.findFragmentByTag(selectMenu?.itemId.toString())?.let {
-            ft.hide(it)
+        //如果id 与 selectMenu的id不一致则隐藏前一个选择菜单
+        if (itemId != selectMenu?.itemId) {
+            supportFragmentManager.findFragmentByTag(selectMenu?.itemId.toString())?.let {
+                ft.hide(it)
+            }
         }
         ft.show(replace)
         ft.commitAllowingStateLoss()
@@ -245,14 +243,14 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
     @SuppressLint("ResourceAsColor")
     private fun showNotice(notice: Any?) {
-        val sharfp by lazy { getSharedPreferences("config", Context.MODE_PRIVATE) }
-        if (notice != null && notice is NoticeBean && !TextUtils.isEmpty(notice.content) && notice.id > 0 && sharfp.getInt(NoticeIgnoreID, -1) < notice.id) {
+        val shared by lazy { getSharedPreferences("config", Context.MODE_PRIVATE) }
+        if (notice != null && notice is NoticeBean && !TextUtils.isEmpty(notice.content) && notice.id > 0 && shared.getInt(NoticeIgnoreID, -1) < notice.id) {
             MaterialDialog.Builder(this).title("公告")
                     .content(notice.content!!)
                     .neutralText("忽略该提示")
                     .neutralColor(R.color.secondText)
                     .onNeutral { _, _ ->
-                        sharfp.edit().putInt(NoticeIgnoreID, notice.id).apply()
+                        shared.edit().putInt(NoticeIgnoreID, notice.id).apply()
                     }
                     .positiveText("知道了")
                     .show()

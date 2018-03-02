@@ -60,7 +60,7 @@ data class History(val type: Int, val createTime: Date, val jsonStr: String, var
         when (type) {
             1 -> MovieDetailActivity.start(context, getLinkItem() as Movie, true)
             in 2..6 -> MovieListActivity.reloadFromHistory(context, this)
-            else -> AppContext.instace.toast("没有可以跳转的界面")
+            else -> JBus.toast("没有可以跳转的界面")
         }
 
     }
@@ -69,12 +69,12 @@ data class History(val type: Int, val createTime: Date, val jsonStr: String, var
 }
 
 private fun doGet(type: Int, jsonStr: String) = when (type) {
-    1 -> AppContext.gson.fromJson<Movie>(jsonStr)
-    2 -> AppContext.gson.fromJson<ActressInfo>(jsonStr)
-    3 -> AppContext.gson.fromJson<Header>(jsonStr)
-    4 -> AppContext.gson.fromJson<Genre>(jsonStr)
-    5 -> AppContext.gson.fromJson<SearchLink>(jsonStr)
-    6 -> AppContext.gson.fromJson<PageLink>(jsonStr)
+    1 -> GSON.fromJson<Movie>(jsonStr)
+    2 -> GSON.fromJson<ActressInfo>(jsonStr)
+    3 -> GSON.fromJson<Header>(jsonStr)
+    4 -> GSON.fromJson<Genre>(jsonStr)
+    5 -> GSON.fromJson<SearchLink>(jsonStr)
+    6 -> GSON.fromJson<PageLink>(jsonStr)
     else -> error("$type : $jsonStr has no matched class ")
 }.let { data ->
     val isXyz =  data.link.urlHost.endsWith("xyz")

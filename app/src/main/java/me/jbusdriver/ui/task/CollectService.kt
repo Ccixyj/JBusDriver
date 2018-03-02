@@ -40,8 +40,8 @@ class CollectService : IntentService("CollectService") {
     private fun handleLoadBakUp(file: File) {
         if (!file.exists()) return
         try {
-            val backs = AppContext.gson.fromJson<List<LinkItem>>(file.readText())?.map {
-                if (it.categoryId < 0) it
+            val backs = GSON.fromJson<List<LinkItem>>(file.readText())?.map {
+                if (it.categoryId < 0)  return@map it
                 if (CategoryService.getById(it.categoryId) == null) {
                     it.getLinkValue().convertDBItem()
                 } else it
@@ -58,10 +58,10 @@ class CollectService : IntentService("CollectService") {
         KLog.d("handleMigrate")
         try {
             val pathSuffix = File.separator + "collect" + File.separator
-            var cacheDir = File(Environment.getExternalStorageDirectory().absolutePath + File.separator + AppContext.instace.packageName + pathSuffix)
+            var cacheDir = File(Environment.getExternalStorageDirectory().absolutePath + File.separator + JBus.packageName + pathSuffix)
             //迁移可能存在的
             migrate(cacheDir)
-            cacheDir = File(AppContext.instace.filesDir.absolutePath + pathSuffix)
+            cacheDir = File(JBus.filesDir.absolutePath + pathSuffix)
             //迁移可能存在的
             migrate(cacheDir)
         } catch (e: Exception) {
@@ -123,6 +123,7 @@ class CollectService : IntentService("CollectService") {
     }
 
     override fun onCreate() {
+        KLog.t("CollectService").e(" before onCreate")
         super.onCreate()
         KLog.t("CollectService").e("onCreate")
     }

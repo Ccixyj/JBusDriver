@@ -32,6 +32,7 @@ open class BasePresenterImpl<V : BaseView> : BasePresenter<V> {
         if (firstStart && this !is BasePresenter.LazyLoaderPresenter) {
             //如果是LazyLoaderPresenter , 交给LazyLoaderPresenter处理
             onFirstLoad()
+            return
         }
     }
 
@@ -68,4 +69,8 @@ open class BasePresenterImpl<V : BaseView> : BasePresenter<V> {
         rxManager.dispose()
     }
 
+    override fun restoreFromState() {
+        //no op
+        KLog.t(TAG).e("restoreFromState:")
+    }
 }

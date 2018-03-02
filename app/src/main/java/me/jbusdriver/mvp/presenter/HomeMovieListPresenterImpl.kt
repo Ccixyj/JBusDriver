@@ -20,7 +20,7 @@ import org.jsoup.nodes.Document
 open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink) : LinkAbsPresenterImpl<Movie>(link) {
 
     private val urls by lazy {
-        CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { AppContext.gson.fromJson<ArrayMap<String, String>>(it) }
+        CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { GSON.fromJson<ArrayMap<String, String>>(it) }
                 ?: arrayMapof()
     }
     private val saveKey: String
@@ -45,10 +45,6 @@ open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink)
             //可能网址被封
             CacheLoader.acache.remove(C.Cache.BUS_URLS)
         }
-    }
-
-    override fun onFirstLoad() {
-        loadData4Page(1)//主页列表内容在每次加载页面加入历史
     }
 
 
