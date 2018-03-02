@@ -159,7 +159,7 @@ class SettingActivity : BaseActivity() {
                             File(file, "backup${System.currentTimeMillis()}.json").writeText(it.toJsonString())
                         }
                     }.compose(SchedulersCompat.single())
-                    .doFinally { loading.dismiss() }
+                    .doAfterTerminate { loading.dismiss() }
                     .subscribeBy(onError = { toast("备份失败,请重新打开app") }, onNext = {
                         toast("备份成功")
                         loadBackUp()

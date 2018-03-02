@@ -15,11 +15,6 @@ class HistoryPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HistoryContrac
 
     private val dbPage by lazy { HistoryService.page() }
 
-    override fun onResume() {
-        super.onResume()
-        onRefresh()
-    }
-
     override fun loadData4Page(page: Int) {
         val dbPage = dbPage.copy(currentPage = page).apply {
             pageInfo = toPageInfo
