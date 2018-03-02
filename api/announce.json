@@ -9,10 +9,12 @@
     "versionCode": 188,
     "versionName": "1.2.1",
     "url": "http://git.oschina.net/751762476/jbusfile/raw/master/JubsDriver_v1.2.1build302.apk",
-    "desc": "JBusDriver 1.2.1 已更新!
-1.移除失效的磁力链接,添加了两个新的磁力解析站点.
-2.修复收藏收据路径的问题.
-3.修复了已知的bug.
+    "desc": "JBusDriver 1.2.2 已更新!
+1.BTSO.PW磁力站点已经恢复,现已重新加入.
+2.跳页模式下,添加跳页菜单,跳页选择模式优化.
+3.现在抽屉菜单与配置项属性一致.
+4.优化样本图片放大后,图片与换页的冲突.添加样本图片加载进度.
+5.优化屏幕旋转/分屏的加载.
 "
   },
   "notice": {
