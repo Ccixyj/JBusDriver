@@ -74,9 +74,7 @@ class HistoryFragment : AppBaseRecycleFragment<HistoryContract.HistoryPresenter,
                         .setText(R.id.tv_history_title, itemLink.des + appender)
 
                 val img by lazy {
-                    if (itemLink is ActressInfo) {
-                        itemLink.avatar
-                    } else (itemLink as? Movie)?.imageUrl ?: ""
+                    (itemLink as? ActressInfo)?.avatar ?: (itemLink as? Movie)?.imageUrl ?: ""
                 }
 
                 if (img.isNotBlank()) {

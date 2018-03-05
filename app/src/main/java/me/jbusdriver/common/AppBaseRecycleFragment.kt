@@ -1,6 +1,7 @@
 package me.jbusdriver.common
 
 import android.animation.ObjectAnimator
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.RecyclerView
@@ -10,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
+import com.chad.library.adapter.base.loadmore.SimpleLoadMoreView
 import io.reactivex.Flowable
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.mvp.BaseView
@@ -26,7 +28,6 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
     abstract val layoutManager: RecyclerView.LayoutManager
     abstract val adapter: BaseQuickAdapter<M, in BaseViewHolder>
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -34,7 +35,6 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
 
     override fun initWidget(rootView: View) {
         recycleView.layoutManager = layoutManager
-        recycleView.recycledViewPool
 
         adapter.openLoadAnimation {
             arrayOf(ObjectAnimator.ofFloat(it, "alpha", 0.0f, 1.0f),
@@ -44,6 +44,9 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
         swipeView?.setOnRefreshListener { mBasePresenter?.onRefresh() }
         adapter.bindToRecyclerView(recycleView)
         adapter.setOnLoadMoreListener({ mBasePresenter?.onLoadMore() }, recycleView)
+        adapter.setLoadMoreView(SimpleLoadMoreView())
+
+
     }
 
     override fun showLoading() {
@@ -78,26 +81,17 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
 
     override fun loadMoreEnd(clickable: Boolean) {
         if (adapter.getEmptyView() == null && adapter.getData().isEmpty()) {
-            adapter.setEmptyView(getEmptyView())
+            adapter.setEmptyView(EmptyState.NoData(viewContext).getEmptyView())
         }
         adapter.loadMoreEnd()
         adapter.enableLoadMoreEndClick(clickable)
     }
 
-    protected open fun getEmptyView(): View = TextView(viewContext).apply {
-        text = "没有数据"
-        layoutParams = ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, viewContext.dpToPx(36f)).apply {
-            gravity = Gravity.CENTER
-        }
-    }
 
     override fun loadMoreFail() {
-        if (adapter.getData().isEmpty()){
-            adapter.setEmptyView(getEmptyView().apply {
-                (this as? TextView)?.text = "加载错误"
-                setOnClickListener {
-                    mBasePresenter?.onRefresh()
-                }
+        if (adapter.getEmptyViewCount() <= 0 && adapter.getData().isEmpty()) {
+            adapter.setEmptyView(EmptyState.ErrorEmpty(viewContext).getEmptyView().apply {
+                setOnClickListener { mBasePresenter?.onRefresh() }
             })
         }
         adapter.loadMoreFail()
@@ -122,6 +116,34 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
 
     override fun showError(e: Throwable?) {
         adapter.loadMoreFail()
+    }
+
+    sealed class EmptyState(val tip: String) {
+        class NoData(val context: Context) : EmptyState("没有数据") {
+            override fun getEmptyView(): View {
+                return TextView(context).apply {
+                    text = tip
+                    layoutParams = ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, context.dpToPx(36f)).apply {
+                        gravity = Gravity.CENTER
+                    }
+                }
+
+            }
+        }
+
+        class ErrorEmpty(val context: Context) : EmptyState("加载失败") {
+            override fun getEmptyView(): View {
+                return TextView(context).apply {
+                    text = tip
+                    layoutParams = ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, context.dpToPx(36f)).apply {
+                        gravity = Gravity.CENTER
+                    }
+                }
+
+            }
+        }
+
+        abstract fun getEmptyView(): View
     }
 }
 

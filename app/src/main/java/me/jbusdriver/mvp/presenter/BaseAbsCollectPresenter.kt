@@ -50,7 +50,7 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
 
     override fun loadData4Page(page: Int) {
         //查询所有的分类 //优化:先查20个
-        mView?.showLoading()
+
         if (AppConfiguration.enableCategory) {
             //一次性加载完成
             Flowable.just(ancestor)
@@ -76,7 +76,8 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
                     }
 
                     .toList()
-                    .doFinally { mView?.dismissLoading() }
+                    .doOnSubscribe { mView?.showLoading() }
+                    .doAfterTerminate { mView?.dismissLoading() }
                     .subscribeBy({
                         mView?.showError(it)
                     }, {
@@ -101,7 +102,8 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
                         adapterDelegate.needInjectType.add(level)
                     }
                 }
-            }.doFinally { mView?.dismissLoading() }
+            }.doOnSubscribe { mView?.showLoading() }
+                    .doAfterTerminate { mView?.dismissLoading() }
                     .compose(SchedulersCompat.io())
                     .subscribeBy({
                         mView?.showError(it)
