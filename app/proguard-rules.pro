@@ -167,9 +167,10 @@
      <init>(...);
 }
 #BaseRecyclerViewAdapterHelper end
+
+#BubbleSeekBar
 -keep class com.xw.repo.BubbleSeekBar {
 *;
 }
-#BubbleSeekBar
 
-#END BubbleSeekBar
+#BubbleSeekBar END
