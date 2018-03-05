@@ -19,7 +19,7 @@ const val Expand_Type_Head = 0
 const val Expand_Type_Item = 1
 
 
-interface ILink : ICollectCategory , Serializable {
+interface ILink : ICollectCategory, Serializable {
     val link: String
 }
 
@@ -71,9 +71,7 @@ data class PageLink(val page: Int, val title: String /*XX类型*/, override val 
 }
 
 data class PageInfo(val activePage: Int = 0, val nextPage: Int = 0,
-                    val activePath: String = "",
-                    val nextPath: String = "",
-                    val pages: List<Int> = listOf())
+                    val referPages: List<Int> = listOf())
 
 val PageInfo.hasNext
     inline get() = activePage < nextPage
@@ -82,7 +80,6 @@ val PageInfo.hasNext
 data class SearchLink(val type: SearchType, var query: String) : ILink {
     @Transient
     override var categoryId: Int = LinkCategory.id ?: 10
-
         set(value) {}
     override val link: String
         get() = "${JAVBusService.defaultFastUrl}${type.urlPathFormater.format(query)}"

@@ -6,6 +6,7 @@ import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.mvp.bean.PageLink
 import me.jbusdriver.mvp.model.AbstractBaseModel
 import me.jbusdriver.mvp.model.BaseModel
@@ -54,10 +55,10 @@ open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink)
     }
 
 
-    override fun stringMap(str: Document) = Movie.loadFromDoc( str).let {
+    override fun stringMap(page: PageInfo, str: Document) = Movie.loadFromDoc(str).let {
         when (mView?.pageMode) {
             AppConfiguration.PageMode.Page -> {
-                listOf(Movie.newPageMovie(pageInfo.activePage, pageInfo.pages)) + it
+                listOf(Movie.newPageMovie(page.activePage, page.referPages)) + it
             }
             else -> it
         }

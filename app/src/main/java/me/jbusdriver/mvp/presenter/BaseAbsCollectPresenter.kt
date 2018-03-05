@@ -117,7 +117,7 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
     }
 
     override fun onRefresh() {
-        pageInfo = PageInfo()
+        //   pageInfo = PageInfo()
 //        listData.clear()
 //        collector.reload()
 //        listData.addAll(collector.dataList)
@@ -135,7 +135,7 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
     override val model: BaseModel<Int, Document>
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 
-    override fun stringMap(str: Document): List<T> {
+    override fun stringMap(page: PageInfo, str: Document): List<T> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

@@ -177,7 +177,7 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                     when (it.itemType) {
                         -1 -> {
                             mBasePresenter?.currentPageInfo?.let {
-                                if (it.pages.isNotEmpty()) showPageDialog(it)
+                                if (it.referPages.isNotEmpty()) showPageDialog(it)
                             }
 
                         }

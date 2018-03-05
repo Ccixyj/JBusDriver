@@ -6,35 +6,21 @@ import me.jbusdriver.db.bean.History
 import me.jbusdriver.db.service.HistoryService
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.LinkListContract
-import me.jbusdriver.mvp.bean.DBtype
-import me.jbusdriver.mvp.bean.ILink
-import me.jbusdriver.mvp.bean.PageInfo
-import me.jbusdriver.mvp.bean.PageLink
+import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.model.BaseModel
 import me.jbusdriver.ui.data.AppConfiguration
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.util.*
 import java.util.concurrent.ConcurrentSkipListMap
-import java.util.concurrent.locks.ReentrantReadWriteLock
 
 /**
  * Created by Administrator on 2017/5/10 0010.
  */
 abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistory: Boolean = false) : AbstractRefreshLoadMorePresenterImpl<LinkListContract.LinkListView, T>(), LinkListContract.LinkListPresenter {
 
-    /**
-    ReentrantReadWriteLock会使用两把锁来解决问题，一个读锁，一个写锁
-    线程进入读锁的前提条件：
-    没有其他线程的写锁，
-    没有写请求或者有写请求，但调用线程和持有锁的线程是同一个
 
-    线程进入写锁的前提条件：
-    没有其他线程的读锁
-    没有其他线程的写锁
-     */
-    private val lock by lazy { ReentrantReadWriteLock() }
-    protected var reachableMaxPage = 1
+    private var reachableMaxPage = 1
 
     open var IsAll = false
     private val urlPath by lazy {
@@ -48,9 +34,8 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
         dataPageCache.clear()
         val link = when (linkData) {
             is PageLink -> {
-                pageInfo = PageInfo(linkData.page, linkData.page + 1)
                 loadData4Page(linkData.page)//首次加载 可以从内存中读取
-                linkData.copy(linkData.page, mView?.type?.key ?: "")
+                linkData.copy(pageInfo.activePage, mView?.type?.key ?: "")
             }
             else -> {
                 loadData4Page(1)
@@ -77,8 +62,8 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
                     KLog.i("fromCallable page $pageInfo requestFor : $it")
                     JAVBusService.INSTANCE.get(it, if (IsAll) "all" else null).addUserCase().map { Jsoup.parse(it) }
                 }.doOnNext {
-                            if (t == 1) CacheLoader.lru.put("${linkData.link}$IsAll", it.toString())
-                        }
+                    if (t == 1) CacheLoader.lru.put("${linkData.link}$IsAll", it.toString())
+                }
 
         override fun requestFromCache(t: Int) = Flowable.concat(CacheLoader.justLru(linkData.link).map { Jsoup.parse(it) }, requestFor(t))
                 .firstOrError().toFlowable()
@@ -101,7 +86,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
     override fun jumpToPage(page: Int) {
         KLog.i("jumpToPage $page ($lastPage)in $dataPageCache")
         if (page >= 1) {
-
+            pageInfo = pageInfo.copy(activePage = page, nextPage = page)
             if (page > lastPage) {
                 mView?.viewContext?.toast("当前最多${lastPage}页")
                 return
@@ -112,7 +97,6 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
                 mView?.moveTo(getJumpIndex(page))
             } else {
                 mView?.moveTo(getJumpIndex(page))
-                pageInfo = pageInfo.copy(activePage = page)
                 loadData4Page(page)
             }
         } else {
@@ -144,37 +128,39 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
     }
 
 
-    override fun doAddData(t: List<T>) {
+    override fun doAddData(t: ResultPageBean<T>) {
 
-        lock.readLock().lock() //加读锁
+//        lock.readLock().lock() //加读锁
         try {
             when (mView?.pageMode) {
                 AppConfiguration.PageMode.Page -> {
                     KLog.i("doAddData page Ino $dataPageCache ${pageInfo.hashCode()} $t")
-                    reachableMaxPage = Math.max(reachableMaxPage, pageInfo.pages.lastOrNull() ?: 1)
+                    reachableMaxPage = Math.max(reachableMaxPage, pageInfo.referPages.lastOrNull()
+                            ?: 1)
 
                     if (pageInfo.activePage == 1) {
                         //第一页:正常加载 ,因为会重置列表,不需要考虑其他情况
-                        dataPageCache[pageInfo.activePage] = t.size - 1//page item In list
+                        dataPageCache[pageInfo.activePage] = t.data.size - 1//page item In list
                         super.doAddData(t)
                         return
                     }
 
                     //需要判断数据
                     if (dataPageCache.keys.contains(pageInfo.activePage)) {
+                        pageInfo = pageInfo.copy(activePage = pageInfo.activePage)
                         mView?.loadMoreComplete() //直接加载完成
                         if (pageInfo.activePage >= lastPage) mView?.loadMoreEnd()
                         return
                     }
                     if (dataPageCache.size > 0 && pageInfo.activePage < dataPageCache.lastKey()) {
                         //当前页属于插入页面
-                        mView?.insertData(getJumpIndex(pageInfo.activePage), t)
+                        mView?.insertData(getJumpIndex(pageInfo.activePage), t.data)
                     } else {
                         super.doAddData(t)
                     }
 
-                    if (t.isNotEmpty()) {
-                        dataPageCache[pageInfo.activePage] = t.size - 1//page item In list
+                    if (t.data.isNotEmpty()) {
+                        dataPageCache[pageInfo.activePage] = t.data.size - 1//page item In list
                     } else {
                         //超过最大页数时 ,可以点击加载原本的下一页 ; 或者请求超时,点击重新加载
                         mView?.loadMoreEnd(true)
@@ -186,7 +172,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
                 }
             }
         } finally {
-            lock.readLock().unlock()
+            // lock.readLock().unlock()
         }
     }
 
@@ -213,10 +199,10 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
 
     override val currentPageInfo: PageInfo
         get() {
-            lock.readLock().lock()
+            //   lock.readLock().lock()
             KLog.d("last last $lastPage : $pageInfo ")
-            return pageInfo.copy(activePage = Math.max(1, pageInfo.activePage), pages = (1..reachableMaxPage).toList()).apply {
-                lock.readLock().unlock()
+            return pageInfo.copy(activePage = Math.max(1, pageInfo.activePage), referPages = (1..reachableMaxPage).toList()).apply {
+                // lock.readLock().unlock()
             }
         }
 

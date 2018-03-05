@@ -8,6 +8,7 @@ import me.jbusdriver.db.bean.toPageInfo
 import me.jbusdriver.db.service.HistoryService
 import me.jbusdriver.mvp.HistoryContract
 import me.jbusdriver.mvp.bean.PageInfo
+import me.jbusdriver.mvp.bean.ResultPageBean
 import me.jbusdriver.mvp.model.BaseModel
 import org.jsoup.nodes.Document
 
@@ -26,17 +27,17 @@ class HistoryPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HistoryContrac
             lastPage = totalPage
         }
         HistoryService.queryPage(dbPage).toFlowable(BackpressureStrategy.DROP)
-                .doOnNext {
-                    pageInfo = pageInfo.copy(activePage = pageInfo.nextPage, nextPage = pageInfo.nextPage + 1)
+                .map {
+                    ResultPageBean(pageInfo.copy(activePage = pageInfo.nextPage, nextPage = pageInfo.nextPage + 1), it)
                 }
                 .compose(SchedulersCompat.io())
-                .subscribeWith(object : ListDefaultSubscriber(page) {
+                .subscribeWith(object : ListDefaultSubscriber(PageInfo(page)) {
 
-                    override fun onNext(t: List<History>) {
+                    override fun onNext(t: ResultPageBean<History>) {
                         super.onNext(t)
-                        if (pageIndex >= dbPage.totalPage) mView?.loadMoreEnd()
+                        if (page >= dbPage.totalPage) mView?.loadMoreEnd()
                         mView?.dismissLoading()
-                        (pageIndex == 1).let {
+                        (page == 1).let {
                             if (it) mView?.enableLoadMore(true) else mView?.enableRefresh(true)
                         }
                     }
@@ -49,7 +50,6 @@ class HistoryPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HistoryContrac
     }
 
     override fun onRefresh() {
-        pageInfo = PageInfo()
         loadData4Page(1)
     }
 
@@ -60,7 +60,7 @@ class HistoryPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HistoryContrac
     override val model: BaseModel<Int, Document>
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 
-    override fun stringMap(str: Document): List<History> {
+    override fun stringMap(page: PageInfo, str: Document): List<History> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

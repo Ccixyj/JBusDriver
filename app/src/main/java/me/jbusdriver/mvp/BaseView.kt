@@ -55,6 +55,7 @@ interface BaseView {
          */
         fun resetList()
 
+        //禁止加载更多
         fun enableLoadMore(bool: Boolean)
 
     }

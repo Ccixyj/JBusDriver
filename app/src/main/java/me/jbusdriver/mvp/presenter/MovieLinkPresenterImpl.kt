@@ -1,10 +1,7 @@
 package me.jbusdriver.mvp.presenter
 
 import io.reactivex.schedulers.Schedulers
-import me.jbusdriver.mvp.bean.ActressInfo
-import me.jbusdriver.mvp.bean.ILink
-import me.jbusdriver.mvp.bean.Movie
-import me.jbusdriver.mvp.bean.convertDBItem
+import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.data.AppConfiguration
 import org.jsoup.nodes.Document
@@ -16,7 +13,7 @@ class MovieLinkPresenterImpl(val link: ILink, isAllFromBundle: Boolean, isHis: B
 
     override var IsAll = isAllFromBundle
 
-    override fun stringMap(str: Document): List<Movie> {
+    override fun stringMap(page: PageInfo, str: Document): List<Movie> {
         //处理alert
         parseMoviesAlert(str).let {
             mView?.showContent(it)
@@ -30,7 +27,7 @@ class MovieLinkPresenterImpl(val link: ILink, isAllFromBundle: Boolean, isHis: B
         return Movie.loadFromDoc( str).let {
             when (mView?.pageMode) {
                 AppConfiguration.PageMode.Page -> {
-                    listOf(Movie.newPageMovie(pageInfo.activePage, pageInfo.pages)) + it
+                    listOf(Movie.newPageMovie(pageInfo.activePage, pageInfo.referPages)) + it
                 }
                 else -> it
             }

@@ -121,4 +121,4 @@ interface ICollectCategory {
 data class DBPage(val currentPage: Int, val totalPage: Int, val pageSize: Int = 20)
 
 val DBPage.toPageInfo
-    inline get() = PageInfo(currentPage, if (currentPage + 1 >= totalPage) totalPage else currentPage + 1)
+    inline get() = PageInfo(currentPage, Math.min(currentPage + 1, totalPage))

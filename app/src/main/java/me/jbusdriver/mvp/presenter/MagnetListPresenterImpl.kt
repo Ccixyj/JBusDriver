@@ -9,6 +9,7 @@ import me.jbusdriver.common.fromJson
 import me.jbusdriver.mvp.MagnetListContract
 import me.jbusdriver.mvp.bean.Magnet
 import me.jbusdriver.mvp.bean.PageInfo
+import me.jbusdriver.mvp.bean.ResultPageBean
 import me.jbusdriver.mvp.model.BaseModel
 import me.jbusdriver.ui.data.magnet.MagnetLoaders
 import org.jsoup.nodes.Document
@@ -20,14 +21,14 @@ class MagnetListPresenterImpl(private val magnetLoaderKey: String, private val k
     override val model: BaseModel<Int, Document>
         get() = error("not call model")
 
-    override fun stringMap(str: Document): List<Magnet> = error("not call stringMap")
+    override fun stringMap(page: PageInfo, str: Document): List<Magnet> = error("not call stringMap")
 
 
     private val cacheKey: String
         get() = "${magnetLoaderKey}_${keyword}_${pageInfo.activePage}"
 
     override fun loadData4Page(page: Int) {
-        pageInfo = PageInfo(page, page + 1)
+        val curPage = PageInfo(page, page)
         //page 1
         val cache = Flowable.concat(CacheLoader.justLru(cacheKey), CacheLoader.justDisk(cacheKey)).firstElement().map { GSON.fromJson<List<Magnet>>(it) }.toFlowable()
         val loaderFormNet = Flowable.fromCallable {
@@ -39,8 +40,9 @@ class MagnetListPresenterImpl(private val magnetLoaderKey: String, private val k
             }
         }
         Flowable.concat(cache, loaderFormNet).firstOrError().toFlowable()
+                .map { ResultPageBean(curPage, it) }
                 .compose(SchedulersCompat.io())
-                .subscribeWith(ListDefaultSubscriber(page))
+                .subscribeWith(ListDefaultSubscriber(curPage))
                 .addTo(rxManager)
     }
 

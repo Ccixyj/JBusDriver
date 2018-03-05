@@ -11,6 +11,7 @@ import me.jbusdriver.common.SimpleSubscriber
 import me.jbusdriver.common.toast
 import me.jbusdriver.mvp.BaseView
 import me.jbusdriver.mvp.bean.PageInfo
+import me.jbusdriver.mvp.bean.ResultPageBean
 import me.jbusdriver.mvp.bean.hasNext
 import me.jbusdriver.mvp.model.BaseModel
 import org.jsoup.nodes.Document
@@ -37,7 +38,8 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
         KLog.i("onLoadMore :${hasLoadNext()} ; page :$pageInfo")
         when {
             hasLoadNext() -> loadData4Page(pageInfo.nextPage)
-            pageInfo.nextPage >= Math.max(pageInfo.activePage,pageInfo.pages.lastOrNull() ?: 1) -> {
+            pageInfo.nextPage >= Math.max(pageInfo.activePage, pageInfo.referPages.lastOrNull()
+                    ?: 1) -> {
                 lastPage = pageInfo.activePage
                 mView?.loadMoreEnd()
             }
@@ -49,19 +51,19 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
 
     override fun onRefresh() {
         rxManager.clear()
-        pageInfo = PageInfo(1, 0)
         loadData4Page(1)
     }
 
     override fun loadData4Page(page: Int) {
+        var curPage = pageInfo.copy(activePage = page, nextPage = page) //设置相等,防止 onload more
         val request = (if (page == 1) model.requestFromCache(page)
         else model.requestFor(page))
         request.map { doc ->
             parsePage(doc)?.let {
-                KLog.i("parse page $it")
-                pageInfo = it
+                curPage = it
             }
-            stringMap(doc)
+            ResultPageBean(curPage, stringMap(curPage, doc))
+
         }.onErrorResumeNext(Function {
             return@Function when {
                 (it is HttpException && it.code() == 404) -> {
@@ -69,19 +71,19 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
                     AndroidSchedulers.mainThread().scheduleDirect {
                         mView?.viewContext?.toast("第${page}页没有数据")
                     }
-                    if (pageInfo.nextPage > 1 && pageInfo.activePage > 0) pageInfo = pageInfo.copy(activePage = pageInfo.nextPage - 1)//重置前一页pageInfo
-                    Flowable.just(mutableListOf())
+                    if (curPage.nextPage > 1 && curPage.activePage > 0) pageInfo = pageInfo.copy(activePage = pageInfo.nextPage - 1)//重置前一页pageInfo
+                    Flowable.just(ResultPageBean.emptyPage(curPage))
                 }
                 it is TimeoutException -> {
                     AndroidSchedulers.mainThread().scheduleDirect {
                         mView?.viewContext?.toast("第${page}页请求超时,请过会再次尝试")
                     }
-                    Flowable.just(mutableListOf())
+                    Flowable.just(ResultPageBean.emptyPage(curPage))
                 }
                 else -> throw  it
             }
         }).compose(SchedulersCompat.io())
-                .subscribeWith(ListDefaultSubscriber(page))
+                .subscribeWith(ListDefaultSubscriber(curPage))
                 .addTo(rxManager)
 
     }
@@ -103,7 +105,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
 
             return PageInfo(current.split("/").lastOrNull()?.toIntOrNull() ?: 0,
                     next.split("/").lastOrNull()?.toIntOrNull() ?: 0
-                    , current, next, pages).apply {
+                    , pages).apply {
                 if (pages.isNotEmpty()) {
                     if (activePage == nextPage && activePage == pages.last()) {
                         lastPage = pages.last()
@@ -117,28 +119,31 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
         }
     }
 
-    abstract fun stringMap(str: Document): List<T>
+    abstract fun stringMap(pageInfo: PageInfo, str: Document): List<T>
 
     /**
      * 加载列表默认实现的订阅者.
      * 实现@AbstractRefreshLoadMorePresenterImpl 可直接使用该类.
      */
 
-    protected open fun doAddData(t: List<T>) {
+    protected open fun doAddData(t: ResultPageBean<T>) {
 //        if (t.isNotEmpty()) {
-            mView?.showContents(t)
+        mView?.showContents(t.data)
 //        }
         if (pageInfo.activePage > 1) mView?.loadMoreComplete()
     }
 
-    open inner class ListDefaultSubscriber(open val pageIndex: Int) : SimpleSubscriber<List<T>>() {
+    open inner class ListDefaultSubscriber(private val currentPage: PageInfo) : SimpleSubscriber<ResultPageBean<T>>() {
+
+        private val old = pageInfo //保存旧值
 
         override fun onStart() {
+            pageInfo = currentPage
             AndroidSchedulers.mainThread().scheduleDirect {
-                (pageIndex == 1).let {
+                (currentPage.activePage == 1).let {
                     if (it) mView?.enableLoadMore(false) else mView?.enableRefresh(false)
                 }
-                if (pageIndex == 1) mView?.showLoading()
+                if (currentPage.activePage == 1) mView?.showLoading()
             }
             super.onStart()
         }
@@ -146,21 +151,21 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
         override fun onComplete() {
             super.onComplete()
             if (!hasLoadNext()) {
-                if (pageIndex == lastPage) {
+                if (currentPage.activePage == lastPage) {
                     mView?.loadMoreEnd(false) //判断是否加载完毕
                 } else {
                     mView?.loadMoreEnd(true)
                 }
             } else {
-                if (pageIndex == lastPage) mView?.loadMoreEnd()
+                if (currentPage.activePage == lastPage) mView?.loadMoreEnd()
             }
 
             mView?.dismissLoading()
-            (pageIndex == 1).let {
+            (currentPage.activePage == 1).let {
                 if (it) mView?.enableLoadMore(true) else mView?.enableRefresh(true)
             }
-            if (pageIndex != pageInfo.activePage) {
-                KLog.w("page $pageIndex is mess : $pageInfo")
+            if (currentPage.activePage != pageInfo.activePage) {
+                KLog.w("page ${currentPage.activePage} is mess : $pageInfo")
 //                pageInfo = pageInfo.copy(activePage = pageIndex)
             }
 
@@ -172,19 +177,22 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
             mView?.loadMoreFail()
             mView?.showError(e)
             //page 重置成前一页
-            (pageIndex == 1).let {
+            (currentPage.activePage == 1).let {
                 if (it) mView?.enableLoadMore(true) else mView?.enableRefresh(true)
                 mView?.resetList()
             }
-            pageInfo = PageInfo(pageIndex - 1, pageIndex)
+            pageInfo = old
         }
 
-        override fun onNext(t: List<T>) {
+        override fun onNext(t: ResultPageBean<T>) {
             super.onNext(t)
-            if (pageIndex == 1) {
+            if (currentPage.activePage == 1) {
                 mView?.resetList()
             }
+            pageInfo = t.pageInfo //考虑cancel的情况,所以在onnext赋值,
             doAddData(t)
         }
     }
+
+
 }

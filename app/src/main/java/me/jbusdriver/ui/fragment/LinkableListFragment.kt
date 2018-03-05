@@ -124,8 +124,8 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
 //    }
 
     protected fun showPageDialog(info: PageInfo) {
-        if (info.pages.isEmpty()) return
-        if (info.pages.size == 1 && info.pages.first() == 1) {
+        if (info.referPages.isEmpty()) return
+        if (info.referPages.size == 1 && info.referPages.first() == 1) {
             viewContext.toast("当前共一页")
             return
         }
@@ -135,7 +135,7 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
             try {
                 val max = this.javaClass.getDeclaredField("mMax")
                 max?.isAccessible = true
-                max?.setFloat(this, info.pages.last().toFloat())
+                max?.setFloat(this, info.referPages.last().toFloat())
 
 //                this.javaClass.declaredMethods.forEach { KLog.d(it) }
                 this.javaClass.getDeclaredMethod("initConfigByPriority").also {
@@ -167,10 +167,10 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
                 adapter.notifyLoadMoreToLoading()
             }
         }.show()
-//        MaterialDialog.Builder(viewContext).title("跳转:").items(info.pages.map {
+//        MaterialDialog.Builder(viewContext).title("跳转:").items(info.referPages.map {
 //            "${if (it > info.activePage) " 👇 跳至" else if (it == info.activePage) " 👉 当前" else " 👆 跳至"} 第 $it 页"
 //        }).itemsCallback { _, _, position, _ ->
-//            info.pages.getOrNull(position)?.let {
+//            info.referPages.getOrNull(position)?.let {
 //                mBasePresenter?.jumpToPage(it)
 //                adapter.notifyLoadMoreToLoading()
 //            }
