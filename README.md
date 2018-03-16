@@ -21,5 +21,5 @@ JBusDriver
 
 | 支付宝   |微信  |
 | -----:  | :----:  |
-|<img src="http://qclxyj.com/assets/pay/alipay.webp" width = "160px" />|<img src="http://qclxyj.com/assets/pay/wechatpay.webp" width = "168px" />|
+|<img src="http://qclxyj.com/assets/pay/alipay.png" width = "160px" />|<img src="http://qclxyj.com/assets/pay/wechatpay.png" width = "168px" />|
 
