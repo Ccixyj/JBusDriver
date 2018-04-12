@@ -42,7 +42,13 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         setSupportActionBar(toolbar)
         val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener {
-            mBasePresenter?.onRefresh()
+//            Recommend.INSTANCE.putRecommends(mapOf(
+//                    "uid" to UUID.randomUUID().toString(),
+//                    "key" to RecommendBean(name = "${movie.code} ${movie.title}", img = movie.imageUrl.urlPath, url = movie.link.urlPath).toJsonString(),
+//                    "reason" to "推荐"
+//
+//            )).compose(SchedulersCompat.io()).subscribe(SimpleSubscriber())
+//            Recommend.INSTANCE.recommends().compose(SchedulersCompat.io()).subscribe(SimpleSubscriber())
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = movie.des
@@ -102,7 +108,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         sr_refresh.setOnRefreshListener { mBasePresenter?.onRefresh() }
         app_bar.addOnOffsetChangedListener { _, offset ->
             KLog.d("offset :$offset")
-            sr_refresh.isEnabled = Math.abs(offset) <=1
+            sr_refresh.isEnabled = Math.abs(offset) <= 1
         }
 
         ll_movie_detail.addView(headHolder.view)
