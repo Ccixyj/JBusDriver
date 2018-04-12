@@ -1,4 +1,5 @@
-# JBusDriver 
+JBusDriver
+---
 
 [加入telegram群](https://t.me/joinchat/HBJbEA-ka9TcWzaxjmD4hw) 感谢 [@alexalice](https://github.com/alexalice)
 
@@ -8,10 +9,17 @@
 
 3.尽情使用,有相关bug,问题或者好的需求可以issues,同样欢迎pull request.
 
-# 版本
+版本
+---
 [最新版本1.2.2](https://github.com/Ccixyj/JBusDriver/releases)
 
 ###### 如何开车
-> 番号+[简易磁力](https://play.google.com/store/apps/details?id=com.magnets.toolbox)/[神奇磁力](https://www.coolapk.com/apk/com.magicmagnet)+[mxplayer](https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad)/[aria2](https://github.com/aria2/aria2)
 
+ > 番号+[简易磁力](https://play.google.com/store/apps/details?id=com.magnets.toolbox)/[神奇磁力](https://www.coolapk.com/apk/com.magicmagnet)+[mxplayer](https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad)/[aria2](https://github.com/aria2/aria2) 
+
+###### 支持我给项目加油/请我吃糖
+
+| 支付宝   |微信  |
+| -----:  | :----:  |
+|<img src="http://qclxyj.com/assets/pay/alipay.png" width = "160px" />|<img src="http://qclxyj.com/assets/pay/wechatpay.png" width = "168px" />|
 
