@@ -154,19 +154,19 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
                     this.requestLayout()
                 }
             } catch (e: Exception) {
-                KLog.e(e, e.message)
+                KLog.e("error :$e")
             }
         }
         MaterialDialog.Builder(viewContext).customView(seekView, false)
                 .neutralText("输入页码").onNeutral { dialog, _ ->
-            showEditDialog(info)
-            dialog.dismiss()
-        }.positiveText("跳转").onPositive { _, _ ->
-            seekView.bsb_seek_page?.progress?.let {
-                mBasePresenter?.jumpToPage(it)
-                adapter.notifyLoadMoreToLoading()
-            }
-        }.show()
+                    showEditDialog(info)
+                    dialog.dismiss()
+                }.positiveText("跳转").onPositive { _, _ ->
+                    seekView.bsb_seek_page?.progress?.let {
+                        mBasePresenter?.jumpToPage(it)
+                        adapter.notifyLoadMoreToLoading()
+                    }
+                }.show()
 //        MaterialDialog.Builder(viewContext).title("跳转:").items(info.pages.map {
 //            "${if (it > info.activePage) " 👇 跳至" else if (it == info.activePage) " 👉 当前" else " 👆 跳至"} 第 $it 页"
 //        }).itemsCallback { _, _, position, _ ->
@@ -198,9 +198,9 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
                 .autoDismiss(false)
                 .inputType(InputType.TYPE_CLASS_NUMBER)
                 .neutralText("选择页码").onNeutral { dialog, _ ->
-            showPageDialog(info)
-            dialog.dismiss()
-        }.show()
+                    showPageDialog(info)
+                    dialog.dismiss()
+                }.show()
     }
 
 

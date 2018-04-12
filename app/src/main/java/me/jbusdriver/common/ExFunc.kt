@@ -185,6 +185,8 @@ fun Context.browse(url: String, errorHandler: (Throwable) -> Unit = {}) {
         startActivity(Intent().apply {
             this.action = "android.intent.action.VIEW"
             this.data = Uri.parse(url)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+
         })
     } catch (e: Exception) {
         toast("无法处理该类型的链接")

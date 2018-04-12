@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -16,7 +15,6 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import com.jaeger.library.StatusBarUtil
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_watch_large_image.*
 import kotlinx.android.synthetic.main.layout_large_image_item.view.*
@@ -48,9 +46,7 @@ class WatchLargeImageActivity : BaseActivity() {
         vp_largeImage.adapter = MyViewPagerAdapter()
         vp_largeImage.currentItem = if (index == -1) 0 else index
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            StatusBarUtil.setTransparent(this)
-        }
+        immersionBar.transparentBar().init()
 
     }
 
@@ -59,7 +55,7 @@ class WatchLargeImageActivity : BaseActivity() {
 
         private const val INTENT_IMAGE_URL = "INTENT_IMAGE_URL"
         private const val INDEX = "currentIndex"
-        @JvmStatic
+
         fun startShow(context: Context, urls: List<String>, index: Int = -1) {
             val intent = Intent(context, WatchLargeImageActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -93,7 +89,7 @@ class WatchLargeImageActivity : BaseActivity() {
                 in 2..5 -> Priority.HIGH
                 in 6..10 -> Priority.NORMAL
                 else -> Priority.LOW
-             }
+            }
             KLog.d("load $position for ${vp_largeImage.currentItem} offset = $offset : $priority")
             val url = urls[position]
             GlideApp.with(this@WatchLargeImageActivity)

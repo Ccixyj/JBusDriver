@@ -173,3 +173,7 @@
 #BubbleSeekBar
 
 #END BubbleSeekBar
+
+#ImmersionBar
+ -keep class com.gyf.barlibrary.* {*;}
+#END ImmersionBar

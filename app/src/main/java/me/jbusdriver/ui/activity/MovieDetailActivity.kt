@@ -3,7 +3,6 @@ package me.jbusdriver.ui.activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
-import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.res.ResourcesCompat
@@ -12,7 +11,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.bumptech.glide.request.target.DrawableImageViewTarget
-import com.jaeger.library.StatusBarUtil
+import com.gyf.barlibrary.ImmersionBar
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_movie_detail.*
 import kotlinx.android.synthetic.main.content_movie_detail.*
@@ -48,10 +47,11 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = movie.des
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //忽略4.4.4以下版本状态栏的问题
-            StatusBarUtil.setTranslucentForImageView(this, 30, toolbar)
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            //忽略4.4.4以下版本状态栏的问题
+//            StatusBarUtil.setTranslucentForImageView(this, 30, toolbar)
+//        }
+        immersionBar.transparentStatusBar().init()
         initWidget()
     }
 
@@ -98,6 +98,13 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
     }
 
     private fun initWidget() {
+        sr_refresh.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimaryLight)
+        sr_refresh.setOnRefreshListener { mBasePresenter?.onRefresh() }
+        app_bar.addOnOffsetChangedListener { _, offset ->
+            KLog.d("offset :$offset")
+            sr_refresh.isEnabled = Math.abs(offset) <=1
+        }
+
         ll_movie_detail.addView(headHolder.view)
         ll_movie_detail.addView(sampleHolder.view)
         ll_movie_detail.addView(viewContext.inflate(R.layout.layout_load_magnet).apply {
@@ -119,9 +126,12 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         actressHolder.release()
         genreHolder.release()
         relativeMovieHolder.release()
+        ImmersionBar.with(this).destroy()
     }
 
-    override fun createPresenter() = MovieDetailPresenterImpl(intent?.getBooleanExtra(C.BundleKey.Key_2, false) ?: false)
+    override fun createPresenter() = MovieDetailPresenterImpl(intent?.getBooleanExtra(C.BundleKey.Key_2, false)
+            ?: false)
+
     override val layoutId = R.layout.activity_movie_detail
 
     override val movie: Movie by lazy {
@@ -132,6 +142,24 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         CacheLoader.acache.getAsString(movie.detailSaveKey)?.let { GSON.fromJson<MovieDetail>(it) }
     }
 
+    override fun showLoading() {
+        KLog.t(TAG).d("showLoading")
+        sr_refresh?.let {
+            if (!it.isRefreshing) {
+                it.post {
+                    it.setProgressViewOffset(false, 0, viewContext.dpToPx(24f))
+                    it.isRefreshing = true
+                }
+            }
+        } ?: super.showLoading()
+    }
+
+    override fun dismissLoading() {
+        KLog.t(TAG).d("dismissLoading")
+        sr_refresh?.let {
+            it.post { it.isRefreshing = false }
+        } ?: super.dismissLoading()
+    }
 
     override fun <T> showContent(data: T?) {
         if (data is MovieDetail) {
@@ -148,6 +176,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
             headHolder.init(data.headers)
             sampleHolder.init(data.imageSamples)
+            sampleHolder.cover = data.cover
             actressHolder.init(data.actress)
             genreHolder.init(data.genres)
             relativeMovieHolder.init(data.relatedMovies)
