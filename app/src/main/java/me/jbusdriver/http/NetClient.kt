@@ -56,6 +56,7 @@ object NetClient {
         override fun responseBodyConverter(type: Type?, annotations: Array<out Annotation>?, retrofit: Retrofit?): Converter<ResponseBody, *> =
                 Converter<ResponseBody, JsonObject> {
                     val s = it.string()
+                    KLog.w(s)
                     val json = GSON.fromJson(s, JsonObject::class.java)
                     if (json == null || json.isJsonNull || json.entrySet().isEmpty()) {
                         error("json is null")

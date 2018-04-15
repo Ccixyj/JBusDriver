@@ -44,11 +44,11 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -59,8 +59,8 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ACache {
     public static final int TIME_HOUR = 60 * 60;
     public static final int TIME_DAY = TIME_HOUR * 24;
-    private static final int MAX_SIZE = 1000 * 1000 * 99; // 99 mb
-    private static final int MAX_COUNT = Integer.MAX_VALUE; // 不限制存放数据的数量
+    public static final int MAX_SIZE = 1000 * 1000 * 99; // 99 mb
+    public static final int MAX_COUNT = Integer.MAX_VALUE; // 不限制存放数据的数量
     private static Map<String, ACache> mInstanceMap = new HashMap<String, ACache>();
     private ACacheManager mCache;
 
@@ -71,6 +71,10 @@ public class ACache {
     public static ACache get(Context ctx, String cacheName) {
         File f = new File(ctx.getCacheDir(), cacheName);
         return get(f, MAX_SIZE, MAX_COUNT);
+    }
+    public static ACache get(Context ctx, String cacheName, long max_zise, int max_count) {
+        File f = new File(ctx.getCacheDir(), cacheName);
+        return get(f, max_zise, max_count);
     }
 
     public static ACache get(File cacheDir) {
@@ -650,6 +654,10 @@ public class ACache {
         mCache.clear();
     }
 
+    public File dir(){
+        return mCache.cacheDir;
+    }
+
     /**
      * @title 缓存管理器
      * @author 杨福海（michael） www.yangfuhai.com
@@ -660,7 +668,7 @@ public class ACache {
         private final AtomicInteger cacheCount;
         private final long sizeLimit;
         private final int countLimit;
-        private final Map<File, Long> lastUsageDates = Collections.synchronizedMap(new HashMap<File, Long>());
+        private final Map<File, Long> lastUsageDates = new ConcurrentHashMap<>();
         protected File cacheDir;
 
         private ACacheManager(File cacheDir, long sizeLimit, int countLimit) {
@@ -792,7 +800,7 @@ public class ACache {
      * @author 杨福海（michael） www.yangfuhai.com
      * @version 1.0
      */
-    private static class Utils {
+    public static class Utils {
 
         /**
          * 判断缓存的String数据是否到期
@@ -800,7 +808,7 @@ public class ACache {
          * @param str
          * @return true：到期了 false：还没有到期
          */
-        private static boolean isDue(String str) {
+        public static boolean isDue(String str) {
             return isDue(str.getBytes());
         }
 
@@ -810,7 +818,7 @@ public class ACache {
          * @param data
          * @return true：到期了 false：还没有到期
          */
-        private static boolean isDue(byte[] data) {
+        public static boolean isDue(byte[] data) {
             String[] strs = getDateInfoFromDate(data);
             if (strs != null && strs.length == 2) {
                 String saveTimeStr = strs[0];

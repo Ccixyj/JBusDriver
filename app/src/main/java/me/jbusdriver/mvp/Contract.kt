@@ -32,12 +32,14 @@ interface MovieDetailContract {
     interface MovieDetailView : BaseView {
         val movie: Movie
         val detailMovieFromDisk: MovieDetail?
+        fun changeLikeIcon(likeCount:Int)
 //        fun addMagnet(t: List<Magnet>)
 //        fun initMagnetLoad()
     }
 
     interface MovieDetailPresenter : BasePresenter<MovieDetailView>, BasePresenter.RefreshPresenter {
         fun loadDetail()
+        fun likeIt(movie:Movie,reason:String? = null)
     }
 }
 

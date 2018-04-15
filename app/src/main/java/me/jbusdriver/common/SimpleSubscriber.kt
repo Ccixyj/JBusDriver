@@ -28,6 +28,7 @@ open class SimpleSubscriber<T> : DisposableSubscriber<T>() {
                 404 -> JBus.toast("没有结果")
             }
         }
+        cancel()
     }
 
     override fun onNext(t: T) {

@@ -21,6 +21,7 @@ import me.jbusdriver.http.GitHub
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.enums.DataSourceType
 import me.jbusdriver.ui.task.CollectService
+import me.jbusdriver.ui.task.TrimLikeService
 import org.jsoup.Jsoup
 
 class SplashActivity : BaseActivity() {
@@ -32,6 +33,11 @@ class SplashActivity : BaseActivity() {
         setContentView(R.layout.activity_splash)
         init()
         migrate()
+        trimLike()
+    }
+
+    private fun trimLike() {
+        TrimLikeService.startTrimSize(this)
     }
 
     private fun migrate() {

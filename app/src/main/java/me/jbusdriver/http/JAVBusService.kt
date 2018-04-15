@@ -20,7 +20,7 @@ interface JAVBusService {
 
 
     companion object {
-        var defaultFastUrl = "https://www.javbus.us"
+        var defaultFastUrl = "https://www.javbus2.pw"
         var INSTANCE = getInstance(defaultFastUrl)
         fun getInstance(source: String): JAVBusService {
             KLog.d("instances : $JBusInstances , defaultFastUrl : $defaultFastUrl")
@@ -32,6 +32,9 @@ interface JAVBusService {
 
         private fun createService(url: String) = NetClient.getRetrofit(if (!url.endsWith("/")) "$url/" else url).create(JAVBusService::class.java)
 
+        /**
+         *key: "xyz" else "default"
+         */
         val defaultImageUrlHosts by lazy { arrayMapof<String, String>() }
     }
 }

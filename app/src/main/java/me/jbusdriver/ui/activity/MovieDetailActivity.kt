@@ -2,14 +2,18 @@ package me.jbusdriver.ui.activity
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.res.ResourcesCompat
+import android.support.v4.graphics.ColorUtils
+import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.gyf.barlibrary.ImmersionBar
 import jbusdriver.me.jbusdriver.R
@@ -42,22 +46,19 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         setSupportActionBar(toolbar)
         val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener {
-//            Recommend.INSTANCE.putRecommends(mapOf(
-//                    "uid" to UUID.randomUUID().toString(),
-//                    "key" to RecommendBean(name = "${movie.code} ${movie.title}", img = movie.imageUrl.urlPath, url = movie.link.urlPath).toJsonString(),
-//                    "reason" to "推荐"
-//
-//            )).compose(SchedulersCompat.io()).subscribe(SimpleSubscriber())
-//            Recommend.INSTANCE.recommends().compose(SchedulersCompat.io()).subscribe(SimpleSubscriber())
+
+            MaterialDialog.Builder(it.context).title("推荐这部影片")
+                    .input("说的什么吧！", null, true) { _, str ->
+                        KLog.d("input call back : $str")
+                        mBasePresenter?.likeIt(movie, str.toString())
+                    }.positiveText("发送").show()
+
+
+//            RecommendService.INSTANCE.recommends().compose(SchedulersCompat.io()).subscribe(SimpleSubscriber())
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = movie.des
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            //忽略4.4.4以下版本状态栏的问题
-//            StatusBarUtil.setTranslucentForImageView(this, 30, toolbar)
-//        }
-        immersionBar.transparentStatusBar().init()
+        immersionBar.fullScreen(true).transparentStatusBar().titleBar(toolbar).statusBarAlpha(0.12f).init()
         initWidget()
     }
 
@@ -187,6 +188,15 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             genreHolder.init(data.genres)
             relativeMovieHolder.init(data.relatedMovies)
 
+        }
+    }
+
+    override fun changeLikeIcon(likeCount: Int) {
+        KLog.d("changeLikeIcon :$likeCount")
+        findViewById<FloatingActionButton>(R.id.fab)?.apply {
+            this.setImageDrawable(resources.getDrawable(R.drawable.ic_love_sel))
+            DrawableCompat.setTint(this.drawable,
+                    ColorUtils.blendARGB(R.color.white.toColorInt(), Color.parseColor("#e91e63"), likeCount / 3f))
         }
     }
 
