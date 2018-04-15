@@ -18,6 +18,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import com.google.gson.Gson
+import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
 import com.orhanobut.logger.Logger
 import com.umeng.analytics.MobclickAgent

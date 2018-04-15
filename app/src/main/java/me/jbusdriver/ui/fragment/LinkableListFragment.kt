@@ -22,6 +22,7 @@ import me.jbusdriver.common.*
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.PageChangeEvent
 import me.jbusdriver.mvp.bean.PageInfo
+import me.jbusdriver.ui.activity.HotRecommendActivity
 import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.data.AppConfiguration
 
@@ -108,6 +109,10 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
                     showPageDialog(it)
                 }
             }
+            R.id.action_recommend -> {
+                KLog.d("action_recommend")
+                HotRecommendActivity.start(this.viewContext)
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -124,8 +129,8 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
 //    }
 
     protected fun showPageDialog(info: PageInfo) {
-        if (info.pages.isEmpty()) return
-        if (info.pages.size == 1 && info.pages.first() == 1) {
+        if (info.referPages.isEmpty()) return
+        if (info.referPages.size == 1 && info.referPages.first() == 1) {
             viewContext.toast("当前共一页")
             return
         }
@@ -135,18 +140,12 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
             try {
                 val max = this.javaClass.getDeclaredField("mMax")
                 max?.isAccessible = true
-                max?.setFloat(this, info.pages.last().toFloat())
+                max?.setFloat(this, info.referPages.last().toFloat())
 
-//                this.javaClass.declaredMethods.forEach { KLog.d(it) }
                 this.javaClass.getDeclaredMethod("initConfigByPriority").also {
                     it.isAccessible = true
                     it.invoke(this)
                 }
-
-//                this.javaClass.getDeclaredMethod("calculateRadiusOfBubble").also {
-//                    it.isAccessible = true
-//                    it.invoke(this)
-//                }
 
                 setProgress(info.activePage.toFloat())
                 this.post {
@@ -167,17 +166,7 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
                         adapter.notifyLoadMoreToLoading()
                     }
                 }.show()
-//        MaterialDialog.Builder(viewContext).title("跳转:").items(info.pages.map {
-//            "${if (it > info.activePage) " 👇 跳至" else if (it == info.activePage) " 👉 当前" else " 👆 跳至"} 第 $it 页"
-//        }).itemsCallback { _, _, position, _ ->
-//            info.pages.getOrNull(position)?.let {
-//                mBasePresenter?.jumpToPage(it)
-//                adapter.notifyLoadMoreToLoading()
-//            }
-//        }.neutralText("输入页码").onNeutral { dialog, _ ->
-//            showEditDialog(info)
-//            dialog.dismiss()
-//        }.show()
+
     }
 
     private fun showEditDialog(info: PageInfo) {

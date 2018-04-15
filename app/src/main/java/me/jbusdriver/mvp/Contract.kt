@@ -104,3 +104,8 @@ interface MagnetListContract {
     interface MagnetListView : BaseView.BaseListWithRefreshView
     interface MagnetListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<MagnetListView>, BasePresenter.LazyLoaderPresenter
 }
+
+interface HotRecommendContract {
+    interface HotRecommendView : BaseView.BaseListWithRefreshView
+    interface HotRecommendPresenter :  BasePresenter.BaseRefreshLoadMorePresenter<HotRecommendView>
+}

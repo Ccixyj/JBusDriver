@@ -111,8 +111,9 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
             if (c > 3) {
                 error("一天点赞最多3次")
             }
+            val uid = RecommendModel.getLikeUID(likeKey)
             val params = arrayMapof(
-                    "uid" to RecommendModel.getLikeUID(likeKey),
+                    "uid" to uid,
                     "key" to RecommendBean(name = "${movie.code} ${movie.title}", img = movie.imageUrl.urlPath, url = movie.link.urlPath).toJsonString()
             )
             if (reason.orEmpty().isNotBlank()) {
@@ -120,7 +121,13 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
             }
             RecommendService.INSTANCE.putRecommends(params).map {
                 KLog.d("res : $it")
-                RecommendModel.save(likeKey)
+                RecommendModel.save(likeKey, uid)
+                AndroidSchedulers.mainThread().scheduleDirect {
+                    it["message"]?.asString?.let {
+                        mView?.viewContext?.toast(it)
+                    }
+
+                }
                 return@map Math.min(c + 1, 3)
             }
         }.onErrorReturn {

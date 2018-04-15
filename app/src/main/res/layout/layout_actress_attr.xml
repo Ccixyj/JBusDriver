@@ -44,5 +44,17 @@
 
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/iv_like_it"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/material_24dp"
+        android:minWidth="@dimen/material_24dp"
+        android:padding="@dimen/material_8dp"
+        android:layout_gravity="top|right"
+        android:tint="@color/colorAccent"
+        android:src="@drawable/ic_love_sel"
+        />
+
 
 </android.support.v7.widget.CardView>

@@ -191,6 +191,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
             }
             pageInfo = t.pageInfo //考虑cancel的情况,所以在onnext赋值,
             doAddData(t)
+            mView?.dismissLoading()
         }
     }
 
