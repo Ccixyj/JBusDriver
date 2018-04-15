@@ -5,15 +5,12 @@
     "https://www.javbus2.pw"
   ],
   "update": {
-    "versionCode": 191,
-    "versionName": "1.2.2",
-    "url": "http://git.oschina.net/751762476/jbusfile/raw/master/JubsDriver_v1.2.2build327.apk",
-    "desc": "JBusDriver 1.2.2 已更新!
-1.BTSO.PW磁力站点已经恢复,现已重新加入.
-2.跳页模式下,添加跳页菜单,跳页选择模式优化.
-3.现在抽屉菜单与配置项属性一致.
-4.优化样本图片放大后,图片与换页的冲突.添加样本图片加载进度.
-5.优化屏幕旋转/分屏的加载.
+    "versionCode": 211,
+    "versionName": "1.2.3",
+    "url": "http://git.oschina.net/751762476/jbusfile/raw/master/JubsDriver_v1.2.3build342.apk",
+    "desc": "JBusDriver 1.2.3 已更新!
+1.添加实验性功能：电影和演员推荐
+2.其他细节优化
 "
   },
   "notice": {
