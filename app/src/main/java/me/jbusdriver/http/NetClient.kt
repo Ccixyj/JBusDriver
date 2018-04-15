@@ -4,11 +4,9 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.text.TextUtils
 import com.facebook.stetho.okhttp3.StethoInterceptor
+import com.google.gson.JsonObject
 import jbusdriver.me.jbusdriver.BuildConfig
-import me.jbusdriver.common.GlideProgressListener
-import me.jbusdriver.common.JBus
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.ProgressResponseBody
+import me.jbusdriver.common.*
 import okhttp3.*
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -43,17 +41,36 @@ object NetClient {
         Interceptor { chain ->
             val request = chain.request()
             val response = chain.proceed(request)
-             return@Interceptor response.newBuilder()
+            return@Interceptor response.newBuilder()
                     .body(ProgressResponseBody(request.url().toString(), response.body(), GlideProgressListener))
                     .build()
         }
     }
 
+    private val strConv = object : Converter.Factory() {
+        override fun responseBodyConverter(type: Type?, annotations: Array<out Annotation>?, retrofit: Retrofit?): Converter<ResponseBody, *> =
+                Converter<ResponseBody, String> { it.string() }
+    }
 
-    fun getRetrofit(baseUrl: String) = Retrofit.Builder().client(okHttpClient).baseUrl(baseUrl)
-            .addConverterFactory(object : Converter.Factory() {
-                override fun responseBodyConverter(type: Type?, annotations: Array<out Annotation>?, retrofit: Retrofit?): Converter<ResponseBody, *> = Converter<ResponseBody, String> { it.string() }
-            })
+    private val jsonConv = object : Converter.Factory() {
+        override fun responseBodyConverter(type: Type?, annotations: Array<out Annotation>?, retrofit: Retrofit?): Converter<ResponseBody, *> =
+                Converter<ResponseBody, JsonObject> {
+                    val s = it.string()
+                    KLog.w(s)
+                    val json = GSON.fromJson(s, JsonObject::class.java)
+                    if (json == null || json.isJsonNull || json.entrySet().isEmpty()) {
+                        error("json is null")
+                    }
+                    if (json.get("code")?.asInt == 200) {
+                        return@Converter json
+                    } else {
+                        error(json.get("message")?.asString ?: "未知错误")
+                    }
+                }
+    }
+
+    fun getRetrofit(baseUrl: String, handleJson: Boolean = false) = Retrofit.Builder().client(okHttpClient).baseUrl(baseUrl)
+            .addConverterFactory(if (handleJson) jsonConv else strConv)
             .addCallAdapterFactory(rxJavaCallAdapterFactory).build()!!
 
     //endregion

@@ -63,6 +63,9 @@
 
         <service
             android:name="me.jbusdriver.ui.task.CollectService"
+            android:exported="false" />
+        <service
+            android:name="me.jbusdriver.ui.task.TrimLikeService"
             android:exported="false"></service>
     </application>
 

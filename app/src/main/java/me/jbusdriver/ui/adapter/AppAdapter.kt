@@ -18,20 +18,12 @@ abstract class BaseAppAdapter<T, K : BaseViewHolder> : BaseQuickAdapter<T, K> {
         super.bindToRecyclerView(recyclerView)
     }
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
-        KLog.i("onAttachedToRecyclerView")
-        super.onAttachedToRecyclerView(recyclerView)
-    }
 
     override fun onViewAttachedToWindow(holder: K) {
         KLog.i("onViewAttachedToWindow")
         super.onViewAttachedToWindow(holder)
     }
 
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView?) {
-        KLog.i("onDetachedFromRecyclerView")
-        super.onDetachedFromRecyclerView(recyclerView)
-    }
 
     override fun onViewDetachedFromWindow(holder: K) {
         KLog.i("onViewDetachedFromWindow")

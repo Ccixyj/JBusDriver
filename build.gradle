@@ -3,34 +3,34 @@
 buildscript {
 
     ext.versions = [
-            'compileSdk'                   : 26,
+            'compileSdk'                   : 27,
             'targetSdk'                    : 26,
             'buildTools'                   : '27.0.3',
 
-            'gradle'                       : '3.0.1',
+            'gradle'                       : '3.1.1',
             'kotlin'                       : '1.2.30',
-            'supportLibrary'               : '27.0.2',
+            'supportLibrary'               : '27.1.1',
 
             'okhttp'                       : '3.9.1',
             'retrofit'                     : '2.3.0',
-            'rxjava'                       : '2.1.9',
-            'rxandroid'                    : '2.0.1',
+            'rxjava'                       : '2.1.12',
+            'rxandroid'                    : '2.0.2',
             'rxkotlin'                     : '2.2.0',
             'rxrelay'                      : '2.0.0',
             'glide'                        : '4.6.1',
-            'sqlbrite'                     : '3.1.1',
+            'sqlbrite'                     : '3.2.0',
 
-            'logger'                       : '2.1.1',
+            'logger'                       : '2.2.0',
             'gson'                         : '2.8.2',
 
             'material_dialogs_core'        : '0.9.6.0',
-            'BaseRecyclerViewAdapterHelper': '2.9.35',
+            'BaseRecyclerViewAdapterHelper': '2.9.38',
             'jsoup'                        : '1.11.2',
             'db_framework'                 : '1.0.0',
-            'statusbarutil'                : '1.4.0',
+            'immersionBar'                 : '2.3.0',
             'flowlayoutmanager'            : '1.2.3.2',
             'analytics'                    : '6.1.4',
-            'bubbleseekbar'                : '3.14',
+            'bubbleseekbar'                : '3.16',
 
             'leakcanary'                   : '1.5.4',
             'stetho'                       : '1.5.0'
@@ -38,8 +38,11 @@ buildscript {
     ]
 
     repositories {
+        maven { url 'https://mirrors.huaweicloud.com/repository/maven/' }
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
         jcenter()
         google()
+        maven { url "https://jitpack.io" }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:${versions.gradle}"
@@ -51,9 +54,10 @@ buildscript {
 
 allprojects {
     repositories {
-        google()
-//        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'https://mirrors.huaweicloud.com/repository/maven/' }
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
         jcenter()
+        google()
         maven { url "https://jitpack.io" }
     }
 }

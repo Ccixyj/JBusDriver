@@ -172,5 +172,8 @@
 -keep class com.xw.repo.BubbleSeekBar {
 *;
 }
+#BubbleSeekBar end
 
-#BubbleSeekBar END
+#ImmersionBar
+ -keep class com.gyf.barlibrary.* {*;}
+#ImmersionBar end

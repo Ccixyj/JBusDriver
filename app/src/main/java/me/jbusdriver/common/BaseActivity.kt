@@ -4,11 +4,12 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.BuildConfig
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import com.gyf.barlibrary.ImmersionBar
 import com.umeng.analytics.MobclickAgent
 import io.reactivex.disposables.CompositeDisposable
+import jbusdriver.me.jbusdriver.BuildConfig
 
 /**
  * Created by Administrator on 2016/8/11 0011.
@@ -18,6 +19,9 @@ abstract class BaseActivity : AppCompatActivity() {
     protected val rxManager by lazy { CompositeDisposable() }
     protected val TAG: String by lazy { this::class.java.simpleName }
     private var destroyed = false
+
+    protected val immersionBar by lazy { ImmersionBar.with(this)!! }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         KLog.t(TAG).d("onCreate $savedInstanceState")
         super.onCreate(savedInstanceState)
@@ -69,6 +73,7 @@ abstract class BaseActivity : AppCompatActivity() {
         rxManager.clear()
         rxManager.dispose()
         KLog.t(TAG).d("onDestroy")
+        immersionBar.destroy()
         destroyed = true
     }
 
