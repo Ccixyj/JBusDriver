@@ -35,6 +35,6 @@ interface JAVBusService {
         /**
          *key: "xyz" else "default"
          */
-        val defaultImageUrlHosts by lazy { arrayMapof<String, String>() }
+        val defaultImageUrlHosts by lazy { arrayMapof<String, MutableSet<String>>() }
     }
 }

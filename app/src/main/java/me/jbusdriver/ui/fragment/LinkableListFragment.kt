@@ -124,8 +124,8 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
 //    }
 
     protected fun showPageDialog(info: PageInfo) {
-        if (info.pages.isEmpty()) return
-        if (info.pages.size == 1 && info.pages.first() == 1) {
+        if (info.referPages.isEmpty()) return
+        if (info.referPages.size == 1 && info.referPages.first() == 1) {
             viewContext.toast("当前共一页")
             return
         }
@@ -135,7 +135,7 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
             try {
                 val max = this.javaClass.getDeclaredField("mMax")
                 max?.isAccessible = true
-                max?.setFloat(this, info.pages.last().toFloat())
+                max?.setFloat(this, info.referPages.last().toFloat())
 
 //                this.javaClass.declaredMethods.forEach { KLog.d(it) }
                 this.javaClass.getDeclaredMethod("initConfigByPriority").also {

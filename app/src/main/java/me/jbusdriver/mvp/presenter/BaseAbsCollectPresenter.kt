@@ -1,8 +1,10 @@
 package me.jbusdriver.mvp.presenter
 
 import io.reactivex.Flowable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.common.KLog
 import me.jbusdriver.common.SchedulersCompat
 import me.jbusdriver.db.bean.*
@@ -78,6 +80,8 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
                     .toList()
                     .doOnSubscribe { mView?.showLoading() }
                     .doAfterTerminate { mView?.dismissLoading() }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy({
                         mView?.showError(it)
                     }, {

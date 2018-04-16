@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.afollestad.materialdialogs.MaterialDialog
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.addTo
 import me.jbusdriver.mvp.BaseView
 import me.jbusdriver.mvp.presenter.BasePresenter
 import me.jbusdriver.mvp.presenter.loader.PresenterFactory
@@ -79,7 +81,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     }
 
     private fun doStart() {
-        KLog.t(TAG).d("doStart : mFirstStart :" + mFirstStart +" mUniqueLoaderIdentifier :" + mUniqueLoaderIdentifier+ " instance = " + this)
+        KLog.t(TAG).d("doStart : mFirstStart :" + mFirstStart + " mUniqueLoaderIdentifier :" + mUniqueLoaderIdentifier + " instance = " + this)
         requireNotNull(mBasePresenter)
         mBasePresenter?.onViewAttached(this as V)
         mBasePresenter?.onStart(mFirstStart)
@@ -197,7 +199,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
         //fragment中会赋值两次，可以设置flag。
         KLog.t(TAG).d("onLoadFinished")
         mBasePresenter = data
-        val bundleKey  = C.SavedInstanceState.LOADER_SAVED_STATES + mUniqueLoaderIdentifier
+        val bundleKey = C.SavedInstanceState.LOADER_SAVED_STATES + mUniqueLoaderIdentifier
         activity!!.intent.getBundleExtra(bundleKey)?.let {
             restoreState(it)
             activity!!.intent.removeExtra(bundleKey)
@@ -212,13 +214,18 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     }
 
     override fun showLoading() {
-        if (viewContext is AppContext) return
-        placeDialogHolder = MaterialDialog.Builder(viewContext).content("正在加载...").progress(true, 0).show()
+        AndroidSchedulers.mainThread().scheduleDirect {
+            if (viewContext is AppContext) return@scheduleDirect
+            placeDialogHolder = MaterialDialog.Builder(viewContext).content("正在加载...").progress(true, 0).show()
+        }.addTo(rxManager)
+
     }
 
     override fun dismissLoading() {
-        placeDialogHolder?.dismiss()
-        placeDialogHolder = null
+        AndroidSchedulers.mainThread().scheduleDirect {
+            placeDialogHolder?.dismiss()
+            placeDialogHolder = null
+        }.addTo(rxManager)
     }
 
     protected open fun restoreState(bundle: Bundle) {

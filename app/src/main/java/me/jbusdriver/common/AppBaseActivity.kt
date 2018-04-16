@@ -120,13 +120,18 @@ abstract class AppBaseActivity<P : BasePresenter<V>, in V : BaseView> : BaseActi
 
 
     override fun showLoading() {
-        if (viewContext is AppContext) return
-        placeDialogHolder = MaterialDialog.Builder(viewContext).content("正在加载...").progress(true, 0).show()
+        runOnUiThread {
+            if (viewContext is AppContext) return@runOnUiThread
+            placeDialogHolder = MaterialDialog.Builder(viewContext).content("正在加载...").progress(true, 0).show()
+        }
+
     }
 
     override fun dismissLoading() {
-        placeDialogHolder?.dismiss()
-        placeDialogHolder = null
+        runOnUiThread {
+            placeDialogHolder?.dismiss()
+            placeDialogHolder = null
+        }
     }
 
     protected open fun restoreState(bundle: Bundle) {

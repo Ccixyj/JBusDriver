@@ -42,14 +42,17 @@ data class Movie(
                 )
             }.apply {
 
-                        val host = this.firstOrNull()?.imageUrl?.urlHost ?: ""
-                        KLog.d("put defaultImageUrlHost  for movie $host ")
-                        if (host.isNotBlank()) {
-                            val key = if (host.endsWith("xyz")) "xyz" else "default"
-                            JAVBusService.defaultImageUrlHosts[key] = host
-                        }
-
+                val host = this.firstOrNull()?.imageUrl?.urlHost ?: ""
+                KLog.d("put defaultImageUrlHost  for movie $host ")
+                if (host.isNotBlank()) {
+                    val key = if (host.endsWith("xyz")) "xyz" else "default"
+                    val set = JAVBusService.defaultImageUrlHosts.getOrPut(key) {
+                        hashSetOf()
                     }
+                    set.add(host)
+                }
+
+            }
         }
 
         fun newPageMovie(page: Int, pages: List<Int>) = Movie(page.toString(), pages.joinToString("#"), "", "", "")
