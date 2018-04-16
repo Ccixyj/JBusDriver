@@ -3,6 +3,7 @@ package me.jbusdriver.mvp.presenter
 import android.net.Uri
 import android.util.Base64
 import com.bumptech.glide.Glide
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService
@@ -26,7 +27,7 @@ class HotRecommendPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HotRecomm
     override fun stringMap(pageInfo: PageInfo, str: Document) = error("not call stringMap")
 
     override fun onFirstLoad() {
-        loadData4Page(count.getAndIncrement())
+        loadData4Page(count.get())
     }
 
     override fun loadData4Page(page: Int) {
@@ -52,16 +53,15 @@ class HotRecommendPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HotRecomm
                     }
                     KLog.d(data)
                     val max = res.getAsJsonPrimitive("pages").asInt
-                    if (max <= page) {
-                        count.set(1)
-                    }
+                    lastPage = max
                     return@map ResultPageBean(PageInfo(page), data)
                 }.doOnTerminate { mView?.dismissLoading() }.compose(SchedulersCompat.io()).subscribe(
                         {
                             KLog.d("$it")
                             mView?.showContents(it.data)
                             mView?.loadMoreEnd()
-                            mView?.viewContext?.toast("更换成功！")
+                            mView?.viewContext?.toast("加载成功！")
+
                         }, {
                     it.printStackTrace()
                     KLog.w(it.message.toString())
@@ -71,8 +71,18 @@ class HotRecommendPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HotRecomm
     }
 
     override fun onLoadMore() {
-        loadData4Page(count.getAndIncrement())
+        if (lastPage <  count.incrementAndGet()) {
+            count.set(1)
+        }
+        loadData4Page(count.get())
     }
 
     override fun hasLoadNext() = false
+    override fun onRefresh() {
+        if (lastPage < count.get()) {
+            count.set(1)
+        }
+        rxManager.clear()
+        loadData4Page(count.get())
+    }
 }

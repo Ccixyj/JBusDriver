@@ -31,7 +31,7 @@ class GlideNoHost(url: String) : GlideUrl(url) {
 
     override fun getCacheKey() = let {
         val url = toStringUrl()
-        ((if (url.urlHost.endsWith("xyz")) "xyz" else "") + url.urlPath)/*.apply { KLog.t("GlideNoHost").d("${toStringUrl()} :$this") }*/
+        ((if (url.urlHost.endsWith("xyz")) url else url.urlPath))  /*.apply { KLog.t("GlideNoHost").d("${toStringUrl()} :$this") }*/
     }
 }
 
