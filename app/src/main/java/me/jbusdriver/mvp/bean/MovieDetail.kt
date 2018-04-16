@@ -32,6 +32,9 @@ data class MovieDetail(val title: String,
         //  val magnets: MutableList<Magnet> = mutableListOf() //磁力链接
 ) {
     companion object {
+
+
+
         fun parseDetails(doc: Document): MovieDetail {
             KLog.d("start parseDetails ")
             val roeMovie = doc.select("[class=row movie]")

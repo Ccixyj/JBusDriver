@@ -17,6 +17,7 @@ import me.jbusdriver.mvp.HotRecommendContract
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.RecommendRespBean
 import me.jbusdriver.mvp.presenter.HotRecommendPresenterImpl
+import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.activity.SearchResultActivity
 
@@ -69,13 +70,14 @@ class RecommendListFragment : AppBaseRecycleFragment<HotRecommendContract.HotRec
             adapter.getItem(position)?.let {
                 KLog.d(it.key)
 //                val image = defaultImageUrlHosts[if (it.key.img.endsWith("xyz")) "xyz" else "default"]?.map { h -> h + it.key.img } ?: emptyList()
-
+                val needchange = !it.key.url.urlHost.endsWith("xyz") && it.key.url.urlHost != defaultFastUrl
+                val url = if (needchange) defaultFastUrl + it.key.url.urlPath else it.key.url
                 if (it.key.url.contains("/star/", false)) {
-                    val needchange = !it.key.url.urlHost.endsWith("xyz") && it.key.url.urlHost != defaultFastUrl
-                    MovieListActivity.start(viewContext, ActressInfo(it.key.name, it.key.img, if (needchange) defaultFastUrl + it.key.url.urlPath else it.key.url))
+
+                    MovieListActivity.start(viewContext, ActressInfo(it.key.name, it.key.img, url))
                 } else {
-                    SearchResultActivity.start(this.viewContext, it.key.name.split(" ").component1())
-                    //  MovieDetailActivity.start(this.viewContext, Movie(), false)
+//                    SearchResultActivity.start(this.viewContext, it.key.name.split(" ").component1())
+                    MovieDetailActivity.start(this.viewContext, url)
                 }
             }
         }

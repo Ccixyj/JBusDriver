@@ -30,15 +30,15 @@ interface LinkListContract {
 
 interface MovieDetailContract {
     interface MovieDetailView : BaseView {
-        val movie: Movie
-        val detailMovieFromDisk: MovieDetail?
+        val movie: Movie?
+        val url: String?
         fun changeLikeIcon(likeCount:Int)
 //        fun addMagnet(t: List<Magnet>)
 //        fun initMagnetLoad()
     }
 
     interface MovieDetailPresenter : BasePresenter<MovieDetailView>, BasePresenter.RefreshPresenter {
-        fun loadDetail()
+        fun loadDetail(url:String)
         fun likeIt(movie:Movie,reason:String? = null)
     }
 }

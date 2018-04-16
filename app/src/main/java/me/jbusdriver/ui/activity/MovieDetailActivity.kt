@@ -16,16 +16,23 @@ import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.gyf.barlibrary.ImmersionBar
+import io.reactivex.Flowable
+import io.reactivex.rxkotlin.addTo
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_movie_detail.*
 import kotlinx.android.synthetic.main.content_movie_detail.*
 import kotlinx.android.synthetic.main.layout_load_magnet.view.*
 import me.jbusdriver.common.*
+import me.jbusdriver.db.bean.History
+import me.jbusdriver.db.service.HistoryService
 import me.jbusdriver.mvp.MovieDetailContract
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.model.CollectModel
+import me.jbusdriver.mvp.model.RecommendModel
 import me.jbusdriver.mvp.presenter.MovieDetailPresenterImpl
 import me.jbusdriver.ui.holder.*
+import org.intellij.lang.annotations.Flow
+import java.util.*
 
 
 class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPresenter, MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailView {
@@ -39,6 +46,8 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
     private val genreHolder by lazy { GenresHolder(this) }
     private val relativeMovieHolder by lazy { RelativeMovieHolder(this) }
 
+    override val url by lazy { intent.getStringExtra(C.BundleKey.Key_1) }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,20 +55,23 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         setSupportActionBar(toolbar)
         val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener {
-
-            MaterialDialog.Builder(it.context).title("推荐这部影片")
-                    .input("说的什么吧！", null, true) { _, str ->
-                        KLog.d("input call back : $str")
-                        mBasePresenter?.likeIt(movie, str.toString())
-                    }.positiveText("发送").show()
+            if (movie != null) {
+                MaterialDialog.Builder(it.context).title("推荐这部影片")
+                        .input("说的什么吧！", null, true) { _, str ->
+                            KLog.d("input call back : $str")
+                            mBasePresenter?.likeIt(movie!!, str.toString())
+                        }.positiveText("发送").show()
+            }
 
 
 //            RecommendService.INSTANCE.recommends().compose(SchedulersCompat.io()).subscribe(SimpleSubscriber())
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = movie.des
+        supportActionBar?.title = movie?.des
         immersionBar.fullScreen(true).transparentStatusBar().titleBar(toolbar).statusBarAlpha(0.12f).init()
         initWidget()
+        initData()
+
     }
 
 
@@ -67,14 +79,15 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         menuInflater.inflate(R.menu.menu_movie_detail, menu)
         collectMenu = menu.findItem(R.id.action_add_movie_collect)
         removeCollectMenu = menu.findItem(R.id.action_remove_movie_collect)
-        if (CollectModel.has(movie.convertDBItem())) {
-            collectMenu.isVisible = false
-            removeCollectMenu.isVisible = true
-        } else {
-            collectMenu.isVisible = true
-            removeCollectMenu.isVisible = false
+        if (movie != null) {
+            if (CollectModel.has(movie!!.convertDBItem())) {
+                collectMenu.isVisible = false
+                removeCollectMenu.isVisible = true
+            } else {
+                collectMenu.isVisible = true
+                removeCollectMenu.isVisible = false
+            }
         }
-
         return true
     }
 
@@ -87,17 +100,21 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             R.id.action_add_movie_collect -> {
                 //收藏
                 KLog.d("收藏")
-                if (CollectModel.addToCollect(movie.convertDBItem())) {
-                    collectMenu.isVisible = false
-                    removeCollectMenu.isVisible = true
+                if (movie != null) {
+                    if (CollectModel.addToCollect(movie!!.convertDBItem())) {
+                        collectMenu.isVisible = false
+                        removeCollectMenu.isVisible = true
+                    }
                 }
             }
             R.id.action_remove_movie_collect -> {
                 //取消收藏
                 KLog.d("取消收藏")
-                if (CollectModel.removeCollect(movie.convertDBItem())) {
-                    collectMenu.isVisible = true
-                    removeCollectMenu.isVisible = false
+                if (movie != null) {
+                    if (CollectModel.removeCollect(movie!!.convertDBItem())) {
+                        collectMenu.isVisible = true
+                        removeCollectMenu.isVisible = false
+                    }
                 }
             }
         }
@@ -106,7 +123,18 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
     private fun initWidget() {
         sr_refresh.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimaryLight)
-        sr_refresh.setOnRefreshListener { mBasePresenter?.onRefresh() }
+        sr_refresh.setOnRefreshListener {
+            //reload
+            movie?.link?.let {
+                //删除缓存和magnet缓存
+                CacheLoader.acache.remove(it.urlPath)
+                CacheLoader.acache.remove(it.urlPath + "_magnet")
+                //重新加载
+                mBasePresenter?.loadDetail(it)
+                //magnet 不要重新加载
+            }
+
+        }
         app_bar.addOnOffsetChangedListener { _, offset ->
             sr_refresh.isEnabled = Math.abs(offset) <= 1
         }
@@ -117,13 +145,23 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             this.tv_movie_look_magnet.setTextColor(ResourcesCompat.getColor(this@apply.resources, R.color.colorPrimaryDark, null))
             this.tv_movie_look_magnet.paintFlags = this.tv_movie_look_magnet.paintFlags or Paint.UNDERLINE_TEXT_FLAG
             setOnClickListener {
-                MagnetPagerListActivity.start(viewContext, movie.code.replace("-", "")) //replace("-", "")
+                val code = movie?.code?.replace("-", "") ?: url.urlPath
+                MagnetPagerListActivity.start(viewContext, code)
             }
         })
         ll_movie_detail.addView(actressHolder.view)
         ll_movie_detail.addView(genreHolder.view)
         ll_movie_detail.addView(relativeMovieHolder.view)
+
+
     }
+
+    private fun initData() {
+        (intent.extras?.getSerializable(C.BundleKey.Key_1) as? Movie)?.let {
+            movie = it
+        }
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -140,13 +178,8 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
     override val layoutId = R.layout.activity_movie_detail
 
-    override val movie: Movie by lazy {
-        intent.extras?.getSerializable(C.BundleKey.Key_1) as? Movie ?: error("need movie info")
-    }
-    //详情不怎么变化,所以直接缓存到disk
-    override val detailMovieFromDisk: MovieDetail? by lazy {
-        CacheLoader.acache.getAsString(movie.detailSaveKey)?.let { GSON.fromJson<MovieDetail>(it) }
-    }
+    override var movie: Movie? = null
+
 
     override fun showLoading() {
         KLog.t(TAG).d("showLoading")
@@ -168,9 +201,27 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
     }
 
     override fun <T> showContent(data: T?) {
+        if (data is Movie && movie == null) {
+            movie = data
+            invalidateOptionsMenu()
+        }
+
         if (data is MovieDetail) {
             //Slide Up Animation
             KLog.d("date : $data")
+            movie?.let {
+                val likeKey = it.saveKey + "_like"
+                Flowable.fromCallable {
+                    RecommendModel.getLikeCount(likeKey)
+                }.map {
+                    Math.min(it, 3)
+                }.subscribe {
+                    changeLikeIcon(it)
+                }.addTo(rxManager)
+
+            }
+
+            supportActionBar?.title = data.title
             //cover fixme
             iv_movie_cover.setOnClickListener { WatchLargeImageActivity.startShow(this, listOf(data.cover) + data.imageSamples.map { it.image }) }
             GlideApp.with(this).load(data.cover.toGlideUrl).thumbnail(0.1f).into(DrawableImageViewTarget(iv_movie_cover))
@@ -186,6 +237,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             actressHolder.init(data.actress)
             genreHolder.init(data.genres)
             relativeMovieHolder.init(data.relatedMovies)
+
 
         }
     }
@@ -205,6 +257,13 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             current.startActivity(Intent(current, MovieDetailActivity::class.java).apply {
                 putExtra(C.BundleKey.Key_1, movie)
                 putExtra(C.BundleKey.Key_2, fromHistory)
+            })
+        }
+
+        fun start(current: Context, movieUrl: String) {
+            current.startActivity(Intent(current, MovieDetailActivity::class.java).apply {
+                putExtra(C.BundleKey.Key_1, movieUrl)
+                putExtra(C.BundleKey.Key_2, false)
             })
         }
 

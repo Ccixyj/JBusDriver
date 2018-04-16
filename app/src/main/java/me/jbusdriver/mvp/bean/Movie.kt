@@ -61,7 +61,7 @@ data class Movie(
     }
 }
 
-val Movie.detailSaveKey
+val Movie.saveKey
     inline get() = code + "_" + date
 
 private val Movie.isInValid
