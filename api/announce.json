@@ -5,12 +5,12 @@
     "https://www.javbus2.pw"
   ],
   "update": {
-    "versionCode": 211,
-    "versionName": "1.2.3",
-    "url": "http://git.oschina.net/751762476/jbusfile/raw/master/JubsDriver_v1.2.3build342.apk",
-    "desc": "JBusDriver 1.2.3 已更新!
-1.添加实验性功能：电影和演员推荐
-2.其他细节优化
+    "versionCode": 213,
+    "versionName": "1.2.4",
+    "url": "http://git.oschina.net/751762476/jbusfile/raw/master/JubsDriver_v1.2.4build347.apk",
+    "desc": "JBusDriver 1.2.4 已更新!
+    1.修复推荐列表图片无法加载的问题
+    2.修复演员列表点赞显示效果不正确的问题
 "
   },
   "notice": {
