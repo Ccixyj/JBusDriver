@@ -144,6 +144,17 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         // movie attr
         (tempSaveBundle.getSerializable("temp:IAttr") as? IAttr)?.let {
             adapter.addHeaderView(getMovieAttrView(it))
+            //init state
+            (link as? ActressInfo)?.let { act ->
+                val likeKey = act.name + act.avatar.urlPath + "_like"
+                Flowable.fromCallable {
+                    RecommendModel.getLikeCount(likeKey)
+                }.map {
+                    Math.min(it, 3)
+                }.subscribe {
+                    changeLikeIcon(it)
+                }.addTo(rxManager)
+            }
         }
         KLog.d("tempSaveBundle add : ${data.size}")
         super.showContents(data)
@@ -166,15 +177,8 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
                     this.ll_attr_container.addView(generateTextView().apply { text = it })
                 }
 
-                //init state
-                val likeKey = data.title
-                Flowable.fromCallable {
-                    RecommendModel.getLikeCount(likeKey)
-                }.map {
-                    Math.min(it, 3)
-                }.subscribe {
-                    changeLikeIcon(it)
-                }.addTo(rxManager)
+
+
 
                 iv_like_it.setOnClickListener {
                     MaterialDialog.Builder(it.context).title("演员推荐")
@@ -228,7 +232,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
             val uid = RecommendModel.getLikeUID(likeKey)
             val params = arrayMapof(
                     "uid" to uid,
-                    "key" to RecommendBean(name = act.name, img = act.avatar.urlPath, url = act.link.urlPath).toJsonString()
+                    "key" to RecommendBean(name = act.name, img = act.avatar, url = act.link).toJsonString()
             )
             if (reason.orEmpty().isNotBlank()) {
                 params.put("reason", reason)

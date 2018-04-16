@@ -1,9 +1,9 @@
 package me.jbusdriver.http
 
+import android.support.v4.util.ArrayMap
 import io.reactivex.Flowable
+import me.jbusdriver.common.*
 import me.jbusdriver.common.AppContext.Companion.JBusInstances
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.arrayMapof
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Url
@@ -35,6 +35,10 @@ interface JAVBusService {
         /**
          *key: "xyz" else "default"
          */
-        val defaultImageUrlHosts by lazy { arrayMapof<String, MutableSet<String>>() }
+        val defaultImageUrlHosts by lazy {
+            CacheLoader.acache.getAsString(C.Cache.IMG_HOSTS)?.let {
+                GSON.fromJson<ArrayMap<String, MutableSet<String>>>(it)
+            } ?: arrayMapof()
+        }
     }
 }

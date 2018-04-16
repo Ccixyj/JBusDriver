@@ -11,10 +11,8 @@ import com.chad.library.adapter.base.loadmore.LoadMoreView
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
-import me.jbusdriver.common.AppBaseRecycleFragment
-import me.jbusdriver.common.KLog
+import me.jbusdriver.common.*
 import me.jbusdriver.http.JAVBusService.Companion.defaultFastUrl
-import me.jbusdriver.http.JAVBusService.Companion.defaultImageUrlHosts
 import me.jbusdriver.mvp.HotRecommendContract
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.RecommendRespBean
@@ -38,9 +36,10 @@ class RecommendListFragment : AppBaseRecycleFragment<HotRecommendContract.HotRec
     override val adapter = object : BaseQuickAdapter<RecommendRespBean, BaseViewHolder>(R.layout.layout_recommend_item) {
 
         override fun convert(helper: BaseViewHolder, item: RecommendRespBean) {
-            val image = defaultImageUrlHosts[if (item.key.img.endsWith("xyz")) "xyz" else "default"] + item.key.img
-
-            Glide.with(viewContext).load(image).into(helper.getView(R.id.iv_recommend_img))
+//            val images = defaultImageUrlHosts[if (item.key.img.endsWith("xyz")) "xyz" else "default"]?.map { it +  }
+//                    ?: emptyList()
+//            val image = images.shuffled().firstOrNull() ?: ""
+            Glide.with(viewContext).load(item.key.img.toGlideUrl).into(helper.getView(R.id.iv_recommend_img))
             helper.setText(R.id.tv_recommend_title, item.key.name)
                     .setText(R.id.tv_reason, if (item.reason?.isNotBlank() == true) "推荐理由：${item.reason}" else "")
                     .setText(R.id.tv_recommend_score, item.score.toString())
@@ -69,12 +68,14 @@ class RecommendListFragment : AppBaseRecycleFragment<HotRecommendContract.HotRec
         adapter.setOnItemClickListener { _, view, position ->
             adapter.getItem(position)?.let {
                 KLog.d(it.key)
-                val image = defaultImageUrlHosts[if (it.key.img.endsWith("xyz")) "xyz" else "default"] + it.key.img
+//                val image = defaultImageUrlHosts[if (it.key.img.endsWith("xyz")) "xyz" else "default"]?.map { h -> h + it.key.img } ?: emptyList()
+
                 if (it.key.url.contains("/star/", false)) {
-                    MovieListActivity.start(viewContext, ActressInfo(it.key.name, image, defaultFastUrl + it.key.url))
+                    val needchange = !it.key.url.urlHost.endsWith("xyz") && it.key.url.urlHost != defaultFastUrl
+                    MovieListActivity.start(viewContext, ActressInfo(it.key.name, it.key.img, if (needchange) defaultFastUrl + it.key.url.urlPath else it.key.url))
                 } else {
-                    SearchResultActivity.start(this.viewContext,it.key.name.split(" ").component1())
-                  //  MovieDetailActivity.start(this.viewContext, Movie(), false)
+                    SearchResultActivity.start(this.viewContext, it.key.name.split(" ").component1())
+                    //  MovieDetailActivity.start(this.viewContext, Movie(), false)
                 }
             }
         }

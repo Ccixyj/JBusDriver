@@ -1,8 +1,11 @@
 package me.jbusdriver.mvp.presenter
 
+import android.net.Uri
 import android.util.Base64
+import com.bumptech.glide.Glide
 import io.reactivex.rxkotlin.addTo
 import me.jbusdriver.common.*
+import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.http.RecommendService
 import me.jbusdriver.mvp.HotRecommendContract
 import me.jbusdriver.mvp.bean.Magnet
@@ -33,7 +36,18 @@ class HotRecommendPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HotRecomm
                     val res = it.getAsJsonObject("result")
                     val data = res.getAsJsonArray("data").mapNotNull {
                         it.asString?.let {
-                            GSON.fromJson<RecommendRespBean>(String(Base64.decode(it,Base64.DEFAULT or Base64.URL_SAFE)))
+                            val bean = GSON.fromJson<RecommendRespBean>(String(Base64.decode(it, Base64.DEFAULT or Base64.URL_SAFE)))
+                            if (!Uri.parse(bean.key.url).isAbsolute) {
+                                val images = JAVBusService.defaultImageUrlHosts.flatMap { it.value }.map {
+                                    mView?.viewContext?.let { c ->
+                                        Glide.with(c).load((it + bean.key.img).toGlideUrl).submit()
+                                    }
+                                    it + bean.key.img
+                                }.shuffled()
+                                KLog.d("images :$images")
+                                bean.copy(key = bean.key.copy(img = images.firstOrNull()
+                                        ?: bean.key.img, url = JAVBusService.defaultFastUrl + bean.key.url))
+                            } else bean
                         }
                     }
                     KLog.d(data)
@@ -48,7 +62,7 @@ class HotRecommendPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HotRecomm
                             mView?.showContents(it.data)
                             mView?.loadMoreEnd()
                             mView?.viewContext?.toast("更换成功！")
-                        },{
+                        }, {
                     it.printStackTrace()
                     KLog.w(it.message.toString())
                 }
@@ -59,5 +73,6 @@ class HotRecommendPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HotRecomm
     override fun onLoadMore() {
         loadData4Page(count.getAndIncrement())
     }
+
     override fun hasLoadNext() = false
 }

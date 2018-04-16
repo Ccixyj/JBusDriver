@@ -114,7 +114,7 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
             val uid = RecommendModel.getLikeUID(likeKey)
             val params = arrayMapof(
                     "uid" to uid,
-                    "key" to RecommendBean(name = "${movie.code} ${movie.title}", img = movie.imageUrl.urlPath, url = movie.link.urlPath).toJsonString()
+                    "key" to RecommendBean(name = "${movie.code} ${movie.title}", img = movie.imageUrl, url = movie.link).toJsonString()
             )
             if (reason.orEmpty().isNotBlank()) {
                 params.put("reason", reason)

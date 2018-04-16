@@ -12,6 +12,7 @@ public class C {
         public static final String ANNOUNCE_URL = "announceUrl"; //app api地址
         public static final String ANNOUNCE_VALUE = "announce_value"; // api 值
         public static final String BUS_URLS = "bus_urls"; //bus 地址
+        public static final String IMG_HOSTS = "img_hosts"; //bus 地址
 
     }
 
