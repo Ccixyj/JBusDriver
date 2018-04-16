@@ -18,6 +18,6 @@ interface RecommendService {
     fun putRecommends(@FieldMap fields: Map<String, String>): Flowable<JsonObject>
 
     companion object {
-        val INSTANCE by lazy { NetClient.getRetrofit("http://qclxyj.com/", true).create(RecommendService::class.java) }
+        val INSTANCE by lazy { NetClient.getRetrofit(/*"http://192.168.1.100:8001/"*/"http://qclxyj.com/", true).create(RecommendService::class.java) }
     }
 }

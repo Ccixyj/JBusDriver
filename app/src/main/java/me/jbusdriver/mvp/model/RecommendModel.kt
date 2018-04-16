@@ -57,21 +57,21 @@ object RecommendModel {
     /**
      * 允许误差1s
      */
-    fun save(likeKey: String) {
+    fun save(likeKey: String, uid: String) {
         try {
             val json = getLikeJson(likeKey)
             val new = calMillSeconds() <= 1000 || (json.get(COUNT)?.asInt ?: 0) <= 0
             if (new) {
                 val newJson = JsonObject().apply {
                     addProperty(COUNT, 1)
-                    addProperty(UID, generateUid(likeKey))
+                    addProperty(UID, uid)
                 }
                 likeCache.put(likeKey, newJson.toString(), (calMillSeconds() / 1000).toInt() - 1)
             } else {
                 likeCache.put(likeKey, json.apply {
                     addProperty(COUNT, json.get(COUNT)?.asInt?.plus(1) ?: 1)
-                    if (json.get(UID) == null) {
-                        addProperty(UID, generateUid(likeKey))
+                    if (json.get(UID)?.asString != uid) {
+                        addProperty(UID, uid)
                     }
                 }.toString(), (calMillSeconds() / 1000).toInt() - 1)
             }

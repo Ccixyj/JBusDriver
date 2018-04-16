@@ -108,7 +108,6 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         sr_refresh.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimaryLight)
         sr_refresh.setOnRefreshListener { mBasePresenter?.onRefresh() }
         app_bar.addOnOffsetChangedListener { _, offset ->
-            KLog.d("offset :$offset")
             sr_refresh.isEnabled = Math.abs(offset) <= 1
         }
 

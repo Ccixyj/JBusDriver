@@ -1,22 +1,31 @@
 package me.jbusdriver.ui.fragment
 
+import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
+import android.support.v4.graphics.ColorUtils
+import android.support.v4.graphics.drawable.DrawableCompat
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
+import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.request.target.DrawableImageViewTarget
+import io.reactivex.Flowable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_actress_attr.view.*
 import kotlinx.android.synthetic.main.layout_load_all.view.*
 import me.jbusdriver.common.*
+import me.jbusdriver.http.RecommendService
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.model.CollectModel
+import me.jbusdriver.mvp.model.RecommendModel
 import me.jbusdriver.mvp.presenter.LinkAbsPresenterImpl
 import me.jbusdriver.mvp.presenter.MovieLinkPresenterImpl
 import me.jbusdriver.ui.activity.SearchResultActivity
@@ -156,6 +165,25 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
                 data.info.forEach {
                     this.ll_attr_container.addView(generateTextView().apply { text = it })
                 }
+
+                //init state
+                val likeKey = data.title
+                Flowable.fromCallable {
+                    RecommendModel.getLikeCount(likeKey)
+                }.map {
+                    Math.min(it, 3)
+                }.subscribe {
+                    changeLikeIcon(it)
+                }.addTo(rxManager)
+
+                iv_like_it.setOnClickListener {
+                    MaterialDialog.Builder(it.context).title("演员推荐")
+                            .input("说的什么吧！", null, true) { _, str ->
+                                (link as? ActressInfo)?.let {
+                                    likeIt(it, str.toString())
+                                }
+                            }.positiveText("发送").show()
+                }
             }
         }
         else -> error("current not provide for IAttr $data")
@@ -189,6 +217,57 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         setTextColor(R.color.secondText.toColorInt())
     }
 
+    fun likeIt(act: ActressInfo, reason: String?) {
+        val likeKey = act.name + act.avatar.urlPath + "_like"
+        Flowable.fromCallable {
+            RecommendModel.getLikeCount(likeKey)
+        }.flatMap { c ->
+            if (c > 3) {
+                error("一天点赞最多3次")
+            }
+            val uid = RecommendModel.getLikeUID(likeKey)
+            val params = arrayMapof(
+                    "uid" to uid,
+                    "key" to RecommendBean(name = act.name, img = act.avatar.urlPath, url = act.link.urlPath).toJsonString()
+            )
+            if (reason.orEmpty().isNotBlank()) {
+                params.put("reason", reason)
+            }
+            RecommendService.INSTANCE.putRecommends(params).map {
+                KLog.d("res : $it")
+                RecommendModel.save(likeKey, uid)
+                AndroidSchedulers.mainThread().scheduleDirect {
+                    it["message"]?.asString?.let {
+                        viewContext.toast(it)
+                    }
+
+                }
+                return@map Math.min(c + 1, 3)
+            }
+        }.onErrorReturn {
+            it.message?.let {
+                AndroidSchedulers.mainThread().scheduleDirect {
+                    viewContext.toast(it)
+                }
+            }
+            3
+        }.compose(SchedulersCompat.io()).subscribeWith(object : SimpleSubscriber<Int>() {
+            override fun onNext(t: Int) {
+                super.onNext(t)
+                changeLikeIcon(t)
+            }
+        }).addTo(rxManager)
+    }
+
+
+    fun changeLikeIcon(count: Int) {
+        KLog.d("changeLikeIcon :$count")
+        adapter.getHeaderLayout().findViewById<ImageView>(R.id.iv_like_it)?.apply {
+            this.setImageDrawable(resources.getDrawable(R.drawable.ic_love_sel))
+            DrawableCompat.setTint(this.drawable,
+                    ColorUtils.blendARGB(R.color.white.toColorInt(), Color.parseColor("#e91e63"), count / 3f))
+        }
+    }
 
     /*================================================*/
 

@@ -11,7 +11,7 @@ JBusDriver
 
 版本
 ---
-[最新版本1.2.2](https://github.com/Ccixyj/JBusDriver/releases)
+[最新版本1.2.3](https://github.com/Ccixyj/JBusDriver/releases)
 
 ###### 如何开车
 
@@ -19,3 +19,8 @@ JBusDriver
 
 
 
+###### 支持我给项目加油/请我吃糖
+
+| 支付宝   |微信  |
+| -----:  | :----:  |
+|<img src="http://qclxyj.com/assets/pay/alipay.png" width = "160px" />|<img src="http://qclxyj.com/assets/pay/wechatpay.png" width = "168px" />|

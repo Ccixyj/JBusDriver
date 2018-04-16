@@ -8,7 +8,7 @@ buildscript {
             'buildTools'                   : '27.0.3',
 
             'gradle'                       : '3.1.1',
-            'kotlin'                       : '1.2.30',
+            'kotlin'                       : '1.2.31',
             'supportLibrary'               : '27.1.1',
 
             'okhttp'                       : '3.9.1',

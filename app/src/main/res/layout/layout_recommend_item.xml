@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/AppTheme.CardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/material_4dp">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/material_108dp"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/iv_recommend_img"
+            android:layout_width="@dimen/material_80dp"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/material_8dp" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/material_4dp"
+            android:layout_marginRight="@dimen/material_8dp"
+            android:layout_toEndOf="@id/iv_recommend_img"
+            android:layout_toRightOf="@id/iv_recommend_img">
+
+            <TextView
+                android:id="@+id/tv_recommend_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:gravity="center_vertical"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:paddingTop="@dimen/material_8dp"
+                android:textColor="?android:textColorPrimary"
+                android:textSize="@dimen/material_14sp"
+                tools:text="titletitletitletitletitletitletitletitletitletitletitletitletitletitletitle" />
+
+            <TextView
+                android:id="@+id/tv_reason"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_recommend_title"
+                tools:text="titletitletitletitletitletitletitletitletitletitletitletitletitletitletitle"
+                />
+
+            <TextView
+                android:id="@+id/tv_recommend_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:drawableLeft="@drawable/ic_like"
+                android:drawablePadding="@dimen/material_4dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:minHeight="@dimen/material_24dp"
+                android:textSize="@dimen/material_12sp"
+                tools:text="2015/01/01" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

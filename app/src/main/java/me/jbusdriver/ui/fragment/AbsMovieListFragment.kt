@@ -204,7 +204,9 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
         layoutManager.scrollToPosition(adapter.getHeaderLayoutCount() + pos)
     }
 
-//    override fun toString(): String = "$type :" + super.toString()
+
+
+    //    override fun toString(): String = "$type :" + super.toString()
 
     companion object {
         const val MOVIE_LIST_DATA_TYPE = "movie:list:data:type"
