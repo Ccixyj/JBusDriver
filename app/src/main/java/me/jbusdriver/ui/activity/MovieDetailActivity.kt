@@ -23,19 +23,17 @@ import kotlinx.android.synthetic.main.activity_movie_detail.*
 import kotlinx.android.synthetic.main.content_movie_detail.*
 import kotlinx.android.synthetic.main.layout_load_magnet.view.*
 import me.jbusdriver.common.*
-import me.jbusdriver.db.bean.History
-import me.jbusdriver.db.service.HistoryService
 import me.jbusdriver.mvp.MovieDetailContract
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.mvp.model.RecommendModel
 import me.jbusdriver.mvp.presenter.MovieDetailPresenterImpl
 import me.jbusdriver.ui.holder.*
-import org.intellij.lang.annotations.Flow
-import java.util.*
 
 
 class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPresenter, MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailView {
+
+    private val statusBarHeight by lazy { ImmersionBar.getStatusBarHeight(this) }
 
     private lateinit var collectMenu: MenuItem
     private lateinit var removeCollectMenu: MenuItem
@@ -68,7 +66,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = movie?.des
-        immersionBar.fullScreen(true).transparentStatusBar().titleBar(toolbar).statusBarAlpha(0.12f).init()
+        immersionBar.transparentStatusBar().titleBar(toolbar).statusBarAlpha(0.12f).init()
         initWidget()
         initData()
 
@@ -186,7 +184,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         sr_refresh?.let {
             if (!it.isRefreshing) {
                 it.post {
-                    it.setProgressViewOffset(false, 0, viewContext.dpToPx(24f))
+                    it.setProgressViewOffset(false, 0, viewContext.dpToPx(24f + statusBarHeight))
                     it.isRefreshing = true
                 }
             }
