@@ -69,10 +69,10 @@ class RecommendListFragment : AppBaseRecycleFragment<HotRecommendContract.HotRec
             adapter.getItem(position)?.let {
                 KLog.d(it.key)
 //                val image = defaultImageUrlHosts[if (it.key.img.endsWith("xyz")) "xyz" else "default"]?.map { h -> h + it.key.img } ?: emptyList()
-                val needchange = !it.key.url.urlHost.endsWith("xyz") && it.key.url.urlHost != defaultFastUrl
-                val url = if (needchange) defaultFastUrl + it.key.url.urlPath else it.key.url
+                val xyz = it.key.url.urlHost.endsWith("xyz")
+                val needChange = !xyz && it.key.url.urlHost != defaultFastUrl
+                val url = if (needChange) defaultFastUrl + it.key.url.urlPath else it.key.url
                 if (it.key.url.contains("/star/", false)) {
-
                     MovieListActivity.start(viewContext, ActressInfo(it.key.name, it.key.img, url))
                 } else {
 //                    SearchResultActivity.start(this.viewContext, it.key.name.split(" ").component1())
