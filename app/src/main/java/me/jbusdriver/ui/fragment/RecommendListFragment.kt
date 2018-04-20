@@ -19,7 +19,6 @@ import me.jbusdriver.mvp.bean.RecommendRespBean
 import me.jbusdriver.mvp.presenter.HotRecommendPresenterImpl
 import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.activity.MovieListActivity
-import me.jbusdriver.ui.activity.SearchResultActivity
 
 /**
  * Created by Administrator on 2017/7/30.
@@ -85,6 +84,7 @@ class RecommendListFragment : AppBaseRecycleFragment<HotRecommendContract.HotRec
 
     override fun showContents(data: List<*>) {
         adapter.data.clear()
+        adapter.notifyItemMoved(0,data.size)
         super.showContents(data)
     }
 
