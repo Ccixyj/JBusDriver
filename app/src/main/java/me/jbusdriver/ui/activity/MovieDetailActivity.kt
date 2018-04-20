@@ -33,7 +33,7 @@ import me.jbusdriver.ui.holder.*
 
 class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPresenter, MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailView {
 
-    private val statusBarHeight by lazy { ImmersionBar.getStatusBarHeight(this) }
+    private val statusBarHeight by lazy { ImmersionBar.getActionBarHeight(this) }
 
     private lateinit var collectMenu: MenuItem
     private lateinit var removeCollectMenu: MenuItem
@@ -184,7 +184,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         sr_refresh?.let {
             if (!it.isRefreshing) {
                 it.post {
-                    it.setProgressViewOffset(false, 0, viewContext.dpToPx(24f + statusBarHeight))
+                    it.setProgressViewOffset(false, 0, statusBarHeight)
                     it.isRefreshing = true
                 }
             }

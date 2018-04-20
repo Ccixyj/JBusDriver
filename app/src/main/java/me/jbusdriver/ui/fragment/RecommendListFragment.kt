@@ -83,8 +83,9 @@ class RecommendListFragment : AppBaseRecycleFragment<HotRecommendContract.HotRec
     }
 
     override fun showContents(data: List<*>) {
-        adapter.data.clear()
-        adapter.notifyItemMoved(0,data.size)
+        val size =  adapter.data.size
+        adapter.data .clear()
+        adapter.notifyItemRangeRemoved(0,size)
         super.showContents(data)
     }
 

@@ -15,6 +15,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
+import com.gyf.barlibrary.ImmersionBar
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_watch_large_image.*
 import kotlinx.android.synthetic.main.layout_large_image_item.view.*
@@ -38,9 +39,11 @@ class WatchLargeImageActivity : BaseActivity() {
 
 
     private fun initWidget() {
+        val statusBarHeight = ImmersionBar.getStatusBarHeight(this)
         urls.mapTo(imageViewList) {
             this@WatchLargeImageActivity.inflate(R.layout.layout_large_image_item).apply {
                 this.mziv_image_large.setViewPager(vp_largeImage)
+                (pb_hor_progress.layoutParams as? ViewGroup.MarginLayoutParams)?.topMargin = statusBarHeight
             }
         }
         vp_largeImage.adapter = MyViewPagerAdapter()

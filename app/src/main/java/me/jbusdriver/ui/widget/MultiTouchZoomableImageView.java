@@ -8,7 +8,7 @@ package me.jbusdriver.ui.widget;
  * You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,7 @@ package me.jbusdriver.ui.widget;
 /*
  * This class is based upon the file ImageViewTouchBase.java which can be found at:
  * https://dl-ssl.google.com/dl/googlesource/git-repo/repo
- *  
+ *
  * Copyright (C) 2009 The Android Open Source Project
  */
 
@@ -82,7 +82,7 @@ public class MultiTouchZoomableImageView extends BaseZoomableImageView {
                     mGestureDetector.onTouchEvent(event);
             } else {
                 if (mImageGestureListener != null)
-                     mImageGestureListener.onImageGestureSingleTapConfirmed();
+                    mImageGestureListener.onImageGestureSingleTapConfirmed();
                 return false;
             }
         } catch (Exception e) {
@@ -91,6 +91,7 @@ public class MultiTouchZoomableImageView extends BaseZoomableImageView {
 
         return true;
     }
+
 
     // Adjusts the zoom of the view
     class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
@@ -199,19 +200,20 @@ public class MultiTouchZoomableImageView extends BaseZoomableImageView {
             final float FLING_MIN_VELOCITY = 200;
             if (e1.getX() - e2.getX() > FLING_MIN_DISTANCE
                     && Math.abs(velocityX) > FLING_MIN_VELOCITY) {
-              //  Log.i("MultiTouchZoomableImageView", "Fling Left");
+                //  Log.i("MultiTouchZoomableImageView", "Fling Left");
             } else if (e2.getX() - e1.getX() > FLING_MIN_DISTANCE
                     && Math.abs(velocityX) > FLING_MIN_VELOCITY) {
-              //  Log.i("MultiTouchZoomableImageView", "Fling Right");
+                //  Log.i("MultiTouchZoomableImageView", "Fling Right");
             } else if (e1.getY() - e2.getY() > FLING_MIN_DISTANCE
                     && Math.abs(velocityY) > FLING_MIN_VELOCITY) {
                 //Log.i("MultiTouchZoomableImageView", "Fling Up");
             } else if (e2.getY() - e1.getY() > FLING_MIN_DISTANCE
                     && Math.abs(velocityY) > FLING_MIN_VELOCITY) {
-             //   Log.i("MultiTouchZoomableImageView", "Fling Down");
+                //   Log.i("MultiTouchZoomableImageView", "Fling Down");
 
                 if (!transIgnoreScale && getScale() <= zoomDefault()) {
-                    mImageGestureListener.onImageGestureFlingDown();
+                    if (mImageGestureListener != null)
+                        mImageGestureListener.onImageGestureFlingDown();
                     return true;
                 }
             }
