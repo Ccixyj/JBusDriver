@@ -98,8 +98,8 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
     }
 
     fun MovieDetail.generateMovie(url: String): Movie {
-        val code = headers.first().value
-        return Movie(title.replace(code, "").trim(), this.cover.replace("cover", "thumb").replace("_b", ""),
+        val code = headers.first().value.trim()
+        return Movie(title.replace(code, "",true).trim(), this.cover.replace("cover", "thumb").replace("_b", ""),
                 code, headers.component2().value, url)
     }
 
