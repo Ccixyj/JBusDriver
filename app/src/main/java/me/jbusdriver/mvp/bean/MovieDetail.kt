@@ -47,16 +47,16 @@ data class MovieDetail(val title: String,
             headersContainer.select("p[class!=star-show]:has(span:not([class=genre])):not(:has(a))")
                     .mapTo(headers) {
                         val split = it.text().split(":")
-                        Header(split.first(), split.getOrNull(1) ?: "", "")
+                        Header(split.first(), split.getOrNull(1)?.trim() ?: "", "")
                     } //解析普通信息
 
-            val content = doc.select("[name=description]").attr("content")
+            val content = doc.select("[name=description]").attr("content")?.trim() ?: ""
             headers.add(Header("描述", content, ""))
 
             headersContainer.select("p[class!=star-show]:has(span:not([class=genre])):has(a)")
                     .mapTo(headers) {
                         val split = it.text().split(":")
-                        Header(split.first(), split.getOrNull(1)
+                        Header(split.first(), split.getOrNull(1)?.trim()
                                 ?: "", it.select("p a").attr("href"))
                     }//解析附带跳转信息
 

@@ -62,7 +62,7 @@ data class Movie(
 }
 
 val Movie.saveKey
-    inline get() = code + "_" + date
+    inline get() = code.trim() + "_" + date.trim()
 
 private val Movie.isInValid
     inline get() = TextUtils.isEmpty(code) && TextUtils.isEmpty(link)
