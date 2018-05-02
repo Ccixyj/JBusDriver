@@ -2,13 +2,9 @@ package me.jbusdriver.mvp.presenter
 
 import android.text.TextUtils
 import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Function
 import io.reactivex.rxkotlin.addTo
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.SchedulersCompat
-import me.jbusdriver.common.SimpleSubscriber
-import me.jbusdriver.common.toast
+import me.jbusdriver.common.*
 import me.jbusdriver.mvp.BaseView
 import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.mvp.bean.ResultPageBean
@@ -68,16 +64,12 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
             return@Function when {
                 (it is HttpException && it.code() == 404) -> {
                     //404 视为没有数据
-                    AndroidSchedulers.mainThread().scheduleDirect {
-                        mView?.viewContext?.toast("第${page}页没有数据")
-                    }
+                    mView?.viewContext?.toast("第${page}页没有数据")
                     if (curPage.nextPage > 1 && curPage.activePage > 0) pageInfo = pageInfo.copy(activePage = pageInfo.nextPage - 1)//重置前一页pageInfo
                     Flowable.just(ResultPageBean.emptyPage(curPage))
                 }
                 it is TimeoutException -> {
-                    AndroidSchedulers.mainThread().scheduleDirect {
-                        mView?.viewContext?.toast("第${page}页请求超时,请过会再次尝试")
-                    }
+                    mView?.viewContext?.toast("第${page}页请求超时,请过会再次尝试")
                     Flowable.just(ResultPageBean.emptyPage(curPage))
                 }
                 else -> throw  it
@@ -139,7 +131,7 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
 
         override fun onStart() {
             pageInfo = currentPage
-            AndroidSchedulers.mainThread().scheduleDirect {
+            postMain {
                 (currentPage.activePage == 1).let {
                     if (it) mView?.enableLoadMore(false) else mView?.enableRefresh(false)
                 }

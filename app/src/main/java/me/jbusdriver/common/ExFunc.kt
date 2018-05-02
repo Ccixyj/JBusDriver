@@ -18,11 +18,11 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import com.google.gson.Gson
-import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
 import com.orhanobut.logger.Logger
 import com.umeng.analytics.MobclickAgent
 import io.reactivex.Flowable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.annotations.Nullable
 import java.io.File
@@ -56,6 +56,11 @@ private fun getColor(id: Int): Int {
 //endregion
 
 //region Context
+val Main_Worker by lazy { AndroidSchedulers.mainThread().createWorker() }
+
+fun postMain(block: () -> Unit) = Main_Worker.schedule(block)
+
+
 val Context.inflater: LayoutInflater
     get() = LayoutInflater.from(this)
 
@@ -70,9 +75,12 @@ fun Context.pxToDp(px: Float) = (px / this.displayMetrics.density + 0.5).toInt()
 private val TOAST: Toast by lazy { Toast.makeText(JBus, "", Toast.LENGTH_LONG) }
 
 fun Context.toast(str: String, duration: Int = Toast.LENGTH_LONG) {
-    TOAST.setText(str)
-    TOAST.duration = duration
-    TOAST.show()
+    postMain {
+        TOAST.setText(str)
+        TOAST.duration = duration
+        TOAST.show()
+    }
+
 }
 
 private fun inflateView(context: Context, layoutResId: Int, parent: ViewGroup?,

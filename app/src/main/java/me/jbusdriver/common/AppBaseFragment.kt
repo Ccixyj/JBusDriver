@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.afollestad.materialdialogs.MaterialDialog
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import me.jbusdriver.mvp.BaseView
 import me.jbusdriver.mvp.presenter.BasePresenter
@@ -214,15 +213,15 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     }
 
     override fun showLoading() {
-        AndroidSchedulers.mainThread().scheduleDirect {
-            if (viewContext is AppContext) return@scheduleDirect
+        postMain {
+            if (viewContext is AppContext) return@postMain
             placeDialogHolder = MaterialDialog.Builder(viewContext).content("正在加载...").progress(true, 0).show()
         }.addTo(rxManager)
 
     }
 
     override fun dismissLoading() {
-        AndroidSchedulers.mainThread().scheduleDirect {
+        postMain {
             placeDialogHolder?.dismiss()
             placeDialogHolder = null
         }.addTo(rxManager)

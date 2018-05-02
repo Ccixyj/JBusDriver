@@ -10,7 +10,6 @@ import com.tbruyelle.rxpermissions2.RxPermissions
 import com.umeng.analytics.MobclickAgent
 import io.reactivex.Flowable
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
@@ -57,11 +56,11 @@ class SplashActivity : BaseActivity() {
                 .retry(1)
                 .doFinally {
                     KLog.d("doFinally")
-                    AndroidSchedulers.mainThread().scheduleDirect {
+                    postMain {
                         toast("load url : ${JAVBusService.defaultFastUrl}")
                         MainActivity.start(this)
                         finish()
-                    }
+                    }.addTo(rxManager)
                 }
                 .subscribeBy(onNext = {
                     KLog.w("initsuccess : $it")

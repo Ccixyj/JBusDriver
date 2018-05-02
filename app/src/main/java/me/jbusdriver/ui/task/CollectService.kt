@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Environment
 import com.google.gson.*
 import com.umeng.analytics.MobclickAgent
-import io.reactivex.android.schedulers.AndroidSchedulers
 import me.jbusdriver.common.*
 import me.jbusdriver.db.bean.LinkItem
 import me.jbusdriver.db.service.CategoryService
@@ -47,9 +46,9 @@ class CollectService : IntentService("CollectService") {
                 } else it
             } ?: emptyList()
             LinkService.saveOrUpdate(backs.asReversed())
-            toastForMain("恢复备份成功")
+            applicationContext.toast("恢复备份成功")
         } catch (e: Exception) {
-            toastForMain("恢复失败,请重新打开app")
+            applicationContext.toast("恢复失败,请重新打开app")
         }
 
     }
@@ -97,12 +96,6 @@ class CollectService : IntentService("CollectService") {
         KYES.forEach { cache.remove(it) }
     }
 
-
-    private fun toastForMain(string: String) {
-        AndroidSchedulers.mainThread().scheduleDirect {
-            applicationContext.toast(string)
-        }
-    }
 
     companion object {
 

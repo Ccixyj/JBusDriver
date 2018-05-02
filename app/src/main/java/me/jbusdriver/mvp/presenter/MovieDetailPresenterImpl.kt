@@ -3,7 +3,6 @@ package me.jbusdriver.mvp.presenter
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.FlowableEmitter
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import me.jbusdriver.common.*
 import me.jbusdriver.db.bean.History
@@ -69,8 +68,6 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
 
         }
 
-
-
     }
 
     override fun onRefresh() {
@@ -122,19 +119,14 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
             RecommendService.INSTANCE.putRecommends(params).map {
                 KLog.d("res : $it")
                 RecommendModel.save(likeKey, uid)
-                AndroidSchedulers.mainThread().scheduleDirect {
-                    it["message"]?.asString?.let {
-                        mView?.viewContext?.toast(it)
-                    }
-
+                it["message"]?.asString?.let {
+                    mView?.viewContext?.toast(it)
                 }
                 return@map Math.min(c + 1, 3)
             }
         }.onErrorReturn {
             it.message?.let {
-                AndroidSchedulers.mainThread().scheduleDirect {
-                    mView?.viewContext?.toast(it)
-                }
+                mView?.viewContext?.toast(it)
             }
             3
         }.compose(SchedulersCompat.io()).subscribeWith(object : SimpleSubscriber<Int>() {

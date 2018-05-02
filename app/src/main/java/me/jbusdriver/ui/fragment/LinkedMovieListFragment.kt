@@ -14,7 +14,6 @@ import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
@@ -240,19 +239,14 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
             RecommendService.INSTANCE.putRecommends(params).map {
                 KLog.d("res : $it")
                 RecommendModel.save(likeKey, uid)
-                AndroidSchedulers.mainThread().scheduleDirect {
-                    it["message"]?.asString?.let {
-                        viewContext.toast(it)
-                    }
-
+                it["message"]?.asString?.let {
+                    viewContext.toast(it)
                 }
                 return@map Math.min(c + 1, 3)
             }
         }.onErrorReturn {
             it.message?.let {
-                AndroidSchedulers.mainThread().scheduleDirect {
-                    viewContext.toast(it)
-                }
+                viewContext.toast(it)
             }
             3
         }.compose(SchedulersCompat.io()).subscribeWith(object : SimpleSubscriber<Int>() {
@@ -269,7 +263,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         adapter.getHeaderLayout().findViewById<ImageView>(R.id.iv_like_it)?.apply {
             this.setImageDrawable(resources.getDrawable(R.drawable.ic_love_sel))
             DrawableCompat.setTint(this.drawable,
-                    ColorUtils.blendARGB(R.color.white.toColorInt(), Color.parseColor("#e91e63"), count / 3f))
+                    ColorUtils.blendARGB(R.color.colorAccent.toColorInt(), Color.parseColor("#e91e63"), count / 3f))
         }
     }
 
