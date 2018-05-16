@@ -1,6 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<me.jbusdriver.ui.widget.ViewPagerFixed xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/vp_largeImage"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/background_dark" />
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <me.jbusdriver.ui.widget.ViewPagerFixed xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/vp_largeImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/background_dark" />
+
+    <TextView
+        android:id="@+id/tv_url_index"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:textColor="@color/white"
+        tools:text = "abc"
+        android:textSize="@dimen/material_18sp"
+        android:layout_marginBottom="@dimen/material_48dp"
+        android:layout_marginLeft="@dimen/material_24dp"
+        android:layout_marginStart="@dimen/material_24dp" />
+
+    <ImageView
+        android:id="@+id/iv_download"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right|end"
+        android:layout_marginBottom="@dimen/material_48dp"
+        android:layout_marginEnd="@dimen/material_24dp"
+        android:layout_marginRight="@dimen/material_24dp"
+        android:maxHeight="@dimen/material_24dp"
+        android:maxWidth="@dimen/material_24dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:src="@drawable/ic_file_download_black_24dp" />
+</FrameLayout>

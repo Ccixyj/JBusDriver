@@ -1,13 +1,16 @@
 package me.jbusdriver.ui.activity
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.support.v4.view.PagerAdapter
+import android.support.v4.view.ViewPager
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Priority
@@ -16,11 +19,16 @@ import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCross
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.gyf.barlibrary.ImmersionBar
+import io.reactivex.rxkotlin.addTo
+import io.reactivex.schedulers.Schedulers
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_watch_large_image.*
+import kotlinx.android.synthetic.main.activity_watch_large_image.view.*
 import kotlinx.android.synthetic.main.layout_large_image_item.view.*
 import me.jbusdriver.common.*
 import me.jbusdriver.ui.widget.ImageGestureListener
+import java.io.File
+import java.util.concurrent.TimeUnit
 
 
 class WatchLargeImageActivity : BaseActivity() {
@@ -30,6 +38,13 @@ class WatchLargeImageActivity : BaseActivity() {
     }
     private val imageViewList: ArrayList<View> = arrayListOf()
     private val index by lazy { intent.getIntExtra(INDEX, -1) }
+    private val imageSaveDir by lazy {
+        val pathSuffix = File.separator + "download" + File.separator + "image" + File.separator
+        createDir(Environment.getExternalStorageDirectory().absolutePath + File.separator + JBus.packageName + pathSuffix)
+                ?: createDir(JBus.externalCacheDir.absolutePath + JBus.packageName + pathSuffix)
+                ?: error("cant not create collect dir in anywhere")
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,18 +53,50 @@ class WatchLargeImageActivity : BaseActivity() {
     }
 
 
+    @SuppressLint("SetTextI18n")
     private fun initWidget() {
+        immersionBar.transparentBar().init()
         val statusBarHeight = ImmersionBar.getStatusBarHeight(this)
+
         urls.mapTo(imageViewList) {
             this@WatchLargeImageActivity.inflate(R.layout.layout_large_image_item).apply {
                 this.mziv_image_large.setViewPager(vp_largeImage)
                 (pb_hor_progress.layoutParams as? ViewGroup.MarginLayoutParams)?.topMargin = statusBarHeight
             }
         }
-        vp_largeImage.adapter = MyViewPagerAdapter()
-        vp_largeImage.currentItem = if (index == -1) 0 else index
 
-        immersionBar.transparentBar().init()
+        vp_largeImage.adapter = MyViewPagerAdapter()
+        vp_largeImage.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            }
+
+            override fun onPageSelected(position: Int) {
+                this@WatchLargeImageActivity.tv_url_index.text = "${position + 1} / ${imageViewList.size}"
+            }
+        })
+        vp_largeImage.currentItem = if (index == -1) 0 else index
+        this@WatchLargeImageActivity.tv_url_index.text = "${vp_largeImage.currentItem + 1} / ${imageViewList.size}"
+
+        iv_download.setOnClickListener {
+            KLog.d("download image ${urls[vp_largeImage.currentItem]}")
+            Schedulers.io().scheduleDirect {
+                val url = urls[vp_largeImage.currentItem]
+                GlideApp.with(this).asFile().load(url).submit()
+                        .get(3, TimeUnit.SECONDS)?.let {
+                            //copy file
+                            val fileName = url.urlPath.split("/").lastOrNull() ?: kotlin.run {
+                                viewContext.toast("无法获取文件名！")
+                                return@scheduleDirect
+                            }
+                            it.copyTo(File(imageSaveDir + fileName), true)
+                            viewContext.toast("文件保存至${imageSaveDir}下")
+                        }
+            }.addTo(rxManager)
+
+        }
 
     }
 
@@ -106,7 +153,7 @@ class WatchLargeImageActivity : BaseActivity() {
                             override fun onProgress(imageUrl: String, bytesRead: Long, totalBytes: Long, isDone: Boolean, exception: GlideException?) {
                                 if (totalBytes == 0L) return
                                 if (url != imageUrl) return
-                                handler.post {
+                                postMain {
                                     //                                    view.pb_hor_progress.visibility = View.GONE
                                     view.pb_hor_progress.isIndeterminate = false
                                     view.pb_hor_progress?.apply {
