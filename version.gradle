@@ -1,0 +1,36 @@
+ext{
+    versions = [
+            'compileSdk'                   : 27,
+            'targetSdk'                    : 26,
+            'buildTools'                   : '27.0.3',
+
+            'gradle'                       : '3.1.2',
+            'kotlin'                       : '1.2.41',
+            'supportLibrary'               : '27.1.1',
+
+            'okhttp'                       : '3.10.0',
+            'retrofit'                     : '2.4.0',
+            'rxjava'                       : '2.1.14',
+            'rxandroid'                    : '2.0.2',
+            'rxkotlin'                     : '2.2.0',
+            'rxrelay'                      : '2.0.0',
+            'glide'                        : '4.7.1',
+            'sqlbrite'                     : '3.2.0',
+
+            'logger'                       : '2.2.0',
+            'gson'                         : '2.8.5',
+
+            'material_dialogs_core'        : '0.9.6.0',
+            'BaseRecyclerViewAdapterHelper': '2.9.38',
+            'jsoup'                        : '1.11.3',
+            'db_framework'                 : '1.0.0',
+            'immersionBar'                 : '2.3.0',
+            'flowlayoutmanager'            : '1.2.3.2',
+            'analytics'                    : '6.1.4',
+            'bubbleseekbar'                : '3.16',
+
+            'leakcanary'                   : '1.5.4',
+            'stetho'                       : '1.5.0'
+
+    ]
+}
