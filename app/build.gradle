@@ -78,10 +78,6 @@ android {
     }
 }
 
-def releaseTime() {
-    return new Date().format("yyyyMMdd_HHmmss")
-}
-
 //使用git的Tag来自动定制Version
 def VersionCode() {
     def cmd = 'git rev-list master --first-parent --count'//master分支
