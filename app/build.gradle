@@ -14,6 +14,13 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         flavorDimensions "github"
+
+        // 开启multidex
+        multiDexEnabled true
+    }
+    //recommend
+    dexOptions {
+        jumboMode = true
     }
 
     signingConfigs {
@@ -31,7 +38,7 @@ android {
                     keyAlias = System.getenv("KEYSTORE_ALIAS")
                     keyPassword = System.getenv("KEYSTORE_ALIAS_PWD")
                 } else {
-                    throw new InvalidUserDataException("You should define KEYSTORE_PASSWORD and KEY_PASSWORD in gradle.properties.")
+                    throw GradleException("You should define KEYSTORE_PASSWORD and KEY_PASSWORD in gradle.properties.")
                 }
             }
         }
@@ -40,7 +47,6 @@ android {
         abortOnError false
     }
     kapt {
-        generateStubs = true
         useBuildCache = true
     }
     aaptOptions {
@@ -54,11 +60,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             android.applicationVariants.all { variant ->
                 if (variant.buildType.name == 'release') {
-                    variant.mergedFlavor.versionName = VersionName()
-                    variant.mergedFlavor.versionCode = VersionCode()
+                    logger.quiet("build release type ...")
+                    def vName = VersionName()
+                    def vCode = VersionCode()
+                    variant.mergedFlavor.versionName = vName
+                    variant.mergedFlavor.versionCode = vCode
                     variant.outputs.all { output ->
-                        output.setVersionNameOverride(VersionName())
-                        output.setVersionCodeOverride(VersionCode())
+                        output.setVersionNameOverride(vName)
+                        output.setVersionCodeOverride(vCode)
                         outputFileName = "JubsDriver[v${variant.versionName}]_(code_${variant.versionCode}).apk"
                     }
                 }
@@ -108,65 +117,71 @@ def VersionName() {
 
     def versionName = tags.last().trim().replaceAll("[a-zA-Z]", "") + "build" + code
     logger.quiet(cmd + " >>>> versionName  = " + versionName)
-
     return versionName
 }
 
 
 dependencies {
-    implementation fileTree(include: ["*.jar"], dir: "libs")
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+
+
     androidTestImplementation("com.android.support.test.espresso:espresso-core:2.3-alpha", {
         exclude group: "com.android.support", module: "support-annotations"
     })
-    testImplementation "junit:junit:4.12"
-
+    testImplementation 'junit:junit:4.12'
     implementation "com.android.support:appcompat-v7:${versions.supportLibrary}"
     implementation "com.android.support:design:${versions.supportLibrary}"
     implementation "com.android.support:cardview-v7:${versions.supportLibrary}"
     implementation "com.android.support:palette-v7:${versions.supportLibrary}"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+
     /*============================================added======================================================*/
     implementation "com.google.code.gson:gson:${versions.gson}"
     implementation "com.afollestad.material-dialogs:core:${versions.material_dialogs_core}"
     implementation "com.orhanobut:logger:${versions.logger}"
     implementation "com.github.CymChad:BaseRecyclerViewAdapterHelper:${versions.BaseRecyclerViewAdapterHelper}"
     implementation "org.jsoup:jsoup:${versions.jsoup}"
+
     //group: "org.jsoup", name: "jsoup", version: "1.11.1"
     implementation "com.xw.repo:bubbleseekbar:${versions.bubbleseekbar}-lite"
-
     implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
     implementation "com.squareup.retrofit2:retrofit:${versions.retrofit}"
-//    implementation "com.squareup.retrofit2:converter-gson:${versions.retrofit}"
-    implementation "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}"
 
+    //    implementation "com.squareup.retrofit2:converter-gson:${versions.retrofit}"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}"
     implementation("com.github.bumptech.glide:glide:${versions.glide}") {
         exclude group: "com.android.support"
     }
     kapt "com.github.bumptech.glide:compiler:${versions.glide}"
     implementation "com.github.bumptech.glide:okhttp3-integration:${versions.glide}"
-
-
     implementation "io.reactivex.rxjava2:rxjava:${versions.rxjava}"
     implementation "io.reactivex.rxjava2:rxandroid:${versions.rxandroid}"
     implementation "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"
     implementation "com.jakewharton.rxrelay2:rxrelay:${versions.rxrelay}"
-    implementation "com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar"
+    implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
 
     //sqllite
     implementation "com.squareup.sqlbrite3:sqlbrite:${versions.sqlbrite}"
     implementation "com.squareup.sqlbrite3:sqlbrite-kotlin:${versions.sqlbrite}"
     implementation "android.arch.persistence:db-framework:${versions.db_framework}"
-
     implementation "com.gyf.barlibrary:barlibrary:${versions.immersionBar}"
     implementation "com.xiaofeng.android:flowlayoutmanager:${versions.flowlayoutmanager}"
+
     //https://github.com/xiaofeng-han/AndroidLibs/tree/master/flowlayoutmanager
     implementation "com.umeng.analytics:analytics:${versions.analytics}"
 
     //stetho
     implementation "com.facebook.stetho:stetho:${versions.stetho}"
     implementation "com.facebook.stetho:stetho-okhttp3:${versions.stetho}"
+
+    //    implementation(name: 'bugly_crashreport_upgrade-1.3.5', ext: 'aar')
+    // 远程依赖集成方式（推荐）
+    implementation "com.tencent.bugly:crashreport_upgrade:${versions.bugly}"
+    // 指定tinker依赖版本（注：应用升级1.3.5版本起，不再内置tinker）
+    implementation "com.tencent.tinker:tinker-android-lib:${versions.tinker}"
+    //hotfix:tinker
+    implementation "com.android.support:multidex:1.0.3" // 多dex配置
 
     //leak
     debugImplementation "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
@@ -183,3 +198,9 @@ configurations.all { config ->
         }
     }
 }
+
+
+this.rootProject.extensions.appVerCode = VersionCode()
+this.rootProject.extensions.appVerName = VersionName()
+// 依赖插件脚本
+apply from: 'tinker.gradle'

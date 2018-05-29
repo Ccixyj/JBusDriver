@@ -4,7 +4,6 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.rxkotlin.addTo
 import me.jbusdriver.common.SchedulersCompat
 import me.jbusdriver.db.bean.History
-import me.jbusdriver.db.bean.toPageInfo
 import me.jbusdriver.db.service.HistoryService
 import me.jbusdriver.mvp.HistoryContract
 import me.jbusdriver.mvp.bean.PageInfo
@@ -18,12 +17,11 @@ class HistoryPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HistoryContrac
 
     override fun loadData4Page(page: Int) {
         val dbPage = dbPage.copy(currentPage = page).apply {
-            pageInfo = toPageInfo
             lastPage = totalPage
         }
         HistoryService.queryPage(dbPage).toFlowable(BackpressureStrategy.DROP)
                 .map {
-                    ResultPageBean(pageInfo.copy(activePage = pageInfo.nextPage, nextPage = pageInfo.nextPage + 1), it)
+                    ResultPageBean(pageInfo.copy(activePage = dbPage.currentPage, nextPage = dbPage.currentPage + 1), it)
                 }
                 .compose(SchedulersCompat.io())
                 .subscribeWith(object : ListDefaultSubscriber(PageInfo(page)) {
