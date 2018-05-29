@@ -177,3 +177,10 @@
 #ImmersionBar
  -keep class com.gyf.barlibrary.* {*;}
 #ImmersionBar end
+
+
+#hotfix
+-dontwarn com.tencent.bugly.**
+-keep public class com.tencent.bugly.**{*;}
+-keep class android.support.**{*;}
+#hotfix end

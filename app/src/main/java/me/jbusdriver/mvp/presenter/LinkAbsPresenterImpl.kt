@@ -87,10 +87,10 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
         KLog.i("jumpToPage $page ($lastPage)in $dataPageCache")
         if (page >= 1) {
             pageInfo = pageInfo.copy(activePage = page, nextPage = page)
-            if (page > lastPage) {
-                mView?.viewContext?.toast("当前最多${lastPage}页")
-                return
-            }
+//            if (page > lastPage) {
+//                mView?.viewContext?.toast("当前最多${lastPage}页")
+//                return
+//            }
 
             if (dataPageCache.containsKey(page)) {
                 //已经加载直接跳页

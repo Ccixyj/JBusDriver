@@ -41,11 +41,12 @@ class HistoryDao(private val db: BriteDatabase) {
         }.flatMap { Observable.just(it) }
     }
 
-    val count: Int = db.query("select count(1) from ${HistoryTable.TABLE_NAME}").let {
-        if (it.moveToFirst()) {
-            it.getInt(0)
-        } else -1
-    }
+    val count: Int
+        get() = db.query("select count(1) from ${HistoryTable.TABLE_NAME}").let {
+            if (it.moveToFirst()) {
+                it.getInt(0)
+            } else -1
+        }
 
     fun deleteAndSetZero() {
         ioBlock {

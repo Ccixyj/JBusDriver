@@ -99,13 +99,8 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
                     next.split("/").lastOrNull()?.toIntOrNull() ?: 0
                     , pages).apply {
                 if (pages.isNotEmpty()) {
-                    if (activePage == nextPage && activePage == pages.last()) {
-                        lastPage = pages.last()
-                    }
-                    //pages小于10页可以认为最大页就是pages的最后一个
-                    pages.last().let {
-                        if (it < 10) lastPage = it
-                    }
+                    lastPage = pages.last()
+
                 }
             }
         }
