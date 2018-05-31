@@ -27,8 +27,11 @@ class CategoryDao(private val db: BriteDatabase) {
         -1L
     }
 
+    @Throws
     fun delete(category: Category) {
-        ioBlock { db.delete(CategoryTable.TABLE_NAME, "${CategoryTable.COLUMN_ID} = ? ", category.id.toString()) }
+        TryIgnoreEx {
+            ioBlock { db.delete(CategoryTable.TABLE_NAME, "${CategoryTable.COLUMN_ID} = ? ", category.id.toString()) }
+        }
     }
 
     fun findById(cId: Int): Category {
