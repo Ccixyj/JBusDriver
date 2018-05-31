@@ -10,9 +10,9 @@ def baseApkDir = "app-0530-00-32-23/gayhub"
 /**
  * 对于插件各参数的详细解析请参考
  */
+println "start tinker support"
 tinkerSupport {
 
-    // 开启tinker-support插件，默认值true
     enable = true
 
     // 自动生成tinkerId, 你无须关注tinkerId，默认为false
@@ -39,8 +39,7 @@ tinkerSupport {
 //    baseApkResourceMapping = "${bakPath}/${baseApkDir}/app-debug-R.txt"
 
     // 构建基准包跟补丁包都要修改tinkerId，主要用于区分
-//    tinkerId = "1.0.3-ccc"
-
+    tinkerId = appVerName
     // 打多渠道补丁时指定目录
     // buildAllFlavorsDir = "${bakPath}/${baseApkDir}"
 

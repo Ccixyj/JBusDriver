@@ -200,7 +200,17 @@ configurations.all { config ->
 }
 
 
-this.rootProject.extensions.appVerCode = VersionCode()
-this.rootProject.extensions.appVerName = VersionName()
+
+
 // 依赖插件脚本
-apply from: 'tinker.gradle'
+def taskNames = project.gradle.startParameter.taskNames
+def currentTaskName = taskNames.isEmpty() ? "" : taskNames.first()
+// 开启tinker-support插件，默认值true
+def checkEnable = !currentTaskName.isEmpty() && currentTaskName.toLowerCase().contains("release")
+println "tinker check : currentTaskName =  ${currentTaskName}  is enable : ${checkEnable}"
+
+if (checkEnable) {
+    this.rootProject.extensions.appVerCode = VersionCode()
+    this.rootProject.extensions.appVerName = VersionName()
+    apply from: 'tinker.gradle'
+}
