@@ -19,7 +19,12 @@ import java.util.*
 class HistoryDao(private val db: BriteDatabase) {
 
 
-    fun insert(history: History) = ioBlock { db.insert(HistoryTable.TABLE_NAME, CONFLICT_IGNORE, history.cv(true)) }
+    fun insert(history: History) = try {
+        ioBlock { db.insert(HistoryTable.TABLE_NAME, CONFLICT_IGNORE, history.cv(true)) }
+    } catch (e: Exception) {
+        -1
+    }
+
 
     fun update(histories: List<History>) {
         db.inTransaction {
@@ -49,10 +54,12 @@ class HistoryDao(private val db: BriteDatabase) {
         }
 
     fun deleteAndSetZero() {
-        ioBlock {
-            db.run {
-                delete(HistoryTable.TABLE_NAME, null)
-                execute("update sqlite_sequence SET seq = 0 where name = '${HistoryTable.TABLE_NAME}'")
+        TryIgnoreEx {
+            ioBlock {
+                db.run {
+                    delete(HistoryTable.TABLE_NAME, null)
+                    execute("update sqlite_sequence SET seq = 0 where name = '${HistoryTable.TABLE_NAME}'")
+                }
             }
         }
     }
@@ -68,6 +75,6 @@ class HistoryDao(private val db: BriteDatabase) {
         }
 
     }
-
-
 }
+
+
