@@ -39,7 +39,11 @@ class LinkItemDao(private val db: BriteDatabase) {
     }
 
 
-    fun delete(link: LinkItem) = TryIgnoreEx { ioBlock { db.delete(LinkItemTable.TABLE_NAME, "${LinkItemTable.COLUMN_DB_TYPE} = ? AND ${LinkItemTable.COLUMN_KEY} = ? ", link.type.toString(), link.key) > 0 } }
+    fun delete(link: LinkItem) = try {
+        ioBlock { db.delete(LinkItemTable.TABLE_NAME, "${LinkItemTable.COLUMN_DB_TYPE} = ? AND ${LinkItemTable.COLUMN_KEY} = ? ", link.type.toString(), link.key) > 0 }
+    } catch (e: Exception) {
+        false
+    }
 
     fun listAll(): Flowable<List<LinkItem>> = db.createQuery(LinkItemTable.TABLE_NAME, "SELECT * FROM ${LinkItemTable.TABLE_NAME} ORDER BY ${LinkItemTable.COLUMN_ID} DESC").mapToList {
         LinkItem(it.getIntByColumn(LinkItemTable.COLUMN_DB_TYPE), Date(it.getLongByColumn(LinkItemTable.COLUMN_CREATE_TIME)),
