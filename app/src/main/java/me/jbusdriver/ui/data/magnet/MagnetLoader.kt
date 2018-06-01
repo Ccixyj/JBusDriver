@@ -72,7 +72,7 @@ class BtanvMagnetLoaderImpl : IMagnetLoader {
 
 class BtdiggsMagnetLoaderImpl : IMagnetLoader {
     //  key -> page
-    private val search = "http://btdiggs.com/search/%s/%s/0/0.html"
+    private val search = "http://btdigg.cc/search/%s/%s/0/0.html"
 
     override var hasNexPage: Boolean = true
 
