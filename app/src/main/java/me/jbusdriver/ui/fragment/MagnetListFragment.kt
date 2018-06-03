@@ -7,6 +7,9 @@ import android.support.v7.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
+import io.reactivex.Flowable
+import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
@@ -15,11 +18,15 @@ import me.jbusdriver.mvp.MagnetListContract
 import me.jbusdriver.mvp.bean.Magnet
 import me.jbusdriver.mvp.presenter.MagnetListPresenterImpl
 import me.jbusdriver.ui.adapter.BaseAppAdapter
+import org.jsoup.Jsoup
 
 class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListPresenter, MagnetListContract.MagnetListView, Magnet>(), MagnetListContract.MagnetListView {
 
     private val keyword by lazy { arguments?.getString(C.BundleKey.Key_1) ?: error("need keyword") }
-    private val magnetLoaderKey by lazy { arguments?.getString(C.BundleKey.Key_2) ?: error("need magnet loaderKey") }
+    private val magnetLoaderKey by lazy {
+        arguments?.getString(C.BundleKey.Key_2) ?: error("need magnet loaderKey")
+    }
+
     override fun createPresenter() = MagnetListPresenterImpl(magnetLoaderKey, keyword)
 
     override val layoutId: Int = R.layout.layout_swipe_recycle
@@ -45,9 +52,19 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListP
                 (adapter.data.getOrNull(position) as? Magnet)?.let { magnet ->
                     KLog.d("setOnItemClickListener $magnet")
                     showMagnetLoading()
-                    viewContext.browse(magnet.link) {
-                        placeDialogHolder?.dismiss()
-                    }
+                    Flowable.just(magnet.link).flatMap { url ->
+                        if (url.startsWith("magnet:?xt")) {
+                            Flowable.just(url)
+                        } else {
+                            Flowable.fromCallable { Jsoup.connect(url).get().select(".content .magnet").text().trim() }
+                                    .onErrorReturn { url }
+                        }
+                    }.compose(SchedulersCompat.io()).subscribeBy {
+                        viewContext.browse(it) {
+                            placeDialogHolder?.dismiss()
+                        }
+                    }.addTo(rxManager)
+
                 }
 
             }
