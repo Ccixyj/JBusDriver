@@ -57,6 +57,7 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListP
                             Flowable.just(url)
                         } else {
                             Flowable.fromCallable { Jsoup.connect(url).get().select(".content .magnet").text().trim() }
+                                    .addUserCase(sec = 6)
                                     .onErrorReturn { url }
                         }
                     }.compose(SchedulersCompat.io()).subscribeBy {
