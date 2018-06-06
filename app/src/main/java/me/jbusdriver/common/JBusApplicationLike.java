@@ -9,6 +9,7 @@ import android.support.multidex.MultiDex;
 
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.tencent.tinker.loader.app.DefaultApplicationLike;
 
 import jbusdriver.me.jbusdriver.BuildConfig;
@@ -29,6 +30,7 @@ public class JBusApplicationLike extends DefaultApplicationLike {
         super.onCreate();
         // 这里实现SDK初始化，appId替换成你的在Bugly平台申请的appId
         // 调试时，将第三个参数改为true
+        CrashReport.setIsDevelopmentDevice(getApplication(), BuildConfig.DEBUG);
         Bugly.init(getApplication(), "26dd49f158", BuildConfig.DEBUG);
         if (getApplication() instanceof AppContext) {
             AppContextKt.setJBus(((AppContext) getApplication()));
