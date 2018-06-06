@@ -35,9 +35,14 @@ class BTSOWMagnetLoaderImpl : IMagnetLoader {
     override var hasNexPage: Boolean = true
 
     override fun loadMagnets(key: String, page: Int): List<Magnet> {
-        val doc = Jsoup.connect(search.format(key.trim(), page)).get()
-        hasNexPage = doc.select(".pagination").text().contains("next", true)
-        return doc.select(".btsowlist .row").map {
+        val url = search.format(key.trim(), page)
+        KLog.d("loadMagnets $url")
+        val doc = Jsoup.connect(url).get()
+        val dataNodes = doc.select(".btsowlist .row")
+        hasNexPage = (doc.select(".pagination a").lastOrNull()?.attr("href")?.split("/")
+                ?.lastOrNull { it.isNotBlank() && it.toIntOrNull() != null }?.toIntOrNull()
+                ?: -1) > 0
+        return dataNodes.map {
             val hrefNode = it.select("a")
             val childs = it.children()
             val size = childs.getOrNull(1)?.text() ?: "未知"
