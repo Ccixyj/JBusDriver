@@ -73,8 +73,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
             R.id.action_add_movie_collect -> {
                 //收藏
                 KLog.d("收藏")
-                val res = CollectModel.addToCollect(link.convertDBItem())
-                if (res) {
+               CollectModel.addToCollectForCategory(link.convertDBItem()){
                     collectMenu?.isVisible = false
                     removeCollectMenu?.isVisible = true
                 }

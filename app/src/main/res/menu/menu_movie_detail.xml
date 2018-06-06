@@ -4,14 +4,16 @@
     tools:context="me.jbusdriver.ui.activity.MovieDetailActivity">
     <item
         android:id="@+id/action_add_movie_collect"
-        android:orderInCategory="100"
         android:icon="@drawable/ic_star_border_white_24dp"
+        android:orderInCategory="100"
         android:title="收藏"
+        android:visible="false"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/action_remove_movie_collect"
         android:icon="@drawable/ic_star_white_24dp"
         android:title="取消收藏"
+        android:visible="false"
         app:showAsAction="always" />
 </menu>

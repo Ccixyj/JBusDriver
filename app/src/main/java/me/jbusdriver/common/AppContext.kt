@@ -1,5 +1,8 @@
 package me.jbusdriver.common
 
+import android.app.Activity
+import android.app.Application
+import android.os.Bundle
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import com.orhanobut.logger.AndroidLogAdapter
@@ -13,6 +16,7 @@ import io.reactivex.plugins.RxJavaPlugins
 import jbusdriver.me.jbusdriver.BuildConfig
 import me.jbusdriver.debug.stetho.initializeStetho
 import me.jbusdriver.http.JAVBusService
+import java.lang.ref.WeakReference
 import java.lang.reflect.Modifier.TRANSIENT
 
 lateinit var JBus: AppContext
@@ -30,8 +34,10 @@ val GSON by lazy {
     }).serializeNulls().create()
 }
 
+val JBusManager = mutableListOf<WeakReference<Activity>>()
+
 class AppContext : TinkerApplication(ShareConstants.TINKER_ENABLE_ALL, "me.jbusdriver.common.JBusApplicationLike",
-        "com.tencent.tinker.loader.TinkerLoader", false) {
+        "com.tencent.tinker.loader.TinkerLoader", false), Application.ActivityLifecycleCallbacks {
 
 
     override fun onCreate() {
@@ -70,6 +76,32 @@ class AppContext : TinkerApplication(ShareConstants.TINKER_ENABLE_ALL, "me.jbusd
         if (!::JBus.isInitialized) {
             JBus = this
         }
+
+        this.registerActivityLifecycleCallbacks(this)
+    }
+
+
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+        JBusManager.add(WeakReference(activity))
+    }
+
+    override fun onActivityStarted(activity: Activity?) {
+    }
+
+    override fun onActivityPaused(activity: Activity?) {
+    }
+
+    override fun onActivityResumed(activity: Activity?) {
+    }
+
+    override fun onActivityStopped(activity: Activity?) {
+    }
+
+    override fun onActivityDestroyed(activity: Activity?) {
+        JBusManager.removeAll { it.get() == activity }
+    }
+
+    override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {
     }
 
 

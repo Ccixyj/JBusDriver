@@ -140,7 +140,10 @@ object LinkService {
     fun queryAll() = dao.listAll()
     fun saveOrUpdate(backs: List<LinkItem>) {
         backs.forEach {
-            dao.insert(it) ?: dao.update(it)
+            val rowId = dao.insert(it) ?: -1
+            if (rowId < 0){
+                dao.update(it)
+            }
         }
     }
 

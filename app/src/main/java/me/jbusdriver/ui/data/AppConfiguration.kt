@@ -72,8 +72,7 @@ object AppConfiguration {
     }
     //endregion
 
-    //region collectCategory
-
+    //region collectCategory 开启收藏分类
     private const val collectCategoryS: String = "collectCategoryS"
     var enableCategory: Boolean by Delegates.observable(java.lang.Boolean.parseBoolean(getSp(collectCategoryS))) { _, old, new ->
         saveSp(collectCategoryS, new.toString())

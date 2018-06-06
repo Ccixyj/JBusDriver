@@ -25,7 +25,8 @@ import me.jbusdriver.ui.data.enums.DataSourceType
 class ActressListFragment : LinkableListFragment<ActressInfo>() {
 
     private val link by lazy {
-       val link =  arguments?.getSerializable(C.BundleKey.Key_1)  as? ILink ?: error("no link data ")
+        val link = arguments?.getSerializable(C.BundleKey.Key_1)  as? ILink
+                ?: error("no link data ")
         KLog.i("link data : $link")
         link
     }
@@ -120,7 +121,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
             R.id.action_add_movie_collect -> {
                 //收藏
                 KLog.d("收藏")
-                if (CollectModel.addToCollect(link.convertDBItem())) {
+                CollectModel.addToCollectForCategory(link.convertDBItem()) {
                     collectMenu?.isVisible = false
                     removeCollectMenu?.isVisible = true
                 }
@@ -187,7 +188,6 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
     override fun moveTo(pos: Int) {
         layoutManager.scrollToPosition(adapter.headerLayoutCount + pos)
     }
-
 
 
 }

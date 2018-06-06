@@ -77,14 +77,13 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         menuInflater.inflate(R.menu.menu_movie_detail, menu)
         collectMenu = menu.findItem(R.id.action_add_movie_collect)
         removeCollectMenu = menu.findItem(R.id.action_remove_movie_collect)
-        if (movie != null) {
-            if (CollectModel.has(movie!!.convertDBItem())) {
-                collectMenu.isVisible = false
-                removeCollectMenu.isVisible = true
-            } else {
-                collectMenu.isVisible = true
-                removeCollectMenu.isVisible = false
-            }
+        val saveItem = movie?.convertDBItem() ?: return true
+        if (CollectModel.has(saveItem)) {
+            collectMenu.isVisible = false
+            removeCollectMenu.isVisible = true
+        } else {
+            collectMenu.isVisible = true
+            removeCollectMenu.isVisible = false
         }
         return true
     }
@@ -94,25 +93,25 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         // automatically handle clicks on the CENSORED/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         val id = item.itemId
+        val saveItem = movie?.convertDBItem() ?: return super.onOptionsItemSelected(item)
+
+
         when (id) {
             R.id.action_add_movie_collect -> {
                 //收藏
                 KLog.d("收藏")
-                if (movie != null) {
-                    if (CollectModel.addToCollect(movie!!.convertDBItem())) {
-                        collectMenu.isVisible = false
-                        removeCollectMenu.isVisible = true
-                    }
+                CollectModel.addToCollectForCategory(saveItem) {
+                    collectMenu.isVisible = false
+                    removeCollectMenu.isVisible = true
                 }
+
             }
             R.id.action_remove_movie_collect -> {
                 //取消收藏
                 KLog.d("取消收藏")
-                if (movie != null) {
-                    if (CollectModel.removeCollect(movie!!.convertDBItem())) {
-                        collectMenu.isVisible = true
-                        removeCollectMenu.isVisible = false
-                    }
+                if (CollectModel.removeCollect(saveItem)) {
+                    collectMenu.isVisible = true
+                    removeCollectMenu.isVisible = false
                 }
             }
         }

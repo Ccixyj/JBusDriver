@@ -20,7 +20,7 @@ object LinkMenu {
             JBus.copy(movie.code)
             JBus.toast("已复制")
         }, "收藏" to { movie: Movie ->
-            CollectModel.addToCollect(movie.convertDBItem())
+            CollectModel.addToCollectForCategory(movie.convertDBItem())
         }, "取消收藏" to { movie: Movie ->
             CollectModel.removeCollect(movie.convertDBItem())
         })
@@ -32,7 +32,7 @@ object LinkMenu {
             JBus.copy(act.name)
             JBus.toast("已复制")
         }, "收藏" to { act: ActressInfo ->
-            CollectModel.addToCollect(act.convertDBItem())
+            CollectModel.addToCollectForCategory(act.convertDBItem())
         }, "取消收藏" to { act: ActressInfo ->
             CollectModel.removeCollect(act.convertDBItem())
         })
@@ -46,10 +46,11 @@ object LinkMenu {
             JBus.copy(link.des.split(" ").last())
             JBus.toast("已复制")
         }, "收藏" to { link ->
-            CollectModel.addToCollect(link.convertDBItem())
+            CollectModel.addToCollectForCategory(link.convertDBItem())
         }, "取消收藏" to { link ->
             CollectModel.removeCollect(link.convertDBItem())
         })
     }
+
 
 }
