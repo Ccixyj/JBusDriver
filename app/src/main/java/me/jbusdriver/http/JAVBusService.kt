@@ -3,7 +3,6 @@ package me.jbusdriver.http
 import android.support.v4.util.ArrayMap
 import io.reactivex.Flowable
 import me.jbusdriver.common.*
-import me.jbusdriver.common.AppContext.Companion.JBusInstances
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Url
@@ -23,9 +22,9 @@ interface JAVBusService {
         var defaultFastUrl = "https://www.javbus2.pw"
         var INSTANCE = getInstance(defaultFastUrl)
         fun getInstance(source: String): JAVBusService {
-            KLog.d("instances : $JBusInstances , defaultFastUrl : $defaultFastUrl")
-            //JBusInstances[type] 会出异常
-            return JBusInstances.getOrPut(source) {
+            KLog.d("instances : ${JBus.JavBusServices}, defaultFastUrl : $defaultFastUrl")
+            //JavBusServices[type] 会出异常
+            return JBus.JavBusServices.getOrPut(source) {
                 createService(source)
             }
         }

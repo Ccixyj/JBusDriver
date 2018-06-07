@@ -33,6 +33,7 @@ val GSON by lazy {
 class AppContext : TinkerApplication(ShareConstants.TINKER_ENABLE_ALL, "me.jbusdriver.common.JBusApplicationLike",
         "com.tencent.tinker.loader.TinkerLoader", false) {
 
+    val JavBusServices by lazy { arrayMapof<String, JAVBusService>() }
 
     override fun onCreate() {
         super.onCreate()
@@ -72,9 +73,15 @@ class AppContext : TinkerApplication(ShareConstants.TINKER_ENABLE_ALL, "me.jbusd
         }
     }
 
-
-    companion object {
-
-        val JBusInstances by lazy { arrayMapof<String, JAVBusService>() }
+    override fun onLowMemory() {
+        super.onLowMemory()
+        JavBusServices.clear()
     }
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        JavBusServices.clear()
+    }
+
+
 }
