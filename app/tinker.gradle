@@ -5,7 +5,8 @@ def bakPath = file("${buildDir}/bakApk/")
 /**
  * 此处填写每次构建生成的基准包目录
  */
-def baseApkDir = "app-0604-10-37-44/gayhub"
+def flavor = android.productFlavors.names.first().trim()
+def baseApkDir = "app-0604-10-37-44/${flavor}"
 
 /**
  * 对于插件各参数的详细解析请参考
@@ -31,11 +32,11 @@ tinkerSupport {
 //    baseApk =  "${bakPath}/${baseApkDir}/app-debug.apk"
 
     // 对应tinker插件applyMapping
-    baseApkProguardMapping = "${bakPath}/${baseApkDir}/app-release-mapping.txt"
+    baseApkProguardMapping = "${bakPath}/${baseApkDir}/app-${flavor}-release-mapping.txt"
 //    baseApkProguardMapping = "${bakPath}/${baseApkDir}/app-debug-mapping.txt"
 
     // 对应tinker插件applyResourceMapping
-    baseApkResourceMapping = "${bakPath}/${baseApkDir}/app-release-R.txt"
+    baseApkResourceMapping = "${bakPath}/${baseApkDir}/app-${flavor}-release-R.txt"
 //    baseApkResourceMapping = "${bakPath}/${baseApkDir}/app-debug-R.txt"
 
     // 构建基准包跟补丁包都要修改tinkerId，主要用于区分
