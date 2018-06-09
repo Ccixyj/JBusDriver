@@ -17,8 +17,6 @@ import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
-import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
@@ -43,31 +41,8 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         bindRx()
         initNavigationView()
         initFragments()
-
-        getVideoList().doOnNext {
-            KLog.d("next")
-
-        }.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-
-                }.addTo(rxManager)
-
-
-
-
-
-
-
     }
 
-    fun getVideoList(): Flowable<List<String>>{
-        KLog.d("main")
-        return  Flowable.fromCallable {
-            KLog.d("from fromCallable")
-            listOf("123")
-        }
-    }
     private fun bindRx() {
         RxBus.toFlowable(MenuChangeEvent::class.java)
                 .delay(100, TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成

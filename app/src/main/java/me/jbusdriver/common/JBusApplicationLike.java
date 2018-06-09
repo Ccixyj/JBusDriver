@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Environment;
 import android.support.multidex.MultiDex;
 
 import com.tencent.bugly.Bugly;
@@ -12,7 +13,7 @@ import com.tencent.bugly.beta.Beta;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.tencent.tinker.loader.app.DefaultApplicationLike;
 
-import jbusdriver.me.jbusdriver.BuildConfig;
+import java.io.File;
 
 public class JBusApplicationLike extends DefaultApplicationLike {
 
@@ -28,13 +29,26 @@ public class JBusApplicationLike extends DefaultApplicationLike {
     @Override
     public void onCreate() {
         super.onCreate();
-        // 这里实现SDK初始化，appId替换成你的在Bugly平台申请的appId
-        // 调试时，将第三个参数改为true
-        CrashReport.setIsDevelopmentDevice(getApplication(), BuildConfig.DEBUG);
-        Bugly.init(getApplication(), "26dd49f158", BuildConfig.DEBUG);
+
         if (getApplication() instanceof AppContext) {
             AppContextKt.setJBus(((AppContext) getApplication()));
         }
+
+        // 这里实现SDK初始化，appId替换成你的在Bugly平台申请的appId
+        // 调试时，将第三个参数改为true
+        boolean isDebug = false;
+        try {
+            isDebug = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator +
+                    getApplication().getPackageName()
+                    + File.separator + "debug"
+                    + File.separator + "buuugly"
+
+            ).exists();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        CrashReport.setIsDevelopmentDevice(getApplication(), isDebug);
+        Bugly.init(getApplication(), "26dd49f158", isDebug);
     }
 
 

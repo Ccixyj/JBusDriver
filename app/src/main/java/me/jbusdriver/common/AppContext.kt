@@ -19,6 +19,7 @@ import me.jbusdriver.http.JAVBusService
 import java.lang.ref.WeakReference
 import java.lang.reflect.Modifier.TRANSIENT
 
+
 lateinit var JBus: AppContext
 
 val GSON by lazy {
@@ -74,9 +75,8 @@ class AppContext : TinkerApplication(ShareConstants.TINKER_ENABLE_ALL, "me.jbusd
         RxJavaPlugins.setErrorHandler {
             if (!BuildConfig.DEBUG) MobclickAgent.reportError(this, it)
         }
-        if (!::JBus.isInitialized) {
-            JBus = this
-        }
+
+        JBus = this
 
         this.registerActivityLifecycleCallbacks(this)
     }
