@@ -28,7 +28,7 @@ tinkerSupport {
     // 编译补丁包时，必需指定基线版本的apk，默认值为空
     // 如果为空，则表示不是进行补丁包的编译
     // @{link tinkerPatch.oldApk }
-    baseApk = "${bakPath}/${baseApkDir}/JubsDriver[v${appVerName}]_(code_${appVerCode}).apk"
+    baseApk = "${bakPath}/${baseApkDir}/JubsDriver[v${appOldVerName}]_(code_${appOldVerCode}).apk"
 //    baseApk =  "${bakPath}/${baseApkDir}/app-debug.apk"
 
     // 对应tinker插件applyMapping

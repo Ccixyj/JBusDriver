@@ -16,7 +16,9 @@ import org.jsoup.nodes.Document
 
 class MagnetListPresenterImpl(private val magnetLoaderKey: String, private val keyword: String) : AbstractRefreshLoadMorePresenterImpl<MagnetListContract.MagnetListView, Magnet>(), MagnetListContract.MagnetListPresenter {
 
-    private val loader by lazy { MagnetLoaders[magnetLoaderKey] ?: error("not matched magnet loader") }
+    private val loader by lazy {
+        MagnetLoaders[magnetLoaderKey] ?: error("not matched magnet loader")
+    }
 
     override val model: BaseModel<Int, Document>
         get() = error("not call model")
@@ -24,11 +26,10 @@ class MagnetListPresenterImpl(private val magnetLoaderKey: String, private val k
     override fun stringMap(page: PageInfo, str: Document): List<Magnet> = error("not call stringMap")
 
 
-    private val cacheKey: String
-        get() = "${magnetLoaderKey}_${keyword}_${pageInfo.activePage}"
 
     override fun loadData4Page(page: Int) {
-        val curPage = PageInfo(page, page)
+        val curPage = PageInfo(page, page + 1)
+        val cacheKey =  "${magnetLoaderKey}_${keyword}_${curPage.activePage}"
         //page 1
         val cache = Flowable.concat(CacheLoader.justLru(cacheKey), CacheLoader.justDisk(cacheKey)).firstElement().map { GSON.fromJson<List<Magnet>>(it) }.toFlowable()
         val loaderFormNet = Flowable.fromCallable {
@@ -51,15 +52,15 @@ class MagnetListPresenterImpl(private val magnetLoaderKey: String, private val k
     }
 
     override fun hasLoadNext(): Boolean = loader.hasNexPage.also {
-        if (!it){
+        if (!it) {
             lastPage = pageInfo.activePage
         }
     }
 
     override fun onRefresh() {
         (0..Math.max(pageInfo.activePage, pageInfo.nextPage)).onEach {
-            CacheLoader.lru.remove(cacheKey)
-            CacheLoader.acache.remove(cacheKey)
+            CacheLoader.lru.remove("${magnetLoaderKey}_${keyword}_$it")
+            CacheLoader.acache.remove("${magnetLoaderKey}_${keyword}_$it")
         }
         super.onRefresh()
     }

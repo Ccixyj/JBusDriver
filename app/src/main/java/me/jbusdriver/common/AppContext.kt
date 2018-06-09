@@ -39,6 +39,7 @@ val JBusManager = mutableListOf<WeakReference<Activity>>()
 class AppContext : TinkerApplication(ShareConstants.TINKER_ENABLE_ALL, "me.jbusdriver.common.JBusApplicationLike",
         "com.tencent.tinker.loader.TinkerLoader", false), Application.ActivityLifecycleCallbacks {
 
+    val JavBusServices by lazy { arrayMapof<String, JAVBusService>() }
 
     override fun onCreate() {
         super.onCreate()
@@ -104,9 +105,15 @@ class AppContext : TinkerApplication(ShareConstants.TINKER_ENABLE_ALL, "me.jbusd
     override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {
     }
 
-
-    companion object {
-
-        val JBusInstances by lazy { arrayMapof<String, JAVBusService>() }
+    override fun onLowMemory() {
+        super.onLowMemory()
+        JavBusServices.clear()
     }
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        JavBusServices.clear()
+    }
+
+
 }
