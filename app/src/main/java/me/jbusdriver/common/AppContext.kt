@@ -73,7 +73,11 @@ class AppContext : TinkerApplication(ShareConstants.TINKER_ENABLE_ALL, "me.jbusd
         MobclickAgent.setDebugMode(BuildConfig.DEBUG)
 
         RxJavaPlugins.setErrorHandler {
-            if (!BuildConfig.DEBUG) MobclickAgent.reportError(this, it)
+            try {
+                if (!BuildConfig.DEBUG) MobclickAgent.reportError(this, it)
+            } catch (e: Exception) {
+                //ignore  report error
+            }
         }
 
         JBus = this
