@@ -25,7 +25,6 @@ import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.AppBaseActivity
-import me.jbusdriver.base.CacheLoader
 import me.jbusdriver.common.JBus
 import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.bean.*

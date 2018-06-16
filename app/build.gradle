@@ -143,6 +143,9 @@ dependencies {
     //leak
     debugImplementation "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${versions.leakcanary}"
+
+
+    implementation "com.android.support:multidex:1.0.3" // 多dex配置
 }
 
 configurations.all { config ->

@@ -6,13 +6,12 @@
     "https://www.javbus2.pw"
   ],
   "update": {
-    "versionCode": 242,
-    "versionName": "1.2.7",
-    "url": "http://git.oschina.net/751762476/jbusfile/raw/master/JubsDriver_v1.2.7build389.apk",
-    "desc": "JBusDriver 1.2.7 已更新!
-1.大图现在可以保存图片了
-2.修复btdigg磁力解析
-3.修复一些其他已知bug
+    "versionCode": 250,
+    "versionName": "1.2.8",
+    "url": "http://git.oschina.net/751762476/jbusfile/raw/master/JubsDriver_v1.2.8build404.apk",
+    "desc": "JBusDriver 1.2.8 已更新!
+1.收藏到分类（开启分类）
+2.修复已知奔溃
 "
   },
   "notice": {
