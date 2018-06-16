@@ -20,6 +20,7 @@ import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.activity.MovieDetailActivity
 import me.jbusdriver.ui.adapter.BaseAppAdapter
+import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import java.util.*
 
@@ -42,8 +43,16 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
                 }
                 relativeAdapter.setOnItemLongClickListener { _, view, position ->
                     relativeAdapter.data.getOrNull(position)?.let { movie ->
-                        val action = if (CollectModel.has(movie.convertDBItem())) LinkMenu.movieActions.minus("收藏")
-                        else LinkMenu.movieActions.minus("取消收藏")
+                        val action = (if (CollectModel.has(movie.convertDBItem())) LinkMenu.movieActions.minus("收藏")
+                        else LinkMenu.movieActions.minus("取消收藏")).toMutableMap()
+
+                        if (AppConfiguration.enableCategory) {
+                            val ac = action.remove("收藏")
+                            if (ac != null) {
+                                action["收藏到分类..."] = ac
+                            }
+                        }
+
                         MaterialDialog.Builder(view.context).title(movie.title)
                                 .items(action.keys)
                                 .itemsCallback { _, _, _, text ->

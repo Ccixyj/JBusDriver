@@ -19,6 +19,7 @@ import me.jbusdriver.mvp.bean.des
 import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.adapter.BaseAppAdapter
+import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 
 /**
@@ -57,14 +58,20 @@ class HeaderHolder(context: Context) : BaseHolder(context) {
                 //长按操作
                 setOnLongClickListener {
                     KLog.d("setOnLongClickListener text : $item")
-                    val action =   LinkMenu.linkActions.filter {
+                    val action = LinkMenu.linkActions.filter {
                         when {
                             TextUtils.isEmpty(item.link) -> it.key == "复制"
                             CollectModel.has(item.convertDBItem()) -> it.key != "收藏"
                             else -> it.key != "取消收藏"
                         }
-                    }
+                    }.toMutableMap()
 
+                    if (AppConfiguration.enableCategory) {
+                        val ac = action.remove("收藏")
+                        if (ac != null) {
+                            action["收藏到分类..."] = ac
+                        }
+                    }
 
                     MaterialDialog.Builder(holder.itemView.context).title(item.name).content(item.des)
                             .items(action.keys)

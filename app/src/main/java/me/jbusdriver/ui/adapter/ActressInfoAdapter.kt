@@ -20,6 +20,7 @@ import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.activity.MovieListActivity
+import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import java.util.*
 
@@ -33,27 +34,27 @@ class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseAppAdapter<Ac
         KLog.d("ActressInfo :$item")
         GlideApp.with(holder.itemView.context).asBitmap().load(item.avatar.toGlideUrl)
                 .error(R.drawable.ic_nowprinting).into(object : BitmapImageViewTarget(holder.getView(R.id.iv_actress_avatar)) {
-            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                Flowable.just(resource).map {
-                    Palette.from(resource).generate()
-                }.compose(SchedulersCompat.io())
-                        .subscribeWith(object : SimpleSubscriber<Palette>() {
-                            override fun onNext(it: Palette) {
-                                super.onNext(it)
-                                val swatch = listOfNotNull(it.lightMutedSwatch, it.lightVibrantSwatch, it.vibrantSwatch, it.mutedSwatch)
-                                if (!swatch.isEmpty()) {
-                                    swatch[randomNum(swatch.size)].let {
-                                        holder.setBackgroundColor(R.id.tv_actress_name, it.rgb)
-                                        holder.setTextColor(R.id.tv_actress_name, it.bodyTextColor)
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        Flowable.just(resource).map {
+                            Palette.from(resource).generate()
+                        }.compose(SchedulersCompat.io())
+                                .subscribeWith(object : SimpleSubscriber<Palette>() {
+                                    override fun onNext(it: Palette) {
+                                        super.onNext(it)
+                                        val swatch = listOfNotNull(it.lightMutedSwatch, it.lightVibrantSwatch, it.vibrantSwatch, it.mutedSwatch)
+                                        if (!swatch.isEmpty()) {
+                                            swatch[randomNum(swatch.size)].let {
+                                                holder.setBackgroundColor(R.id.tv_actress_name, it.rgb)
+                                                holder.setTextColor(R.id.tv_actress_name, it.bodyTextColor)
+                                            }
+                                        }
                                     }
-                                }
-                            }
-                        })
-                        .addTo(rxManager)
+                                })
+                                .addTo(rxManager)
 
-                super.onResourceReady(resource, transition)
-            }
-        })
+                        super.onResourceReady(resource, transition)
+                    }
+                })
         //加载名字
         holder.setText(R.id.tv_actress_name, item.name)
 
@@ -72,9 +73,15 @@ class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseAppAdapter<Ac
 
         setOnItemLongClickListener { _, view, position ->
             data.getOrNull(position)?.let { act ->
-                val action = if (CollectModel.has(act.convertDBItem())) LinkMenu.actressActions.minus("收藏")
-                else LinkMenu.actressActions.minus("取消收藏")
+                val action = (if (CollectModel.has(act.convertDBItem())) LinkMenu.actressActions.minus("收藏")
+                else LinkMenu.actressActions.minus("取消收藏")).toMutableMap()
 
+                if (AppConfiguration.enableCategory) {
+                    val ac = action.remove("收藏")
+                    if (ac != null) {
+                        action["收藏到分类..."] = ac
+                    }
+                }
                 MaterialDialog.Builder(view.context).title(act.name)
                         .items(action.keys)
                         .itemsCallback { _, _, _, text ->

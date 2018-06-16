@@ -6,10 +6,13 @@ import android.os.Bundle
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.Loader
 import com.afollestad.materialdialogs.MaterialDialog
-import me.jbusdriver.mvp.BaseView
-import me.jbusdriver.mvp.presenter.BasePresenter
-import me.jbusdriver.mvp.presenter.loader.PresenterFactory
-import me.jbusdriver.mvp.presenter.loader.PresenterLoader
+import me.jbusdriver.base.KLog
+import me.jbusdriver.base.inflate
+import me.jbusdriver.base.mvp.BaseView
+import me.jbusdriver.base.mvp.presenter.BasePresenter
+import me.jbusdriver.base.mvp.presenter.loader.PresenterFactory
+import me.jbusdriver.base.mvp.presenter.loader.PresenterLoader
+import me.jbusdriver.common.AppContext
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 

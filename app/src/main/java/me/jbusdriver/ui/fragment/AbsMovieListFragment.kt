@@ -156,9 +156,14 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                             it.setOnLongClickListener {
                                 KLog.d("setOnItemLongClickListener $item")
 
-                                val action = if (CollectModel.has(item.convertDBItem())) LinkMenu.movieActions.minus("收藏")
-                                else LinkMenu.movieActions.minus("取消收藏")
-
+                                val action =( if (CollectModel.has(item.convertDBItem())) LinkMenu.movieActions.minus("收藏")
+                                else LinkMenu.movieActions.minus("取消收藏")).toMutableMap()
+                                if (AppConfiguration.enableCategory) {
+                                    val ac = action.remove("收藏")
+                                    if (ac != null) {
+                                        action["收藏到分类..."] = ac
+                                    }
+                                }
                                 MaterialDialog.Builder(viewContext).title(item.code)
                                         .content(item.title)
                                         .items(action.keys)
@@ -195,9 +200,6 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
     }
 
 
-
-
-
     override fun insertData(pos: Int, data: List<*>) {
         adapter.addData(pos, data as List<Movie>)
     }
@@ -205,7 +207,6 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
     override fun moveTo(pos: Int) {
         layoutManager.scrollToPosition(adapter.getHeaderLayoutCount() + pos)
     }
-
 
 
     //    override fun toString(): String = "$type :" + super.toString()
