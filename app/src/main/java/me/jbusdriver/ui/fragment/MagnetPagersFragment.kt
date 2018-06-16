@@ -2,7 +2,7 @@ package me.jbusdriver.ui.fragment
 
 import android.support.v4.app.Fragment
 import io.reactivex.schedulers.Schedulers
-import me.jbusdriver.common.C
+import me.jbusdriver.base.common.C
 import me.jbusdriver.mvp.MagnetPagerContract
 import me.jbusdriver.mvp.presenter.MagnetPagerPresenterImpl
 import me.jbusdriver.ui.data.AppConfiguration

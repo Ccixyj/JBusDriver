@@ -1,7 +1,7 @@
 package me.jbusdriver.mvp.bean
 
-import me.jbusdriver.common.toJsonString
-import me.jbusdriver.common.urlPath
+import me.jbusdriver.base.toJsonString
+import me.jbusdriver.base.urlPath
 import me.jbusdriver.db.bean.AllFirstParentDBCategoryGroup
 import me.jbusdriver.db.bean.ICollectCategory
 import me.jbusdriver.db.bean.LinkCategory

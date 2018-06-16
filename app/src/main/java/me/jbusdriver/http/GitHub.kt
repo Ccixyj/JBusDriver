@@ -1,6 +1,7 @@
 package me.jbusdriver.http
 
 import io.reactivex.Flowable
+import me.jbusdriver.base.http.NetClient
 import retrofit2.http.GET
 
 /**

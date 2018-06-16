@@ -4,12 +4,13 @@ import android.text.TextUtils
 import io.reactivex.Flowable
 import io.reactivex.functions.Function
 import io.reactivex.rxkotlin.addTo
-import me.jbusdriver.common.*
-import me.jbusdriver.mvp.BaseView
+import me.jbusdriver.base.*
+import me.jbusdriver.base.mvp.BaseView
+import me.jbusdriver.base.mvp.model.BaseModel
+import me.jbusdriver.base.mvp.presenter.BasePresenter
 import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.mvp.bean.ResultPageBean
 import me.jbusdriver.mvp.bean.hasNext
-import me.jbusdriver.mvp.model.BaseModel
 import org.jsoup.nodes.Document
 import retrofit2.HttpException
 import java.util.concurrent.TimeoutException

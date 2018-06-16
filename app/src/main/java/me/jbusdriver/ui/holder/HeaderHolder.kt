@@ -11,8 +11,8 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_header.view.*
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.inflate
+import me.jbusdriver.base.KLog
+import me.jbusdriver.base.inflate
 import me.jbusdriver.mvp.bean.Header
 import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.bean.des

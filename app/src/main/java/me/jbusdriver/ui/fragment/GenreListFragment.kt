@@ -7,7 +7,11 @@ import com.xiaofeng.flowlayoutmanager.FlowLayoutManager
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
-import me.jbusdriver.common.*
+import me.jbusdriver.base.GSON
+import me.jbusdriver.base.fromJson
+import me.jbusdriver.base.toJsonString
+import me.jbusdriver.base.common.AppBaseRecycleFragment
+import me.jbusdriver.base.common.C
 import me.jbusdriver.mvp.GenreListContract
 import me.jbusdriver.mvp.bean.Genre
 import me.jbusdriver.mvp.presenter.GenreListPresenterImpl

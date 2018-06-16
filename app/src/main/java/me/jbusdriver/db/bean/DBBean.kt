@@ -2,7 +2,8 @@ package me.jbusdriver.db.bean
 
 import android.content.ContentValues
 import android.content.Context
-import me.jbusdriver.common.*
+import me.jbusdriver.base.*
+import me.jbusdriver.common.JBus
 import me.jbusdriver.db.CategoryTable
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.*

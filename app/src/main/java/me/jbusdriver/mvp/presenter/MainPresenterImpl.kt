@@ -4,7 +4,13 @@ import com.google.gson.JsonObject
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import me.jbusdriver.common.*
+import me.jbusdriver.base.GSON
+import me.jbusdriver.base.KLog
+import me.jbusdriver.base.addUserCase
+import me.jbusdriver.base.fromJson
+import me.jbusdriver.base.common.C
+import me.jbusdriver.base.CacheLoader
+import me.jbusdriver.base.SchedulersCompat
 import me.jbusdriver.http.GitHub
 import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.bean.NoticeBean

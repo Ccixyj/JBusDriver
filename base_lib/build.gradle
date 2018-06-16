@@ -1,0 +1,88 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'//kapt3插件
+
+android {
+    compileSdkVersion versions.compileSdk
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion versions.targetSdk
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    //android support
+    api "com.android.support:appcompat-v7:${versions.supportLibrary}"
+    api "com.android.support:design:${versions.supportLibrary}"
+    api "com.android.support:cardview-v7:${versions.supportLibrary}"
+    api "com.android.support:palette-v7:${versions.supportLibrary}"
+    api "com.android.support.constraint:constraint-layout:${versions.constraint_layout}"
+    api "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+
+    /*============================================added======================================================*/
+    api "com.google.code.gson:gson:${versions.gson}"
+    api "com.orhanobut:logger:${versions.logger}"
+    api "org.jsoup:jsoup:${versions.jsoup}"
+
+    //view widget
+    api "com.afollestad.material-dialogs:core:${versions.material_dialogs_core}"
+    api "com.github.CymChad:BaseRecyclerViewAdapterHelper:${versions.BaseRecyclerViewAdapterHelper}"
+    api "com.gyf.barlibrary:barlibrary:${versions.immersionBar}"
+
+    //okhttp
+    api "com.squareup.okhttp3:okhttp:${versions.okhttp}"
+    api "com.squareup.retrofit2:retrofit:${versions.retrofit}"
+    //    implementation "com.squareup.retrofit2:converter-gson:${versions.retrofit}"
+    api "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}"
+
+    //glide
+    api("com.github.bumptech.glide:glide:${versions.glide}") {
+        exclude group: "com.android.support"
+    }
+    kapt "com.github.bumptech.glide:compiler:${versions.glide}"
+    api "com.github.bumptech.glide:okhttp3-integration:${versions.glide}"
+
+    //rx
+    api "io.reactivex.rxjava2:rxjava:${versions.rxjava}"
+    api "io.reactivex.rxjava2:rxandroid:${versions.rxandroid}"
+    api "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"
+    api "com.jakewharton.rxrelay2:rxrelay:${versions.rxrelay}"
+    api "com.tbruyelle.rxpermissions2:rxpermissions:${versions.rxpermissions2}"
+
+    //sqllite
+    api "com.squareup.sqlbrite3:sqlbrite:${versions.sqlbrite}"
+    api "com.squareup.sqlbrite3:sqlbrite-kotlin:${versions.sqlbrite}"
+    api "android.arch.persistence:db-framework:${versions.db_framework}"
+
+    //stetho
+    api "com.facebook.stetho:stetho:${versions.stetho}"
+    api "com.facebook.stetho:stetho-okhttp3:${versions.stetho}"
+
+    api "com.umeng.analytics:analytics:${versions.analytics}"
+
+
+
+
+    implementation "com.android.support:multidex:1.0.3" // 多dex配置
+}

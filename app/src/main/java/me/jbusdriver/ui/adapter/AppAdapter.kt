@@ -5,7 +5,7 @@ import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.chad.library.adapter.base.entity.MultiItemEntity
-import me.jbusdriver.common.KLog
+import me.jbusdriver.base.KLog
 
 abstract class BaseAppAdapter<T, K : BaseViewHolder> : BaseQuickAdapter<T, K> {
 

@@ -11,7 +11,9 @@ import android.view.MenuItem
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
-import me.jbusdriver.common.*
+import me.jbusdriver.base.*
+import me.jbusdriver.base.common.C
+import me.jbusdriver.base.CacheLoader
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.model.CollectModel

@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#4CAF50</color>
-    <color name="colorPrimaryDark">#388E3C</color>
-    <color name="colorPrimaryLight">#C8E6C9</color>
-    <color name="colorAccent">#F2C45A</color>
-    <color name="primaryText">#212121</color>
-    <color name="secondText">#757575</color>
-    <color name="icons">#FFFFFF</color>
-    <color name="divider">#BDBDBD</color>
-    <color name="error">#ffff0030</color>
 
 
     <color name="white">#ffffffff</color>

@@ -23,6 +23,8 @@ import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_setting.*
 import kotlinx.android.synthetic.main.layout_collect_back_edit_item.view.*
 import kotlinx.android.synthetic.main.layout_menu_op_item.view.*
+import me.jbusdriver.base.*
+import me.jbusdriver.base.common.BaseActivity
 import me.jbusdriver.common.*
 import me.jbusdriver.db.service.LinkService
 import me.jbusdriver.mvp.bean.Expand_Type_Head

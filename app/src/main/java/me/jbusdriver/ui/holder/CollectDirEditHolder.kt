@@ -11,9 +11,9 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_collect_dir_edit.view.*
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.inflate
-import me.jbusdriver.common.toast
+import me.jbusdriver.base.KLog
+import me.jbusdriver.base.inflate
+import me.jbusdriver.base.toast
 import me.jbusdriver.db.bean.AllFirstParentDBCategoryGroup
 import me.jbusdriver.db.bean.Category
 import me.jbusdriver.ui.adapter.BaseAppAdapter

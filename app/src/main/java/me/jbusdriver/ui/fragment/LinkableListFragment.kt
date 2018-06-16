@@ -18,7 +18,11 @@ import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_seek_page.view.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
-import me.jbusdriver.common.*
+import me.jbusdriver.base.KLog
+import me.jbusdriver.base.RxBus
+import me.jbusdriver.base.inflate
+import me.jbusdriver.base.toast
+import me.jbusdriver.base.common.AppBaseRecycleFragment
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.PageChangeEvent
 import me.jbusdriver.mvp.bean.PageInfo

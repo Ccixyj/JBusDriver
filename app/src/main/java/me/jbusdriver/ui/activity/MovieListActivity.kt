@@ -6,8 +6,8 @@ import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import android.widget.Toast
 import jbusdriver.me.jbusdriver.R
-import me.jbusdriver.common.AppBaseActivity
-import me.jbusdriver.common.C
+import me.jbusdriver.base.common.AppBaseActivity
+import me.jbusdriver.base.common.C
 import me.jbusdriver.db.bean.History
 import me.jbusdriver.mvp.MovieParseContract
 import me.jbusdriver.mvp.bean.ILink

@@ -5,10 +5,10 @@ import android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE
 import com.squareup.sqlbrite3.BriteDatabase
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.getIntByColumn
-import me.jbusdriver.common.getLongByColumn
-import me.jbusdriver.common.getStringByColumn
+import me.jbusdriver.base.KLog
+import me.jbusdriver.base.getIntByColumn
+import me.jbusdriver.base.getLongByColumn
+import me.jbusdriver.base.getStringByColumn
 import me.jbusdriver.db.LinkItemTable
 import me.jbusdriver.db.bean.LinkItem
 import java.util.*

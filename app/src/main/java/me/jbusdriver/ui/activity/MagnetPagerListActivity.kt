@@ -5,8 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_search_result.*
-import me.jbusdriver.common.BaseActivity
-import me.jbusdriver.common.C
+import me.jbusdriver.base.common.BaseActivity
+import me.jbusdriver.base.common.C
 import me.jbusdriver.ui.fragment.MagnetPagersFragment
 
 class MagnetPagerListActivity : BaseActivity() {

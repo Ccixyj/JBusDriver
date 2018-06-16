@@ -13,8 +13,8 @@ import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
-import me.jbusdriver.common.AppBaseRecycleFragment
-import me.jbusdriver.common.GlideApp
+import me.jbusdriver.base.GlideApp
+import me.jbusdriver.base.common.AppBaseRecycleFragment
 import me.jbusdriver.common.toGlideUrl
 import me.jbusdriver.db.bean.History
 import me.jbusdriver.mvp.HistoryContract

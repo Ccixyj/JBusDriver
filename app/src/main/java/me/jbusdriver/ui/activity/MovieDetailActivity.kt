@@ -22,7 +22,11 @@ import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_movie_detail.*
 import kotlinx.android.synthetic.main.content_movie_detail.*
 import kotlinx.android.synthetic.main.layout_load_magnet.view.*
-import me.jbusdriver.common.*
+import me.jbusdriver.base.*
+import me.jbusdriver.base.common.AppBaseActivity
+import me.jbusdriver.base.common.C
+import me.jbusdriver.base.CacheLoader
+import me.jbusdriver.common.toGlideUrl
 import me.jbusdriver.mvp.MovieDetailContract
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.model.CollectModel

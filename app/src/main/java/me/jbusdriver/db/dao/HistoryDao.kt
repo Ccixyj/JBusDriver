@@ -5,9 +5,9 @@ import android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE
 import com.squareup.sqlbrite3.BriteDatabase
 import com.squareup.sqlbrite3.inTransaction
 import io.reactivex.Observable
-import me.jbusdriver.common.getIntByColumn
-import me.jbusdriver.common.getLongByColumn
-import me.jbusdriver.common.getStringByColumn
+import me.jbusdriver.base.getIntByColumn
+import me.jbusdriver.base.getLongByColumn
+import me.jbusdriver.base.getStringByColumn
 import me.jbusdriver.db.HistoryTable
 import me.jbusdriver.db.bean.History
 import java.util.*

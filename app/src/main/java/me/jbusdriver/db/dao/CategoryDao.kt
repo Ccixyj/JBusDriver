@@ -3,9 +3,9 @@ package me.jbusdriver.db.dao
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.squareup.sqlbrite3.BriteDatabase
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.getIntByColumn
-import me.jbusdriver.common.getStringByColumn
+import me.jbusdriver.base.KLog
+import me.jbusdriver.base.getIntByColumn
+import me.jbusdriver.base.getStringByColumn
 import me.jbusdriver.db.CategoryTable
 import me.jbusdriver.db.bean.Category
 import java.util.concurrent.TimeUnit

@@ -1,4 +1,4 @@
-package me.jbusdriver.common
+package me.jbusdriver.base.common
 
 import android.annotation.TargetApi
 import android.os.Build

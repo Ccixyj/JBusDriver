@@ -4,11 +4,11 @@ import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentPagerAdapter
 import android.view.View
-import me.jbusdriver.mvp.BaseView
+import me.jbusdriver.base.mvp.BaseView
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_mine_collect.*
-import me.jbusdriver.common.AppBaseFragment
-import me.jbusdriver.mvp.presenter.BasePresenter
+import me.jbusdriver.base.common.AppBaseFragment
+import me.jbusdriver.base.mvp.presenter.BasePresenter
 
 /**
  * Created by Administrator on 2017/7/17 0017.

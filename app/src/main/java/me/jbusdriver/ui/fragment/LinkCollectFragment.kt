@@ -15,10 +15,10 @@ import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_menu_op_head.view.*
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
-import me.jbusdriver.common.AppBaseRecycleFragment
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.dpToPx
-import me.jbusdriver.common.toast
+import me.jbusdriver.base.KLog
+import me.jbusdriver.base.dpToPx
+import me.jbusdriver.base.toast
+import me.jbusdriver.base.common.AppBaseRecycleFragment
 import me.jbusdriver.db.bean.Category
 import me.jbusdriver.db.bean.LinkCategory
 import me.jbusdriver.db.service.CategoryService
@@ -91,7 +91,7 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
                             val all = mBasePresenter?.collectGroupMap?.keys ?: emptyList<Category>()
                             val last = all - category
                             if (last.isNotEmpty()) {
-                                action.put("移到分类...", { link ->
+                                action.put("移到分类...") { link ->
                                     KLog.d("移到分类 : $last")
                                     MaterialDialog.Builder(viewContext).title("选择目录")
                                             .items(last.map { it.name })
@@ -103,7 +103,7 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
                                                 }
                                                 return@itemsCallbackSingleChoice true
                                             }.show()
-                                })
+                                }
                             }
                         }
                     }

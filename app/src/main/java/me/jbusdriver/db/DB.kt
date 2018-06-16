@@ -5,8 +5,8 @@ import android.arch.persistence.db.SupportSQLiteOpenHelper
 import android.arch.persistence.db.framework.FrameworkSQLiteOpenHelperFactory
 import com.squareup.sqlbrite3.SqlBrite
 import io.reactivex.schedulers.Schedulers
+import me.jbusdriver.base.KLog
 import me.jbusdriver.common.JBus
-import me.jbusdriver.common.KLog
 import me.jbusdriver.db.dao.CategoryDao
 import me.jbusdriver.db.dao.HistoryDao
 import me.jbusdriver.db.dao.LinkItemDao

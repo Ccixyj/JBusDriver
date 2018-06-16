@@ -3,12 +3,16 @@ package me.jbusdriver.mvp.presenter
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import me.jbusdriver.common.*
+import me.jbusdriver.base.KLog
+import me.jbusdriver.base.addUserCase
+import me.jbusdriver.base.postMain
+import me.jbusdriver.base.CacheLoader
+import me.jbusdriver.base.SchedulersCompat
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.GenrePageContract
 import me.jbusdriver.mvp.bean.Genre
-import me.jbusdriver.mvp.model.AbstractBaseModel
-import me.jbusdriver.mvp.model.BaseModel
+import me.jbusdriver.base.mvp.model.AbstractBaseModel
+import me.jbusdriver.base.mvp.model.BaseModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 

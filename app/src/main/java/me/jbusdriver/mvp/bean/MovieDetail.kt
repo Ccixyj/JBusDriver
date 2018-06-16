@@ -1,11 +1,10 @@
 package me.jbusdriver.mvp.bean
 
 import android.text.TextUtils
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.urlHost
+import me.jbusdriver.base.KLog
+import me.jbusdriver.base.urlHost
 import me.jbusdriver.db.bean.ActressCategory
 import me.jbusdriver.db.bean.LinkCategory
-import me.jbusdriver.ui.data.enums.DataSourceType
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.io.Serializable

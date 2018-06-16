@@ -4,7 +4,11 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.util.ArrayMap
 import android.view.View
-import me.jbusdriver.common.*
+import me.jbusdriver.base.GSON
+import me.jbusdriver.base.arrayMapof
+import me.jbusdriver.base.fromJson
+import me.jbusdriver.base.common.C
+import me.jbusdriver.base.CacheLoader
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.GenrePageContract
 import me.jbusdriver.mvp.GenrePageContract.GenrePagePresenter

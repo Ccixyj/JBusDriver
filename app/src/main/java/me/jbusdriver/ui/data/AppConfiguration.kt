@@ -2,7 +2,11 @@ package me.jbusdriver.ui.data
 
 import android.content.Context
 import io.reactivex.schedulers.Schedulers
-import me.jbusdriver.common.*
+import me.jbusdriver.base.GSON
+import me.jbusdriver.base.RxBus
+import me.jbusdriver.base.fromJson
+import me.jbusdriver.base.toJsonString
+import me.jbusdriver.common.JBus
 import me.jbusdriver.mvp.bean.CategoryChangeEvent
 import me.jbusdriver.mvp.bean.MenuChangeEvent
 import me.jbusdriver.mvp.bean.PageChangeEvent

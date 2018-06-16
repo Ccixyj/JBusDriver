@@ -2,7 +2,7 @@ package me.jbusdriver.db.service
 
 import android.text.TextUtils
 import io.reactivex.Observable
-import me.jbusdriver.common.KLog
+import me.jbusdriver.base.KLog
 import me.jbusdriver.db.DB
 import me.jbusdriver.db.bean.Category
 import me.jbusdriver.db.bean.DBPage

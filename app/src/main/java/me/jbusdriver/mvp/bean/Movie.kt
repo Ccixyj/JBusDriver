@@ -3,7 +3,12 @@ package me.jbusdriver.mvp.bean
 import android.text.TextUtils
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import com.google.gson.annotations.SerializedName
-import me.jbusdriver.common.*
+import me.jbusdriver.base.ACache
+import me.jbusdriver.base.KLog
+import me.jbusdriver.base.toJsonString
+import me.jbusdriver.base.urlHost
+import me.jbusdriver.base.common.C
+import me.jbusdriver.base.CacheLoader
 import me.jbusdriver.db.bean.MovieCategory
 import me.jbusdriver.http.JAVBusService
 import org.jsoup.nodes.Document
@@ -46,7 +51,7 @@ data class Movie(
                 if (host.isNotBlank()) {
                     val key = if (host.endsWith("xyz")) "xyz" else "default"
                     val set = JAVBusService.defaultImageUrlHosts.getOrPut(key) {
-                        hashSetOf()
+                       hashSetOf()
                     }
                     if (host !in set) {
                         set.add(host)

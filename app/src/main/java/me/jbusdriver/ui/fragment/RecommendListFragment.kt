@@ -11,7 +11,11 @@ import com.chad.library.adapter.base.loadmore.LoadMoreView
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
-import me.jbusdriver.common.*
+import me.jbusdriver.base.KLog
+import me.jbusdriver.base.urlHost
+import me.jbusdriver.base.urlPath
+import me.jbusdriver.base.common.AppBaseRecycleFragment
+import me.jbusdriver.common.toGlideUrl
 import me.jbusdriver.http.JAVBusService.Companion.defaultFastUrl
 import me.jbusdriver.mvp.HotRecommendContract
 import me.jbusdriver.mvp.bean.ActressInfo

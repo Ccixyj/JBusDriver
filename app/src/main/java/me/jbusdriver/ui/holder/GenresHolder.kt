@@ -5,7 +5,7 @@ import android.view.View
 import com.xiaofeng.flowlayoutmanager.FlowLayoutManager
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_genres.view.*
-import me.jbusdriver.common.inflate
+import me.jbusdriver.base.inflate
 import me.jbusdriver.mvp.bean.Genre
 import me.jbusdriver.ui.adapter.GenreAdapter
 

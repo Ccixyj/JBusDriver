@@ -19,7 +19,9 @@ import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_actress_attr.view.*
 import kotlinx.android.synthetic.main.layout_load_all.view.*
-import me.jbusdriver.common.*
+import me.jbusdriver.base.*
+import me.jbusdriver.base.common.C
+import me.jbusdriver.common.toGlideUrl
 import me.jbusdriver.http.RecommendService
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.*

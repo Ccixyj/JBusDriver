@@ -3,9 +3,9 @@ package me.jbusdriver.mvp.presenter
 import android.net.Uri
 import android.util.Base64
 import com.bumptech.glide.Glide
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
-import me.jbusdriver.common.*
+import me.jbusdriver.base.*
+import me.jbusdriver.common.toGlideUrl
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.http.RecommendService
 import me.jbusdriver.mvp.HotRecommendContract
@@ -13,7 +13,7 @@ import me.jbusdriver.mvp.bean.Magnet
 import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.mvp.bean.RecommendRespBean
 import me.jbusdriver.mvp.bean.ResultPageBean
-import me.jbusdriver.mvp.model.BaseModel
+import me.jbusdriver.base.mvp.model.BaseModel
 import org.jsoup.nodes.Document
 import java.util.concurrent.atomic.AtomicInteger
 

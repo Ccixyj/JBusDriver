@@ -7,9 +7,9 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_search_result.*
-import me.jbusdriver.common.BaseActivity
-import me.jbusdriver.common.C
-import me.jbusdriver.common.RxBus
+import me.jbusdriver.base.RxBus
+import me.jbusdriver.base.common.BaseActivity
+import me.jbusdriver.base.common.C
 import me.jbusdriver.mvp.bean.SearchWord
 import me.jbusdriver.ui.fragment.SearchResultPagesFragment
 

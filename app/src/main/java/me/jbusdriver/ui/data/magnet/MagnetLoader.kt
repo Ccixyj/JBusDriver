@@ -1,10 +1,7 @@
 package  me.jbusdriver.ui.data.magnet
 
 import android.util.Base64
-import android.widget.Toast
-import me.jbusdriver.common.JBus
-import me.jbusdriver.common.KLog
-import me.jbusdriver.common.toast
+import me.jbusdriver.base.KLog
 import me.jbusdriver.mvp.bean.Magnet
 import org.jsoup.Jsoup
 

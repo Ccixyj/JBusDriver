@@ -3,7 +3,7 @@ package me.jbusdriver.db
 import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.db.SupportSQLiteOpenHelper
 import android.database.sqlite.SQLiteDatabase
-import me.jbusdriver.common.KLog
+import me.jbusdriver.base.KLog
 import me.jbusdriver.db.bean.AllFirstParentDBCategoryGroup
 
 

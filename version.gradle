@@ -23,7 +23,7 @@ ext {
             'logger'                       : '2.2.0',
             'rxpermissions2'               : '0.9.4@aar',
 
-            'constraint_layout'            : '1.1.1',
+            'constraint_layout'            : '1.1.2',
             'material_dialogs_core'        : '0.9.6.0',
             'BaseRecyclerViewAdapterHelper': '2.9.40',
             'immersionBar'                 : '2.3.0',

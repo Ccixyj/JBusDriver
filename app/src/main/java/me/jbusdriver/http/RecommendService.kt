@@ -2,6 +2,7 @@ package me.jbusdriver.http
 
 import com.google.gson.JsonObject
 import io.reactivex.Flowable
+import me.jbusdriver.base.http.NetClient
 import retrofit2.http.*
 
 /**

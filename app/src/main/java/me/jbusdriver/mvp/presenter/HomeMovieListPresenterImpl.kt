@@ -2,14 +2,16 @@ package me.jbusdriver.mvp.presenter
 
 import android.support.v4.util.ArrayMap
 import io.reactivex.Flowable
-import me.jbusdriver.common.*
+import me.jbusdriver.base.*
+import me.jbusdriver.base.common.C
+import me.jbusdriver.base.CacheLoader
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.PageInfo
 import me.jbusdriver.mvp.bean.PageLink
-import me.jbusdriver.mvp.model.AbstractBaseModel
-import me.jbusdriver.mvp.model.BaseModel
+import me.jbusdriver.base.mvp.model.AbstractBaseModel
+import me.jbusdriver.base.mvp.model.BaseModel
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.enums.DataSourceType
 import org.jsoup.Jsoup

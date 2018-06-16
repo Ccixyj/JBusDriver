@@ -23,7 +23,10 @@ import io.reactivex.schedulers.Schedulers
 import jbusdriver.me.jbusdriver.BuildConfig
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.nav_header_main.view.*
-import me.jbusdriver.common.*
+import me.jbusdriver.base.*
+import me.jbusdriver.base.common.AppBaseActivity
+import me.jbusdriver.base.CacheLoader
+import me.jbusdriver.common.JBus
 import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.presenter.MainPresenterImpl
@@ -93,7 +96,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
             ll_click_reload.setOnClickListener {
                 CacheLoader.lru.evictAll()
                 CacheLoader.acache.clear()
-                JBus.JavBusServices.clear()
+                JBus.JBusServices.clear()
                 SplashActivity.start(this@MainActivity)
                 finish()
             }
