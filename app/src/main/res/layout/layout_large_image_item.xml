@@ -7,13 +7,10 @@
     android:orientation="vertical">
 
 
-    <me.jbusdriver.ui.widget.MultiTouchZoomableImageView
-        android:id="@+id/mziv_image_large"
+    <com.github.chrisbanes.photoview.PhotoView
+        android:id="@+id/pv_image_large"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
         tools:background="@color/cardview_dark_background"
         tools:src="@mipmap/ic_launcher" />
 

@@ -3,36 +3,31 @@ package me.jbusdriver.ui.activity
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Environment
-import android.os.Handler
-import android.os.Looper
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
-import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.gyf.barlibrary.ImmersionBar
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_watch_large_image.*
-import kotlinx.android.synthetic.main.activity_watch_large_image.view.*
 import kotlinx.android.synthetic.main.layout_large_image_item.view.*
 import me.jbusdriver.base.*
+import me.jbusdriver.base.common.BaseActivity
 import me.jbusdriver.base.http.OnProgressListener
 import me.jbusdriver.base.http.addProgressListener
 import me.jbusdriver.base.http.removeProgressListener
-import me.jbusdriver.base.common.BaseActivity
 import me.jbusdriver.common.JBus
 import me.jbusdriver.common.toGlideUrl
-import me.jbusdriver.ui.widget.ImageGestureListener
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -66,7 +61,6 @@ class WatchLargeImageActivity : BaseActivity() {
 
         urls.mapTo(imageViewList) {
             this@WatchLargeImageActivity.inflate(R.layout.layout_large_image_item).apply {
-                this.mziv_image_large.setViewPager(vp_largeImage)
                 (pb_hor_progress.layoutParams as? ViewGroup.MarginLayoutParams)?.topMargin = statusBarHeight
             }
         }
@@ -123,7 +117,6 @@ class WatchLargeImageActivity : BaseActivity() {
     }
 
     inner class MyViewPagerAdapter : PagerAdapter() {
-        private val handler by lazy { Handler(Looper.getMainLooper()) }
 
         override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
             container.removeView(imageViewList[position])//删除页卡
@@ -149,18 +142,18 @@ class WatchLargeImageActivity : BaseActivity() {
             KLog.d("load $position for ${vp_largeImage.currentItem} offset = $offset : $priority")
             val url = urls[position]
             GlideApp.with(this@WatchLargeImageActivity)
-                    .asBitmap()
                     .load(url.toGlideUrl)
-                    .transition(withCrossFade())
+                    .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.ic_image_error)
+                    .fitCenter()
                     .priority(priority)
-                    .into(object : SimpleTarget<Bitmap>() {
+                    .into(object : DrawableImageViewTarget(view.pv_image_large) {
                         val listener = object : OnProgressListener {
                             override fun onProgress(imageUrl: String, bytesRead: Long, totalBytes: Long, isDone: Boolean, exception: GlideException?) {
                                 if (totalBytes == 0L) return
                                 if (url != imageUrl) return
                                 postMain {
-                                    //                                    view.pb_hor_progress.visibility = View.GONE
+                                    //view.pb_hor_progress.visibility = View.GONE
                                     view.pb_hor_progress.isIndeterminate = false
                                     view.pb_hor_progress?.apply {
                                         progress = (bytesRead * 1.0f / totalBytes * 100.0f).toInt()
@@ -179,38 +172,16 @@ class WatchLargeImageActivity : BaseActivity() {
                             super.onLoadStarted(placeholder)
                         }
 
-                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                            view.mziv_image_large?.imageBitmap = resource
+                        override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                            super.onResourceReady(resource, transition)
                             view.pb_hor_progress?.animate()?.alpha(0f)?.setDuration(300)?.start()
                             removeProgressListener(listener)
                         }
-
 
                         override fun onLoadFailed(errorDrawable: Drawable?) {
                             super.onLoadFailed(errorDrawable)
                             removeProgressListener(listener)
                             view.pb_hor_progress?.animate()?.alpha(0f)?.setDuration(300)?.start()
-                            (view.mziv_image_large)?.also { iv ->
-                                //                                imageBitmap = BitmapFactory.decodeResource(viewContext.resources, R.drawable.ic_image_error)
-                                GlideApp.with(view).asBitmap().load(R.drawable.ic_image_error).into(object : SimpleTarget<Bitmap>() {
-                                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                        iv.imageBitmap = resource
-                                    }
-                                })
-
-                                iv.setImageGestureListener(object : ImageGestureListener {
-                                    override fun onImageGestureSingleTapConfirmed() {
-                                        KLog.e("onImageGestureSingleTapConfirmed : reload")
-                                        loadImage(view, position)
-                                    }
-
-                                    override fun onImageGestureLongPress() {
-                                    }
-
-                                    override fun onImageGestureFlingDown() {
-                                    }
-                                })
-                            }
                         }
 
                     })
