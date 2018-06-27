@@ -6,8 +6,8 @@
     android:gravity="bottom"
     android:orientation="vertical"
     android:paddingBottom="@dimen/material_8dp"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingLeft="@dimen/material_16dp"
+    android:paddingRight="@dimen/material_16dp"
     android:paddingTop="@dimen/material_8dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 

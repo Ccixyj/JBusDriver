@@ -55,7 +55,7 @@
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/fab_margin"
+            android:layout_margin="@dimen/material_16dp"
             app:layout_anchor="@id/app_bar"
             app:layout_anchorGravity="bottom|end"
             android:tint="@color/white"
