@@ -15,7 +15,7 @@ JBusDriver
 
 ###### 如何开车
 
- > 番号+[简易磁力](https://play.google.com/store/apps/details?id=com.magnets.toolbox)/[神奇磁力](https://www.coolapk.com/apk/com.magicmagnet)+[mxplayer](https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad)/[aria2](https://github.com/aria2/aria2) 
+ > 番号+[神奇磁力](https://www.coolapk.com/apk/com.magicmagnet)+[mxplayer](https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad)/[aria2](https://github.com/aria2/aria2) 
 
 
 
