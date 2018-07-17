@@ -61,7 +61,7 @@ class AppContext : TinkerApplication(ShareConstants.TINKER_ENABLE_ALL, "me.jbusd
         }
 
         JBus = this
-
+        JBusManager.setContext(this)
         this.registerActivityLifecycleCallbacks(JBusManager)
     }
 

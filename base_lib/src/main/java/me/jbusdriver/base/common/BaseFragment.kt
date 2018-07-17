@@ -73,6 +73,6 @@ open class BaseFragment : Fragment() {
 
     //region other
     val viewContext: Context
-        get() = activity ?: JBusManager.manager.firstOrNull()?.get()!!
+        get() = activity ?: JBusManager.context
     //endregion
 }

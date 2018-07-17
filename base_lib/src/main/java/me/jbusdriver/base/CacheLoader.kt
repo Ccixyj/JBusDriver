@@ -5,18 +5,17 @@ import android.app.ActivityManager
 import android.support.v4.util.LruCache
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
+import me.jbusdriver.base.JBusManager.context
 import java.util.concurrent.TimeUnit
 
 
 object CacheLoader {
     private const val TAG = "CacheLoader"
-    private val context by lazy {
-        JBusManager.manager.firstOrNull()?.get()?.applicationContext ?: error("not context")
-    }
+
 
     private fun initMemCache(): LruCache<String, String> {
         val memoryInfo = ActivityManager.MemoryInfo()
-        val myActivityManager = context.getSystemService(Activity.ACTIVITY_SERVICE) as ActivityManager
+        val myActivityManager = JBusManager.context.getSystemService(Activity.ACTIVITY_SERVICE) as ActivityManager
         //获得系统可用内存，保存在MemoryInfo对象上
         myActivityManager.getMemoryInfo(memoryInfo)
         val memSize = memoryInfo.availMem.formatFileSize()
@@ -24,7 +23,7 @@ object CacheLoader {
         KLog.t(TAG).d("max availMem = $memSize")
         if (memoryInfo.lowMemory) {
             KLog.w("可能的内存不足")
-            context.toast("当前可用内存:$memSize,请注意释放内存")
+            JBusManager.context.toast("当前可用内存:$memSize,请注意释放内存")
         }
         val cacheSize = if (memoryInfo.availMem > 32 * 1024 * 1024) 4 * 1024 * 1024 else 2 * 1024 * 1024
         KLog.t(TAG).d("max cacheSize = ${cacheSize.toLong().formatFileSize()}")

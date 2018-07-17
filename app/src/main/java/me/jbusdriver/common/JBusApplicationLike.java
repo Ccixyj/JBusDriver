@@ -15,6 +15,8 @@ import com.tencent.tinker.loader.app.DefaultApplicationLike;
 
 import java.io.File;
 
+import me.jbusdriver.base.JBusManager;
+
 public class JBusApplicationLike extends DefaultApplicationLike {
 
     public static final String TAG = "Tinker.JBusApplicationLike";
@@ -33,6 +35,7 @@ public class JBusApplicationLike extends DefaultApplicationLike {
         if (getApplication() instanceof AppContext) {
             AppContextKt.setJBus(((AppContext) getApplication()));
         }
+        JBusManager.INSTANCE.setContext(getApplication());
 
         // 这里实现SDK初始化，appId替换成你的在Bugly平台申请的appId
         // 调试时，将第三个参数改为true

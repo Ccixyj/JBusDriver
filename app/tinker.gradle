@@ -6,7 +6,7 @@ def bakPath = file("${buildDir}/bakApk/")
  * 此处填写每次构建生成的基准包目录
  */
 def flavor = android.productFlavors.names.first().trim()
-def baseApkDir = "app-0604-10-37-44/${flavor}"
+def baseApkDir = "app-0707-17-05-54/${flavor}"
 
 /**
  * 对于插件各参数的详细解析请参考

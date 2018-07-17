@@ -43,10 +43,9 @@ fun <K, V> arrayMapof(): ArrayMap<K, V> = ArrayMap()
 fun Int.toColorInt() = getColor(this)
 
 private fun getColor(id: Int): Int {
-    val ctx = JBusManager.manager.firstOrNull()?.get()?.applicationContext ?: return -1
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        ctx.resources.getColor(id, null)
-    } else ctx.resources.getColor(id)
+        JBusManager.context.resources.getColor(id, null)
+    } else JBusManager.context.resources.getColor(id)
 }
 //endregion
 
