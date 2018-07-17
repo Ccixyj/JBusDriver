@@ -1,3 +1,5 @@
+import java.util.regex.Pattern
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
@@ -99,23 +101,15 @@ def VersionCode() {
 
 //使用git的Tag来自动定制Version
 def VersionName() {
-    def cmd = 'git tag'
+    def cmd = ''' git log --tags --simplify-by-decoration --pretty="format:%d" '''
     def tags = cmd.execute().text.readLines()
-    /* if (tags.size() >= 1) {
-         def version_last = tags.last().trim() //newest
-         cmd = 'git rev-list ' + version_last + '..  --count'
-         if (tags.size() >= 2) {
-             tags.remove(tags.last())
-             def version_last_2 = tags.last().trim() //newest
-             cmd = 'git rev-list ' + version_last_2 + '..' + version_last + '  --count'
-         }
-     } else {
-         cmd = 'git rev-list  --count'
-     }*/
+    logger.quiet(cmd + " >>>> tags  = " + tags)
+    def verName = tags.first().trim().find(Pattern.compile("v[0-9.a-z]+")).substring(1).trim()
+    logger.quiet(cmd + " >>>> verName  = " + verName)
     cmd = 'git rev-list  --all  --count'
     def code = cmd.execute().text.trim().toInteger()
 
-    def versionName = tags.last().trim().replaceAll("[a-zA-Z]", "") + "build" + code
+    def versionName =  verName + "build" + code
     logger.quiet(cmd + " >>>> versionName  = " + versionName)
     return versionName
 }
