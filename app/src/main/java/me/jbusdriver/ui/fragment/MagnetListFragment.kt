@@ -20,6 +20,7 @@ import me.jbusdriver.mvp.MagnetListContract
 import me.jbusdriver.mvp.bean.Magnet
 import me.jbusdriver.mvp.presenter.MagnetListPresenterImpl
 import me.jbusdriver.ui.adapter.BaseAppAdapter
+import me.jbusdriver.ui.data.magnet.MagnetFormatPrefix
 import org.jsoup.Jsoup
 
 class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListPresenter, MagnetListContract.MagnetListView, Magnet>(), MagnetListContract.MagnetListView {
@@ -55,7 +56,7 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListP
                     KLog.d("setOnItemClickListener $magnet")
                     showMagnetLoading()
                     Flowable.just(magnet.link).flatMap { url ->
-                        if (url.startsWith("magnet:?xt")) {
+                        if (url.startsWith(MagnetFormatPrefix)) {
                             Flowable.just(url)
                         } else {
                             Flowable.fromCallable { Jsoup.connect(url).get().select(".content .magnet").text().trim() }

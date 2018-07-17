@@ -92,7 +92,7 @@ class BtdiggsMagnetLoaderImpl : IMagnetLoader {
             val title = href.text()
             val labels = it.select(".attr span")
             Magnet(title, labels.component2().text(), labels.component1().text(),
-                    MagnetFormatPrefix + labels.select("a").last().attr("href").split("/").lastOrNull()?.removeSuffix(".html"))
+                    "http:" + href.attr("href"))
         }
 
     }
