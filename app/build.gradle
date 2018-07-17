@@ -165,13 +165,13 @@ def currentTaskName = taskNames.isEmpty() ? "" : taskNames.first()
 def checkEnable = !currentTaskName.isEmpty() && currentTaskName.toLowerCase().contains("release")
 println "tinker check : currentTaskName =  ${currentTaskName}  is enable : ${checkEnable}"
 
-//if (checkEnable) {
+if (checkEnable) {
     this.rootProject.extensions.appOldVerCode = 258
     this.rootProject.extensions.appOldVerName = "1.2.9build419"
     this.rootProject.extensions.appVerCode = VersionCode()
     this.rootProject.extensions.appVerName = VersionName()
     apply from: 'tinker.gradle'
-//}
+}
 repositories {
     mavenCentral()
 }

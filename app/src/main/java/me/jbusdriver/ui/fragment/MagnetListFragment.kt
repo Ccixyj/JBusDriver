@@ -51,23 +51,30 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListP
             }
 
         }.apply {
+
+            fun tryGetMagnet(url: String): Flowable<String> {
+                return Flowable.just(url).flatMap { url ->
+                    if (url.startsWith(MagnetFormatPrefix)) {
+                        Flowable.just(url)
+                    } else {
+                        Flowable.fromCallable { Jsoup.connect(url).get().select(".content .magnet").text().trim() }
+                                .addUserCase(sec = 6)
+                                .onErrorReturn { url }
+                    }
+                }
+            }
+
             setOnItemClickListener { adapter, _, position ->
                 (adapter.data.getOrNull(position) as? Magnet)?.let { magnet ->
                     KLog.d("setOnItemClickListener $magnet")
                     showMagnetLoading()
-                    Flowable.just(magnet.link).flatMap { url ->
-                        if (url.startsWith(MagnetFormatPrefix)) {
-                            Flowable.just(url)
-                        } else {
-                            Flowable.fromCallable { Jsoup.connect(url).get().select(".content .magnet").text().trim() }
-                                    .addUserCase(sec = 6)
-                                    .onErrorReturn { url }
-                        }
-                    }.compose(SchedulersCompat.io()).subscribeBy {
-                        viewContext.browse(it) {
-                            placeDialogHolder?.dismiss()
-                        }
-                    }.addTo(rxManager)
+                    tryGetMagnet(magnet.link)
+                            .compose(SchedulersCompat.io()).subscribeBy {
+                                this@MagnetListFragment.adapter.setData(position, magnet.copy(link = it))
+                                viewContext.browse(it) {
+                                    placeDialogHolder?.dismiss()
+                                }
+                            }.addTo(rxManager)
 
                 }
 
@@ -77,11 +84,16 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListP
                 (adapter.data.getOrNull(position) as? Magnet)?.let { magnet ->
                     when (view.id) {
                         R.id.iv_magnet_copy -> {
-                            KLog.d("copy $magnet")
-                            view.context.apply {
-                                copy(magnet.link)
-                                toast("复制成功")
-                            }
+
+                            tryGetMagnet(magnet.link).compose(SchedulersCompat.io()).subscribeBy { url->
+                                this@MagnetListFragment.adapter.setData(position, magnet.copy(link = url))
+                                view.context.apply {
+                                    copy(url)
+                                    toast("复制成功")
+                                }
+                                KLog.d("copy value : ${view.context.paste()}")
+                            }.addTo(rxManager)
+
 
                         }
                         else -> Unit
