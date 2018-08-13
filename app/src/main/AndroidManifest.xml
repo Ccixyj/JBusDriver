@@ -17,7 +17,7 @@
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme.NoActionBar">
 
         <!-- 友盟key -->
         <meta-data
@@ -29,13 +29,11 @@
 
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:theme="@android:style/Theme.Translucent" />
+            android:configChanges="keyboardHidden|orientation|screenSize|locale" />
 
         <activity
             android:name="me.jbusdriver.ui.activity.MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:label="@string/app_name" />
         <activity
             android:name="me.jbusdriver.ui.activity.SplashActivity"
             android:theme="@style/AppTheme.Splash">
@@ -45,26 +43,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="me.jbusdriver.ui.activity.MovieDetailActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name="me.jbusdriver.ui.activity.WatchLargeImageActivity"
-            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
-        <activity
-            android:name="me.jbusdriver.ui.activity.MovieListActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name="me.jbusdriver.ui.activity.MovieDetailActivity" />
+        <activity android:name="me.jbusdriver.ui.activity.WatchLargeImageActivity" />
+        <activity android:name="me.jbusdriver.ui.activity.MovieListActivity" />
         <activity
             android:name="me.jbusdriver.ui.activity.SearchResultActivity"
-            android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:launchMode="singleTop" />
         <activity
             android:name="me.jbusdriver.ui.activity.MagnetPagerListActivity"
-            android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name="me.jbusdriver.ui.activity.SettingActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:launchMode="singleTop" />
+        <activity android:name="me.jbusdriver.ui.activity.SettingActivity" />
 
         <service
             android:name="me.jbusdriver.ui.task.CollectService"
@@ -73,8 +61,7 @@
             android:name="me.jbusdriver.ui.task.TrimLikeService"
             android:exported="false" />
 
-        <activity android:name="me.jbusdriver.ui.activity.HotRecommendActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name="me.jbusdriver.ui.activity.HotRecommendActivity" />
     </application>
 
 </manifest>

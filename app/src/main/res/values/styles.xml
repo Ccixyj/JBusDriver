@@ -52,11 +52,6 @@
 
     <style name="AppTheme.Splash" parent="AppTheme.NoActionBar">
         <item name="android:windowBackground">@drawable/bg_splash</item>
-        <item name="android:windowActionBarOverlay">true</item>
     </style>
-
-    <style name="AppTheme.NoActionBar.TransparentStatusBar" parent="AppTheme.NoActionBar">
-    </style>
-
 
 </resources>

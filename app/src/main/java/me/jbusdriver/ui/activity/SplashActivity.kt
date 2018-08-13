@@ -31,6 +31,7 @@ class SplashActivity : BaseActivity() {
     private var urls = arrayMapof<String, String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        immersionBar.transparentBar().init()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
         init()
