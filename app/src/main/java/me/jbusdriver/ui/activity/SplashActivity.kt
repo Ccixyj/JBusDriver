@@ -91,9 +91,10 @@ class SplashActivity : BaseActivity() {
                     .map { source ->
                         //放入内存缓存,更新需要
                         KLog.d("load initUrls from urlsFromUpdateCache $source")
-                        CacheLoader.cacheLru(C.Cache.ANNOUNCE_VALUE to source)
+                        val r = GSON.fromJson<JsonObject>(source) ?: JsonObject()
+                        CacheLoader.cacheLru(C.Cache.ANNOUNCE_VALUE to r)
                         arrayMapof<String, String>().apply {
-                            val availableUrls = GSON.fromJson<JsonObject>(source)?.get("backUp")?.asJsonArray
+                            val availableUrls = r.get("backUp")?.asJsonArray
                             //赋值一个默认的(随机)
                             availableUrls?.let {
                                 it.mapNotNull { it.asString }.shuffled().firstOrNull()?.let {
