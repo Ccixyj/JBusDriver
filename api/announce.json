@@ -9,12 +9,12 @@
     "https://www.busjav.com/"
   ],
   "update": {
-    "versionCode": 262,
-    "versionName": "1.2.10",
+    "versionCode": 273,
+    "versionName": "1.2.11",
     "url": "https://gitee.com/751762476/jbusfile/raw/master/JubsDriver_v1.2.10build437.apk",
-    "desc": "JBusDriver 1.2.10 更新!
-1.修复傻逼btdigg的磁力解析
-
+    "desc": "JBusDriver 1.2.11 更新!
+1.主要修复了恢复备份的问题。
+2.热门推荐功能已经失效，干掉了。
 "
   },
   "notice": {

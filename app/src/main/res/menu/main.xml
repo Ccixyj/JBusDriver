@@ -32,6 +32,7 @@
         android:orderInCategory="101"
         android:title="热门推荐（实验性功能）"
         app:showAsAction="never"
+        android:visible="false"
         />
 
   <!--  <item
