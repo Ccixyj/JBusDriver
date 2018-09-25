@@ -43,7 +43,7 @@ object LinkMenu {
     val linkActions by lazy {
         mapOf("复制" to { link: ILink ->
             KLog.d("copy $link ${link.des}")
-            JBus.copy(link.des.split(" ").last())
+            JBus.copy(link.des.substring(link.des.indexOf(" ").coerceAtLeast(0)))
             JBus.toast("已复制")
         }, "收藏" to { link ->
             CollectModel.addToCollectForCategory(link.convertDBItem())
