@@ -16,3 +16,5 @@ data class PageChangeEvent(val mode: Int)
 class MenuChangeEvent
 
 class CategoryChangeEvent
+
+data class BackUpEvent(val path: String, var total: Int, var index: Int)

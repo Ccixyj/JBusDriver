@@ -34,9 +34,21 @@ class CategoryDao(private val db: BriteDatabase) {
         }
     }
 
-    fun findById(cId: Int): Category {
-        return db.createQuery(CategoryTable.TABLE_NAME, "select * from ${CategoryTable.TABLE_NAME}  where ${CategoryTable.COLUMN_ID} = ?", cId.toString())
-                .mapToOne { toCategory(it) }.timeout(3, TimeUnit.SECONDS).blockingFirst()
+    fun findById(cId: Int): Category? {
+        return db.query("select * from ${CategoryTable.TABLE_NAME}  where ${CategoryTable.COLUMN_ID} = ?", cId.toString())?.let {
+                KLog.d("cursor :$it")
+            if (it.moveToFirst()){
+                return  Category(it.getStringByColumn(CategoryTable.COLUMN_NAME)
+                        ?: "", it.getIntByColumn(CategoryTable.COLUMN_P_ID),
+                        it.getStringByColumn(CategoryTable.COLUMN_TREE) ?: ""
+                ).apply {
+                    id = it.getIntByColumn(CategoryTable.COLUMN_ID)
+                }
+
+            }
+            null
+        }
+
     }
 
     private fun toCategory(it: Cursor): Category {

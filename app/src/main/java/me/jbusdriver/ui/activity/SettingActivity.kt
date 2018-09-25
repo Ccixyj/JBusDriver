@@ -17,6 +17,7 @@ import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import io.reactivex.Flowable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
@@ -25,8 +26,9 @@ import kotlinx.android.synthetic.main.layout_collect_back_edit_item.view.*
 import kotlinx.android.synthetic.main.layout_menu_op_item.view.*
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.BaseActivity
-import me.jbusdriver.common.*
+import me.jbusdriver.common.JBus
 import me.jbusdriver.db.service.LinkService
+import me.jbusdriver.mvp.bean.BackUpEvent
 import me.jbusdriver.mvp.bean.Expand_Type_Head
 import me.jbusdriver.mvp.bean.MenuOp
 import me.jbusdriver.mvp.bean.MenuOpHead
@@ -35,6 +37,7 @@ import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.magnet.MagnetLoaders
 import me.jbusdriver.ui.task.CollectService
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 @SuppressLint("ValidFragment")
 class SettingActivity : BaseActivity() {
@@ -55,6 +58,20 @@ class SettingActivity : BaseActivity() {
         setContentView(R.layout.activity_setting)
         setToolBar()
         initSettingView()
+        RxBus.toFlowable(BackUpEvent::class.java).throttleLast(100, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    tv_collect_backup.text = "正在加载备份${it.path}的第${it.index}/${it.total}个"
+                    if (it.total == it.index) {
+                        tv_collect_backup.text = "点击备份"
+                        tv_collect_backup.isClickable = it.total == it.index
+                    }
+
+                }, {
+
+                    tv_collect_backup.text = "点击备份"
+                    tv_collect_backup.isClickable = true
+                }).addTo(rxManager)
     }
 
     @SuppressLint("ResourceAsColor")

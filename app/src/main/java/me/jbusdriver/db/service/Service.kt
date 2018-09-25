@@ -147,5 +147,13 @@ object LinkService {
         }
     }
 
+    fun saveOrUpdate(back: LinkItem) {
+        val rowId = dao.insert(back) ?: -1
+        if (rowId < 0){
+            dao.update(back)
+        }
+    }
+
+
     fun hasByKey(data: LinkItem) = dao.hasByKey(data)
 }
