@@ -29,7 +29,7 @@ class CollectService : IntentService("CollectService") {
             when (intent.action) {
                 ACTION_COLLECT_MIGRATE -> handleMigrate()
                 ACTION_COLLECT_LOAD -> handleLoadBakUp(File(intent.getStringExtra(ACTION_COLLECT_LOAD)))
-            //  ACTION_COLLECT_BackUP -> handleBakUp(File(intent.getStringExtra(ACTION_COLLECT_BackUP)))
+                //  ACTION_COLLECT_BackUP -> handleBakUp(File(intent.getStringExtra(ACTION_COLLECT_BackUP)))
                 else -> Unit
             }
 
@@ -41,7 +41,7 @@ class CollectService : IntentService("CollectService") {
         if (!file.exists()) return
         try {
             val backs = GSON.fromJson<List<LinkItem>>(file.readText())?.map {
-                if (it.categoryId < 0)  return@map it
+                if (it.categoryId < 0) return@map it
                 if (CategoryService.getById(it.categoryId) == null) {
                     it.getLinkValue().convertDBItem()
                 } else it
@@ -49,6 +49,7 @@ class CollectService : IntentService("CollectService") {
             LinkService.saveOrUpdate(backs.asReversed())
             applicationContext.toast("恢复备份成功")
         } catch (e: Exception) {
+            MobclickAgent.reportError(this@CollectService, e)
             applicationContext.toast("恢复失败,请重新打开app")
         }
 
