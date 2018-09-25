@@ -28,7 +28,7 @@ object CacheLoader {
         val cacheSize = if (memoryInfo.availMem > 32 * 1024 * 1024) 4 * 1024 * 1024 else 2 * 1024 * 1024
         KLog.t(TAG).d("max cacheSize = ${cacheSize.toLong().formatFileSize()}")
         return object : LruCache<String, String>(cacheSize) { //4m
-            override fun entryRemoved(evicted: Boolean, key: String?, oldValue: String?, newValue: String?) {
+            override fun entryRemoved(evicted: Boolean, key: String, oldValue: String, newValue: String?) {
                 KLog.i(String.format("entryRemoved : evicted = %s , key = %20s , oldValue = %30s , newValue = %30s", evicted.toString(), key, oldValue, newValue))
                 if (evicted) oldValue.let { null } ?: oldValue.let { newValue }
             }

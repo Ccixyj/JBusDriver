@@ -43,7 +43,7 @@ class HistoryFragment : AppBaseRecycleFragment<HistoryContract.HistoryPresenter,
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
-        menu.add(Menu.NONE, R.id.cancel_action, 10, "清除历史记录").apply {
+        menu.add(Menu.NONE, Menu.NONE, 10, "清除历史记录").apply {
             setIcon(R.drawable.ic_delete_24dp)
             setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
             setOnMenuItemClickListener {

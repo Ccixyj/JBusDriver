@@ -65,12 +65,10 @@ android {
                     logger.quiet("build release type ...")
                     def vName = VersionName()
                     def vCode = VersionCode()
-                    variant.mergedFlavor.versionName = vName
-                    variant.mergedFlavor.versionCode = vCode
                     variant.outputs.all { output ->
                         output.setVersionNameOverride(vName)
                         output.setVersionCodeOverride(vCode)
-                        outputFileName = "JubsDriver[v${variant.versionName}]_(code_${variant.versionCode}).apk"
+                        outputFileName = "JubsDriver[v${output.versionNameOverride}]_(code_${output.versionCodeOverride}).apk"
                     }
                 }
 
