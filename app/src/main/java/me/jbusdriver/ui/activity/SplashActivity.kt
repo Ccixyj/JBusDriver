@@ -18,7 +18,6 @@ import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.BaseActivity
 import me.jbusdriver.base.common.C
-import me.jbusdriver.base.CacheLoader
 import me.jbusdriver.http.GitHub
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.enums.DataSourceType
@@ -29,6 +28,7 @@ import org.jsoup.Jsoup
 class SplashActivity : BaseActivity() {
 
     private var urls = arrayMapof<String, String>()
+    private var baseXyzUrl = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         immersionBar.transparentBar().init()
@@ -95,6 +95,8 @@ class SplashActivity : BaseActivity() {
                         val r = GSON.fromJson<JsonObject>(source) ?: JsonObject()
                         CacheLoader.cacheLru(C.Cache.ANNOUNCE_VALUE to r)
                         arrayMapof<String, String>().apply {
+                            baseXyzUrl = r.get("xyz")?.asString?.removeSuffix("/").orEmpty()
+
                             val availableUrls = r.get("backUp")?.asJsonArray
                             //赋值一个默认的(随机)
                             availableUrls?.let {
@@ -136,9 +138,17 @@ class SplashActivity : BaseActivity() {
                         urls[DataSourceType.CENSORED.key] = it.first
 
                         //change xyz
-                        urls[DataSourceType.XYZ_ACTRESSES.key] = urls[DataSourceType.XYZ_ACTRESSES.key]?.replace("org", "xyz")
-                        urls[DataSourceType.XYZ.key] = urls[DataSourceType.XYZ.key]?.replace("org", "xyz")
-                        urls[DataSourceType.XYZ_GENRE.key] = urls[DataSourceType.XYZ_GENRE.key]?.replace("org", "xyz")
+                        if (baseXyzUrl.isNotBlank()) {
+                            urls[DataSourceType.XYZ.key] = baseXyzUrl
+                                urls[DataSourceType.XYZ_ACTRESSES.key] = "$baseXyzUrl/actresses"
+                            urls[DataSourceType.XYZ_GENRE.key] = "$baseXyzUrl/genre"
+                        } else {
+                            val baseUrlSuffix = urls[DataSourceType.XYZ.key]?.substringAfterLast(".").orEmpty()
+                            urls[DataSourceType.XYZ.key] = urls[DataSourceType.XYZ.key]?.replace(baseUrlSuffix, "xyz")
+                            urls[DataSourceType.XYZ_ACTRESSES.key] = urls[DataSourceType.XYZ_ACTRESSES.key]?.replace(baseUrlSuffix, "xyz")
+                            urls[DataSourceType.XYZ_GENRE.key] = urls[DataSourceType.XYZ_GENRE.key]?.replace(baseUrlSuffix, "xyz")
+                        }
+
 
 
                         CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to urls, C.Cache.DAY * 2) //缓存所有的urls

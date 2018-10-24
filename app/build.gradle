@@ -37,7 +37,7 @@ android {
                 if (System.getenv("KEYSTORE_FILE") != null) {
                     storeFile = file(System.getenv("KEYSTORE_FILE"))
                     storePassword = System.getenv("KEYSTORE_PWD")
-                    keyAlias = System.getenv("KEYSTORE_ALIAS")
+                    keyAlias = System.getenv("KEYSTOREmultiDexEnabled _ALIAS")
                     keyPassword = System.getenv("KEYSTORE_ALIAS_PWD")
                 } else {
                     throw GradleException("You should define KEYSTORE_PASSWORD and KEY_PASSWORD in gradle.properties.")

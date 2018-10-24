@@ -1,15 +1,11 @@
 package me.jbusdriver.ui.fragment
 
-import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
-import android.support.v4.graphics.ColorUtils
-import android.support.v4.graphics.drawable.DrawableCompat
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import io.reactivex.Flowable
@@ -144,16 +140,17 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         (tempSaveBundle.getSerializable("temp:IAttr") as? IAttr)?.let {
             adapter.addHeaderView(getMovieAttrView(it))
             //init state
-            (link as? ActressInfo)?.let { act ->
-                val likeKey = act.name + act.avatar.urlPath + "_like"
-                Flowable.fromCallable {
-                    RecommendModel.getLikeCount(likeKey)
-                }.map {
-                    Math.min(it, 3)
-                }.subscribe {
-                    changeLikeIcon(it)
-                }.addTo(rxManager)
-            }
+            //todo remove it next release
+//            (link as? ActressInfo)?.let { act ->
+//                val likeKey = act.name + act.avatar.urlPath + "_like"
+//                Flowable.fromCallable {
+//                    RecommendModel.getLikeCount(likeKey)
+//                }.map {
+//                    Math.min(it, 3)
+//                }.subscribe {
+//                    changeLikeIcon(it)
+//                }.addTo(rxManager)
+//            }
         }
         KLog.d("tempSaveBundle add : ${data.size}")
         super.showContents(data)
@@ -257,13 +254,14 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
     }
 
 
+    @Deprecated("not user any more")
     fun changeLikeIcon(count: Int) {
-        KLog.d("changeLikeIcon :$count")
-        adapter.getHeaderLayout().findViewById<ImageView>(R.id.iv_like_it)?.apply {
-            this.setImageDrawable(resources.getDrawable(R.drawable.ic_love_sel))
-            DrawableCompat.setTint(this.drawable,
-                    ColorUtils.blendARGB(R.color.colorAccent.toColorInt(), Color.parseColor("#e91e63"), count / 3f))
-        }
+//        KLog.d("changeLikeIcon :$count")
+//        adapter.getHeaderLayout().findViewById<ImageView>(R.id.iv_like_it)?.apply {
+//            this.setImageDrawable(resources.getDrawable(R.drawable.ic_love_sel))
+//            DrawableCompat.setTint(this.drawable,
+//                    ColorUtils.blendARGB(R.color.colorAccent.toColorInt(), Color.parseColor("#e91e63"), count / 3f))
+//        }
     }
 
     /*================================================*/
