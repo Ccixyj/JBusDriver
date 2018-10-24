@@ -14,7 +14,6 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.gyf.barlibrary.ImmersionBar
@@ -58,16 +57,18 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         setSupportActionBar(toolbar)
         val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener {
-            if (movie != null) {
-                MaterialDialog.Builder(it.context).title("推荐这部影片")
-                        .input("说的什么吧！", null, true) { _, str ->
-                            KLog.d("input call back : $str")
-                            mBasePresenter?.likeIt(movie!!, str.toString())
-                        }.positiveText("发送").show()
-            }
-
-
+            //todo remove next release
+//            if (movie != null) {
+//                MaterialDialog.Builder(it.context).title("推荐这部影片")
+//                        .input("说的什么吧！", null, true) { _, str ->
+//                            KLog.d("input call back : $str")
+//                            mBasePresenter?.likeIt(movie!!, str.toString())
+//                        }.positiveText("发送").show()
+//            }
 //            RecommendService.INSTANCE.recommends().compose(SchedulersCompat.io()).subscribe(SimpleSubscriber())
+
+            mBasePresenter?.onRefresh()
+
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = movie?.des

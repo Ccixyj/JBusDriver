@@ -8,6 +8,7 @@ import retrofit2.http.*
 /**
  * Created by Administrator on 2017/4/15 0015.
  */
+@Deprecated("not use any more")
 interface RecommendService {
 
     @GET("v1/api/recommends/{count}")

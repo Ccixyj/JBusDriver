@@ -11,12 +11,13 @@ import android.support.multidex.MultiDex;
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
 import com.tencent.bugly.crashreport.CrashReport;
-import com.tencent.tinker.loader.app.DefaultApplicationLike;
+import com.tencent.tinker.entry.DefaultApplicationLike;
 
 import java.io.File;
 
 import me.jbusdriver.base.JBusManager;
 
+@SuppressWarnings("unused")
 public class JBusApplicationLike extends DefaultApplicationLike {
 
     public static final String TAG = "Tinker.JBusApplicationLike";
@@ -26,7 +27,6 @@ public class JBusApplicationLike extends DefaultApplicationLike {
                                long applicationStartMillisTime, Intent tinkerResultIntent) {
         super(application, tinkerFlags, tinkerLoadVerifyFlag, applicationStartElapsedTime, applicationStartMillisTime, tinkerResultIntent);
     }
-
 
     @Override
     public void onCreate() {

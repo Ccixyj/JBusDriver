@@ -11,7 +11,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
@@ -75,7 +74,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
             R.id.action_add_movie_collect -> {
                 //收藏
                 KLog.d("收藏")
-               CollectModel.addToCollectForCategory(link.convertDBItem()){
+                CollectModel.addToCollectForCategory(link.convertDBItem()) {
                     collectMenu?.isVisible = false
                     removeCollectMenu?.isVisible = true
                 }
@@ -178,16 +177,14 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
                 }
 
 
-
-
-                iv_like_it.setOnClickListener {
-                    MaterialDialog.Builder(it.context).title("演员推荐")
-                            .input("说的什么吧！", null, true) { _, str ->
-                                (link as? ActressInfo)?.let {
-                                    likeIt(it, str.toString())
-                                }
-                            }.positiveText("发送").show()
-                }
+//                iv_like_it.setOnClickListener {
+//                    MaterialDialog.Builder(it.context).title("演员推荐")
+//                            .input("说的什么吧！", null, true) { _, str ->
+//                                (link as? ActressInfo)?.let {
+//                                    likeIt(it, str.toString())
+//                                }
+//                            }.positiveText("发送").show()
+//                }
             }
         }
         else -> error("current not provide for IAttr $data")
@@ -221,6 +218,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         setTextColor(R.color.secondText.toColorInt())
     }
 
+    @Deprecated("not user any more")
     fun likeIt(act: ActressInfo, reason: String?) {
         val likeKey = act.name + act.avatar.urlPath + "_like"
         Flowable.fromCallable {

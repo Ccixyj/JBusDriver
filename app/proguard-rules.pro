@@ -51,7 +51,7 @@
 -keep public class * extends android.preference.Preference
 -keep public class * extends android.view.View
 -keep public class com.android.vending.licensing.ILicensingService
-
+ -keep class android.support.**{*;}
 -keep public class * extends android.support.v4.**
 -keep public class * extends android.support.v7.**
 -keep public class * extends android.support.annotation.**
@@ -182,7 +182,8 @@
 #hotfix
 -dontwarn com.tencent.bugly.**
 -keep public class com.tencent.bugly.**{*;}
--keep class android.support.**{*;}
--keep class com.android.internal.util.Predicate{*;}
+# tinker混淆规则
+-dontwarn com.tencent.tinker.**
+-keep class com.tencent.tinker.** { *; }
 
 #hotfix end

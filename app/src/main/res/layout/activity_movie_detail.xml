@@ -60,7 +60,7 @@
             app:layout_anchor="@id/app_bar"
             app:layout_anchorGravity="bottom|end"
             android:tint="@color/white"
-            app:srcCompat="@drawable/ic_love_sel" />
+            app:srcCompat="@drawable/ic_menu_refresh" />
 
     </android.support.design.widget.CoordinatorLayout>
 </android.support.v4.widget.SwipeRefreshLayout>
