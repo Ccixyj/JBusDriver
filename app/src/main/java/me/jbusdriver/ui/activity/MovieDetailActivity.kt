@@ -27,7 +27,7 @@ import kotlinx.android.synthetic.main.layout_load_magnet.view.*
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.AppBaseActivity
 import me.jbusdriver.base.common.C
-import me.jbusdriver.common.toGlideUrl
+import me.jbusdriver.base.glide.toGlideNoHostUrl
 import me.jbusdriver.mvp.MovieDetailContract
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.model.CollectModel
@@ -227,7 +227,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             //cover fixme
             iv_movie_cover.setOnClickListener { WatchLargeImageActivity.startShow(this, listOf(data.cover) + data.imageSamples.map { it.image }) }
             GlideApp.with(this)
-                    .load(data.cover.toGlideUrl)
+                    .load(data.cover.toGlideNoHostUrl)
                     .centerCrop()
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(DrawableImageViewTarget(iv_movie_cover))

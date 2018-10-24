@@ -15,7 +15,7 @@ import me.jbusdriver.base.GlideApp
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.SchedulersCompat
 import me.jbusdriver.base.SimpleSubscriber
-import me.jbusdriver.common.toGlideUrl
+import me.jbusdriver.base.glide.toGlideNoHostUrl
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.model.CollectModel
@@ -32,7 +32,7 @@ class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseAppAdapter<Ac
 
     override fun convert(holder: BaseViewHolder, item: ActressInfo) {
         KLog.d("ActressInfo :$item")
-        GlideApp.with(holder.itemView.context).asBitmap().load(item.avatar.toGlideUrl)
+        GlideApp.with(holder.itemView.context).asBitmap().load(item.avatar.toGlideNoHostUrl)
                 .error(R.drawable.ic_nowprinting).into(object : BitmapImageViewTarget(holder.getView(R.id.iv_actress_avatar)) {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                         Flowable.just(resource).map {

@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.layout_actress_attr.view.*
 import kotlinx.android.synthetic.main.layout_load_all.view.*
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.C
-import me.jbusdriver.common.toGlideUrl
+import me.jbusdriver.base.glide.toGlideNoHostUrl
 import me.jbusdriver.http.RecommendService
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.*
@@ -165,7 +165,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         is ActressAttrs -> {
             this.viewContext.inflate(R.layout.layout_actress_attr).apply {
                 //img
-                GlideApp.with(this@LinkedMovieListFragment).load(data.imageUrl.toGlideUrl).into(DrawableImageViewTarget(this.iv_actress_avatar))
+                GlideApp.with(this@LinkedMovieListFragment).load(data.imageUrl.toGlideNoHostUrl).into(DrawableImageViewTarget(this.iv_actress_avatar))
                 //title
                 this.ll_attr_container.addView(generateTextView().apply {
                     textSize = 16f

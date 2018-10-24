@@ -15,7 +15,7 @@ import me.jbusdriver.base.KLog
 import me.jbusdriver.base.urlHost
 import me.jbusdriver.base.urlPath
 import me.jbusdriver.base.common.AppBaseRecycleFragment
-import me.jbusdriver.common.toGlideUrl
+import me.jbusdriver.base.glide.toGlideNoHostUrl
 import me.jbusdriver.http.JAVBusService.Companion.defaultFastUrl
 import me.jbusdriver.mvp.HotRecommendContract
 import me.jbusdriver.mvp.bean.ActressInfo
@@ -43,7 +43,7 @@ class RecommendListFragment : AppBaseRecycleFragment<HotRecommendContract.HotRec
 //            val images = defaultImageUrlHosts[if (item.key.img.endsWith("xyz")) "xyz" else "default"]?.map { it +  }
 //                    ?: emptyList()
 //            val image = images.shuffled().firstOrNull() ?: ""
-            Glide.with(viewContext).load(item.key.img.toGlideUrl).into(helper.getView(R.id.iv_recommend_img))
+            Glide.with(viewContext).load(item.key.img.toGlideNoHostUrl).into(helper.getView(R.id.iv_recommend_img))
             helper.setText(R.id.tv_recommend_title, item.key.name)
                     .setText(R.id.tv_reason, if (item.reason?.isNotBlank() == true) "推荐理由：${item.reason}" else "")
                     .setText(R.id.tv_recommend_score, item.score.toString())

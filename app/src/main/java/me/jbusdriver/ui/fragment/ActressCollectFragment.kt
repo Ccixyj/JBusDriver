@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.AppBaseRecycleFragment
-import me.jbusdriver.common.toGlideUrl
+import me.jbusdriver.base.glide.toGlideNoHostUrl
 import me.jbusdriver.db.bean.ActressCategory
 import me.jbusdriver.db.bean.Category
 import me.jbusdriver.db.service.CategoryService
@@ -60,7 +60,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                     -1 -> {
                         val actress = requireNotNull(item.linkBean)
 
-                        GlideApp.with(holder.itemView.context).asBitmap().load(actress.avatar.toGlideUrl)
+                        GlideApp.with(holder.itemView.context).asBitmap().load(actress.avatar.toGlideNoHostUrl)
                                 .error(R.drawable.ic_nowprinting).into(object : BitmapImageViewTarget(holder.getView(R.id.iv_actress_avatar)) {
                             override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                                 Flowable.just(resource).map {

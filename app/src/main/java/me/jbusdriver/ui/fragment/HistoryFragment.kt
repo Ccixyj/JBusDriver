@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.base.GlideApp
 import me.jbusdriver.base.common.AppBaseRecycleFragment
-import me.jbusdriver.common.toGlideUrl
+import me.jbusdriver.base.glide.toGlideNoHostUrl
 import me.jbusdriver.db.bean.History
 import me.jbusdriver.mvp.HistoryContract
 import me.jbusdriver.mvp.bean.*
@@ -79,7 +79,7 @@ class HistoryFragment : AppBaseRecycleFragment<HistoryContract.HistoryPresenter,
 
                 if (img.isNotBlank()) {
                     helper.setVisible(R.id.iv_history_icon, true)
-                    GlideApp.with(mContext).load(img.toGlideUrl).into(helper.getView(R.id.iv_history_icon))
+                    GlideApp.with(mContext).load(img.toGlideNoHostUrl).into(helper.getView(R.id.iv_history_icon))
                 } else {
                     helper.setGone(R.id.iv_history_icon, false)
                 }

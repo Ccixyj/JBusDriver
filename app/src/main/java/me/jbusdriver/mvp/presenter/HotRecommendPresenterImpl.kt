@@ -5,7 +5,7 @@ import android.util.Base64
 import com.bumptech.glide.Glide
 import io.reactivex.rxkotlin.addTo
 import me.jbusdriver.base.*
-import me.jbusdriver.common.toGlideUrl
+import me.jbusdriver.base.glide.toGlideNoHostUrl
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.http.RecommendService
 import me.jbusdriver.mvp.HotRecommendContract
@@ -41,7 +41,7 @@ class HotRecommendPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HotRecomm
                             if (!Uri.parse(bean.key.url).isAbsolute) {
                                 val images = JAVBusService.defaultImageUrlHosts.flatMap { it.value }.map {
                                     mView?.viewContext?.let { c ->
-                                        Glide.with(c).load((it + bean.key.img).toGlideUrl).submit()
+                                        Glide.with(c).load((it + bean.key.img).toGlideNoHostUrl).submit()
                                     }
                                     it + bean.key.img
                                 }.shuffled()

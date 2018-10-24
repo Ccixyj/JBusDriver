@@ -13,7 +13,7 @@ import me.jbusdriver.base.GlideApp
 import me.jbusdriver.base.displayMetrics
 import me.jbusdriver.base.dpToPx
 import me.jbusdriver.base.inflate
-import me.jbusdriver.common.toGlideUrl
+import me.jbusdriver.base.glide.toGlideNoHostUrl
 import me.jbusdriver.mvp.bean.ImageSample
 import me.jbusdriver.ui.activity.WatchLargeImageActivity
 import me.jbusdriver.ui.adapter.BaseAppAdapter
@@ -63,7 +63,7 @@ class ImageSampleHolder(context: Context) : BaseHolder(context) {
         override fun convert(holder: BaseViewHolder, item: ImageSample) {
             weakRef.get()?.apply {
                 holder.getView<ImageView>(R.id.iv_movie_thumb)?.let {
-                    GlideApp.with(this).load(item.thumb.toGlideUrl)
+                    GlideApp.with(this).load(item.thumb.toGlideNoHostUrl)
                             .fitCenter()
                             .placeholder(R.drawable.ic_child_care_black_24dp)
                             .error(R.drawable.ic_child_care_black_24dp)

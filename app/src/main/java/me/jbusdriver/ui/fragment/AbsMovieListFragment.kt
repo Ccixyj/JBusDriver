@@ -13,7 +13,7 @@ import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.C
-import me.jbusdriver.common.toGlideUrl
+import me.jbusdriver.base.glide.toGlideNoHostUrl
 import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.convertDBItem
@@ -131,7 +131,7 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                                 .setText(R.id.tv_movie_code, item.code)
 
 
-                        GlideApp.with(this@AbsMovieListFragment).load(item.imageUrl.toGlideUrl).placeholder(R.drawable.ic_place_holder)
+                        GlideApp.with(this@AbsMovieListFragment).load(item.imageUrl.toGlideNoHostUrl).placeholder(R.drawable.ic_place_holder)
                                 .error(R.drawable.ic_place_holder).centerCrop().into(DrawableImageViewTarget(holder.getView(R.id.iv_movie_img)))
 
 

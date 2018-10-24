@@ -14,7 +14,7 @@ import io.reactivex.rxkotlin.addTo
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_relative_movies.view.*
 import me.jbusdriver.base.*
-import me.jbusdriver.common.toGlideUrl
+import me.jbusdriver.base.glide.toGlideNoHostUrl
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.model.CollectModel
@@ -69,7 +69,7 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
     private val relativeAdapter: BaseQuickAdapter<Movie, BaseViewHolder> by lazy {
         object : BaseAppAdapter<Movie, BaseViewHolder>(R.layout.layout_detail_relative_movies_item) {
             override fun convert(holder: BaseViewHolder, item: Movie) {
-                GlideApp.with(holder.itemView.context).asBitmap().load(item.imageUrl.toGlideUrl).into(object : BitmapImageViewTarget(holder.getView(R.id.iv_relative_movie_image)) {
+                GlideApp.with(holder.itemView.context).asBitmap().load(item.imageUrl.toGlideNoHostUrl).into(object : BitmapImageViewTarget(holder.getView(R.id.iv_relative_movie_image)) {
                     override fun setResource(resource: Bitmap?) {
                         super.setResource(resource)
                         resource?.let {

@@ -27,7 +27,7 @@ import me.jbusdriver.base.http.OnProgressListener
 import me.jbusdriver.base.http.addProgressListener
 import me.jbusdriver.base.http.removeProgressListener
 import me.jbusdriver.common.JBus
-import me.jbusdriver.common.toGlideUrl
+import me.jbusdriver.base.glide.toGlideNoHostUrl
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -142,7 +142,7 @@ class WatchLargeImageActivity : BaseActivity() {
             KLog.d("load $position for ${vp_largeImage.currentItem} offset = $offset : $priority")
             val url = urls[position]
             GlideApp.with(this@WatchLargeImageActivity)
-                    .load(url.toGlideUrl)
+                    .load(url.toGlideNoHostUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.ic_image_error)
                     .fitCenter()

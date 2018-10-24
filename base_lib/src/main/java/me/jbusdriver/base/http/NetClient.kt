@@ -75,7 +75,7 @@ object NetClient {
 
     //endregion
 
-    val okHttpClient by lazy {
+    private val okHttpClient by lazy {
         //设置缓存路径
 
         val client = OkHttpClient.Builder()
@@ -99,7 +99,7 @@ object NetClient {
         client.build()
     }
 
-    val glideOkHttpClient by lazy {
+    val glideOkHttpClient: OkHttpClient by lazy {
         val client = OkHttpClient.Builder()
                 .readTimeout((20 * 1000).toLong(), TimeUnit.MILLISECONDS)
                 .connectTimeout((15 * 1000).toLong(), TimeUnit.MILLISECONDS)
