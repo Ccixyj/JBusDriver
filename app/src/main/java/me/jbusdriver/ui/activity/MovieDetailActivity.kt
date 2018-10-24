@@ -2,14 +2,11 @@ package me.jbusdriver.ui.activity
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.res.ResourcesCompat
-import android.support.v4.graphics.ColorUtils
-import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
@@ -17,20 +14,23 @@ import android.view.View
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.gyf.barlibrary.ImmersionBar
-import io.reactivex.Flowable
-import io.reactivex.rxkotlin.addTo
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_movie_detail.*
 import kotlinx.android.synthetic.main.content_movie_detail.*
 import kotlinx.android.synthetic.main.layout_load_magnet.view.*
-import me.jbusdriver.base.*
+import me.jbusdriver.base.GlideApp
+import me.jbusdriver.base.KLog
 import me.jbusdriver.base.common.AppBaseActivity
 import me.jbusdriver.base.common.C
 import me.jbusdriver.base.glide.toGlideNoHostUrl
+import me.jbusdriver.base.inflate
+import me.jbusdriver.base.urlPath
 import me.jbusdriver.mvp.MovieDetailContract
-import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.mvp.bean.MovieDetail
+import me.jbusdriver.mvp.bean.convertDBItem
+import me.jbusdriver.mvp.bean.des
 import me.jbusdriver.mvp.model.CollectModel
-import me.jbusdriver.mvp.model.RecommendModel
 import me.jbusdriver.mvp.presenter.MovieDetailPresenterImpl
 import me.jbusdriver.ui.holder.*
 
@@ -57,15 +57,6 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         setSupportActionBar(toolbar)
         val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener {
-            //todo remove next release
-//            if (movie != null) {
-//                MaterialDialog.Builder(it.context).title("推荐这部影片")
-//                        .input("说的什么吧！", null, true) { _, str ->
-//                            KLog.d("input call back : $str")
-//                            mBasePresenter?.likeIt(movie!!, str.toString())
-//                        }.positiveText("发送").show()
-//            }
-//            RecommendService.INSTANCE.recommends().compose(SchedulersCompat.io()).subscribe(SimpleSubscriber())
 
             mBasePresenter?.onRefresh()
 
@@ -128,14 +119,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         sr_refresh.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimaryLight)
         sr_refresh.setOnRefreshListener {
             //reload
-            movie?.link?.let {
-                //删除缓存和magnet缓存
-                CacheLoader.acache.remove(it.urlPath)
-                CacheLoader.acache.remove(it.urlPath + "_magnet")
-                //重新加载
-                mBasePresenter?.loadDetail(it)
-                //magnet 不要重新加载
-            }
+            mBasePresenter?.onRefresh()
 
         }
 
@@ -211,18 +195,6 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
         if (data is MovieDetail) {
             //Slide Up Animation
-            KLog.d("date : $data")
-            movie?.let {
-                val likeKey = it.saveKey + "_like"
-                Flowable.fromCallable {
-                    RecommendModel.getLikeCount(likeKey)
-                }.map {
-                    Math.min(it, 3)
-                }.subscribe {
-                    changeLikeIcon(it)
-                }.addTo(rxManager)
-
-            }
 
             supportActionBar?.title = data.title
             //cover fixme
@@ -246,15 +218,6 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             relativeMovieHolder.init(data.relatedMovies)
 
 
-        }
-    }
-
-    override fun changeLikeIcon(likeCount: Int) {
-        KLog.d("changeLikeIcon :$likeCount")
-        findViewById<FloatingActionButton>(R.id.fab)?.apply {
-            this.setImageDrawable(resources.getDrawable(R.drawable.ic_love_sel))
-            DrawableCompat.setTint(this.drawable,
-                    ColorUtils.blendARGB(R.color.white.toColorInt(), Color.parseColor("#e91e63"), likeCount / 3f))
         }
     }
 

@@ -139,18 +139,6 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         // movie attr
         (tempSaveBundle.getSerializable("temp:IAttr") as? IAttr)?.let {
             adapter.addHeaderView(getMovieAttrView(it))
-            //init state
-            //todo remove it next release
-//            (link as? ActressInfo)?.let { act ->
-//                val likeKey = act.name + act.avatar.urlPath + "_like"
-//                Flowable.fromCallable {
-//                    RecommendModel.getLikeCount(likeKey)
-//                }.map {
-//                    Math.min(it, 3)
-//                }.subscribe {
-//                    changeLikeIcon(it)
-//                }.addTo(rxManager)
-//            }
         }
         KLog.d("tempSaveBundle add : ${data.size}")
         super.showContents(data)
@@ -248,21 +236,11 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         }.compose(SchedulersCompat.io()).subscribeWith(object : SimpleSubscriber<Int>() {
             override fun onNext(t: Int) {
                 super.onNext(t)
-                changeLikeIcon(t)
+//                changeLikeIcon(t)
             }
         }).addTo(rxManager)
     }
 
-
-    @Deprecated("not user any more")
-    fun changeLikeIcon(count: Int) {
-//        KLog.d("changeLikeIcon :$count")
-//        adapter.getHeaderLayout().findViewById<ImageView>(R.id.iv_like_it)?.apply {
-//            this.setImageDrawable(resources.getDrawable(R.drawable.ic_love_sel))
-//            DrawableCompat.setTint(this.drawable,
-//                    ColorUtils.blendARGB(R.color.colorAccent.toColorInt(), Color.parseColor("#e91e63"), count / 3f))
-//        }
-    }
 
     /*================================================*/
 

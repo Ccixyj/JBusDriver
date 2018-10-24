@@ -34,15 +34,13 @@ interface MovieDetailContract {
     interface MovieDetailView : BaseView {
         val movie: Movie?
         val url: String?
-        fun changeLikeIcon(likeCount:Int)
 //        fun addMagnet(t: List<Magnet>)
 //        fun initMagnetLoad()
     }
 
     interface MovieDetailPresenter : BasePresenter<MovieDetailView>, BasePresenter.RefreshPresenter {
         fun loadDetail(url:String)
-        @Deprecated("not user any more")
-        fun likeIt(movie:Movie,reason:String? = null)
+
     }
 }
 

@@ -11,12 +11,11 @@
   ],
   "xyz":"https://www.javbus.work",
   "update": {
-    "versionCode": 274,
-    "versionName": "1.2.11",
-    "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/JubsDriver_v1.2.11build455.apk",
-    "desc": "JBusDriver 1.2.11 更新!
-1.主要修复了恢复备份的问题。
-2.热门推荐功能已经失效，干掉了。
+    "versionCode": 281,
+    "versionName": "1.2.12",
+    "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/JubsDriver_v1.2.12build462.apk",
+    "desc": "JBusDriver 1.2.12 更新!
+1.修复欧美数据源问题
 "
   },
   "notice": {

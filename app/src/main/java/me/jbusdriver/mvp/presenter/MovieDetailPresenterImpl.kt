@@ -5,20 +5,14 @@ import io.reactivex.Flowable
 import io.reactivex.FlowableEmitter
 import io.reactivex.rxkotlin.addTo
 import me.jbusdriver.base.*
-import me.jbusdriver.base.CacheLoader
-import me.jbusdriver.base.SchedulersCompat
-import me.jbusdriver.base.SimpleSubscriber
-import me.jbusdriver.db.bean.History
-import me.jbusdriver.db.service.HistoryService
-import me.jbusdriver.http.JAVBusService
-import me.jbusdriver.http.RecommendService
-import me.jbusdriver.mvp.MovieDetailContract
-import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.base.mvp.model.AbstractBaseModel
 import me.jbusdriver.base.mvp.model.BaseModel
-import me.jbusdriver.mvp.model.RecommendModel
+import me.jbusdriver.http.JAVBusService
+import me.jbusdriver.mvp.MovieDetailContract
+import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.mvp.bean.MovieDetail
+import me.jbusdriver.mvp.bean.checkUrl
 import org.jsoup.Jsoup
-import java.util.*
 
 class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenterImpl<MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailPresenter {
 
@@ -55,26 +49,17 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
         super.onFirstLoad()
         val fromUrl = mView?.movie?.link ?: mView?.url ?: error("need url info")
         loadDetail(fromUrl)
-
-        mView?.movie?.let {
-            if (!fromHistory)
-                HistoryService.insert(History(it.DBtype, Date(), it.toJsonString()))
-
-            val likeKey = it.saveKey + "_like"
-            Flowable.fromCallable {
-                RecommendModel.getLikeCount(likeKey)
-            }.map {
-                Math.min(it, 3)
-            }.subscribe {
-                mView?.changeLikeIcon(it)
-            }.addTo(rxManager)
-
-        }
-
     }
 
     override fun onRefresh() {
-
+        mView?.movie?.link?.let {
+            //删除缓存和magnet缓存
+            CacheLoader.acache.remove(it.urlPath)
+            CacheLoader.acache.remove(it.urlPath + "_magnet")
+            //重新加载
+            loadDetail(it)
+            //magnet 不要重新加载
+        }
     }
 
     override fun loadDetail(url: String) {
@@ -99,46 +84,10 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
 
     fun MovieDetail.generateMovie(url: String): Movie {
         val code = headers.first().value.trim()
-        return Movie(title.replace(code, "",true).trim(), this.cover.replace("cover", "thumb").replace("_b", ""),
+        return Movie(title.replace(code, "", true).trim(), this.cover.replace("cover", "thumb").replace("_b", ""),
                 code, headers.component2().value, url)
     }
 
-    override fun likeIt(movie: Movie, reason: String?) {
-        val likeKey = movie.saveKey + "_like"
-        Flowable.fromCallable {
-            RecommendModel.getLikeCount(likeKey)
-        }.flatMap { c ->
-            if (c > 3) {
-                error("一天点赞最多3次")
-            }
-            val uid = RecommendModel.getLikeUID(likeKey)
-            val params = arrayMapof(
-                    "uid" to uid,
-                    "key" to RecommendBean(name = "${movie.code} ${movie.title}", img = movie.imageUrl, url = movie.link).toJsonString()
-            )
-            if (reason.orEmpty().isNotBlank()) {
-                params.put("reason", reason)
-            }
-            RecommendService.INSTANCE.putRecommends(params).map {
-                KLog.d("res : $it")
-                RecommendModel.save(likeKey, uid)
-                it["message"]?.asString?.let {
-                    mView?.viewContext?.toast(it)
-                }
-                return@map Math.min(c + 1, 3)
-            }
-        }.onErrorReturn {
-            it.message?.let {
-                mView?.viewContext?.toast(it)
-            }
-            3
-        }.compose(SchedulersCompat.io()).subscribeWith(object : SimpleSubscriber<Int>() {
-            override fun onNext(t: Int) {
-                super.onNext(t)
-                mView?.changeLikeIcon(t)
-            }
-        }).addTo(rxManager)
-    }
 
     override fun restoreFromState() {
         super.restoreFromState()
