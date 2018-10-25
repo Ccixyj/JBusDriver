@@ -17,4 +17,4 @@ class MenuChangeEvent
 
 class CategoryChangeEvent
 
-data class BackUpEvent(val path: String, var total: Int, var index: Int)
+data class BackUpEvent(var path: String, var total: Int, var index: Int)

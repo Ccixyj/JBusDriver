@@ -9,6 +9,7 @@ import com.google.gson.JsonDeserializer
 import com.orhanobut.logger.Logger
 import java.io.File
 import java.lang.reflect.Modifier.TRANSIENT
+import java.util.*
 
 typealias  KLog = Logger
 
@@ -22,6 +23,8 @@ val GSON by lazy {
         } catch (e: NumberFormatException) {
             return@JsonDeserializer null
         }
+    }).registerTypeAdapter(Date::class.java, JsonDeserializer { json, _, _ ->
+        return@JsonDeserializer Date(json.asJsonPrimitive.asString)
     }).serializeNulls().create()
 }
 
@@ -35,8 +38,6 @@ fun Context.toast(str: String, duration: Int = Toast.LENGTH_LONG) {
     }
 
 }
-
-
 
 
 fun createDir(collectDir: String): String? {
