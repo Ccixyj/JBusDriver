@@ -100,7 +100,6 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
             val next = if (page < pageNum) page + 1 else pageNum
             pageInfo = pageInfo.copy(activePage = page, nextPage = next)
             Flowable.just(pageInfo).map {
-                KLog.d("request page : $it")
                 val start = (pageInfo.activePage - 1) * pageSize
                 val nextSize = start + pageSize
                 val end = if (nextSize <= listData.size) nextSize else listData.size

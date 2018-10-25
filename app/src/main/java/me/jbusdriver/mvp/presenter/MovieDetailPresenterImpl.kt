@@ -18,7 +18,6 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
 
 
     private val loadFromNet = { s: String ->
-        KLog.d("request for : $s")
         JAVBusService.INSTANCE.get(s).addUserCase().map { MovieDetail.parseDetails(Jsoup.parse(it)) }
                 .doOnNext { s.urlPath.let { key -> CacheLoader.cacheDisk(key to it) } }
                 ?: Flowable.empty()

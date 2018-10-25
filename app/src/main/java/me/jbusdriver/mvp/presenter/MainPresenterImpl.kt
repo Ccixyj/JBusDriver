@@ -40,7 +40,7 @@ class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContra
                     mView?.showContent(it)
 
                 }, onError = {
-                    KLog.d("fetchUpdate error ${it.message}")
+                    KLog.w("fetchUpdate error ${it.message}")
                 })
                 .addTo(rxManager)
     }

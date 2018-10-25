@@ -28,7 +28,7 @@ val GSON by lazy {
     }).serializeNulls().create()
 }
 
-private val TOAST: Toast by lazy { Toast.makeText(JBusManager.context, "", Toast.LENGTH_LONG) }
+private val TOAST: Toast by lazy { Toast.makeText(JBusManager.context.applicationContext, "", Toast.LENGTH_LONG) }
 
 fun Context.toast(str: String, duration: Int = Toast.LENGTH_LONG) {
     postMain {

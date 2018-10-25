@@ -82,7 +82,7 @@ object RecommendModel {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            KLog.e("error: $e")
+            KLog.w("error: $e")
         }
     }
 

@@ -15,7 +15,6 @@ import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_menu_op_head.view.*
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
-import me.jbusdriver.base.KLog
 import me.jbusdriver.base.dpToPx
 import me.jbusdriver.base.toast
 import me.jbusdriver.base.common.AppBaseRecycleFragment
@@ -28,7 +27,7 @@ import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.mvp.presenter.LinkCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.activity.SearchResultActivity
-import me.jbusdriver.ui.adapter.BaseAppAdapter
+
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import me.jbusdriver.ui.holder.CollectDirEditHolder
@@ -39,14 +38,13 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
     override val recycleView: RecyclerView by lazy { rv_recycle }
     override val layoutManager: RecyclerView.LayoutManager by lazy { LinearLayoutManager(viewContext) }
     override val adapter: BaseQuickAdapter<CollectLinkWrapper<ILink>, in BaseViewHolder> by lazy {
-        object : BaseAppAdapter<CollectLinkWrapper<ILink>, BaseViewHolder>(null) {
+        object : BaseQuickAdapter<CollectLinkWrapper<ILink>, BaseViewHolder>(null) {
 
             override fun convert(holder: BaseViewHolder, collect: CollectLinkWrapper<ILink>) {
                 when (holder.itemViewType) {
                     -1 -> {
                         val item = requireNotNull(collect.linkBean)
                         val des = item.des.split(" ")
-                        KLog.d("des ${des.joinToString(",")}")
                         holder.getView<TextView>(R.id.tv_head_value)?.apply {
                             setTextColor(ResourcesCompat.getColor(this@apply.resources, R.color.colorPrimaryDark, null))
                             paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
@@ -59,7 +57,6 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
 
                     }
                     else -> {
-                        KLog.d("type item $collect")
                         setFullSpan(holder)
                         holder.setText(R.id.tv_nav_menu_name, " ${if (collect.isExpanded) "👇" else "👆"} " + collect.category.name)
                     }
@@ -69,7 +66,6 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
             setOnItemClickListener { _, view, position ->
                 val data = this@LinkCollectFragment.adapter.getData().getOrNull(position)
                         ?: return@setOnItemClickListener
-                KLog.d("click data : ${data.isExpanded} ; ${adapter.getData().size} ${adapter.getData()}")
                 data.linkBean?.let {
                     if (it is SearchLink) {
                         SearchResultActivity.start(viewContext, it.query)
@@ -92,11 +88,9 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
                             val last = all - category
                             if (last.isNotEmpty()) {
                                 action.put("移到分类...") { link ->
-                                    KLog.d("移到分类 : $last")
                                     MaterialDialog.Builder(viewContext).title("选择目录")
                                             .items(last.map { it.name })
                                             .itemsCallbackSingleChoice(-1) { _, _, w, _ ->
-                                                KLog.d("选择 : $w")
                                                 last.getOrNull(w)?.let {
                                                     mBasePresenter?.setCategory(link, it)
                                                     mBasePresenter?.onRefresh()
@@ -141,7 +135,6 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
 
             holder.showDialogWithData(mBasePresenter?.collectGroupMap?.keys?.toList()
                     ?: emptyList()) { delActionsParams, addActionsParams ->
-                KLog.d("$delActionsParams $addActionsParams")
                 if (delActionsParams.isNotEmpty()) {
                     delActionsParams.forEach {
                         try {
@@ -165,7 +158,6 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
 
 
     override fun showContents(data: List<*>) {
-        KLog.d("showContents $data")
         mBasePresenter?.let { p ->
             p.adapterDelegate.needInjectType.onEach {
                 if (it == -1) p.adapterDelegate.registerItemType(it, R.layout.layout_header_item) //默认注入类型0，即actress

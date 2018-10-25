@@ -31,43 +31,18 @@ abstract class BaseActivity : AppCompatActivity() {
         MobclickAgent.setScenarioType(this, MobclickAgent.EScenarioType.E_UM_NORMAL)
     }
 
-    override fun onStart() {
-        super.onStart()
-        KLog.t(TAG).d("onStart")
-    }
 
-    override fun onRestart() {
-        super.onRestart()
-        KLog.t(TAG).d("onRestart")
-    }
 
     override fun onResume() {
         super.onResume()
         MobclickAgent.onResume(this)
-        KLog.t(TAG).d("onResume")
     }
 
-    override fun onPostResume() {
-        super.onPostResume()
-        KLog.t(TAG).d("onPostResume")
-    }
 
     override fun onPause() {
         super.onPause()
         MobclickAgent.onPause(this)
-        KLog.t(TAG).d("onPause")
     }
-
-    override fun onStop() {
-        super.onStop()
-        KLog.t(TAG).d("onStop")
-    }
-
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
-        KLog.t(TAG).d("onSaveInstanceState $outState")
-    }
-
 
     override fun onDestroy() {
         super.onDestroy()

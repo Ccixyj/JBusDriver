@@ -29,7 +29,6 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
     private val link by lazy {
         val link = arguments?.getSerializable(C.BundleKey.Key_1)  as? ILink
                 ?: error("no link data ")
-        KLog.i("link data : $link")
         link
     }
 
@@ -37,7 +36,6 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
         arguments?.getSerializable(ACTRESS_LIST_DATA_TYPE) as? DataSourceType ?: let {
             (arguments?.getSerializable(C.BundleKey.Key_1) as? ILink)?.let { link ->
                 val path = link.link.urlPath
-                KLog.d("link data urlPath :$path ")
                 val type = when {
                     link.link.urlHost.endsWith("xyz") -> {
                         //xyz
@@ -72,7 +70,6 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
                     }
 
                 }
-                KLog.d("link data type :$type ")
                 type
 
             } ?: DataSourceType.CENSORED
@@ -122,7 +119,6 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
         when (id) {
             R.id.action_add_movie_collect -> {
                 //收藏
-                KLog.d("收藏")
                 CollectModel.addToCollectForCategory(link.convertDBItem()) {
                     collectMenu?.isVisible = false
                     removeCollectMenu?.isVisible = true
@@ -130,7 +126,6 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
             }
             R.id.action_remove_movie_collect -> {
                 //取消收藏
-                KLog.d("取消收藏")
                 if (CollectModel.removeCollect(link.convertDBItem())) {
                     collectMenu?.isVisible = true
                     removeCollectMenu?.isVisible = false

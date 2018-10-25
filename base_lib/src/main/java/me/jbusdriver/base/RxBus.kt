@@ -7,7 +7,6 @@ object RxBus {
     private val mBus = PublishRelay.create<Any>().toSerialized()
 
     fun post(obj: Any) {
-        KLog.d("post event $obj")
         mBus.accept(obj)
     }
 

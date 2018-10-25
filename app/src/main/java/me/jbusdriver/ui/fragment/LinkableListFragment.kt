@@ -46,7 +46,6 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
     private fun bindRx() {
         RxBus.toFlowable(PageChangeEvent::class.java)
                 .subscribeBy(onNext = {
-                    KLog.d("PageChangeEvent $it")
                     activity?.invalidateOptionsMenu() //刷新菜单
                     mBasePresenter?.onRefresh()
                 }).addTo(rxManager)
@@ -69,7 +68,6 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
 
             mSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String): Boolean {
-                    KLog.i("search >> $query")
                     if (TextUtils.isEmpty(query)) viewContext.toast("关键字不能为空!")
                     gotoSearchResult(query)
 
@@ -84,7 +82,6 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
         super.onPrepareOptionsMenu(menu) //menu before show
-        KLog.d("onPrepareOptionsMenu ${AppConfiguration.pageMode}")
         menu?.findItem(R.id.action_show_all)?.isChecked = tempSaveBundle.getBoolean(MENU_SHOW_ALL, false)
         menu?.findItem(R.id.action_jump)?.let {
             it.isVisible = AppConfiguration.pageMode == AppConfiguration.PageMode.Page
@@ -114,7 +111,6 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
                 }
             }
             R.id.action_recommend -> {
-                KLog.d("action_recommend")
                 HotRecommendActivity.start(this.viewContext)
             }
         }
@@ -157,7 +153,7 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
                     this.requestLayout()
                 }
             } catch (e: Exception) {
-                KLog.e("error :$e")
+                KLog.w("error :$e")
             }
         }
         MaterialDialog.Builder(viewContext).customView(seekView, false)
@@ -175,8 +171,7 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
 
     private fun showEditDialog(info: PageInfo) {
         MaterialDialog.Builder(viewContext).title("输入页码:")
-                .input("输入跳转页码", null, false, { dialog, input ->
-                    KLog.d("page $input")
+                .input("输入跳转页码", null, false) { dialog, input ->
                     input.toString().toIntOrNull()?.let {
                         if (it < 1) {
                             viewContext.toast("必须输入大于0的整数!")
@@ -187,7 +182,7 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
                     } ?: let {
                         viewContext.toast("必须输入数字!")
                     }
-                })
+                }
                 .autoDismiss(false)
                 .inputType(InputType.TYPE_CLASS_NUMBER)
                 .neutralText("选择页码").onNeutral { dialog, _ ->

@@ -36,7 +36,6 @@ class BTSOWMagnetLoaderImpl : IMagnetLoader {
 
     override fun loadMagnets(key: String, page: Int): List<Magnet> {
         val url = search.format(key.trim(), page)
-        KLog.d("loadMagnets $url")
         val doc = Jsoup.connect(url).get()
         val dataNodes = doc.select(".btsowlist .row")
         hasNexPage = (doc.select(".pagination a").lastOrNull()?.attr("href")?.split("/")
@@ -84,7 +83,6 @@ class BtdiggsMagnetLoaderImpl : IMagnetLoader {
     private fun encode(string: String) = Base64.encodeToString(string.toByteArray(), Base64.NO_PADDING or Base64.URL_SAFE)
 
     override fun loadMagnets(key: String, page: Int): List<Magnet> {
-        KLog.d("loadMagnets ${search.format(encode(key).trim(), page)}")
         val doc = Jsoup.connect(search.format(encode(key).trim(), page)).get()
         hasNexPage = doc.select(".page-split :last-child[title]").size > 0
         return doc.select(".list dl").map {

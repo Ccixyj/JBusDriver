@@ -56,7 +56,6 @@ class RecommendListFragment : AppBaseRecycleFragment<HotRecommendContract.HotRec
     override fun initWidget(rootView: View) {
         super.initWidget(rootView)
         adapter.setOnLoadMoreListener({
-            KLog.d("onLoadMore")
             mBasePresenter?.onLoadMore()
 
         }, recycleView)
@@ -71,8 +70,6 @@ class RecommendListFragment : AppBaseRecycleFragment<HotRecommendContract.HotRec
         })
         adapter.setOnItemClickListener { _, view, position ->
             adapter.getItem(position)?.let {
-                KLog.d(it.key)
-//                val image = defaultImageUrlHosts[if (it.key.img.endsWith("xyz")) "xyz" else "default"]?.map { h -> h + it.key.img } ?: emptyList()
                 val xyz = it.key.url.urlHost.endsWith("xyz")
                 val needChange = !xyz && it.key.url.urlHost != defaultFastUrl
                 val url = if (needChange) defaultFastUrl + it.key.url.urlPath else it.key.url

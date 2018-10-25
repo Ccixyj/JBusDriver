@@ -19,7 +19,7 @@ import me.jbusdriver.base.common.C
 import me.jbusdriver.mvp.MagnetListContract
 import me.jbusdriver.mvp.bean.Magnet
 import me.jbusdriver.mvp.presenter.MagnetListPresenterImpl
-import me.jbusdriver.ui.adapter.BaseAppAdapter
+
 import me.jbusdriver.ui.data.magnet.MagnetFormatPrefix
 import org.jsoup.Jsoup
 
@@ -40,10 +40,9 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListP
 
     override val adapter: BaseQuickAdapter<Magnet, in BaseViewHolder> by lazy {
 
-        object : BaseAppAdapter<Magnet, BaseViewHolder>(R.layout.layout_magnet_item) {
+        object : BaseQuickAdapter<Magnet, BaseViewHolder>(R.layout.layout_magnet_item) {
 
             override fun convert(helper: BaseViewHolder, item: Magnet) {
-                KLog.d("convert $item")
                 helper.setText(R.id.tv_magnet_title, item.name)
                         .setText(R.id.tv_magnet_date, item.date)
                         .setText(R.id.tv_magnet_size, item.size)
@@ -66,7 +65,6 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListP
 
             setOnItemClickListener { adapter, _, position ->
                 (adapter.data.getOrNull(position) as? Magnet)?.let { magnet ->
-                    KLog.d("setOnItemClickListener $magnet")
                     showMagnetLoading()
                     tryGetMagnet(magnet.link)
                             .compose(SchedulersCompat.io()).subscribeBy {
@@ -91,7 +89,6 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListContract.MagnetListP
                                     copy(url)
                                     toast("复制成功")
                                 }
-                                KLog.d("copy value : ${view.context.paste()}")
                             }.addTo(rxManager)
 
 

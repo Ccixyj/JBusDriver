@@ -34,7 +34,6 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
     private val link by lazy {
         val link = arguments?.getSerializable(C.BundleKey.Key_1)  as? ILink
                 ?: error("no link data ")
-        KLog.i("link data : $link")
         link
     }
 
@@ -69,7 +68,6 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         when (id) {
             R.id.action_add_movie_collect -> {
                 //收藏
-                KLog.d("收藏")
                 CollectModel.addToCollectForCategory(link.convertDBItem()) {
                     collectMenu?.isVisible = false
                     removeCollectMenu?.isVisible = true
@@ -77,7 +75,6 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
             }
             R.id.action_remove_movie_collect -> {
                 //取消收藏
-                KLog.d("取消收藏")
                 val res = CollectModel.removeCollect(link.convertDBItem())
                 if (res) {
                     collectMenu?.isVisible = true
@@ -130,7 +127,6 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
 
     override fun showContents(data: List<*>) {
         adapter.removeAllHeaderView()
-        KLog.d("tempSaveBundle : $tempSaveBundle")
         //load all
         tempSaveBundle.getString("temp:load:all")?.let {
             getLoadAllView(it)?.let { adapter.addHeaderView(it) }
@@ -140,7 +136,6 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         (tempSaveBundle.getSerializable("temp:IAttr") as? IAttr)?.let {
             adapter.addHeaderView(getMovieAttrView(it))
         }
-        KLog.d("tempSaveBundle add : ${data.size}")
         super.showContents(data)
 
     }
@@ -221,7 +216,6 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
                 params.put("reason", reason)
             }
             RecommendService.INSTANCE.putRecommends(params).map {
-                KLog.d("res : $it")
                 RecommendModel.save(likeKey, uid)
                 it["message"]?.asString?.let {
                     viewContext.toast(it)

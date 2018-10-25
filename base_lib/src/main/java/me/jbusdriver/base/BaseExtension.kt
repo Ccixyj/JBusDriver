@@ -121,7 +121,6 @@ val Context.spanCount: Int
  * @param content
  */
 fun Context.copy(content: String) {
-    KLog.d("copy : $content")
     // 得到剪贴板管理器
     val cmb = this.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     cmb.primaryClip = ClipData.newPlainText(null, content)

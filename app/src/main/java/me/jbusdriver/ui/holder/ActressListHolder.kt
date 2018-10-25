@@ -24,7 +24,6 @@ class ActressListHolder(context: Context) : BaseHolder(context) {
                 rv_recycle_actress.isNestedScrollingEnabled = true
                 actressAdapter.setOnItemClickListener { _, _, position ->
                     actressAdapter.data.getOrNull(position)?.let { item ->
-                        KLog.d("item : $it")
                         weakRef.get()?.let {
                             MovieListActivity.start(it, item)
                         }

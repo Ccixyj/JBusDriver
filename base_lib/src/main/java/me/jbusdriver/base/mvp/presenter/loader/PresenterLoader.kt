@@ -54,7 +54,6 @@ class PresenterLoader<T : BasePresenter<*>>
 
 
     override fun onReset() {
-        KLog.d("PresenterLoader: current SPresenter $presenter destroy")
         presenter?.onPresenterDestroyed()
         presenter = null
     }

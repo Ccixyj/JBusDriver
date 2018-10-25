@@ -51,7 +51,6 @@ class CollectService : IntentService("CollectService") {
             }
             RxBus.post(event)
             all.asReversed().forEachIndexed { index, linkItem ->
-                KLog.d("mapIndexed $index $linkItem")
 
                 RxBus.post(event.apply {
                     this.total = s
@@ -84,7 +83,6 @@ class CollectService : IntentService("CollectService") {
     }
 
     private fun handleMigrate() {
-        KLog.d("handleMigrate")
         try {
             val pathSuffix = File.separator + "collect" + File.separator
             var cacheDir = File(Environment.getExternalStorageDirectory().absolutePath + File.separator + JBus.packageName + pathSuffix)
@@ -94,7 +92,7 @@ class CollectService : IntentService("CollectService") {
             //迁移可能存在的
             migrate(cacheDir)
         } catch (e: Exception) {
-            KLog.d("error happen : $e")
+            KLog.w("error happen : $e")
             MobclickAgent.reportError(this, e)
         }
     }
@@ -119,7 +117,7 @@ class CollectService : IntentService("CollectService") {
                 KLog.d("need migrate $data")
                 LinkService.saveOrUpdate(data.map { it.convertDBItem() }.asReversed())
             } catch (e: Exception) {
-                KLog.d("error happen : $e")
+                KLog.w("error happen : $e")
                 MobclickAgent.reportError(this, e)
             }
         }
@@ -153,7 +151,6 @@ private object ILinkAdapter : JsonSerializer<ILink>, JsonDeserializer<ILink> {
     private const val INSTANCE = "LINK_INSTANCE"
 
     override fun serialize(src: ILink, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
-        KLog.d("ILinkAdapter  serialize  $typeOfSrc $src ")
         val retValue = JsonObject()
         val className = src.javaClass.name
         retValue.addProperty(CLASSNAME, className)
@@ -163,7 +160,6 @@ private object ILinkAdapter : JsonSerializer<ILink>, JsonDeserializer<ILink> {
     }
 
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ILink {
-        KLog.d("ILinkAdapter  deserialize $typeOfT $json ")
         val jsonObject = json.asJsonObject
         val className = jsonObject.get(CLASSNAME)?.asString
                 ?: throw error("$json cant not find property $CLASSNAME")

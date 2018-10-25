@@ -111,14 +111,12 @@ class SettingActivity : BaseActivity() {
             adapter.expand(data.indexOf(it))
         }
         adapter.setOnItemClickListener { _, view, position ->
-            KLog.d("MenuOpAdapter : setOnItemClickListener ${data[position]}")
             (adapter.data.getOrNull(position) as? MenuOp)?.let {
                 view.cb_nav_menu?.let { cb ->
                     //添加设置
                     synchronized(cb) {
                         cb.isChecked = !cb.isChecked
                         menuOpValue[it.name] = cb.isChecked
-                        KLog.d("menuConfig ${menuOpValue.filter { it.value }}")
                     }
                 }
             }
@@ -153,7 +151,6 @@ class SettingActivity : BaseActivity() {
                     }.alwaysCallMultiChoiceCallback()
                     .itemsDisabledIndices(*disables)
                     .dismissListener {
-                        KLog.d("dismissListener : $it")
                         //保存
                         AppConfiguration.saveMagnetKeys()
                         tv_magnet_source.text = AppConfiguration.MagnetKeys.joinToString(separator = "   ")
@@ -195,7 +192,6 @@ class SettingActivity : BaseActivity() {
         Flowable.fromCallable { backDir }
                 .map {
                     val list = it.walk().maxDepth(1).filter {
-                        KLog.d("filter ${it.name} : ${it.name.contains("backup.+json".toRegex())}")
                         it.isFile && it.name.contains("backup.+json".toRegex())
                     }.toList()
                     if (list.isEmpty()) {
@@ -230,7 +226,6 @@ class SettingActivity : BaseActivity() {
                                             setSpan(ForegroundColorSpan(R.color.secondText.toColorInt()), 0, date.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                                         })
                                 tv_backup_load.setOnClickListener {
-                                    KLog.d("load back up ${file.name}")
                                     MaterialDialog.Builder(viewContext)
                                             .title("加载备份")
                                             .content("${file.name}\n注意:相同文件会被覆盖")
@@ -244,7 +239,6 @@ class SettingActivity : BaseActivity() {
 
                                 }
                                 tv_backup_delete.setOnClickListener {
-                                    KLog.d("delete back up ${file.name}")
                                     MaterialDialog.Builder(viewContext)
                                             .title("注意")
                                             .content("确定要删除${file.name}吗?")
@@ -264,7 +258,6 @@ class SettingActivity : BaseActivity() {
                 }.compose(SchedulersCompat.single())
                 .subscribeBy {
                     it.forEach {
-                        KLog.d("load : $it")
                         ll_collect_backup_files.addView(it)
                     }
                 }

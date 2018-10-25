@@ -6,6 +6,7 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
 import com.bumptech.glide.request.target.DrawableImageViewTarget
+import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_image_samples.view.*
@@ -16,7 +17,7 @@ import me.jbusdriver.base.inflate
 import me.jbusdriver.base.glide.toGlideNoHostUrl
 import me.jbusdriver.mvp.bean.ImageSample
 import me.jbusdriver.ui.activity.WatchLargeImageActivity
-import me.jbusdriver.ui.adapter.BaseAppAdapter
+
 import me.jbusdriver.ui.adapter.GridSpacingItemDecoration
 
 
@@ -59,7 +60,7 @@ class ImageSampleHolder(context: Context) : BaseHolder(context) {
     }
 
 
-    private val imageSampleAdapter = object : BaseAppAdapter<ImageSample, BaseViewHolder>(R.layout.layout_image_sample_item) {
+    private val imageSampleAdapter = object : BaseQuickAdapter<ImageSample, BaseViewHolder>(R.layout.layout_image_sample_item) {
         override fun convert(holder: BaseViewHolder, item: ImageSample) {
             weakRef.get()?.apply {
                 holder.getView<ImageView>(R.id.iv_movie_thumb)?.let {

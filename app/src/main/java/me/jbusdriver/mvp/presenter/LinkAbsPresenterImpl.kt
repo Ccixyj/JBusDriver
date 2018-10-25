@@ -60,7 +60,6 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
     override val model: BaseModel<Int, Document> = object : BaseModel<Int, Document> {
         override fun requestFor(t: Int) =
                 (if (t == 1) linkData.link else "${linkData.link.urlHost}$urlPath/$t").let {
-                    KLog.i("fromCallable page $pageInfo requestFor : $it")
                     JAVBusService.INSTANCE.get(it, if (IsAll) "all" else null).addUserCase().map { Jsoup.parse(it) }
                 }.doOnNext {
                     if (t == 1) CacheLoader.lru.put("${linkData.link}$IsAll", it.toString())
@@ -85,7 +84,6 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
     }
 
     override fun jumpToPage(page: Int) {
-        KLog.i("jumpToPage $page ($lastPage)in $dataPageCache")
         if (page >= 1) {
             pageInfo = pageInfo.copy(activePage = page, nextPage = page)
 //            if (page > lastPage) {
@@ -135,7 +133,6 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
         try {
             when (mView?.pageMode) {
                 AppConfiguration.PageMode.Page -> {
-                    KLog.i("doAddData page Ino $dataPageCache ${pageInfo.hashCode()} $t")
                     reachableMaxPage = Math.max(reachableMaxPage, pageInfo.referPages.lastOrNull()
                             ?: 1)
 
@@ -201,7 +198,6 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
     override val currentPageInfo: PageInfo
         get() {
             //   lock.readLock().lock()
-            KLog.d("last last $lastPage : $pageInfo ")
             return pageInfo.copy(activePage = Math.max(1, pageInfo.activePage), referPages = (1..reachableMaxPage).toList()).apply {
                 // lock.readLock().unlock()
             }
