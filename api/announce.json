@@ -18,9 +18,9 @@
     ]
   },
   "update": {
-    "versionCode": 288,
+    "versionCode": 289,
     "versionName": "1.2.13",
-    "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/JubsDriver_v1.2.13build472.apk",
+    "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/JubsDriver_v1.2.13build473.apk",
     "desc": "JBusDriver 1.2.13 更新!\r\n 1.修复欧美数据收藏的问题\r\n 2.优化收藏数据量较大时卡顿的问题"
   },
   "notice": {
