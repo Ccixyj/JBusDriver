@@ -80,7 +80,6 @@ val PageInfo.hasNext
 data class SearchLink(val type: SearchType, var query: String) : ILink {
     @Transient
     override var categoryId: Int = LinkCategory.id ?: 10
-        set(value) {}
     override val link: String
         get() = "${JAVBusService.defaultFastUrl}${type.urlPathFormater.format(query)}"
 

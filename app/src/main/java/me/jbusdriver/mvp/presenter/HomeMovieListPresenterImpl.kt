@@ -4,14 +4,10 @@ import android.support.v4.util.ArrayMap
 import io.reactivex.Flowable
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.C
-import me.jbusdriver.base.CacheLoader
-import me.jbusdriver.http.JAVBusService
-import me.jbusdriver.mvp.bean.ILink
-import me.jbusdriver.mvp.bean.Movie
-import me.jbusdriver.mvp.bean.PageInfo
-import me.jbusdriver.mvp.bean.PageLink
 import me.jbusdriver.base.mvp.model.AbstractBaseModel
 import me.jbusdriver.base.mvp.model.BaseModel
+import me.jbusdriver.http.JAVBusService
+import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.enums.DataSourceType
 import org.jsoup.Jsoup
@@ -56,10 +52,10 @@ open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink)
     }
 
 
-    override fun stringMap(page: PageInfo, str: Document) = Movie.loadFromDoc(str).let {
+    override fun stringMap(page: PageInfo, str: Document) = loadMovieFromDoc(str).let {
         when (mView?.pageMode) {
             AppConfiguration.PageMode.Page -> {
-                listOf(Movie.newPageMovie(page.activePage, page.referPages)) + it
+                listOf(newPageMovie(page.activePage, page.referPages)) + it
             }
             else -> it
         }

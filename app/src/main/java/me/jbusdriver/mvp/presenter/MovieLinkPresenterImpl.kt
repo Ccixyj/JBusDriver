@@ -24,10 +24,10 @@ class MovieLinkPresenterImpl(val link: ILink, isAllFromBundle: Boolean, isHis: B
             mView?.showContent(it)
         }
 
-        return Movie.loadFromDoc( str).let {
+        return loadMovieFromDoc( str).let {
             when (mView?.pageMode) {
                 AppConfiguration.PageMode.Page -> {
-                    listOf(Movie.newPageMovie(pageInfo.activePage, pageInfo.referPages)) + it
+                    listOf(newPageMovie(pageInfo.activePage, pageInfo.referPages)) + it
                 }
                 else -> it
             }
@@ -38,7 +38,7 @@ class MovieLinkPresenterImpl(val link: ILink, isAllFromBundle: Boolean, isHis: B
 
     private fun parseAttrs(link: ILink, doc: Document) = when (link) {
         is ActressInfo -> {
-            ActressInfo.parseActressAttrs(doc).let { attr ->
+            parseActressAttrs(doc).let { attr ->
                 Schedulers.single().scheduleDirect {
                     if (link.avatar != attr.imageUrl) {
                         //如果已收藏演员, 需要重新设置头像

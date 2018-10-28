@@ -9,6 +9,7 @@ import me.jbusdriver.base.mvp.model.AbstractBaseModel
 import me.jbusdriver.base.mvp.model.BaseModel
 import me.jbusdriver.common.isEndWithXyzHost
 import me.jbusdriver.http.JAVBusService
+import me.jbusdriver.mvp.bean.parseMovieDetails
 import me.jbusdriver.mvp.MovieDetailContract
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.MovieDetail
@@ -19,7 +20,7 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
 
 
     private val loadFromNet = { s: String ->
-        JAVBusService.INSTANCE.get(s).addUserCase().map { MovieDetail.parseDetails(Jsoup.parse(it)) }
+        JAVBusService.INSTANCE.get(s).addUserCase().map { parseMovieDetails(Jsoup.parse(it)) }
                 .doOnNext { s.urlPath.let { key -> CacheLoader.cacheDisk(key to it) } }
                 ?: Flowable.empty()
     }

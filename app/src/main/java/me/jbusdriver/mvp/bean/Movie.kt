@@ -15,7 +15,7 @@ data class Movie(
         val code: String, //番号
         val date: String, //日期
         @SerializedName("detailUrl") override val link: String,
-        val tags: List<String> = listOf()//标签,
+        @Transient val tags: List<String> = listOf()//标签,
 
 ) : MultiItemEntity, ILink {
     @Transient
@@ -23,26 +23,24 @@ data class Movie(
 
 
     override fun getItemType(): Int = if (isInValid) -1 else 0
+}
 
-    companion object {
-        //图片url host 设置
-        fun loadFromDoc(str: Document): List<Movie> {
-            return str.select(".movie-box").mapIndexed { _, element ->
-                Movie(
-                        title = element.select("img").attr("title"),
-                        imageUrl = element.select("img").attr("src"),
-                        code = element.select("date").first().text(),
-                        date = element.select("date").getOrNull(1)?.text() ?: "",
-                        link = element.attr("href"),
-                        tags = element.select(".item-tag").firstOrNull()?.children()?.map { it.text() }
-                                ?: emptyList()
-                )
-            }
-        }
-
-        fun newPageMovie(page: Int, pages: List<Int>) = Movie(page.toString(), pages.joinToString("#"), "", "", "")
+fun loadMovieFromDoc(str: Document): List<Movie> {
+    return str.select(".movie-box").mapIndexed { _, element ->
+        Movie(
+                title = element.select("img").attr("title"),
+                imageUrl = element.select("img").attr("src"),
+                code = element.select("date").first().text(),
+                date = element.select("date").getOrNull(1)?.text() ?: "",
+                link = element.attr("href"),
+                tags = element.select(".item-tag").firstOrNull()?.children()?.map { it.text() }
+                        ?: emptyList()
+        )
     }
 }
+
+fun newPageMovie(page: Int, pages: List<Int>) = Movie(page.toString(), pages.joinToString("#"), "", "", "")
+
 
 val Movie.saveKey
     inline get() = code.trim() + "_" + date.trim()

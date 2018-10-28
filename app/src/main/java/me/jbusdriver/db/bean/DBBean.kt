@@ -45,7 +45,7 @@ val AllFirstParentDBCategoryGroup by lazy { arrayMapof(1 to MovieCategory, 2 to 
 
 data class LinkItem(val type: Int, val createTime: Date, val key: String, val jsonStr: String, var categoryId: Int = -1) {
     var id: Int? = null
-    fun getLinkValue() = doGet(type, jsonStr).also {
+    fun getLinkValue(): ILink = doGet(type, jsonStr).also {
         if (it is ICollectCategory) {
             it.categoryId = this.categoryId
         }
