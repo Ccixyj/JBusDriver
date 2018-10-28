@@ -82,9 +82,9 @@ class SplashActivity : BaseActivity() {
                         val r = GSON.fromJson<JsonObject>(source) ?: JsonObject()
                         CacheLoader.cacheLru(C.Cache.ANNOUNCE_VALUE to r)
                         arrayMapof<String, String>().apply {
-                            val xyzLoader = r.getAsJsonObject("xyzLoader")
-                            JAVBusService.defaultXyzUrl = xyzLoader?.get("url")?.asString?.removeSuffix("/").orEmpty()
-                            JAVBusService.xyzHostDomains.addAll(xyzLoader.getAsJsonArray("legacyHost").map { it.asString  })
+                            val xyzLoader = r.getAsJsonObject("xyzLoader") ?: JsonObject()
+                            JAVBusService.defaultXyzUrl = xyzLoader.get("url")?.asString?.removeSuffix("/").orEmpty()
+                            JAVBusService.xyzHostDomains.addAll(xyzLoader.getAsJsonArray("legacyHost")?.map { it.asString  } ?: emptyList())
                             val availableUrls = r.get("backUp")?.asJsonArray
                             //赋值一个默认的(随机)
                             availableUrls?.let {
