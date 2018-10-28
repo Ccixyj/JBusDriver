@@ -11,11 +11,11 @@ import com.chad.library.adapter.base.loadmore.LoadMoreView
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
-import me.jbusdriver.base.KLog
+import me.jbusdriver.base.common.AppBaseRecycleFragment
 import me.jbusdriver.base.urlHost
 import me.jbusdriver.base.urlPath
-import me.jbusdriver.base.common.AppBaseRecycleFragment
-import me.jbusdriver.base.glide.toGlideNoHostUrl
+import me.jbusdriver.common.isEndWithXyzHost
+import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.http.JAVBusService.Companion.defaultFastUrl
 import me.jbusdriver.mvp.HotRecommendContract
 import me.jbusdriver.mvp.bean.ActressInfo
@@ -40,7 +40,7 @@ class RecommendListFragment : AppBaseRecycleFragment<HotRecommendContract.HotRec
     override val adapter = object : BaseQuickAdapter<RecommendRespBean, BaseViewHolder>(R.layout.layout_recommend_item) {
 
         override fun convert(helper: BaseViewHolder, item: RecommendRespBean) {
-//            val images = defaultImageUrlHosts[if (item.key.img.endsWith("xyz")) "xyz" else "default"]?.map { it +  }
+//            val images = defaultImageUrlHosts[if (item.key.img.endsWith(JAVBusService.xyzHostDomain)) "xyz" else "default"]?.map { it +  }
 //                    ?: emptyList()
 //            val image = images.shuffled().firstOrNull() ?: ""
             Glide.with(viewContext).load(item.key.img.toGlideNoHostUrl).into(helper.getView(R.id.iv_recommend_img))
@@ -70,7 +70,7 @@ class RecommendListFragment : AppBaseRecycleFragment<HotRecommendContract.HotRec
         })
         adapter.setOnItemClickListener { _, view, position ->
             adapter.getItem(position)?.let {
-                val xyz = it.key.url.urlHost.endsWith("xyz")
+                val xyz = it.key.url.urlHost.isEndWithXyzHost
                 val needChange = !xyz && it.key.url.urlHost != defaultFastUrl
                 val url = if (needChange) defaultFastUrl + it.key.url.urlPath else it.key.url
                 if (it.key.url.contains("/star/", false)) {

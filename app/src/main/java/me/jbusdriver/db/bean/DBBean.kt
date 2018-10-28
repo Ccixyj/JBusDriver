@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import me.jbusdriver.base.*
 import me.jbusdriver.common.JBus
+import me.jbusdriver.common.isEndWithXyzHost
 import me.jbusdriver.db.CategoryTable
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.*
@@ -77,7 +78,7 @@ private fun doGet(type: Int, jsonStr: String) = when (type) {
     6 -> GSON.fromJson<PageLink>(jsonStr)
     else -> error("$type : $jsonStr has no matched class ")
 }.let { data ->
-    val isXyz = data.link.urlHost.endsWith("xyz")
+    val isXyz = data.link.urlHost.isEndWithXyzHost
     if (isXyz) return@let data
     val host: String by lazy { JAVBusService.defaultFastUrl }
     return@let when (data) {

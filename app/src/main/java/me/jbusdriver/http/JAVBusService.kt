@@ -23,6 +23,16 @@ interface JAVBusService {
 
     companion object {
         var defaultFastUrl = "https://www.javbus2.pw"
+        var defaultXyzUrl = "https://www.javbus.work"
+        val xyzHostDomains by lazy {
+            mutableSetOf<String>().apply {
+                this.add(defaultXyzUrl.takeLast(defaultXyzUrl.lastIndexOf(".").coerceAtLeast(0)))
+            }
+        }
+
+
+
+
         var INSTANCE = getInstance(defaultFastUrl)
         fun getInstance(source: String): JAVBusService {
             KLog.d("instances : ${JBus.JBusServices}, defaultFastUrl : $defaultFastUrl")
@@ -34,13 +44,5 @@ interface JAVBusService {
 
         private fun createService(url: String) = NetClient.getRetrofit(if (!url.endsWith("/")) "$url/" else url).create(JAVBusService::class.java)
 
-        /**
-         *key: "xyz" else "default"
-         */
-        val defaultImageUrlHosts by lazy {
-            CacheLoader.acache.getAsString(C.Cache.IMG_HOSTS)?.let {
-                GSON.fromJson<ArrayMap<String, MutableSet<String>>>(it)
-            } ?: arrayMapof()
-        }
     }
 }

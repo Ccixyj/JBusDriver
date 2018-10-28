@@ -8,14 +8,14 @@ import com.bumptech.glide.load.model.ModelLoaderFactory
 import com.bumptech.glide.load.model.MultiModelLoaderFactory
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.http.NetClient
-import me.jbusdriver.base.urlHost
 import me.jbusdriver.base.urlPath
 import java.io.InputStream
 
 
-class GlideNoHostUrl(val url: String) {
+class GlideNoHostUrl(val url: String, private val noFilterHost:Set<String>) {
 
-    fun getId() = ((if (url.urlHost.endsWith("xyz")) url else url.urlPath))  /*.apply { KLog.t("GlideNoHostUrl").d("${toStringUrl()} :$this") }*/
+    private fun isNeedFilter(url: String) = noFilterHost.any { url.endsWith(it) }
+    fun getId() = ((if (isNeedFilter(url)) url else url.urlPath))  /*.apply { KLog.t("GlideNoHostUrl").d("${toStringUrl()} :$this") }*/
     override fun toString(): String = "GlideNoHostUrl(url='$url') ,id =${getId()}"
 }
 
@@ -24,6 +24,7 @@ class NoHostImageLoader(private val fac: okhttp3.Call.Factory) : ModelLoader<Gli
         val gUrl = object : GlideUrl(model.url) {
             override fun getCacheKey(): String = model.getId()
         }
+        KLog.d("load for url $model -> $gUrl")
         return ModelLoader.LoadData(gUrl, OkHttpStreamFetcher(fac, gUrl))
     }
 
@@ -39,5 +40,3 @@ class NoHostImageLoader(private val fac: okhttp3.Call.Factory) : ModelLoader<Gli
 }
 
 
-val String.toGlideNoHostUrl: GlideNoHostUrl
-    inline get() = GlideNoHostUrl(this)

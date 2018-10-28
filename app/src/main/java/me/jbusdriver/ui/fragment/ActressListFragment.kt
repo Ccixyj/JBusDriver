@@ -13,7 +13,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.C
-import me.jbusdriver.base.CacheLoader
+import me.jbusdriver.common.isEndWithXyzHost
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.model.CollectModel
@@ -37,7 +37,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
             (arguments?.getSerializable(C.BundleKey.Key_1) as? ILink)?.let { link ->
                 val path = link.link.urlPath
                 val type = when {
-                    link.link.urlHost.endsWith("xyz") -> {
+                    link.link.urlHost.isEndWithXyzHost -> {
                         //xyz
                         when {
                             path.startsWith("genre") -> DataSourceType.GENRE

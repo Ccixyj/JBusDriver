@@ -3,14 +3,7 @@ package me.jbusdriver.mvp.bean
 import android.text.TextUtils
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import com.google.gson.annotations.SerializedName
-import me.jbusdriver.base.ACache
-import me.jbusdriver.base.KLog
-import me.jbusdriver.base.toJsonString
-import me.jbusdriver.base.urlHost
-import me.jbusdriver.base.common.C
-import me.jbusdriver.base.CacheLoader
 import me.jbusdriver.db.bean.MovieCategory
-import me.jbusdriver.http.JAVBusService
 import org.jsoup.nodes.Document
 
 /**
@@ -44,21 +37,6 @@ data class Movie(
                         tags = element.select(".item-tag").firstOrNull()?.children()?.map { it.text() }
                                 ?: emptyList()
                 )
-            }.apply {
-
-                val host = this.firstOrNull()?.imageUrl?.urlHost ?: ""
-                KLog.d("put defaultImageUrlHost  for movie $host ")
-                if (host.isNotBlank()) {
-                    val key = if (host.endsWith("xyz")) "xyz" else "default"
-                    val set = JAVBusService.defaultImageUrlHosts.getOrPut(key) {
-                       hashSetOf()
-                    }
-                    if (host !in set) {
-                        set.add(host)
-                        CacheLoader.acache.put(C.Cache.IMG_HOSTS, JAVBusService.defaultImageUrlHosts.toJsonString(), ACache.TIME_DAY)
-                    }
-                }
-
             }
         }
 

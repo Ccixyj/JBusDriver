@@ -18,7 +18,7 @@ import me.jbusdriver.base.GlideApp
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.common.AppBaseRecycleFragment
 import me.jbusdriver.base.toast
-import me.jbusdriver.base.glide.toGlideNoHostUrl
+import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.db.bean.Category
 import me.jbusdriver.db.bean.MovieCategory
 import me.jbusdriver.db.service.CategoryService

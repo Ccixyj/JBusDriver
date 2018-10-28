@@ -9,15 +9,19 @@
     "https://www.dmmsee.net",
     "https://www.busjav.cc"
   ],
-  "xyz":"https://www.javbus.work",
+  "xyz": "https://www.javbus.work",
+  "xyzLoader": {
+    "url": "https://www.javbus.work",
+    "legacyHost": [
+      "xyz",
+      "work"
+    ]
+  },
   "update": {
     "versionCode": 282,
     "versionName": "1.2.12",
     "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/JubsDriver_v1.2.12build463.apk",
-    "desc": "JBusDriver 1.2.12 更新!
-1.修复欧美数据源问题
-2.修复恢复收藏时可能的崩溃
-"
+    "desc": "JBusDriver 1.2.12 更新!\r\n 1.修复欧美数据源问题\r\n2.修复恢复收藏时可能的崩溃"
   },
   "notice": {
     "id": 0,

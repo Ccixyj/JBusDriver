@@ -14,7 +14,7 @@ import me.jbusdriver.base.GlideApp
 import me.jbusdriver.base.displayMetrics
 import me.jbusdriver.base.dpToPx
 import me.jbusdriver.base.inflate
-import me.jbusdriver.base.glide.toGlideNoHostUrl
+import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.mvp.bean.ImageSample
 import me.jbusdriver.ui.activity.WatchLargeImageActivity
 

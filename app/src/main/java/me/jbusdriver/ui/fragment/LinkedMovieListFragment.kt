@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.layout_actress_attr.view.*
 import kotlinx.android.synthetic.main.layout_load_all.view.*
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.C
-import me.jbusdriver.base.glide.toGlideNoHostUrl
+import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.http.RecommendService
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.*

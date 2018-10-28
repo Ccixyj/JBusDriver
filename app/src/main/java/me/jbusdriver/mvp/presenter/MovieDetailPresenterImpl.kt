@@ -7,6 +7,7 @@ import io.reactivex.rxkotlin.addTo
 import me.jbusdriver.base.*
 import me.jbusdriver.base.mvp.model.AbstractBaseModel
 import me.jbusdriver.base.mvp.model.BaseModel
+import me.jbusdriver.common.isEndWithXyzHost
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.MovieDetailContract
 import me.jbusdriver.mvp.bean.Movie
@@ -29,7 +30,7 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
                     val saveKey = t.urlPath
                     CacheLoader.acache.getAsString(saveKey)?.let {
                         val old = GSON.fromJson<MovieDetail>(it)
-                        val res = if (old != null && mView?.movie?.link?.endsWith("xyz") == false) {
+                        val res = if (old != null && mView?.movie?.link?.urlHost?.isEndWithXyzHost == false) {
                             val new = old.checkUrl(JAVBusService.defaultFastUrl)
                             if (old != new) CacheLoader.cacheDisk(saveKey to new)
                             new

@@ -16,7 +16,7 @@ import me.jbusdriver.base.GlideApp
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.SchedulersCompat
 import me.jbusdriver.base.SimpleSubscriber
-import me.jbusdriver.base.glide.toGlideNoHostUrl
+import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.model.CollectModel

@@ -22,7 +22,7 @@ import me.jbusdriver.base.GlideApp
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.common.AppBaseActivity
 import me.jbusdriver.base.common.C
-import me.jbusdriver.base.glide.toGlideNoHostUrl
+import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.base.inflate
 import me.jbusdriver.base.urlPath
 import me.jbusdriver.mvp.MovieDetailContract

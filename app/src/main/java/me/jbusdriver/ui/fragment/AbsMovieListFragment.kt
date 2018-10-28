@@ -14,7 +14,8 @@ import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.C
-import me.jbusdriver.base.glide.toGlideNoHostUrl
+import me.jbusdriver.common.isEndWithXyzHost
+import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.convertDBItem
@@ -41,7 +42,7 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
 
                 val path = link.link.urlPath
                 val type = when {
-                    link.link.urlHost.endsWith("xyz") -> {
+                    link.link.urlHost.isEndWithXyzHost -> {
                         //xyz
                         when {
                             path.startsWith("genre") -> DataSourceType.GENRE

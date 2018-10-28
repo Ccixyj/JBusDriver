@@ -1,19 +1,9 @@
 package me.jbusdriver.mvp.presenter
 
-import android.net.Uri
-import android.util.Base64
-import com.bumptech.glide.Glide
-import io.reactivex.rxkotlin.addTo
-import me.jbusdriver.base.*
-import me.jbusdriver.base.glide.toGlideNoHostUrl
-import me.jbusdriver.http.JAVBusService
-import me.jbusdriver.http.RecommendService
+import me.jbusdriver.base.mvp.model.BaseModel
 import me.jbusdriver.mvp.HotRecommendContract
 import me.jbusdriver.mvp.bean.Magnet
 import me.jbusdriver.mvp.bean.PageInfo
-import me.jbusdriver.mvp.bean.RecommendRespBean
-import me.jbusdriver.mvp.bean.ResultPageBean
-import me.jbusdriver.base.mvp.model.BaseModel
 import org.jsoup.nodes.Document
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -31,6 +21,7 @@ class HotRecommendPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HotRecomm
     }
 
     override fun loadData4Page(page: Int) {
+/*
         RecommendService.INSTANCE.recommends(page)
                 .map {
                     val res = it.getAsJsonObject("result")
@@ -62,6 +53,7 @@ class HotRecommendPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HotRecomm
                     it.printStackTrace()
                 }
                 ).addTo(rxManager)
+*/
 
     }
 

@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.AppBaseRecycleFragment
-import me.jbusdriver.base.glide.toGlideNoHostUrl
+import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.db.bean.ActressCategory
 import me.jbusdriver.db.bean.Category
 import me.jbusdriver.db.service.CategoryService
