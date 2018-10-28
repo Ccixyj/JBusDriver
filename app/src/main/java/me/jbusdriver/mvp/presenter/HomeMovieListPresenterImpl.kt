@@ -37,7 +37,6 @@ open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink)
         val urlN = urls.getOrElse(type.key) { "" }.let { url ->
             return@let if (page == 1) url else "$url${type.prefix}$page"
         }
-        KLog.i("load url :$urlN")
         //existmag=all
         //add his
         val pageLink = PageLink(page = page, title = type.key, link = urlN)

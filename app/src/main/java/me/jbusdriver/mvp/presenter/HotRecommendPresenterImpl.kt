@@ -31,7 +31,6 @@ class HotRecommendPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HotRecomm
     }
 
     override fun loadData4Page(page: Int) {
-        KLog.d("loadData4Page :$page")
         RecommendService.INSTANCE.recommends(page)
                 .map {
                     val res = it.getAsJsonObject("result")
@@ -45,26 +44,22 @@ class HotRecommendPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HotRecomm
                                     }
                                     it + bean.key.img
                                 }.shuffled()
-                                KLog.d("images :$images")
                                 bean.copy(key = bean.key.copy(img = images.firstOrNull()
                                         ?: bean.key.img, url = JAVBusService.defaultFastUrl + bean.key.url))
                             } else bean
                         }
                     }
-                    KLog.d(data)
                     val max = res.getAsJsonPrimitive("pages").asInt
                     lastPage = max
                     return@map ResultPageBean(PageInfo(page), data)
                 }.doOnTerminate { mView?.dismissLoading() }.compose(SchedulersCompat.io()).subscribe(
                         {
-                            KLog.d("$it")
                             mView?.showContents(it.data)
                             mView?.loadMoreEnd()
                             mView?.viewContext?.toast("加载成功！")
 
                         }, {
                     it.printStackTrace()
-                    KLog.w(it.message.toString())
                 }
                 ).addTo(rxManager)
 

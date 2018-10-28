@@ -64,7 +64,6 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                 .compose(SchedulersCompat.computation())
                 .subscribeBy {
                     supportFragmentManager.findFragmentByTag(R.id.mine_collect.toString())?.let {
-                        KLog.d("remove :$it $selectMenu")
                         supportFragmentManager.beginTransaction().remove(it).commitNowAllowingStateLoss()
                     }
                     if (selectMenu?.itemId == R.id.mine_collect) setNavSelected()
@@ -101,14 +100,12 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
             }
 
             tv_app_setting.setOnClickListener {
-                KLog.d("tv_app_setting")
                 SettingActivity.start(this@MainActivity)
                 drawer.closeDrawer(GravityCompat.START)
             }
 
 
             fun tintTextLeftDrawable(parent: ViewGroup) {
-                KLog.d("ViewGroup : ${parent.id} =$parent")
 
                 (0..parent.childCount).forEachIndexed { i, _ ->
                     //如果是容器,直接查子view
@@ -154,7 +151,6 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                 }
         val menuId = intent.getIntExtra("MenuSelectedItemId", id)
         val select = navigationView.menu.findItem(menuId)
-        KLog.d("all : ${AppConfiguration.menuConfig.filter { it.value }} selectMenu $select : prev :$selectMenu")
         select?.let {
             navigationView.setCheckedItem(it.itemId)
             onNavigationItemSelected(it)
@@ -183,7 +179,6 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         switchFragment(item.itemId)
         //更新当前选择菜单
         selectMenu = item
-        KLog.d("onNavigationItemSelected $item ")
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         drawer.closeDrawer(GravityCompat.START)
         supportActionBar?.title = selectMenu?.title

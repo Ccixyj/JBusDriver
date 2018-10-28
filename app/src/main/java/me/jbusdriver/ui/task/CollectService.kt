@@ -33,7 +33,7 @@ class CollectService : IntentService("CollectService") {
         }
     }
 
-    private lateinit var event: BackUpEvent
+    private val event: BackUpEvent = BackUpEvent("", 0, 1)
 
     private fun handleLoadBakUp(file: File) {
         if (!file.exists()) return
@@ -44,11 +44,19 @@ class CollectService : IntentService("CollectService") {
                 return
             }
             val s = all.size
-            event = BackUpEvent(file.absolutePath, s, 1)
+            event.apply {
+                path = file.absolutePath
+                total = s
+                index = 1
+            }
             RxBus.post(event)
-            val backs = all.asReversed().mapIndexed { index, linkItem ->
-                KLog.d("mapIndexed $index $linkItem")
-                if (linkItem.categoryId < 0) return@mapIndexed linkItem
+            all.asReversed().forEachIndexed { index, linkItem ->
+
+                RxBus.post(event.apply {
+                    this.total = s
+                    this.index = index + 1
+                })
+                if (linkItem.categoryId < 0) return@forEachIndexed
                 val item: LinkItem
                 try {
                     item = if (CategoryService.getById(linkItem.categoryId) == null) {
@@ -58,22 +66,16 @@ class CollectService : IntentService("CollectService") {
                     LinkService.saveOrUpdate(item)
                 } catch (e: Exception) {
                     e.printStackTrace()
+                    MobclickAgent.reportError(this@CollectService, "恢复数据出错: $e")
                     LinkService.saveOrUpdate(linkItem)
-                    return@mapIndexed linkItem
                 }
-
-                RxBus.post(event.apply {
-                    this.total = s
-                    this.index = index + 1
-                })
-                return@mapIndexed item
             }
 
             applicationContext.toast("恢复备份成功")
             RxBus.post(event.copy(total = s, index = s))
         } catch (e: Exception) {
             e.printStackTrace()
-            MobclickAgent.reportError(this@CollectService, e)
+            MobclickAgent.reportError(this@CollectService, "恢复出错：$e")
             applicationContext.toast("恢复失败,请重新打开app")
             RxBus.post(event.copy(total = 0, index = 0))
         }
@@ -81,7 +83,6 @@ class CollectService : IntentService("CollectService") {
     }
 
     private fun handleMigrate() {
-        KLog.d("handleMigrate")
         try {
             val pathSuffix = File.separator + "collect" + File.separator
             var cacheDir = File(Environment.getExternalStorageDirectory().absolutePath + File.separator + JBus.packageName + pathSuffix)
@@ -91,7 +92,7 @@ class CollectService : IntentService("CollectService") {
             //迁移可能存在的
             migrate(cacheDir)
         } catch (e: Exception) {
-            KLog.d("error happen : $e")
+            KLog.w("error happen : $e")
             MobclickAgent.reportError(this, e)
         }
     }
@@ -116,7 +117,7 @@ class CollectService : IntentService("CollectService") {
                 KLog.d("need migrate $data")
                 LinkService.saveOrUpdate(data.map { it.convertDBItem() }.asReversed())
             } catch (e: Exception) {
-                KLog.d("error happen : $e")
+                KLog.w("error happen : $e")
                 MobclickAgent.reportError(this, e)
             }
         }
@@ -150,7 +151,6 @@ private object ILinkAdapter : JsonSerializer<ILink>, JsonDeserializer<ILink> {
     private const val INSTANCE = "LINK_INSTANCE"
 
     override fun serialize(src: ILink, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
-        KLog.d("ILinkAdapter  serialize  $typeOfSrc $src ")
         val retValue = JsonObject()
         val className = src.javaClass.name
         retValue.addProperty(CLASSNAME, className)
@@ -160,7 +160,6 @@ private object ILinkAdapter : JsonSerializer<ILink>, JsonDeserializer<ILink> {
     }
 
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ILink {
-        KLog.d("ILinkAdapter  deserialize $typeOfT $json ")
         val jsonObject = json.asJsonObject
         val className = jsonObject.get(CLASSNAME)?.asString
                 ?: throw error("$json cant not find property $CLASSNAME")

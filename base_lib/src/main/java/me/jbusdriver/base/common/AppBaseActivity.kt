@@ -53,7 +53,7 @@ abstract class AppBaseActivity<P : BasePresenter<V>, in V : BaseView> : BaseActi
     }
 
     protected open fun doStart() {
-        KLog.t(TAG).d("doStart", mFirstStart, mUniqueLoaderIdentifier)
+        KLog.t(TAG).d("$this doStart isFirst: $mFirstStart, id: $mUniqueLoaderIdentifier")
         requireNotNull(mBasePresenter)
         mBasePresenter?.onViewAttached(this as V)
         mBasePresenter?.onStart(mFirstStart)
@@ -94,7 +94,6 @@ abstract class AppBaseActivity<P : BasePresenter<V>, in V : BaseView> : BaseActi
         super.onSaveInstanceState(outState)
         outState?.putBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE, mFirstStart)
         outState?.putInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE, mUniqueLoaderIdentifier)
-        KLog.d("$TAG onSaveInstanceState $outState")
     }
 
     protected abstract val layoutId: Int
@@ -138,7 +137,6 @@ abstract class AppBaseActivity<P : BasePresenter<V>, in V : BaseView> : BaseActi
     }
 
     protected open fun restoreState(bundle: Bundle) {
-        KLog.d("$TAG restoreState : $bundle")
         mBasePresenter?.restoreFromState()
     }
 

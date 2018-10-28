@@ -6,6 +6,7 @@ import android.text.TextUtils
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.transition.Transition
+import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import io.reactivex.Flowable
 import io.reactivex.disposables.CompositeDisposable
@@ -24,14 +25,13 @@ import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import java.util.*
 
-class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseAppAdapter<ActressInfo, BaseViewHolder>(R.layout.layout_actress_item) {
+class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseQuickAdapter<ActressInfo, BaseViewHolder>(R.layout.layout_actress_item) {
 
 
     private val random = Random()
     private fun randomNum(number: Int) = Math.abs(random.nextInt() % number)
 
     override fun convert(holder: BaseViewHolder, item: ActressInfo) {
-        KLog.d("ActressInfo :$item")
         GlideApp.with(holder.itemView.context).asBitmap().load(item.avatar.toGlideNoHostUrl)
                 .error(R.drawable.ic_nowprinting).into(object : BitmapImageViewTarget(holder.getView(R.id.iv_actress_avatar)) {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
@@ -66,7 +66,6 @@ class ActressInfoAdapter(val rxManager: CompositeDisposable) : BaseAppAdapter<Ac
 
         setOnItemClickListener { _, view, position ->
             data.getOrNull(position)?.let { item ->
-                KLog.d("item : $item")
                 MovieListActivity.start(view.context, item)
             }
         }

@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.request.target.DrawableImageViewTarget
+import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
@@ -19,7 +20,6 @@ import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.activity.MovieDetailActivity
-import me.jbusdriver.ui.adapter.BaseMultiItemAppAdapter
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import me.jbusdriver.ui.data.enums.DataSourceType
@@ -40,7 +40,6 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
             (arguments?.getSerializable(C.BundleKey.Key_1) as? ILink)?.let { link ->
 
                 val path = link.link.urlPath
-                KLog.d("link data urlPath :$path ")
                 val type = when {
                     link.link.urlHost.endsWith("xyz") -> {
                         //xyz
@@ -75,7 +74,6 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                     }
 
                 }
-                KLog.d("link data type :$type ")
                 type
 
             } ?: DataSourceType.CENSORED
@@ -84,7 +82,7 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
 
 
     override val adapter: BaseQuickAdapter<Movie, in BaseViewHolder>  by lazy {
-        object : BaseMultiItemAppAdapter<Movie, BaseViewHolder>(null) {
+        object : BaseMultiItemQuickAdapter<Movie, BaseViewHolder>(null) {
 
             init {
                 addItemType(-1, R.layout.layout_pager_section_item)
@@ -154,9 +152,8 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                                 MovieDetailActivity.start(viewContext, item)
                             }
                             it.setOnLongClickListener {
-                                KLog.d("setOnItemLongClickListener $item")
 
-                                val action =( if (CollectModel.has(item.convertDBItem())) LinkMenu.movieActions.minus("收藏")
+                                val action = (if (CollectModel.has(item.convertDBItem())) LinkMenu.movieActions.minus("收藏")
                                 else LinkMenu.movieActions.minus("取消收藏")).toMutableMap()
                                 if (AppConfiguration.enableCategory) {
                                     val ac = action.remove("收藏")

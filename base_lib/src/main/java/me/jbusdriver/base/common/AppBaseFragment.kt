@@ -41,21 +41,18 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        KLog.t(TAG).d("onCreate : $savedInstanceState")
         mFirstStart = savedInstanceState == null || savedInstanceState.getBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE)
         mUniqueLoaderIdentifier = savedInstanceState?.getInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE) ?: AppBaseActivity.sViewCounter.incrementAndGet()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        KLog.t(TAG).d("onActivityCreated :$savedInstanceState")
         require(activity != null)
         activity!!.intent.putExtra(C.SavedInstanceState.LOADER_SAVED_STATES + mUniqueLoaderIdentifier, savedInstanceState)
         loaderManager.initLoader(mUniqueLoaderIdentifier, null, this).startLoading()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        KLog.t(TAG).d("onCreateView : ${rootViewWeakRef?.get()}")
         rootViewWeakRef?.get()?.let {
             ((it.parent as? View) as? ViewGroup)?.also {
                 it.removeView(rootViewWeakRef?.get())
@@ -66,7 +63,6 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
                 rootViewWeakRef = WeakReference(it)
             }
         }
-        KLog.t(TAG).d("onCreateView ok: ${rootViewWeakRef?.get()}")
         return rootViewWeakRef?.get()
     }
 
@@ -83,7 +79,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     }
 
     private fun doStart() {
-        KLog.t(TAG).d("doStart : mFirstStart :" + mFirstStart + " mUniqueLoaderIdentifier :" + mUniqueLoaderIdentifier + " instance = " + this)
+        KLog.t(TAG).d("$this doStart isFirst: $mFirstStart, id: $mUniqueLoaderIdentifier")
         requireNotNull(mBasePresenter)
         mBasePresenter?.onViewAttached(this as V)
         mBasePresenter?.onStart(mFirstStart)
@@ -117,7 +113,6 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
      *fragment show hide 不走setUserVisibleHint , 走onHiddenChanged方法.
      */
     override fun onHiddenChanged(hidden: Boolean) {
-        KLog.t(TAG).d("onHiddenChanged :$hidden")
         super.onHiddenChanged(hidden)
         userVisibleHint = !hidden
 //        if (!hidden) {
@@ -137,7 +132,6 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     }
 
     protected open fun onVisible() {
-        KLog.t(TAG).i("onVisible : $isLazyLoaded $mBasePresenter")
         if (isLazyLoaded || mBasePresenter == null) {
             //mBasePresenter 可能没有初始化 ,放入dostart 中执行lazy
         } else {
@@ -183,7 +177,6 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
         super.onSaveInstanceState(outState)
         outState.putBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE, mFirstStart)
         outState.putInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE, mUniqueLoaderIdentifier)
-        KLog.d("$TAG onSaveInstanceState $outState")
     }
 
 
@@ -199,7 +192,6 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
      */
     override fun onLoadFinished(loader: Loader<P>, data: P) {
         //fragment中会赋值两次，可以设置flag。
-        KLog.t(TAG).d("onLoadFinished")
         mBasePresenter = data
         val bundleKey = C.SavedInstanceState.LOADER_SAVED_STATES + mUniqueLoaderIdentifier
         activity!!.intent.getBundleExtra(bundleKey)?.let {
@@ -231,7 +223,6 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     }
 
     protected open fun restoreState(bundle: Bundle) {
-        KLog.d("$TAG restoreState : $bundle")
         mBasePresenter?.restoreFromState()
     }
 

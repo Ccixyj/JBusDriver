@@ -96,7 +96,6 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         when (id) {
             R.id.action_add_movie_collect -> {
                 //收藏
-                KLog.d("收藏")
                 CollectModel.addToCollectForCategory(saveItem) {
                     collectMenu.isVisible = false
                     removeCollectMenu.isVisible = true
@@ -105,7 +104,6 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             }
             R.id.action_remove_movie_collect -> {
                 //取消收藏
-                KLog.d("取消收藏")
                 if (CollectModel.removeCollect(saveItem)) {
                     collectMenu.isVisible = true
                     removeCollectMenu.isVisible = false
@@ -169,7 +167,6 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
 
     override fun showLoading() {
-        KLog.t(TAG).d("showLoading")
         sr_refresh?.let {
             if (!it.isRefreshing) {
                 it.post {
@@ -181,7 +178,6 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
     }
 
     override fun dismissLoading() {
-        KLog.t(TAG).d("dismissLoading")
         sr_refresh?.let {
             it.post { it.isRefreshing = false }
         } ?: super.dismissLoading()

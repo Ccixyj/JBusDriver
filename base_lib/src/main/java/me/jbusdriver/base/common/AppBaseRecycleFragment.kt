@@ -52,7 +52,6 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
     }
 
     override fun showLoading() {
-        KLog.t(TAG).d("showLoading")
         swipeView?.let {
             if (!it.isRefreshing) {
                 it.post {
@@ -66,14 +65,12 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
     }
 
     override fun dismissLoading() {
-        KLog.t(TAG).d("dismissLoading")
         swipeView?.let {
             it.post { it.isRefreshing = false }
         } ?: super.dismissLoading()
     }
 
     override fun showContents(data: List<*>) {
-        KLog.d("showContents :$data")
         (data as? MutableList<M> ?: data.toMutableList() as? MutableList<M>)?.let {
             adapter.addData(it)
         }
@@ -114,7 +111,6 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
 
 
     override fun resetList() {
-        KLog.d("resetList")
         adapter.setNewData(null)
     }
 

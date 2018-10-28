@@ -1,6 +1,7 @@
 package me.jbusdriver.db.service
 
 import android.text.TextUtils
+import io.reactivex.Flowable
 import io.reactivex.Observable
 import me.jbusdriver.base.KLog
 import me.jbusdriver.db.DB
@@ -13,6 +14,7 @@ import me.jbusdriver.mvp.bean.ILink
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.ui.data.AppConfiguration
+import org.intellij.lang.annotations.Flow
 import java.util.*
 
 /**
@@ -114,10 +116,11 @@ object LinkService {
 
     fun remove(data: ILink) = dao.delete(data.convertDBItem())
     fun remove(data: LinkItem) = dao.delete(data)
-    fun queryMovies() = dao.listByType(1).let { it.mapNotNull { it.getLinkValue() as? Movie } }
-    fun queryActress() = dao.listByType(2).let { it.mapNotNull { (it.getLinkValue() as? ActressInfo) } }
 
-    fun queryLink() = dao.queryLink().let { it.map { it.getLinkValue() } }
+    fun queryMovies() = Flowable.fromCallable{dao.listByType(1)}.map { it -> it.mapNotNull { it.getLinkValue() as? Movie } }
+    fun queryActress() = Flowable.fromCallable { dao.listByType(2) }.map { it -> it.mapNotNull { (it.getLinkValue() as? ActressInfo) } }
+
+    fun queryLink() = Flowable.fromCallable { dao.queryLink() }.map {  it ->it.map { it.getLinkValue() } }
 
     fun resetCategory(category: Category, dBType: Int) {
         KLog.d("reset $category")

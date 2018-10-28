@@ -31,7 +31,6 @@ fun addProgressListener(progressListener: OnProgressListener) {
     if (findProgressListener(progressListener) == null) {
         listeners.add(WeakReference(progressListener))
     }
-    KLog.d("add progress $progressListener success :$listeners")
 }
 
 fun removeProgressListener(progressListener: OnProgressListener) {
@@ -39,7 +38,6 @@ fun removeProgressListener(progressListener: OnProgressListener) {
     if (listener != null) {
         listeners.remove(listener)
     }
-    KLog.d("remove progress $listener success :$listeners")
 }
 
 private fun findProgressListener(listener: OnProgressListener): WeakReference<OnProgressListener>? = listeners.find { it.get() == listener }

@@ -20,7 +20,7 @@ import me.jbusdriver.db.bean.History
 import me.jbusdriver.mvp.HistoryContract
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.presenter.HistoryPresenterImpl
-import me.jbusdriver.ui.adapter.BaseAppAdapter
+
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -60,7 +60,7 @@ class HistoryFragment : AppBaseRecycleFragment<HistoryContract.HistoryPresenter,
     override val adapter: BaseQuickAdapter<History, in BaseViewHolder> by lazy {
 
 
-        object : BaseAppAdapter<History, BaseViewHolder>(R.layout.layout_history_item) {
+        object : BaseQuickAdapter<History, BaseViewHolder>(R.layout.layout_history_item) {
 
             val linkCache by lazy { ArrayMap<Int, ILink>() }
             val format = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)

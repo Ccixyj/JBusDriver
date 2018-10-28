@@ -18,40 +18,11 @@ open class BaseFragment : Fragment() {
     val rxManager by lazy { CompositeDisposable() }
     protected val tempSaveBundle by lazy { Bundle() }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        KLog.t(TAG).d("onCreate")
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        KLog.t(TAG).d("onActivityCreated")
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         KLog.t(TAG).d("onCreateView")
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
-    override fun onStart() {
-        super.onStart()
-        KLog.t(TAG).d("onStart")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        KLog.t(TAG).d("onResume")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        KLog.t(TAG).d("onPause")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        KLog.t(TAG).d("onStop")
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -59,16 +30,10 @@ open class BaseFragment : Fragment() {
         rxManager.clear()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        KLog.t(TAG).d("onSaveInstanceState $outState")
-        super.onSaveInstanceState(outState)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         rxManager.clear()
         rxManager.dispose()
-        KLog.t(TAG).d("onDestroy")
     }
 
     //region other

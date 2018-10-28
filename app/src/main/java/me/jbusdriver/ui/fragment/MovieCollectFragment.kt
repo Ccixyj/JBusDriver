@@ -30,7 +30,6 @@ import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.mvp.presenter.MovieCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieDetailActivity
-import me.jbusdriver.ui.adapter.BaseAppAdapter
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import me.jbusdriver.ui.holder.CollectDirEditHolder
@@ -42,7 +41,7 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
     override val layoutManager: RecyclerView.LayoutManager by lazy { LinearLayoutManager(viewContext) }
     override val layoutId: Int = R.layout.layout_swipe_recycle
     override val adapter: BaseQuickAdapter<CollectLinkWrapper<Movie>, in BaseViewHolder> by lazy {
-        object : BaseAppAdapter<CollectLinkWrapper<Movie>, BaseViewHolder>(null) {
+        object : BaseQuickAdapter<CollectLinkWrapper<Movie>, BaseViewHolder>(null) {
 
             override fun convert(holder: BaseViewHolder, item: CollectLinkWrapper<Movie>) {
                 when (holder.itemViewType) {
@@ -64,7 +63,6 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
                     }
 
                     else -> {
-                        KLog.d("type item $item")
                         setFullSpan(holder)
                         holder.setText(R.id.tv_nav_menu_name, " ${if (item.isExpanded) "👇" else "👆"} " + item.category.name)
                     }
@@ -75,7 +73,6 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
             setOnItemClickListener { _, view, position ->
                 val data = this@MovieCollectFragment.adapter.getData().getOrNull(position)
                         ?: return@setOnItemClickListener
-                KLog.d("click data : ${data.isExpanded} ; ${adapter.getData().size} ${adapter.getData()}")
                 data.linkBean?.let {
                     MovieDetailActivity.start(viewContext, it)
                 } ?: apply {
@@ -94,11 +91,9 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
                             val last = all - category
                             if (last.isNotEmpty()) {
                                 action.put("移到分类...") { link ->
-                                    KLog.d("移到分类 : $last")
                                     MaterialDialog.Builder(viewContext).title("选择目录")
                                             .items(last.map { it.name })
                                             .itemsCallbackSingleChoice(-1) { _, _, w, _ ->
-                                                KLog.d("选择 : $w")
                                                 last.getOrNull(w)?.let {
                                                     mBasePresenter?.setCategory(link, it)
                                                     mBasePresenter?.onRefresh()
@@ -146,7 +141,6 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
 
             holder.showDialogWithData(mBasePresenter?.collectGroupMap?.keys?.toList()
                     ?: emptyList()) { delActionsParams, addActionsParams ->
-                KLog.d("$delActionsParams $addActionsParams")
                 if (delActionsParams.isNotEmpty()) {
                     delActionsParams.forEach {
                         try {
@@ -172,7 +166,6 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
 
 
     override fun showContents(data: List<*>) {
-        KLog.d("showContents $data")
         mBasePresenter?.let { p ->
             p.adapterDelegate.needInjectType.onEach {
                 if (it == -1) p.adapterDelegate.registerItemType(it, R.layout.layout_movie_item) //默认注入类型0，即actress

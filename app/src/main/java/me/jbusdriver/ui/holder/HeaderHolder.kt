@@ -8,6 +8,7 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
+import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_header.view.*
@@ -18,7 +19,7 @@ import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.bean.des
 import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.activity.MovieListActivity
-import me.jbusdriver.ui.adapter.BaseAppAdapter
+
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 
@@ -38,7 +39,7 @@ class HeaderHolder(context: Context) : BaseHolder(context) {
         } ?: error("context ref is finish")
     }
 
-    private val headAdapter = object : BaseAppAdapter<Header, BaseViewHolder>(R.layout.layout_header_item) {
+    private val headAdapter = object : BaseQuickAdapter<Header, BaseViewHolder>(R.layout.layout_header_item) {
         override fun convert(holder: BaseViewHolder, item: Header) {
             holder.getView<TextView>(R.id.tv_head_value)?.apply {
                 if (!TextUtils.isEmpty(item.link)) {
@@ -46,7 +47,6 @@ class HeaderHolder(context: Context) : BaseHolder(context) {
                     paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
                     setOnClickListener {
-                        KLog.d("setOnClickListener text : $item")
                         MovieListActivity.start(it.context, item)
                     }
 
@@ -57,7 +57,6 @@ class HeaderHolder(context: Context) : BaseHolder(context) {
                 }
                 //长按操作
                 setOnLongClickListener {
-                    KLog.d("setOnLongClickListener text : $item")
                     val action = LinkMenu.linkActions.filter {
                         when {
                             TextUtils.isEmpty(item.link) -> it.key == "复制"

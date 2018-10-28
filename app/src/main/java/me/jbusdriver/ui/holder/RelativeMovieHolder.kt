@@ -19,7 +19,7 @@ import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.activity.MovieDetailActivity
-import me.jbusdriver.ui.adapter.BaseAppAdapter
+
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import java.util.*
@@ -37,7 +37,6 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
                 rv_recycle_relative_movies.isNestedScrollingEnabled = true
                 relativeAdapter.setOnItemClickListener { _, v, position ->
                     relativeAdapter.data.getOrNull(position)?.let {
-                        KLog.d("relative  : $it")
                         MovieDetailActivity.start(v.context, it)
                     }
                 }
@@ -67,7 +66,7 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
     }
 
     private val relativeAdapter: BaseQuickAdapter<Movie, BaseViewHolder> by lazy {
-        object : BaseAppAdapter<Movie, BaseViewHolder>(R.layout.layout_detail_relative_movies_item) {
+        object : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.layout_detail_relative_movies_item) {
             override fun convert(holder: BaseViewHolder, item: Movie) {
                 GlideApp.with(holder.itemView.context).asBitmap().load(item.imageUrl.toGlideNoHostUrl).into(object : BitmapImageViewTarget(holder.getView(R.id.iv_relative_movie_image)) {
                     override fun setResource(resource: Bitmap?) {
@@ -112,7 +111,6 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
 
     fun init(relativeMovies: List<Movie>) {
         //actress
-        KLog.d("relate moview : $relativeMovies")
         if (relativeMovies.isEmpty()) view.tv_movie_relative_none_tip.visibility = View.VISIBLE
         else {
             //load header

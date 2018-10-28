@@ -34,7 +34,7 @@ import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.mvp.presenter.ActressCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieListActivity
-import me.jbusdriver.ui.adapter.BaseAppAdapter
+
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import me.jbusdriver.ui.holder.CollectDirEditHolder
@@ -51,7 +51,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
     }
     override val adapter: BaseQuickAdapter<CollectLinkWrapper<ActressInfo>, in BaseViewHolder> by lazy {
 
-        object : BaseAppAdapter<CollectLinkWrapper<ActressInfo>, BaseViewHolder>(null) {
+        object : BaseQuickAdapter<CollectLinkWrapper<ActressInfo>, BaseViewHolder>(null) {
             private val random = Random()
             private fun randomNum(number: Int) = Math.abs(random.nextInt() % number)
 
@@ -91,7 +91,6 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                     }
 
                     else -> {
-                        KLog.d("type item $item")
                         setFullSpan(holder)
                         holder.setText(R.id.tv_nav_menu_name, " ${if (item.isExpanded) "👇" else "👆"} " + item.category.name)
                     }
@@ -102,7 +101,6 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
             setOnItemClickListener { _, view, position ->
                 val data = this@ActressCollectFragment.adapter.getData().getOrNull(position)
                         ?: return@setOnItemClickListener
-                KLog.d("click data : ${data.isExpanded} ; ${adapter.getData().size} ${adapter.getData()}")
                 data.linkBean?.let {
                     MovieListActivity.start(viewContext, it)
                 } ?: apply {
@@ -124,11 +122,9 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                             val last = all - category
                             if (last.isNotEmpty()) {
                                 action.put("移到分类...") { link ->
-                                    KLog.d("移到分类 : $last")
                                     MaterialDialog.Builder(viewContext).title("选择目录")
                                             .items(last.map { it.name })
                                             .itemsCallbackSingleChoice(-1) { _, _, w, _ ->
-                                                KLog.d("选择 : $w")
                                                 last.getOrNull(w)?.let {
                                                     mBasePresenter?.setCategory(link, it)
                                                     mBasePresenter?.onRefresh()
@@ -203,7 +199,6 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
     override fun createPresenter() = ActressCollectPresenterImpl()
 
     override fun showContents(data: List<*>) {
-        KLog.d("showContents $data")
 
         mBasePresenter?.let { p ->
             p.adapterDelegate.needInjectType.onEach {

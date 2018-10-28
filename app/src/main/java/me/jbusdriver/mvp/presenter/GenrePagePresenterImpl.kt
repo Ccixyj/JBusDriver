@@ -44,7 +44,6 @@ class GenrePagePresenterImpl(val url: String) : BasePresenterImpl<GenrePageContr
                 }.doAfterTerminate { postMain { mView?.dismissLoading() } }
                 .compose(SchedulersCompat.io())
                 .subscribeBy(onError = {
-                    KLog.d(it)
                 }, onComplete = {
                     mView?.showContent(null)
                 }).addTo(rxManager)

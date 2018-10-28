@@ -8,6 +8,7 @@ import android.content.Context
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
+import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_collect_dir_edit.view.*
@@ -16,7 +17,7 @@ import me.jbusdriver.base.inflate
 import me.jbusdriver.base.toast
 import me.jbusdriver.db.bean.AllFirstParentDBCategoryGroup
 import me.jbusdriver.db.bean.Category
-import me.jbusdriver.ui.adapter.BaseAppAdapter
+
 
 /**
  * Created by Administrator on 2017/11/2 0002.
@@ -105,7 +106,6 @@ class CollectDirEditHolder(context: Context, parentCategory: Category) : BaseHol
                     layoutManager = LinearLayoutManager(context)
                     categoryAdapter.bindToRecyclerView(this)
                     categoryAdapter.setOnItemChildClickListener { _, view, position ->
-                        KLog.d("$position view $view ")
                         when (view.id) {
                             R.id.tv_category_delete -> {
                                 //删除
@@ -128,7 +128,7 @@ class CollectDirEditHolder(context: Context, parentCategory: Category) : BaseHol
     }
 
     private val categoryAdapter by lazy {
-        object : BaseAppAdapter<Category, BaseViewHolder>(R.layout.layout_collect_dir_edit_item) {
+        object : BaseQuickAdapter<Category, BaseViewHolder>(R.layout.layout_collect_dir_edit_item) {
             private val exclude = AllFirstParentDBCategoryGroup.mapNotNull { it.value.id }
             override fun convert(holder: BaseViewHolder, item: Category) {
                 holder.setText(R.id.tv_category_name, item.name)

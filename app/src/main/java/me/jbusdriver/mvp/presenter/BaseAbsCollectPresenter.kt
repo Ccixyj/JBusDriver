@@ -20,7 +20,7 @@ import me.jbusdriver.ui.data.AppConfiguration
 import org.jsoup.nodes.Document
 
 
-abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T : ICollectCategory> : AbstractRefreshLoadMorePresenterImpl<V, T>(),BaseCollectPresenter<T> {
+abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T : ICollectCategory> : AbstractRefreshLoadMorePresenterImpl<V, T>(), BaseCollectPresenter<T> {
 
 
     protected open val pageSize = 20
@@ -32,9 +32,7 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
             else -> LinkCategory
         }
     }
-    private val listData by lazy {
-        load().toMutableList()
-    }
+    private val listData = mutableListOf<ILink>()
 
     private val pageNum
         get() = ((listData.size - 1) / pageSize) + 1
@@ -48,6 +46,11 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
         this is MovieCollectContract.MovieCollectPresenter -> LinkService.queryMovies()
         this is ActressCollectContract.ActressCollectPresenter -> LinkService.queryActress()
         else -> LinkService.queryLink()
+    }
+
+    override fun onFirstLoad() {
+        //通过refresh加载，loadData4Page
+        onRefresh()
     }
 
     override fun loadData4Page(page: Int) {
@@ -97,7 +100,6 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
             val next = if (page < pageNum) page + 1 else pageNum
             pageInfo = pageInfo.copy(activePage = page, nextPage = next)
             Flowable.just(pageInfo).map {
-                KLog.d("request page : $it")
                 val start = (pageInfo.activePage - 1) * pageSize
                 val nextSize = start + pageSize
                 val end = if (nextSize <= listData.size) nextSize else listData.size
@@ -123,19 +125,17 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
     }
 
     override fun onRefresh() {
-        //   pageInfo = PageInfo()
-//        listData.clear()
-//        collector.reload()
-//        listData.addAll(collector.dataList)
-        if (!AppConfiguration.enableCategory) {
-            listData.clear()
-            listData.addAll(load())
-        } else {
+        mView?.showLoading()
+        listData.clear()
+        if (AppConfiguration.enableCategory) {
             collectGroupMap.clear()
         }
-
         mView?.resetList()
-        loadData4Page(1)
+       load().doOnNext { listData.addAll(it) }
+               .compose(SchedulersCompat.io())
+               .subscribe {
+                   loadData4Page(1)
+               }.addTo(rxManager)
     }
 
     override val model: BaseModel<Int, Document>

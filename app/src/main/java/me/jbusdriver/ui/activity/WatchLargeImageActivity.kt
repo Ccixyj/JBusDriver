@@ -81,7 +81,6 @@ class WatchLargeImageActivity : BaseActivity() {
         this@WatchLargeImageActivity.tv_url_index.text = "${vp_largeImage.currentItem + 1} / ${imageViewList.size}"
 
         iv_download.setOnClickListener {
-            KLog.d("download image ${urls[vp_largeImage.currentItem]}")
             Schedulers.io().scheduleDirect {
                 val url = urls[vp_largeImage.currentItem]
                 GlideApp.with(this).asFile().load(url).submit()
@@ -139,7 +138,6 @@ class WatchLargeImageActivity : BaseActivity() {
                 in 6..10 -> Priority.NORMAL
                 else -> Priority.LOW
             }
-            KLog.d("load $position for ${vp_largeImage.currentItem} offset = $offset : $priority")
             val url = urls[position]
             GlideApp.with(this@WatchLargeImageActivity)
                     .load(url.toGlideNoHostUrl)

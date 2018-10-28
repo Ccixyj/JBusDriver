@@ -36,11 +36,6 @@ class SplashActivity : BaseActivity() {
         setContentView(R.layout.activity_splash)
         init()
         migrate()
-        trimLike()
-    }
-
-    private fun trimLike() {
-        TrimLikeService.startTrimSize(this)
     }
 
     private fun migrate() {
@@ -59,7 +54,6 @@ class SplashActivity : BaseActivity() {
                 }
                 .retry(1)
                 .doFinally {
-                    KLog.d("doFinally")
                     postMain {
                         toast("load url : ${JAVBusService.defaultFastUrl}")
                         MainActivity.start(this)
@@ -67,14 +61,12 @@ class SplashActivity : BaseActivity() {
                     }.addTo(rxManager)
                 }
                 .subscribeBy(onNext = {
-                    KLog.w("initsuccess : $it")
                     it.get(DataSourceType.CENSORED.key)?.let {
                         JAVBusService.defaultFastUrl = it.urlHost
                     }
                 }, onError = {
                     it.printStackTrace()
                 }, onComplete = {
-                    KLog.w("onComplete ")
                 })
                 .addTo(rxManager)
 
@@ -84,14 +76,11 @@ class SplashActivity : BaseActivity() {
         return if (CacheLoader.lru.get(C.Cache.BUS_URLS).isNullOrBlank()) {
             //内存在没有地址时 ,先从disk获取缓存的,没有则从网络下载
             val urlsFromDisk = CacheLoader.justDisk(C.Cache.BUS_URLS).map {
-                GSON.fromJson<ArrayMap<String, String>>(it).apply {
-                    KLog.d("load initUrls from disk  $this")
-                }
+                GSON.fromJson<ArrayMap<String, String>>(it)
             }
             val urlsFromUpdateCache = Flowable.concat(CacheLoader.justLru(C.Cache.ANNOUNCE_URL), GitHub.INSTANCE.announce().addUserCase(4)).firstOrError().toFlowable()
                     .map { source ->
                         //放入内存缓存,更新需要
-                        KLog.d("load initUrls from urlsFromUpdateCache $source")
                         val r = GSON.fromJson<JsonObject>(source) ?: JsonObject()
                         CacheLoader.cacheLru(C.Cache.ANNOUNCE_VALUE to r)
                         arrayMapof<String, String>().apply {
@@ -103,7 +92,6 @@ class SplashActivity : BaseActivity() {
                                 it.mapNotNull { it.asString }.shuffled().firstOrNull()?.let {
                                     JAVBusService.defaultFastUrl = it
                                     urls[DataSourceType.CENSORED.key] = it
-                                    KLog.d("defaultFastUrl ${JAVBusService.defaultFastUrl}")
                                 }
                             }
                             put(DataSourceType.CENSORED.key, availableUrls.toString())
@@ -140,7 +128,7 @@ class SplashActivity : BaseActivity() {
                         //change xyz
                         if (baseXyzUrl.isNotBlank()) {
                             urls[DataSourceType.XYZ.key] = baseXyzUrl
-                                urls[DataSourceType.XYZ_ACTRESSES.key] = "$baseXyzUrl/actresses"
+                            urls[DataSourceType.XYZ_ACTRESSES.key] = "$baseXyzUrl/actresses"
                             urls[DataSourceType.XYZ_GENRE.key] = "$baseXyzUrl/genre"
                         } else {
                             val baseUrlSuffix = urls[DataSourceType.XYZ.key]?.substringAfterLast(".").orEmpty()
@@ -152,7 +140,6 @@ class SplashActivity : BaseActivity() {
 
 
                         CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to urls, C.Cache.DAY * 2) //缓存所有的urls
-                        KLog.i("get fast it : $it")
                         CacheLoader.lru.put(DataSourceType.CENSORED.key + "false", it.second) //默认有种的
                         urls
                     }.toFlowable()
@@ -160,9 +147,7 @@ class SplashActivity : BaseActivity() {
                     .firstElement().toObservable()
                     .subscribeOn(Schedulers.io())
         } else CacheLoader.justLru(C.Cache.BUS_URLS).map {
-            GSON.fromJson<ArrayMap<String, String>>(it).apply {
-                KLog.i("map urls $this")
-            }
+            GSON.fromJson<ArrayMap<String, String>>(it)
         }.toObservable()
     }
 

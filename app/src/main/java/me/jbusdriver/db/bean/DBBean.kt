@@ -79,24 +79,14 @@ private fun doGet(type: Int, jsonStr: String) = when (type) {
 }.let { data ->
     val isXyz = data.link.urlHost.endsWith("xyz")
     if (isXyz) return@let data
-    KLog.d("check type : $type  #$data hosts: ${JAVBusService.defaultImageUrlHosts}")
     val host: String by lazy { JAVBusService.defaultFastUrl }
-//    val imageHost: Set<String> by lazy {
-//        if (!isXyz) JAVBusService.defaultImageUrlHosts["default"] ?: mutableSetOf()
-//        else JAVBusService.defaultImageUrlHosts["xyz"] ?: mutableSetOf()
-//    }
     return@let when (data) {
         is Movie -> {
             val linkChange = data.link.urlHost != host
-//            val imageChange =  imageHost.isNotEmpty() && data.imageUrl.urlHost !in imageHost
-//            if (imageChange){
-//                imageHost.map { it + data.imageUrl.urlPath }.filter { Glide.with(JBus).asFile().load(it).preload()  != null}
-//            }
             data.copy(link = if (linkChange) data.link.replace(data.link.urlHost, host) else data.link, imageUrl = /*if (imageChange) data.imageUrl.replace(data.imageUrl.urlHost, imageHost) else*/ data.imageUrl)
         }
         is ActressInfo -> {
             val linkChange = data.link.urlHost != host
-//            val imageChange =  imageHost.isNotEmpty() && data.avatar.urlHost !in imageHost && !data.avatar.endsWith("nowprinting.gif")
             data.copy(link = if (linkChange) data.link.replace(data.link.urlHost, host) else data.link, avatar = /*if (imageChange) data.avatar.replace(data.avatar.urlHost, imageHost) else*/ data.avatar)
         }
         else -> {
@@ -109,10 +99,7 @@ private fun doGet(type: Int, jsonStr: String) = when (type) {
                 }
             } else data
         }
-    }.apply {
-        KLog.d("check link : $this")
     }
-
 }
 
 

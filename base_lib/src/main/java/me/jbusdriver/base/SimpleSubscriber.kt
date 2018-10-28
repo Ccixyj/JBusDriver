@@ -10,13 +10,7 @@ open class SimpleSubscriber<T> : DisposableSubscriber<T>() {
 
     private val TAG: String = this.javaClass.name
 
-    override fun onStart() {
-        super.onStart()
-        KLog.t(TAG).i(": onStart >>")
-    }
-
     override fun onComplete() {
-        KLog.t(TAG).i("onCompleted >> ")
         cancel()
     }
 
@@ -32,7 +26,6 @@ open class SimpleSubscriber<T> : DisposableSubscriber<T>() {
     }
 
     override fun onNext(t: T) {
-        KLog.t(TAG).i("t = $t")
     }
 
 

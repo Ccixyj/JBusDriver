@@ -27,7 +27,6 @@ object NetClient {
     private val rxJavaCallAdapterFactory = RxJava2CallAdapterFactory.create()
     private val EXIST_MAGNET_INTERCEPTOR by lazy {
         Interceptor { chain ->
-            KLog.t(TAG).i("NetClient: check is existmag ")
             var request = chain.request()
             val builder = request.newBuilder().header("User-Agent", USER_AGENT)
             if (!TextUtils.isEmpty(request.header("existmag")))
@@ -56,7 +55,6 @@ object NetClient {
         override fun responseBodyConverter(type: Type?, annotations: Array<out Annotation>?, retrofit: Retrofit?): Converter<ResponseBody, *> =
                 Converter<ResponseBody, JsonObject> {
                     val s = it.string()
-                    KLog.w(s)
                     val json = GSON.fromJson(s, JsonObject::class.java)
                     if (json == null || json.isJsonNull || json.entrySet().isEmpty()) {
                         error("json is null")

@@ -3,6 +3,7 @@ package me.jbusdriver.ui.adapter
 import android.graphics.drawable.GradientDrawable
 import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
+import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import jbusdriver.me.jbusdriver.R
 import me.jbusdriver.base.KLog
@@ -18,7 +19,7 @@ import me.jbusdriver.ui.data.contextMenu.LinkMenu
 /**
  * Created by Administrator on 2017/7/30.
  */
-open class GenreAdapter : BaseAppAdapter<Genre, BaseViewHolder>(R.layout.layout_genre_item) {
+open class GenreAdapter : BaseQuickAdapter<Genre, BaseViewHolder>(R.layout.layout_genre_item) {
 
 
     override fun convert(holder: BaseViewHolder, item: Genre) {
@@ -33,7 +34,6 @@ open class GenreAdapter : BaseAppAdapter<Genre, BaseViewHolder>(R.layout.layout_
 
         setOnItemClickListener { _, view, position ->
             data.getOrNull(position)?.let { genre ->
-                KLog.d("genre : $genre")
                 MovieListActivity.start(view.context, genre)
             }
         }
