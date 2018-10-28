@@ -116,10 +116,15 @@ object LinkService {
     fun remove(data: ILink) = dao.delete(data.convertDBItem())
     fun remove(data: LinkItem) = dao.delete(data)
 
-    fun queryMovies(): Flowable<List<Movie>> = Flowable.fromCallable{dao.listByType(1)}.map { it -> it.mapNotNull { it.getLinkValue() as? Movie } }
+    fun queryMovies(): Flowable<List<Movie>> = Flowable.fromCallable { dao.listByType(1) }.map { it ->
+        it.mapNotNull {
+            it.getLinkValue() as? Movie
+        }
+    }
+
     fun queryActress(): Flowable<List<ActressInfo>> = Flowable.fromCallable { dao.listByType(2) }.map { it -> it.mapNotNull { (it.getLinkValue() as? ActressInfo) } }
 
-    fun queryLink(): Flowable<List<ILink>> = Flowable.fromCallable { dao.queryLink() }.map { it ->it.map { it.getLinkValue() } }
+    fun queryLink(): Flowable<List<ILink>> = Flowable.fromCallable { dao.queryLink() }.map { it -> it.map { it.getLinkValue() } }
 
     fun resetCategory(category: Category, dBType: Int) {
         KLog.d("reset $category")
@@ -143,7 +148,7 @@ object LinkService {
     fun saveOrUpdate(backs: List<LinkItem>) {
         backs.forEach {
             val rowId = dao.insert(it) ?: -1
-            if (rowId < 0){
+            if (rowId < 0) {
                 dao.update(it)
             }
         }
@@ -151,7 +156,7 @@ object LinkService {
 
     fun saveOrUpdate(back: LinkItem) {
         val rowId = dao.insert(back) ?: -1
-        if (rowId < 0){
+        if (rowId < 0) {
             dao.update(back)
         }
     }

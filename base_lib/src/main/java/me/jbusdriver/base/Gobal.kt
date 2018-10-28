@@ -24,7 +24,11 @@ val GSON by lazy {
             return@JsonDeserializer null
         }
     }).registerTypeAdapter(Date::class.java, JsonDeserializer { json, _, _ ->
-        return@JsonDeserializer Date(json.asJsonPrimitive.asString)
+        try {
+            return@JsonDeserializer Date(json.asJsonPrimitive.asString)
+        } catch (e: Exception) {
+            return@JsonDeserializer Date()
+        }
     }).serializeNulls().create()
 }
 

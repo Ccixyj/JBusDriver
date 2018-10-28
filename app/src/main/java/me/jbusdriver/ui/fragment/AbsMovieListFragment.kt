@@ -136,7 +136,7 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
 
                         with(holder.getView<LinearLayout>(R.id.ll_movie_hot)) {
                             this.removeAllViews()
-                            item.tags.mapIndexed { index, tag ->
+                            item.tags?.mapIndexed { index, tag ->
                                 (viewContext.inflate(R.layout.tv_movie_tag) as TextView).let {
                                     it.text = tag
                                     it.setPadding(padding, 0, padding, 0)

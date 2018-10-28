@@ -64,6 +64,7 @@ class SplashActivity : BaseActivity() {
                     }
                 }, onError = {
                     it.printStackTrace()
+                    KLog.w("init urls error : $it")
                 }, onComplete = {
                 })
                 .addTo(rxManager)
@@ -79,6 +80,7 @@ class SplashActivity : BaseActivity() {
             val urlsFromUpdateCache = Flowable.concat(CacheLoader.justLru(C.Cache.ANNOUNCE_URL), GitHub.INSTANCE.announce().addUserCase(4)).firstOrError().toFlowable()
                     .map { source ->
                         //放入内存缓存,更新需要
+
                         val r = GSON.fromJson<JsonObject>(source) ?: JsonObject()
                         CacheLoader.cacheLru(C.Cache.ANNOUNCE_VALUE to r)
                         arrayMapof<String, String>().apply {
@@ -94,6 +96,7 @@ class SplashActivity : BaseActivity() {
                                 }
                             }
                             put(DataSourceType.CENSORED.key, availableUrls.toString())
+                            KLog.d("init urls first :$source for $this")
                         }
                     }
                     .flatMap {
@@ -130,16 +133,18 @@ class SplashActivity : BaseActivity() {
                             urls[DataSourceType.XYZ_ACTRESSES.key] = "${JAVBusService.defaultXyzUrl}/actresses"
                             urls[DataSourceType.XYZ_GENRE.key] = "${JAVBusService.defaultXyzUrl}/genre"
                         } else {
+                            val host = JAVBusService.xyzHostDomains.firstOrNull() ?: "work"
                             val baseUrlSuffix = urls[DataSourceType.XYZ.key]?.substringAfterLast(".").orEmpty()
-                            urls[DataSourceType.XYZ.key] = urls[DataSourceType.XYZ.key]?.replace(baseUrlSuffix, "xyz")
-                            urls[DataSourceType.XYZ_ACTRESSES.key] = urls[DataSourceType.XYZ_ACTRESSES.key]?.replace(baseUrlSuffix, "xyz")
-                            urls[DataSourceType.XYZ_GENRE.key] = urls[DataSourceType.XYZ_GENRE.key]?.replace(baseUrlSuffix, "xyz")
+                            urls[DataSourceType.XYZ.key] = urls[DataSourceType.XYZ.key]?.replace(baseUrlSuffix, host)
+                            urls[DataSourceType.XYZ_ACTRESSES.key] = urls[DataSourceType.XYZ_ACTRESSES.key]?.replace(baseUrlSuffix, host)
+                            urls[DataSourceType.XYZ_GENRE.key] = urls[DataSourceType.XYZ_GENRE.key]?.replace(baseUrlSuffix, host)
                         }
 
 
 
                         CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to urls, C.Cache.DAY * 2) //缓存所有的urls
                         CacheLoader.lru.put(DataSourceType.CENSORED.key + "false", it.second) //默认有种的
+                        KLog.d("init urls second :$urls ")
                         urls
                     }.toFlowable()
             return Flowable.concat<ArrayMap<String, String>>(urlsFromDisk, urlsFromUpdateCache)

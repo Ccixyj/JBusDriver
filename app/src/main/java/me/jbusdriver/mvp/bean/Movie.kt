@@ -15,7 +15,7 @@ data class Movie(
         val code: String, //番号
         val date: String, //日期
         @SerializedName("detailUrl") override val link: String,
-        @Transient val tags: List<String> = listOf()//标签,
+        @Transient val tags: List<String>? = listOf()//标签,
 
 ) : MultiItemEntity, ILink {
     @Transient

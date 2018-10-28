@@ -13,15 +13,15 @@
   "xyzLoader": {
     "url": "https://www.javbus.work",
     "legacyHost": [
-      "xyz",
-      "work"
+      "work",
+      "xyz"
     ]
   },
   "update": {
-    "versionCode": 282,
-    "versionName": "1.2.12",
-    "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/JubsDriver_v1.2.12build463.apk",
-    "desc": "JBusDriver 1.2.12 更新!\r\n 1.修复欧美数据源问题\r\n 2.修复恢复收藏时可能的崩溃"
+    "versionCode": 288,
+    "versionName": "1.2.13",
+    "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/JubsDriver_v1.2.13build472.apk",
+    "desc": "JBusDriver 1.2.13 更新!\r\n 1.修复欧美数据收藏的问题\r\n 2.优化收藏数据量较大时卡顿的问题"
   },
   "notice": {
     "id": 0,

@@ -1,5 +1,6 @@
 package me.jbusdriver.common
 
+import android.os.Environment
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
@@ -13,6 +14,7 @@ import me.jbusdriver.base.JBusManager
 import me.jbusdriver.base.arrayMapof
 import me.jbusdriver.debug.stetho.initializeStetho
 import me.jbusdriver.http.JAVBusService
+import java.io.File
 
 
 lateinit var JBus: AppContext
@@ -44,7 +46,11 @@ class AppContext : TinkerApplication(ShareConstants.TINKER_ENABLE_ALL, "me.jbusd
                     .build()
 
             Logger.addLogAdapter(object : AndroidLogAdapter(formatStrategy) {
-                override fun isLoggable(priority: Int, tag: String?) = BuildConfig.DEBUG
+                override fun isLoggable(priority: Int, tag: String?) = BuildConfig.DEBUG || File(Environment.getExternalStorageDirectory().absolutePath + File.separator +
+                        packageName
+                        + File.separator + "debug"
+
+                ).exists()
             })
 
             initializeStetho(this) //chrome://inspect/#devices
