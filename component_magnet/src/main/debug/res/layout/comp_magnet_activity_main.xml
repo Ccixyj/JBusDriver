@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:text="ebod 580"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/material_48dp"
+        android:hint="put something to search"
+        />
+
+    <TextView
+        android:id="@+id/comp_magnet_tv_go_search"
+        android:gravity="center"
+        android:text="go_search"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/material_48dp" />
+
+</LinearLayout>

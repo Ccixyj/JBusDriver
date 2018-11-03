@@ -145,6 +145,9 @@ dependencies {
 
 
     implementation "com.android.support:multidex:1.0.3" // 多dex配置
+
+    //components
+    addComponent "component_magnet"
 }
 
 configurations.all { config ->
