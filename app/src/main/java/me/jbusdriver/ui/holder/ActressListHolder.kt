@@ -3,7 +3,7 @@ package me.jbusdriver.ui.holder
 import android.content.Context
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_actress.view.*
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.inflate

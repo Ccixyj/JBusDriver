@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentPagerAdapter
 import android.view.View
 import me.jbusdriver.base.mvp.BaseView
-import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_mine_collect.*
 import me.jbusdriver.base.common.AppBaseFragment
 import me.jbusdriver.base.mvp.presenter.BasePresenter

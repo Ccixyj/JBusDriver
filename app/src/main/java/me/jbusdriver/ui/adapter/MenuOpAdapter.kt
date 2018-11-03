@@ -3,7 +3,7 @@ package me.jbusdriver.ui.adapter
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.chad.library.adapter.base.entity.MultiItemEntity
-import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.R
 import me.jbusdriver.mvp.bean.Expand_Type_Head
 import me.jbusdriver.mvp.bean.Expand_Type_Item
 import me.jbusdriver.mvp.bean.MenuOp

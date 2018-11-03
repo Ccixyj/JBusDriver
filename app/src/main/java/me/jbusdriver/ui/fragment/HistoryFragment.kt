@@ -10,7 +10,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.base.GlideApp

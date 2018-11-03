@@ -20,7 +20,7 @@ import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_setting.*
 import kotlinx.android.synthetic.main.layout_collect_back_edit_item.view.*
 import kotlinx.android.synthetic.main.layout_menu_op_item.view.*

@@ -5,10 +5,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import me.jbusdriver.base.KLog
 import me.jbusdriver.base.SchedulersCompat
 import me.jbusdriver.base.mvp.BaseView
 import me.jbusdriver.base.mvp.model.BaseModel
+import me.jbusdriver.commen.bean.ICollectCategory
 import me.jbusdriver.db.bean.*
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.db.service.LinkService

@@ -3,7 +3,7 @@ package me.jbusdriver.mvp.bean
 import me.jbusdriver.base.toJsonString
 import me.jbusdriver.base.urlPath
 import me.jbusdriver.db.bean.AllFirstParentDBCategoryGroup
-import me.jbusdriver.db.bean.ICollectCategory
+import me.jbusdriver.commen.bean.ICollectCategory
 import me.jbusdriver.db.bean.LinkCategory
 import me.jbusdriver.db.bean.LinkItem
 import me.jbusdriver.http.JAVBusService

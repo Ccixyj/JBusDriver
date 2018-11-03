@@ -10,7 +10,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.R
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.C
 import me.jbusdriver.common.isEndWithXyzHost

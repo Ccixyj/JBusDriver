@@ -11,7 +11,7 @@ import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.R
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.C
 import me.jbusdriver.common.isEndWithXyzHost

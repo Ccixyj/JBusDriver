@@ -3,6 +3,7 @@ package me.jbusdriver.db.bean
 import android.content.ContentValues
 import android.content.Context
 import me.jbusdriver.base.*
+import me.jbusdriver.commen.bean.ICollectCategory
 import me.jbusdriver.common.JBus
 import me.jbusdriver.common.isEndWithXyzHost
 import me.jbusdriver.db.CategoryTable
@@ -101,11 +102,6 @@ private fun doGet(type: Int, jsonStr: String) = when (type) {
             } else data
         }
     }
-}
-
-
-interface ICollectCategory {
-    var categoryId: Int
 }
 
 

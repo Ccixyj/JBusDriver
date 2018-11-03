@@ -10,7 +10,7 @@ import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_collect_dir_edit.view.*
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.inflate

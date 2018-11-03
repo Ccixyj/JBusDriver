@@ -18,7 +18,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.gyf.barlibrary.ImmersionBar
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
-import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_watch_large_image.*
 import kotlinx.android.synthetic.main.layout_large_image_item.view.*
 import me.jbusdriver.base.*

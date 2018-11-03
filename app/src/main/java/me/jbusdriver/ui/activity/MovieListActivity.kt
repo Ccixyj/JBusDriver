@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import android.widget.Toast
-import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.R
 import me.jbusdriver.base.common.AppBaseActivity
 import me.jbusdriver.base.common.C
 import me.jbusdriver.db.bean.History

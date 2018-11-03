@@ -1,0 +1,31 @@
+ext.alwaysLib = true //虽然apply了cc-settings-2.gradle，但一直作为library编译，否则别的组件依赖此module时会报错
+apply from: rootProject.file('cc-settings-2.gradle')
+apply plugin: 'kotlin-android'
+
+
+android {
+    compileSdkVersion versions.compileSdk
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion versions.targetSdk
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation project(':base_lib')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+}

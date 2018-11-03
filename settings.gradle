@@ -1,1 +1,1 @@
-include ':app', ':base_lib'
+include ':app', ':base_lib', ':component_interceptors', ':common_bean'

@@ -11,7 +11,7 @@ import com.bumptech.glide.request.target.DrawableImageViewTarget
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_actress_attr.view.*
 import kotlinx.android.synthetic.main.layout_load_all.view.*
 import me.jbusdriver.base.*

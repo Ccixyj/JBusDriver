@@ -14,7 +14,7 @@ import android.view.MenuItem
 import com.afollestad.materialdialogs.MaterialDialog
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_seek_page.view.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*

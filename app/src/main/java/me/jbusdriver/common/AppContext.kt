@@ -1,6 +1,7 @@
 package me.jbusdriver.common
 
 import android.os.Environment
+import com.billy.cc.core.component.CC
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
@@ -9,7 +10,7 @@ import com.tencent.tinker.loader.app.TinkerApplication
 import com.tencent.tinker.loader.shareutil.ShareConstants
 import com.umeng.analytics.MobclickAgent
 import io.reactivex.plugins.RxJavaPlugins
-import jbusdriver.me.jbusdriver.BuildConfig
+import me.jbusdriver.BuildConfig
 import me.jbusdriver.base.JBusManager
 import me.jbusdriver.base.arrayMapof
 import me.jbusdriver.debug.stetho.initializeStetho
@@ -54,6 +55,10 @@ class AppContext : TinkerApplication(ShareConstants.TINKER_ENABLE_ALL, "me.jbusd
             })
 
             initializeStetho(this) //chrome://inspect/#devices
+
+            CC.enableVerboseLog(true)
+            CC.enableDebug(true)
+            CC.enableRemoteCC(true)
         }
 
         MobclickAgent.setDebugMode(BuildConfig.DEBUG)
