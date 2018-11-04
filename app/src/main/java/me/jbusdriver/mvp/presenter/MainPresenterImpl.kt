@@ -11,6 +11,7 @@ import me.jbusdriver.base.fromJson
 import me.jbusdriver.base.common.C
 import me.jbusdriver.base.CacheLoader
 import me.jbusdriver.base.SchedulersCompat
+import me.jbusdriver.base.mvp.presenter.BasePresenterImpl
 import me.jbusdriver.http.GitHub
 import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.bean.NoticeBean

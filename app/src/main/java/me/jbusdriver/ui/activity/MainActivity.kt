@@ -20,8 +20,8 @@ import com.afollestad.materialdialogs.MaterialDialog
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import jbusdriver.me.jbusdriver.BuildConfig
-import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.BuildConfig
+import me.jbusdriver.R
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.AppBaseActivity

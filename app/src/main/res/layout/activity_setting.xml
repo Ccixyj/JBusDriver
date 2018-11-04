@@ -222,7 +222,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:minHeight="@dimen/material_40dp"
-                        android:text="当前选择"
+                        android:text="获取配置中..."
                         android:textColor="@color/secondText" />
                 </LinearLayout>
             </android.support.v7.widget.CardView>

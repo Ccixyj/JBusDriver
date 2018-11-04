@@ -18,6 +18,14 @@ public class C {
 
     }
 
+    public static class Components {
+
+        /**
+         * @see  "me.jbusdriver.component.magnet.ComponentMagnet"
+         */
+        public static final String Manget = "ComponentMagnet";
+    }
+
 
     public static class SavedInstanceState {
         public static final String RECREATION_SAVED_STATE = "RECREATION_SAVED_STATE";

@@ -4,7 +4,8 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.Menu
 import android.view.MenuInflater
-import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.R
+import me.jbusdriver.base.ui.fragment.TabViewPagerFragment
 import me.jbusdriver.mvp.MineCollectContract
 import me.jbusdriver.mvp.presenter.MineCollectPresenterImpl
 import me.jbusdriver.ui.data.AppConfiguration

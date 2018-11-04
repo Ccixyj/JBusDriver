@@ -4,7 +4,8 @@ import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.db.SupportSQLiteOpenHelper
 import android.database.sqlite.SQLiteDatabase
 import me.jbusdriver.base.KLog
-import me.jbusdriver.db.bean.AllFirstParentDBCategoryGroup
+import me.jbusdriver.commen.bean.db.CategoryTable
+import me.jbusdriver.commen.bean.db.AllFirstParentDBCategoryGroup
 
 
 //region history
@@ -25,16 +26,6 @@ object HistoryTable {
     const val COLUMN_IS_ALL = "isAll"
 }
 //endregion
-
-//region collect category
-object CategoryTable {
-    const val TABLE_NAME = "t_category"
-    const val COLUMN_ID = "id"
-    const val COLUMN_P_ID = "pid"
-    const val COLUMN_NAME = "name"
-    const val COLUMN_TREE = "tree"
-    const val COLUMN_ORDER = "orderIndex"
-}
 
 private const val CREATE_COLLECT_CATEGORY_SQL = "CREATE TABLE ${CategoryTable.TABLE_NAME} ( " +
         " ${CategoryTable.COLUMN_ID} INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -106,7 +97,7 @@ class CollectDBCallBack : SupportSQLiteOpenHelper.Callback(COLLECT_DB_VERSION) {
         db?.execSQL(CREATE_COLLECT_CATEGORY_SQL)
         AllFirstParentDBCategoryGroup.forEach {
             db?.insert(CategoryTable.TABLE_NAME, SQLiteDatabase.CONFLICT_NONE, it.value.cv())
-            db?.update(CategoryTable.TABLE_NAME, SQLiteDatabase.CONFLICT_NONE, it.value.cv(),CategoryTable.COLUMN_ID + " = ${it.value.id!!} ",null)
+            db?.update(CategoryTable.TABLE_NAME, SQLiteDatabase.CONFLICT_NONE, it.value.cv(), CategoryTable.COLUMN_ID + " = ${it.value.id!!} ",null)
         }
 //        AllFirstParentDBCategoryGroup.forEach {
 //            try {

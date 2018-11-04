@@ -27,6 +27,13 @@
         android:title="全部影片"
         app:showAsAction="never"
         />
+
+    <item
+        android:id="@+id/action_switch_layout"
+        android:orderInCategory="100"
+        android:title="布局切换"
+        app:showAsAction="never"
+        />
     <item
         android:id="@+id/action_recommend"
         android:orderInCategory="101"

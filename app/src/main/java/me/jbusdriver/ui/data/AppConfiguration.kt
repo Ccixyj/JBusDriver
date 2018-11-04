@@ -1,16 +1,9 @@
 package me.jbusdriver.ui.data
 
-import android.content.Context
-import io.reactivex.schedulers.Schedulers
-import me.jbusdriver.base.GSON
-import me.jbusdriver.base.RxBus
-import me.jbusdriver.base.fromJson
-import me.jbusdriver.base.toJsonString
-import me.jbusdriver.common.JBus
+import me.jbusdriver.base.*
 import me.jbusdriver.mvp.bean.CategoryChangeEvent
 import me.jbusdriver.mvp.bean.MenuChangeEvent
 import me.jbusdriver.mvp.bean.PageChangeEvent
-import me.jbusdriver.ui.data.magnet.MagnetLoaders
 import kotlin.properties.Delegates
 
 /**
@@ -20,8 +13,6 @@ import kotlin.properties.Delegates
 
 object AppConfiguration {
 
-    private fun getSp(key: String): String? = JBus.getSharedPreferences("config", Context.MODE_PRIVATE).getString(key, null)
-    private fun saveSp(key: String, value: String) = Schedulers.io().scheduleDirect { JBus.getSharedPreferences("config", Context.MODE_PRIVATE).edit().putString(key, value).apply() }
 
     //region pageMode value
     object PageMode {
@@ -45,18 +36,7 @@ object AppConfiguration {
 
     //endregion
 
-    //region magnet
-    private const val MagnetSourceS: String = "MagnetSourceS"
-    val MagnetKeys: MutableList<String> by lazy {
-        GSON.fromJson<MutableList<String>>(getSp(MagnetSourceS) ?: "") ?: let {
-            val default = MagnetLoaders.keys.take(2)
-            saveSp(MagnetSourceS, default.toJsonString())
-            default.toMutableList()
-        }
-    }
 
-    fun saveMagnetKeys() = saveSp(MagnetSourceS, MagnetKeys.toJsonString())
-    //endregion
 
     //region menu
     private const val MenuConfigS: String = "MenuConfig"

@@ -3,9 +3,7 @@ package me.jbusdriver.ui.fragment
 import android.os.Bundle
 import android.support.v4.view.MenuItemCompat
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.SearchView
+import android.support.v7.widget.*
 import android.text.InputType
 import android.text.TextUtils
 import android.view.Menu
@@ -14,19 +12,15 @@ import android.view.MenuItem
 import com.afollestad.materialdialogs.MaterialDialog
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import jbusdriver.me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_seek_page.view.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
-import me.jbusdriver.base.KLog
-import me.jbusdriver.base.RxBus
-import me.jbusdriver.base.inflate
-import me.jbusdriver.base.toast
+import me.jbusdriver.R
+import me.jbusdriver.base.*
 import me.jbusdriver.base.common.AppBaseRecycleFragment
+import me.jbusdriver.base.mvp.bean.PageInfo
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.PageChangeEvent
-import me.jbusdriver.mvp.bean.PageInfo
-import me.jbusdriver.ui.activity.HotRecommendActivity
 import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.data.AppConfiguration
 
@@ -36,7 +30,20 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
 
     override val swipeView: SwipeRefreshLayout? by lazy { sr_refresh }
     override val recycleView: RecyclerView  by lazy { rv_recycle }
-    override val layoutManager: RecyclerView.LayoutManager  by lazy { LinearLayoutManager(viewContext) }
+    override val layoutManager: RecyclerView.LayoutManager
+        get() = when (currentLayoutType) {
+            OrientationHelper.VERTICAL -> layoutManagers.getOrPut(OrientationHelper.VERTICAL) { LinearLayoutManager(viewContext) }
+            OrientationHelper.HORIZONTAL -> layoutManagers.getOrPut(OrientationHelper.HORIZONTAL) {
+                StaggeredGridLayoutManager(2, OrientationHelper.VERTICAL).apply {
+                }
+            }
+            else -> LinearLayoutManager(viewContext)
+        }
+
+    private val layoutManagers = hashMapOf<Int, RecyclerView.LayoutManager>()
+
+    private var currentLayoutType = getSp("layout_type")?.toIntOrNull()
+            ?: OrientationHelper.VERTICAL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -110,9 +117,24 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
                     showPageDialog(it)
                 }
             }
-            R.id.action_recommend -> {
-                HotRecommendActivity.start(this.viewContext)
+
+            R.id.action_switch_layout -> {
+                val pos = when (val lm = recycleView.layoutManager) {
+                    is LinearLayoutManager -> lm.findFirstVisibleItemPosition()
+                    is StaggeredGridLayoutManager -> lm.findFirstCompletelyVisibleItemPositions(intArrayOf(0, 0)).firstOrNull()
+                            ?: 0
+                    else -> 0
+                }
+                currentLayoutType = if (currentLayoutType == OrientationHelper.HORIZONTAL) OrientationHelper.VERTICAL else OrientationHelper.HORIZONTAL
+                //save config
+                saveSp("layout_type", currentLayoutType.toString())
+                recycleView.layoutManager = layoutManager
+                recycleView.adapter = adapter
+                recycleView.layoutManager.scrollToPosition(pos)
             }
+            /* R.id.action_recommend -> {
+                 HotRecommendActivity.start(this.viewContext)
+             }*/
         }
         return super.onOptionsItemSelected(item)
     }

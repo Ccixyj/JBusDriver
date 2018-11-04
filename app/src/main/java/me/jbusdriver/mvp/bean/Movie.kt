@@ -1,9 +1,8 @@
 package me.jbusdriver.mvp.bean
 
-import android.text.TextUtils
-import com.chad.library.adapter.base.entity.MultiItemEntity
 import com.google.gson.annotations.SerializedName
-import me.jbusdriver.db.bean.MovieCategory
+import me.jbusdriver.commen.bean.ILink
+import me.jbusdriver.commen.bean.db.MovieCategory
 import org.jsoup.nodes.Document
 
 /**
@@ -17,12 +16,12 @@ data class Movie(
         @SerializedName("detailUrl") override val link: String,
         @Transient val tags: List<String>? = listOf()//标签,
 
-) : MultiItemEntity, ILink {
+) : ILink {
     @Transient
     override var categoryId: Int = MovieCategory.id ?: 1
 
 
-    override fun getItemType(): Int = if (isInValid) -1 else 0
+   /* override fun getItemType(): Int = if (isInValid) -1 else 0*/
 }
 
 fun loadMovieFromDoc(str: Document): List<Movie> {
@@ -45,5 +44,4 @@ fun newPageMovie(page: Int, pages: List<Int>) = Movie(page.toString(), pages.joi
 val Movie.saveKey
     inline get() = code.trim() + "_" + date.trim()
 
-private val Movie.isInValid
-    inline get() = TextUtils.isEmpty(code) && TextUtils.isEmpty(link)
+

@@ -2,13 +2,17 @@ package me.jbusdriver.mvp.presenter
 
 import io.reactivex.Flowable
 import me.jbusdriver.base.*
-import me.jbusdriver.base.CacheLoader
+import me.jbusdriver.base.mvp.bean.PageInfo
+import me.jbusdriver.base.mvp.bean.ResultPageBean
+import me.jbusdriver.base.mvp.model.BaseModel
+import me.jbusdriver.base.mvp.presenter.AbstractRefreshLoadMorePresenterImpl
+import me.jbusdriver.commen.bean.ILink
 import me.jbusdriver.db.bean.History
 import me.jbusdriver.db.service.HistoryService
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.LinkListContract
-import me.jbusdriver.mvp.bean.*
-import me.jbusdriver.base.mvp.model.BaseModel
+import me.jbusdriver.mvp.bean.DBtype
+import me.jbusdriver.mvp.bean.PageLink
 import me.jbusdriver.ui.data.AppConfiguration
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

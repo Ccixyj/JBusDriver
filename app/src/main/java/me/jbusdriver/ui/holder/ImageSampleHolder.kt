@@ -8,7 +8,7 @@ import android.widget.ImageView
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_image_samples.view.*
 import me.jbusdriver.base.GlideApp
 import me.jbusdriver.base.displayMetrics

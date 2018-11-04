@@ -7,7 +7,6 @@ import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.gson.JsonObject
 import me.jbusdriver.base.BuildConfig
 import me.jbusdriver.base.GSON
-import me.jbusdriver.base.KLog
 import okhttp3.*
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -22,7 +21,7 @@ import java.util.concurrent.TimeUnit
  */
 object NetClient {
     private const val TAG = "NetClient"
-    private const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36"
+    const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36"
     // private val gsonConverterFactory = GsonConverterFactory.create(GSON)
     private val rxJavaCallAdapterFactory = RxJava2CallAdapterFactory.create()
     private val EXIST_MAGNET_INTERCEPTOR by lazy {

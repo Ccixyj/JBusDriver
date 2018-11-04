@@ -10,9 +10,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.R
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.C
+import me.jbusdriver.commen.bean.ILink
 import me.jbusdriver.common.isEndWithXyzHost
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.*
@@ -99,6 +100,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
         menu?.findItem(R.id.action_show_all)?.isVisible = false
+        menu?.findItem(R.id.action_switch_layout)?.isVisible = false
         if (isSearch) {
             val isCollect = CollectModel.has((link as SearchLink).convertDBItem())
             collectMenu = menu?.add(Menu.NONE, R.id.action_add_movie_collect, 10, "收藏")?.apply {

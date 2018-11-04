@@ -17,7 +17,7 @@ import java.io.File
 object DB {
     private val provideSqlBrite: SqlBrite by lazy {
         SqlBrite.Builder().apply {
-            if (jbusdriver.me.jbusdriver.BuildConfig.DEBUG) {
+            if (me.jbusdriver.BuildConfig.DEBUG) {
                 this.logger { message -> KLog.t("DataBase").i(message) }
             }
         }.build()
@@ -27,7 +27,7 @@ object DB {
         val configuration = SupportSQLiteOpenHelper.Configuration.builder(JBus)
                 .name(JBUS_DB_NAME).callback(JBusDBOpenCallBack()).build()
         provideSqlBrite.wrapDatabaseHelper(FrameworkSQLiteOpenHelperFactory().create(configuration), Schedulers.io()).apply {
-            setLoggingEnabled(jbusdriver.me.jbusdriver.BuildConfig.DEBUG)
+            setLoggingEnabled(me.jbusdriver.BuildConfig.DEBUG)
         }
     }
 
@@ -37,7 +37,7 @@ object DB {
             override val dir: String = JBus.packageName + File.separator + "collect"
         }).name(COLLECT_DB_NAME).callback(CollectDBCallBack()).build()
         provideSqlBrite.wrapDatabaseHelper(FrameworkSQLiteOpenHelperFactory().create(configuration), Schedulers.io()).apply {
-            setLoggingEnabled(jbusdriver.me.jbusdriver.BuildConfig.DEBUG)
+            setLoggingEnabled(me.jbusdriver.BuildConfig.DEBUG)
         }
     }
 

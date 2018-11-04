@@ -5,12 +5,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import android.widget.Toast
-import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.R
 import me.jbusdriver.base.common.AppBaseActivity
 import me.jbusdriver.base.common.C
 import me.jbusdriver.db.bean.History
 import me.jbusdriver.mvp.MovieParseContract
-import me.jbusdriver.mvp.bean.ILink
+import me.jbusdriver.commen.bean.ILink
 import me.jbusdriver.mvp.bean.des
 import me.jbusdriver.mvp.presenter.MovieParsePresenterImpl
 import me.jbusdriver.ui.fragment.LinkableListFragment

@@ -10,11 +10,12 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-import jbusdriver.me.jbusdriver.R
+import me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.base.GlideApp
 import me.jbusdriver.base.common.AppBaseRecycleFragment
+import me.jbusdriver.commen.bean.ILink
 import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.db.bean.History
 import me.jbusdriver.mvp.HistoryContract

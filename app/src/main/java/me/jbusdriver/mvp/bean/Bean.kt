@@ -2,13 +2,13 @@ package me.jbusdriver.mvp.bean
 
 import me.jbusdriver.base.toJsonString
 import me.jbusdriver.base.urlPath
-import me.jbusdriver.db.bean.AllFirstParentDBCategoryGroup
-import me.jbusdriver.db.bean.ICollectCategory
-import me.jbusdriver.db.bean.LinkCategory
+import me.jbusdriver.commen.bean.ICollectCategory
+import me.jbusdriver.commen.bean.ILink
+import me.jbusdriver.commen.bean.db.AllFirstParentDBCategoryGroup
+import me.jbusdriver.commen.bean.db.LinkCategory
 import me.jbusdriver.db.bean.LinkItem
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.enums.SearchType
-import java.io.Serializable
 import java.util.*
 
 /**
@@ -18,10 +18,6 @@ import java.util.*
 const val Expand_Type_Head = 0
 const val Expand_Type_Item = 1
 
-
-interface ILink : ICollectCategory, Serializable {
-    val link: String
-}
 
 val ILink.des: String
     inline get() = when (this) {
@@ -69,12 +65,6 @@ data class PageLink(val page: Int, val title: String /*XX类型*/, override val 
     @Transient
     override var categoryId: Int = LinkCategory.id ?: 10
 }
-
-data class PageInfo(val activePage: Int = 0, val nextPage: Int = 0,
-                    val referPages: List<Int> = listOf())
-
-val PageInfo.hasNext
-    inline get() = activePage < nextPage
 
 
 data class SearchLink(val type: SearchType, var query: String) : ILink {
