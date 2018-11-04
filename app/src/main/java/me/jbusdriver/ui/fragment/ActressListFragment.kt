@@ -100,6 +100,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
         menu?.findItem(R.id.action_show_all)?.isVisible = false
+        menu?.findItem(R.id.action_switch_layout)?.isVisible = false
         if (isSearch) {
             val isCollect = CollectModel.has((link as SearchLink).convertDBItem())
             collectMenu = menu?.add(Menu.NONE, R.id.action_add_movie_collect, 10, "收藏")?.apply {

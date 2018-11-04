@@ -2,9 +2,6 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:layout_above="@+id/movie_date"
-    android:layout_alignParentEnd="true"
-    android:layout_alignParentRight="true"
     android:background="@drawable/shape_solid_corner"
     android:gravity="center"
     android:textColor="@android:color/white" />

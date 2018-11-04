@@ -1,6 +1,10 @@
 package me.jbusdriver.ui.fragment
 
 import android.graphics.drawable.GradientDrawable
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.OrientationHelper
+import android.support.v7.widget.StaggeredGridLayoutManager
+import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -8,15 +12,15 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.request.target.DrawableImageViewTarget
-import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
+import com.chad.library.adapter.base.util.MultiTypeDelegate
 import me.jbusdriver.R
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.C
+import me.jbusdriver.commen.bean.ILink
 import me.jbusdriver.common.isEndWithXyzHost
 import me.jbusdriver.common.toGlideNoHostUrl
-import me.jbusdriver.commen.bean.ILink
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.model.CollectModel
@@ -83,26 +87,42 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
 
 
     override val adapter: BaseQuickAdapter<Movie, in BaseViewHolder>  by lazy {
-        object : BaseMultiItemQuickAdapter<Movie, BaseViewHolder>(null) {
+        object : BaseQuickAdapter<Movie, BaseViewHolder>(null) {
+
+            private val Movie.isInValid
+                inline get() = TextUtils.isEmpty(code) && TextUtils.isEmpty(link)
 
             init {
-                addItemType(-1, R.layout.layout_pager_section_item)
-                addItemType(0, R.layout.layout_page_line_movie_item)
+
+                multiTypeDelegate = object : MultiTypeDelegate<Movie>() {
+                    override fun getItemType(t: Movie): Int {
+                        return when {
+                            t.isInValid -> -1
+                            recyclerView?.layoutManager is LinearLayoutManager -> OrientationHelper.VERTICAL
+                            recyclerView?.layoutManager is StaggeredGridLayoutManager -> OrientationHelper.HORIZONTAL
+                            else -> 1
+                        }
+                    }
+                }
+
+                multiTypeDelegate
+                        .registerItemType(-1, R.layout.layout_pager_section_item)
+                        .registerItemType(OrientationHelper.VERTICAL, R.layout.layout_page_line_movie_item)
+                        .registerItemType(OrientationHelper.HORIZONTAL, R.layout.layout_page_line_movie_item_hor)
+
             }
 
-            private val padding by lazy { this@AbsMovieListFragment.viewContext.dpToPx(8f) }
-            private val colors = listOf(0xff2195f3.toInt(), 0xff4caf50.toInt(), 0xffff0030.toInt()) //蓝,绿,红
+            private val dp8 by lazy { this@AbsMovieListFragment.viewContext.dpToPx(8f) }
+            private val backColors = listOf(0xff2195f3.toInt(), 0xff4caf50.toInt(), 0xffff0030.toInt()) //蓝,绿,红
 
-            private val lp by lazy {
-                LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, this@AbsMovieListFragment.viewContext.dpToPx(24f)).apply {
-                    leftMargin = padding
-                    gravity = Gravity.CENTER_VERTICAL
-                }
+            private fun genLp() = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, this@AbsMovieListFragment.viewContext.dpToPx(24f)).apply {
+                gravity = Gravity.CENTER_VERTICAL
             }
 
             override fun convert(holder: BaseViewHolder, item: Movie) {
-                when (item.itemType) {
+                when (holder.itemViewType) {
                     -1 -> {
+                        setFullSpan(holder)
                         holder.setText(R.id.tv_page_num, item.title)
                         val currentPage = item.title.toIntOrNull()
                         if (currentPage != null) {
@@ -113,8 +133,8 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                             }
                         }
                     }
+                    OrientationHelper.HORIZONTAL, OrientationHelper.VERTICAL -> {
 
-                    0 -> {
                         when (pageMode) {
                             AppConfiguration.PageMode.Page -> {
                                 holder.setGone(R.id.v_line, true)
@@ -139,10 +159,26 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                             item.tags?.mapIndexed { index, tag ->
                                 (viewContext.inflate(R.layout.tv_movie_tag) as TextView).let {
                                     it.text = tag
-                                    it.setPadding(padding, 0, padding, 0)
-                                    (it.background as? GradientDrawable)?.setColor(colors.getOrNull(index % 3)
-                                            ?: colors.first())
-                                    it.layoutParams = lp
+                                    if (holder.itemViewType == OrientationHelper.HORIZONTAL) {
+                                        it.textSize = resources.getDimension(R.dimen.material_10sp)
+                                    }
+                                    it.setPadding(dp8, 0, dp8, 0)
+                                    (it.background as? GradientDrawable)?.apply {
+                                        setColor(backColors.getOrNull(index % 3)
+                                                ?: backColors.first())
+                                        if (holder.itemViewType == OrientationHelper.HORIZONTAL) {
+                                            cornerRadius = dp8 * 1.5f
+                                        } else {
+                                            cornerRadius = dp8 * 2f
+                                        }
+                                    }
+                                    it.layoutParams = genLp().apply {
+                                        if (holder.itemViewType == OrientationHelper.VERTICAL) {
+                                            leftMargin = dp8
+                                        } else {
+                                            rightMargin = dp8
+                                        }
+                                    }
                                     this.addView(it)
                                 }
                             }
@@ -173,13 +209,17 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                             }
 
                         }
+
                     }
+
                 }
+
+
             }
         }.apply {
             setOnItemClickListener { adapter, _, position ->
                 (adapter.data.getOrNull(position) as? Movie)?.let {
-                    when (it.itemType) {
+                    when (adapter.multiTypeDelegate?.getDefItemViewType(adapter.data, position)) {
                         -1 -> {
                             mBasePresenter?.currentPageInfo?.let {
                                 if (it.referPages.isNotEmpty()) showPageDialog(it)
