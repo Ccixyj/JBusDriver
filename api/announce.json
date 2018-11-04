@@ -18,10 +18,10 @@
     ]
   },
   "update": {
-    "versionCode": 289,
-    "versionName": "1.2.13",
-    "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/JubsDriver_v1.2.13build473.apk",
-    "desc": "JBusDriver 1.2.13 更新!\r\n 1.修复欧美数据收藏的问题\r\n 2.优化收藏数据量较大时卡顿的问题"
+    "versionCode": 291,
+    "versionName": "1.2.14",
+    "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/JubsDriver_v1.2.14build482.apk",
+    "desc": "JBusDriver 1.2.14 更新!\r\n 1.电影列表可以切换横向（更多 -> 布局切换）\r\n 2.添加磁力站点BTDB，更新了磁力站链接"
   },
   "notice": {
     "id": 0,
