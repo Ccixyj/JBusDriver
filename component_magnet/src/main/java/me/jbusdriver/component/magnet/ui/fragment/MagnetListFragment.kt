@@ -16,6 +16,7 @@ import me.jbusdriver.base.common.AppBaseRecycleFragment
 import me.jbusdriver.base.common.C
 import me.jbusdriver.component.magnet.R
 import me.jbusdriver.component.magnet.bean.Magnet
+import me.jbusdriver.component.magnet.loader.IMagnetLoader
 import me.jbusdriver.component.magnet.loader.IMagnetLoader.Companion.MagnetFormatPrefix
 import me.jbusdriver.component.magnet.mvp.MagnetListContract.MagnetListPresenter
 import me.jbusdriver.component.magnet.mvp.MagnetListContract.MagnetListView
@@ -55,7 +56,8 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListPresenter, MagnetLis
                     if (url.startsWith(MagnetFormatPrefix)) {
                         Flowable.just(url)
                     } else {
-                        Flowable.fromCallable { Jsoup.connect(url).get().select(".content .magnet").text().trim() }
+                        Flowable.fromCallable { Jsoup.connect(url).get().select(".content .infohash a").text().trim() }
+                                .map { IMagnetLoader.MagnetFormatPrefix + it }
                                 .addUserCase(sec = 6)
                                 .onErrorReturn { url }
                     }

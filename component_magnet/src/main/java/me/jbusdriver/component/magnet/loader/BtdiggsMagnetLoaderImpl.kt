@@ -16,9 +16,18 @@ class BtdiggsMagnetLoaderImpl : IMagnetLoader {
         return doc.select(".list dl").map {
             val href = it.select("dt a")
             val title = href.text()
+            val url = href.attr("href")
+
+            val realUrl = when {
+                url.startsWith("www.") -> "https://$url"
+                url.startsWith("/magnet") -> {
+                    IMagnetLoader.MagnetFormatPrefix + url.removePrefix("/magnet/").removeSuffix(".html")
+                }
+                else -> url
+            }
+
             val labels = it.select(".attr span")
-            Magnet(title, labels.component2().text(), labels.component1().text(),
-                    "http:" + href.attr("href"))
+            Magnet(title, labels.component2().text(), labels.component1().text(), realUrl)
         }
 
     }
