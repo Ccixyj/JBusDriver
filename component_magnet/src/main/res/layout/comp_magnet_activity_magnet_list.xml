@@ -13,7 +13,7 @@
         app:elevation="@dimen/material_0dp">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/comp_magnet_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -23,7 +23,7 @@
 
 
     <FrameLayout
-        android:id="@+id/fl_magnet_list"
+        android:id="@+id/comp_magnet_fl_magnet_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />

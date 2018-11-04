@@ -6,9 +6,8 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import me.jbusdriver.R
-import me.jbusdriver.base.KLog
 import me.jbusdriver.mvp.bean.Genre
-import me.jbusdriver.mvp.bean.ILink
+import me.jbusdriver.commen.bean.ILink
 import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.bean.des
 import me.jbusdriver.mvp.model.CollectModel

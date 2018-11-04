@@ -2,22 +2,6 @@ package me.jbusdriver.mvp.bean
 
 import android.text.TextUtils
 import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
-
-
-/**
- *movie detail
- */
-fun parseMagnets(doc: Element): List<Magnet> {
-    return doc.select("#magnet-table tr:has(a)").map {
-        Magnet(it.select("td").getOrNull(0)?.text() ?: "",
-                it.select("td").getOrNull(1)?.text() ?: "",
-                it.select("td").getOrNull(2)?.text() ?: "",
-                it.select("a").attr("href")
-//                        it.select("a[class*=btn]").map { it.text() }
-        )
-    }
-}
 
 
 /**

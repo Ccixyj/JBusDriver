@@ -14,19 +14,18 @@ import android.view.MenuItem
 import com.afollestad.materialdialogs.MaterialDialog
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_seek_page.view.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
+import me.jbusdriver.R
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.RxBus
-import me.jbusdriver.base.inflate
-import me.jbusdriver.base.toast
 import me.jbusdriver.base.common.AppBaseRecycleFragment
+import me.jbusdriver.base.inflate
+import me.jbusdriver.base.mvp.bean.PageInfo
+import me.jbusdriver.base.toast
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.PageChangeEvent
-import me.jbusdriver.mvp.bean.PageInfo
-import me.jbusdriver.ui.activity.HotRecommendActivity
 import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.data.AppConfiguration
 
@@ -110,9 +109,9 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
                     showPageDialog(it)
                 }
             }
-            R.id.action_recommend -> {
+           /* R.id.action_recommend -> {
                 HotRecommendActivity.start(this.viewContext)
-            }
+            }*/
         }
         return super.onOptionsItemSelected(item)
     }

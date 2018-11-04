@@ -12,11 +12,10 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_collect_dir_edit.view.*
-import me.jbusdriver.base.KLog
 import me.jbusdriver.base.inflate
 import me.jbusdriver.base.toast
-import me.jbusdriver.db.bean.AllFirstParentDBCategoryGroup
-import me.jbusdriver.db.bean.Category
+import me.jbusdriver.commen.bean.db.AllFirstParentDBCategoryGroup
+import me.jbusdriver.commen.bean.db.Category
 
 
 /**

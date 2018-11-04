@@ -38,6 +38,8 @@ class AppContext : TinkerApplication(ShareConstants.TINKER_ENABLE_ALL, "me.jbusd
         if (BuildConfig.DEBUG) {
             LeakCanary.install(this)
 
+            initializeStetho(this) //chrome://inspect/#devices
+
             val formatStrategy = PrettyFormatStrategy.newBuilder()
                     .showThreadInfo(true)  // (Optional) Whether to show thread info or not. Default true
                     .methodCount(2)         // (Optional) How many method line to show. Default 2
@@ -54,7 +56,6 @@ class AppContext : TinkerApplication(ShareConstants.TINKER_ENABLE_ALL, "me.jbusd
                 ).exists()
             })
 
-            initializeStetho(this) //chrome://inspect/#devices
 
             CC.enableVerboseLog(true)
             CC.enableDebug(true)

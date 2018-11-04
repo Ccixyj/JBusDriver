@@ -187,4 +187,9 @@ fun Context.browse(url: String, errorHandler: (Throwable) -> Unit = {}) {
     }
 }
 
+/*SharedPreferences*/
+
+fun getSp(key: String): String? = JBusManager.context.applicationContext.getSharedPreferences("config", Context.MODE_PRIVATE).getString(key, null)
+fun saveSp(key: String, value: String) = Schedulers.io().scheduleDirect { JBusManager.context.applicationContext.getSharedPreferences("config", Context.MODE_PRIVATE).edit().putString(key, value).apply() }
+
 

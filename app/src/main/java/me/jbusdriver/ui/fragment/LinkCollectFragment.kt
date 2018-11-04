@@ -18,8 +18,9 @@ import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.base.dpToPx
 import me.jbusdriver.base.toast
 import me.jbusdriver.base.common.AppBaseRecycleFragment
-import me.jbusdriver.db.bean.Category
-import me.jbusdriver.db.bean.LinkCategory
+import me.jbusdriver.commen.bean.ILink
+import me.jbusdriver.commen.bean.db.Category
+import me.jbusdriver.commen.bean.db.LinkCategory
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.mvp.LinkCollectContract
 import me.jbusdriver.mvp.bean.*

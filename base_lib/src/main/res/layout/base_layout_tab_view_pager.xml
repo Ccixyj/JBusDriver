@@ -16,7 +16,7 @@
         app:tabIndicatorHeight="@dimen/material_3dp"
         app:tabMaxWidth="2000dp"
         app:tabMode="fixed"
-        app:tabSelectedTextColor="@color/white"
+        app:tabSelectedTextColor="@android:color/white"
         app:tabTextColor="@color/gray"
       />
 

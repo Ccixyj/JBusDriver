@@ -15,17 +15,19 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
+import com.billy.cc.core.component.CC
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_setting.*
 import kotlinx.android.synthetic.main.layout_collect_back_edit_item.view.*
 import kotlinx.android.synthetic.main.layout_menu_op_item.view.*
+import me.jbusdriver.R
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.BaseActivity
+import me.jbusdriver.base.common.C
 import me.jbusdriver.common.JBus
 import me.jbusdriver.db.service.LinkService
 import me.jbusdriver.mvp.bean.BackUpEvent
@@ -34,7 +36,6 @@ import me.jbusdriver.mvp.bean.MenuOp
 import me.jbusdriver.mvp.bean.MenuOpHead
 import me.jbusdriver.ui.adapter.MenuOpAdapter
 import me.jbusdriver.ui.data.AppConfiguration
-import me.jbusdriver.ui.data.magnet.MagnetLoaders
 import me.jbusdriver.ui.task.CollectService
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -44,6 +45,7 @@ class SettingActivity : BaseActivity() {
 
     private var pageModeHolder = AppConfiguration.pageMode
     private val menuOpValue by lazy { AppConfiguration.menuConfig.toMutableMap() }
+
 
     private val backDir by lazy {
         val pathSuffix = File.separator + "collect" + File.separator + "backup" + File.separator
@@ -124,40 +126,9 @@ class SettingActivity : BaseActivity() {
         }
 
         //magnet source
-        val allKeys = MagnetLoaders.keys
-        tv_magnet_source.text = AppConfiguration.MagnetKeys.filter { allKeys.contains(it) }.joinToString(separator = "   ")
-        ll_magnet_source_config.setOnClickListener {
 
-            val selectedIndices = AppConfiguration.MagnetKeys.map { MagnetLoaders.keys.indexOf(it) }.toTypedArray()
+        loadMagNetConfig()
 
-            val disables = if (selectedIndices.size <= 1) selectedIndices else emptyArray()
-
-
-
-            MaterialDialog.Builder(viewContext).title("磁力源配置")
-                    .items(MagnetLoaders.keys.toList())
-                    .itemsCallbackMultiChoice(selectedIndices) { dialog, which, _ ->
-                        if (which.size <= 1) {
-                            dialog.builder.itemsDisabledIndices(*which)
-                        } else {
-                            dialog.builder.itemsDisabledIndices()
-                        }
-                        dialog.notifyItemsChanged()
-                        //加入配置项
-                        AppConfiguration.MagnetKeys.clear()
-                        AppConfiguration.MagnetKeys.addAll(dialog.selectedIndices?.mapNotNull { MagnetLoaders.keys.toList().getOrNull(it) }
-                                ?: emptyList())
-                        return@itemsCallbackMultiChoice true
-                    }.alwaysCallMultiChoiceCallback()
-                    .itemsDisabledIndices(*disables)
-                    .dismissListener {
-                        //保存
-                        AppConfiguration.saveMagnetKeys()
-                        tv_magnet_source.text = AppConfiguration.MagnetKeys.joinToString(separator = "   ")
-                    }
-                    .show()
-
-        }
 
         //收藏分类
         sw_collect_category.isChecked = AppConfiguration.enableCategory
@@ -184,6 +155,75 @@ class SettingActivity : BaseActivity() {
         }
 
         loadBackUp()
+
+    }
+
+    private fun loadMagNetConfig() {
+
+        val keyRes = CC.obtainBuilder(C.Components.Manget)
+                .setActionName("allKeys")
+                .build().call()
+        val allMagnetKeys = if (keyRes.isSuccess) {
+            keyRes.getDataItem<List<String>>("keys")
+        } else emptyList()
+
+        val configKeyRes = CC.obtainBuilder(C.Components.Manget)
+                .setActionName("config.getKeys")
+                .build().call()
+        val configMagnetKeys = if (configKeyRes.isSuccess) {
+            configKeyRes.getDataItem<List<String>>("keys")
+        } else emptyList()
+
+        //if get config failed
+        if (!keyRes.isSuccess || !configKeyRes.isSuccess) {
+            tv_magnet_source.text = "初始化配置失败"
+            return
+        }
+
+        tv_magnet_source.text = configMagnetKeys.joinToString(separator = "   ")
+
+        //init view
+        val selectCopy = configMagnetKeys.toMutableList()
+        ll_magnet_source_config.setOnClickListener {
+
+            val selectedIndices = selectCopy.map { allMagnetKeys.indexOf(it) }.toTypedArray()
+
+            val disables = if (selectedIndices.size <= 1) selectedIndices else emptyArray()
+
+            MaterialDialog.Builder(viewContext).title("磁力源配置")
+                    .items(allMagnetKeys)
+                    .itemsCallbackMultiChoice(selectedIndices) { dialog, which, _ ->
+                        if (which.size <= 1) {
+                            dialog.builder.itemsDisabledIndices(*which)
+                        } else {
+                            dialog.builder.itemsDisabledIndices()
+                        }
+                        dialog.notifyItemsChanged()
+
+
+                        return@itemsCallbackMultiChoice true
+                    }.alwaysCallMultiChoiceCallback()
+                    .itemsDisabledIndices(*disables)
+                    .dismissListener {
+                        //保存
+                        if (it is MaterialDialog) {
+                            //加入配置项
+                            val selected = it.selectedIndices?.mapNotNull { allMagnetKeys.toList().getOrNull(it) }
+                                    ?: emptyList()
+                            selectCopy.clear()
+                            selectCopy.addAll(selected)
+                            CC.obtainBuilder(C.Components.Manget)
+                                    .setActionName("config.save")
+                                    .addParam("keys", selected)
+                                    .build().callAsync()
+
+                            tv_magnet_source.text = selected.joinToString(separator = "   ")
+                        }
+
+                    }
+                    .show()
+
+        }
 
     }
 

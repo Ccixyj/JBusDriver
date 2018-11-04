@@ -16,7 +16,7 @@ import me.jbusdriver.base.*
 import me.jbusdriver.base.common.C
 import me.jbusdriver.common.isEndWithXyzHost
 import me.jbusdriver.common.toGlideNoHostUrl
-import me.jbusdriver.mvp.bean.ILink
+import me.jbusdriver.commen.bean.ILink
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.model.CollectModel

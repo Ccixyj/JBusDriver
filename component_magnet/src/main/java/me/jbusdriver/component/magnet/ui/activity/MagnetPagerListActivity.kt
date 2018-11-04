@@ -1,13 +1,14 @@
-package me.jbusdriver.ui.activity
+package me.jbusdriver.component.magnet.ui.activity
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import me.jbusdriver.R
-import kotlinx.android.synthetic.main.activity_search_result.*
+import com.billy.cc.core.component.CC
+import com.billy.cc.core.component.CCUtil
+import kotlinx.android.synthetic.main.comp_magnet_activity_magnet_list.*
+import me.jbusdriver.base.JBusManager.context
 import me.jbusdriver.base.common.BaseActivity
 import me.jbusdriver.base.common.C
-import me.jbusdriver.ui.fragment.MagnetPagersFragment
+import me.jbusdriver.component.magnet.R
+import me.jbusdriver.component.magnet.ui.fragment.MagnetPagersFragment
 
 class MagnetPagerListActivity : BaseActivity() {
 
@@ -15,12 +16,12 @@ class MagnetPagerListActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_magnet_list)
-        setSupportActionBar(toolbar)
+        setContentView(R.layout.comp_magnet_activity_magnet_list)
+        setSupportActionBar(comp_magnet_toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setTitle(keyword)
         //go to SearchResultPagesFragment
-        supportFragmentManager.beginTransaction().replace(R.id.fl_magnet_list, MagnetPagersFragment().apply {
+        supportFragmentManager.beginTransaction().replace(R.id.comp_magnet_fl_magnet_list, MagnetPagersFragment().apply {
             arguments = Bundle().apply { putString(C.BundleKey.Key_1, keyword) }
         }).commit()
 
@@ -31,8 +32,8 @@ class MagnetPagerListActivity : BaseActivity() {
     }
 
     companion object {
-        fun start(context: Context, keyword: String) {
-            context.startActivity(Intent(context, MagnetPagerListActivity::class.java).apply {
+        fun start(cc: CC, keyword: String) {
+            context.startActivity(CCUtil.createNavigateIntent(cc,MagnetPagerListActivity::class.java).apply {
                 putExtra(C.BundleKey.Key_1, keyword)
             })
         }

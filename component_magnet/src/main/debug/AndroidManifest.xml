@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="me.jbusdriver.component.magnet" >
+    package="me.jbusdriver.component.magnet">
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name="debug.App"
@@ -7,7 +8,7 @@
         android:icon="@mipmap/comp_magnet_ic_launcher"
         android:label="@string/comp_magnet_app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme.NoActionBar">
 
         <activity android:name="debug.CompMagnetMainActivity">
             <intent-filter>
@@ -16,5 +17,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.activity.MagnetPagerListActivity"
+            android:launchMode="singleTop" />
     </application>
 </manifest>

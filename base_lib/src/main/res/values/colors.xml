@@ -12,4 +12,7 @@
     <color name="error">#ffff0030</color>
 
 
+    <color name="white">#ffffffff</color>
+    <color name="gray">#ddd</color>
+
 </resources>

@@ -1,8 +1,9 @@
 package me.jbusdriver.mvp.bean
 
 import me.jbusdriver.base.urlHost
-import me.jbusdriver.db.bean.ActressCategory
-import me.jbusdriver.db.bean.LinkCategory
+import me.jbusdriver.commen.bean.ILink
+import me.jbusdriver.commen.bean.db.ActressCategory
+import me.jbusdriver.commen.bean.db.LinkCategory
 import java.io.Serializable
 
 /**
@@ -49,11 +50,6 @@ data class ActressInfo(val name: String, val avatar: String, override val link: 
 
     override fun toString() = "ActressInfo(name='$name', avatar='$avatar', link='$link', tag=$tag  categoryId $categoryId) "
 
-}
-
-data class Magnet(val name: String, val size: String, val date: String, override val link: String) : ILink {
-    @Transient
-    override var categoryId: Int = LinkCategory.id ?: 10
 }
 
 data class ImageSample(val title: String, val thumb: String, val image: String)

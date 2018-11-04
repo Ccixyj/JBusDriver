@@ -1,4 +1,4 @@
-package me.jbusdriver.mvp.bean
+package me.jbusdriver.base.mvp.bean
 
 data class ResultPageBean<T>(val pageInfo: PageInfo, val data: List<T>) {
 

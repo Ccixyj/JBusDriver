@@ -1,9 +1,8 @@
-package me.jbusdriver.mvp.presenter
+package me.jbusdriver.base.mvp.presenter
 
 import io.reactivex.disposables.CompositeDisposable
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.mvp.BaseView
-import me.jbusdriver.base.mvp.presenter.BasePresenter
 import kotlin.properties.Delegates
 
 /**

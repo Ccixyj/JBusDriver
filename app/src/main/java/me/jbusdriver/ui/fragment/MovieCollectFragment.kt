@@ -15,12 +15,11 @@ import kotlinx.android.synthetic.main.layout_menu_op_head.view.*
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.base.GlideApp
-import me.jbusdriver.base.KLog
 import me.jbusdriver.base.common.AppBaseRecycleFragment
 import me.jbusdriver.base.toast
 import me.jbusdriver.common.toGlideNoHostUrl
-import me.jbusdriver.db.bean.Category
-import me.jbusdriver.db.bean.MovieCategory
+import me.jbusdriver.commen.bean.db.Category
+import me.jbusdriver.commen.bean.db.MovieCategory
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.mvp.MovieCollectContract
 import me.jbusdriver.mvp.bean.CollectLinkWrapper

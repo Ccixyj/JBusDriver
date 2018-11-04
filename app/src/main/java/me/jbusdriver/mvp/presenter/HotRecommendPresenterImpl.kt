@@ -1,13 +1,14 @@
 package me.jbusdriver.mvp.presenter
 
+import me.jbusdriver.base.mvp.bean.PageInfo
 import me.jbusdriver.base.mvp.model.BaseModel
+import me.jbusdriver.base.mvp.presenter.AbstractRefreshLoadMorePresenterImpl
+import me.jbusdriver.commen.bean.ILink
 import me.jbusdriver.mvp.HotRecommendContract
-import me.jbusdriver.mvp.bean.Magnet
-import me.jbusdriver.mvp.bean.PageInfo
 import org.jsoup.nodes.Document
 import java.util.concurrent.atomic.AtomicInteger
 
-class HotRecommendPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HotRecommendContract.HotRecommendView, Magnet>(), HotRecommendContract.HotRecommendPresenter {
+class HotRecommendPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HotRecommendContract.HotRecommendView, ILink>(), HotRecommendContract.HotRecommendPresenter {
 
     private val count = AtomicInteger(1)
 

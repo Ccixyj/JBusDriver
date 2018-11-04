@@ -13,6 +13,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import me.jbusdriver.R
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.C
+import me.jbusdriver.commen.bean.ILink
 import me.jbusdriver.common.isEndWithXyzHost
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.*

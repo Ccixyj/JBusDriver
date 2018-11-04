@@ -7,6 +7,7 @@ import io.reactivex.rxkotlin.addTo
 import me.jbusdriver.base.*
 import me.jbusdriver.base.mvp.model.AbstractBaseModel
 import me.jbusdriver.base.mvp.model.BaseModel
+import me.jbusdriver.base.mvp.presenter.BasePresenterImpl
 import me.jbusdriver.common.isEndWithXyzHost
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.parseMovieDetails

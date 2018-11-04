@@ -51,9 +51,6 @@
         <activity
             android:name="me.jbusdriver.ui.activity.SearchResultActivity"
             android:launchMode="singleTop" />
-        <activity
-            android:name="me.jbusdriver.ui.activity.MagnetPagerListActivity"
-            android:launchMode="singleTop" />
         <activity android:name="me.jbusdriver.ui.activity.SettingActivity" />
 
         <service
@@ -63,7 +60,7 @@
             android:name="me.jbusdriver.ui.task.TrimLikeService"
             android:exported="false" />
 
-        <activity android:name="me.jbusdriver.ui.activity.HotRecommendActivity" />
+       <!-- <activity android:name="me.jbusdriver.ui.activity.HotRecommendActivity" />-->
     </application>
 
 </manifest>

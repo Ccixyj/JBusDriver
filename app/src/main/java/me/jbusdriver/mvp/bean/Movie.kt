@@ -3,7 +3,8 @@ package me.jbusdriver.mvp.bean
 import android.text.TextUtils
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import com.google.gson.annotations.SerializedName
-import me.jbusdriver.db.bean.MovieCategory
+import me.jbusdriver.commen.bean.ILink
+import me.jbusdriver.commen.bean.db.MovieCategory
 import org.jsoup.nodes.Document
 
 /**

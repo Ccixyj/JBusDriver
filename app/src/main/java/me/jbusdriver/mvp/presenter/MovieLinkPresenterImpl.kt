@@ -1,6 +1,8 @@
 package me.jbusdriver.mvp.presenter
 
 import io.reactivex.schedulers.Schedulers
+import me.jbusdriver.base.mvp.bean.PageInfo
+import me.jbusdriver.commen.bean.ILink
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.data.AppConfiguration

@@ -1,12 +1,12 @@
 package debug
 
-import android.app.Application
 import com.billy.cc.core.component.CC
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
+import me.jbusdriver.base.cc.BaseApp
 
-class App : Application() {
+class App : BaseApp() {
     override fun onCreate() {
         super.onCreate()
 

@@ -15,9 +15,10 @@ class LogInterceptor : IGlobalCCInterceptor {
     override fun priority() = 1
 
     override fun intercept(chain: Chain): CCResult {
-        KLog.d(TAG, "============log before:" + chain.cc)
+        KLog.d("LogInterceptor============log before:" + chain.cc)
+        chain.cc
         val result = chain.proceed()
-        KLog.d(TAG, "============log after:$result")
+        KLog.d("LogInterceptor============log after:$result")
         return result
     }
 }
