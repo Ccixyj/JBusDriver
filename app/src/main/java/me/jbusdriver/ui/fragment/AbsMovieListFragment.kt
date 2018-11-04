@@ -160,7 +160,7 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                                 (viewContext.inflate(R.layout.tv_movie_tag) as TextView).let {
                                     it.text = tag
                                     if (holder.itemViewType == OrientationHelper.HORIZONTAL) {
-                                        it.textSize = resources.getDimension(R.dimen.material_10sp)
+                                        it.textSize = 11f
                                     }
                                     it.setPadding(dp8, 0, dp8, 0)
                                     (it.background as? GradientDrawable)?.apply {
