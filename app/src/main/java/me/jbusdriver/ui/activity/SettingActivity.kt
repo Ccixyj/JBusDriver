@@ -214,7 +214,7 @@ class SettingActivity : BaseActivity() {
                             selectCopy.addAll(selected)
                             CC.obtainBuilder(C.Components.Manget)
                                     .setActionName("config.save")
-                                    .addParam("keys", selected)
+                                    .addParam("keys", selectCopy)
                                     .build().callAsync()
 
                             tv_magnet_source.text = selected.joinToString(separator = "   ")

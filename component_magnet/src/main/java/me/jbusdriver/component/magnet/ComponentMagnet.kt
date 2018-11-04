@@ -34,7 +34,7 @@ class ComponentMagnet : IComponent {
                 }
             }
             "config.getKeys" -> {
-                CC.sendCCResult(cc.callId, CCResult.success(mapOf("keys" to Configuration.MagnetKeys)))
+                CC.sendCCResult(cc.callId, CCResult.success(mapOf("keys" to Configuration.getConfigKeys())))
             }
         }
         return false
