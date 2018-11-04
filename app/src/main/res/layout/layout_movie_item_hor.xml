@@ -8,7 +8,7 @@
     android:layout_height="wrap_content">
 
     <android.support.constraint.ConstraintLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/material_8dp">
 
@@ -40,7 +40,7 @@
 
         <TextView
             android:id="@+id/tv_movie_code"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/tv_movie_date"
             android:layout_alignParentLeft="true"
@@ -50,13 +50,16 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:layout_marginTop="@dimen/material_4dp"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_movie_title"
+            app:layout_constraintRight_toLeftOf="@+id/tv_movie_date"
+
             android:textSize="12sp"
             tools:text="abc123" />
 
         <TextView
             android:id="@+id/tv_movie_date"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
@@ -64,6 +67,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textSize="@dimen/material_12sp"
+            app:layout_constraintLeft_toRightOf="@id/tv_movie_code"
             app:layout_constraintBaseline_toBaselineOf="@id/tv_movie_code"
             app:layout_constraintRight_toRightOf="parent"
             tools:text="2015/01/01" />
