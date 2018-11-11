@@ -3,7 +3,7 @@ package me.jbusdriver.component.magnet.loader
 import me.jbusdriver.component.magnet.bean.Magnet
 import org.jsoup.Jsoup
 
-class TorrentKittyImpl : IMagnetLoader {
+class TorrentKittyMangetLoaderImpl : IMagnetLoader {
 
     private var search = "https://www.torrentkitty.tv/search/%s/%s"
 

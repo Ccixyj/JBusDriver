@@ -4,7 +4,7 @@ import me.jbusdriver.base.KLog
 import me.jbusdriver.component.magnet.bean.Magnet
 import org.jsoup.Jsoup
 
-class CNBtkittyImpl : IMagnetLoader {
+class CNBtkittyMangetLoaderImpl : IMagnetLoader {
 
     private val search = "http://cnbtkitty.me"
 

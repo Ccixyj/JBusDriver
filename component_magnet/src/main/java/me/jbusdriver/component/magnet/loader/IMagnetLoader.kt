@@ -35,7 +35,7 @@ interface IMagnetLoader {
         /**  "btso.pw" to BtsoPWMagnetLoaderImpl()
          */
         val MagnetLoaders: Map<String, IMagnetLoader> by lazy {
-            mapOf("BTDB" to BTDBMagnetLoaderImpl(),"btdigg" to BtdiggsMagnetLoaderImpl(), "BTSO.PW" to BtsoPWMagnetLoaderImpl(), "TorrentKitty" to TorrentKittyImpl(), "BTSOW" to BTSOWMagnetLoaderImpl(), "CNBtkitty" to CNBtkittyImpl(), "Btanv" to BtanvMagnetLoaderImpl())
+            mapOf("BTDB" to BTDBMagnetLoaderImpl(),"btdigg" to BtdiggsMagnetLoaderImpl(), "BTSO.PW" to BtsoPWMagnetLoaderImpl(), "TorrentKitty" to TorrentKittyMangetLoaderImpl(), "BTSOW" to BTSOWMagnetLoaderImpl(), "CNBtkitty" to CNBtkittyMangetLoaderImpl(), "Btanv" to BtanvMagnetLoaderImpl())
         }
     }
 
