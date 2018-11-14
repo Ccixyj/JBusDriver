@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
+import android.support.design.widget.AppBarLayout
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.Toolbar
@@ -121,7 +122,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
         }
 
-        app_bar.addOnOffsetChangedListener { _, offset -> sr_refresh.isEnabled = Math.abs(offset) <= 1 }
+        app_bar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, offset -> sr_refresh.isEnabled = Math.abs(offset) <= 1 })
 
 
         ll_movie_detail.addView(headHolder.view)

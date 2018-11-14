@@ -24,7 +24,7 @@ class MagnetListPresenterImpl(private val magnetLoaderKey: String, private val k
     override val model: BaseModel<Int, Document>
         get() = error("not call model")
 
-    override fun stringMap(page: PageInfo, str: Document): List<Magnet> = error("not call stringMap")
+    override fun stringMap(pageInfo: PageInfo, str: Document): List<Magnet> = error("not call stringMap")
 
 
 
