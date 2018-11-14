@@ -86,7 +86,8 @@ class SplashActivity : BaseActivity() {
                         arrayMapof<String, String>().apply {
                             val xyzLoader = r.getAsJsonObject("xyzLoader") ?: JsonObject()
                             JAVBusService.defaultXyzUrl = xyzLoader.get("url")?.asString?.removeSuffix("/").orEmpty()
-                            JAVBusService.xyzHostDomains.addAll(xyzLoader.getAsJsonArray("legacyHost")?.map { it.asString  } ?: emptyList())
+                            JAVBusService.xyzHostDomains.addAll(xyzLoader.getAsJsonArray("legacyHost")?.map { it.asString }
+                                    ?: emptyList())
                             val availableUrls = r.get("backUp")?.asJsonArray
                             //赋值一个默认的(随机)
                             availableUrls?.let {
@@ -102,12 +103,14 @@ class SplashActivity : BaseActivity() {
                     .flatMap {
                         urls = it
                         val mapFlow = GSON.fromJson<List<String>>(it[DataSourceType.CENSORED.key]
-                                ?: "").map {
-                            Flowable.combineLatest(Flowable.just<String>(it),
-                                    JAVBusService.INSTANCE.get(it).addUserCase(15).onErrorReturnItem(""),
+                                ?: "").map { url ->
+                            Flowable.combineLatest(Flowable.just<String>(url),
+                                    JAVBusService.INSTANCE.get(url).addUserCase(15).onErrorReturnItem("").doOnNext {
+                                        KLog.d("prefetch urls : $url  -> ${it?.take(30)} success")
+                                    },
                                     BiFunction<String, String?, Pair<String, String>> { t1, t2 -> t1 to t2 })
                         }
-                        Flowable.mergeDelayError(mapFlow).filter { it.second.isNotBlank() }.take(1)
+                        Flowable.mergeDelayError(mapFlow).parallel().filter { it.second.isNotBlank() }.sequential()
                     }
                     .firstOrError()
                     .doOnError { CacheLoader.acache.remove(C.Cache.ANNOUNCE_URL) }
