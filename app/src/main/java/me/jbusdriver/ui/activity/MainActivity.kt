@@ -20,16 +20,15 @@ import com.afollestad.materialdialogs.MaterialDialog
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.nav_header_main.view.*
 import me.jbusdriver.BuildConfig
 import me.jbusdriver.R
-import kotlinx.android.synthetic.main.nav_header_main.view.*
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.AppBaseActivity
 import me.jbusdriver.common.JBus
 import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.presenter.MainPresenterImpl
-import me.jbusdriver.ui.data.AppConfiguration
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.MainView>(), NavigationView.OnNavigationItemSelectedListener, MainContract.MainView {
@@ -165,10 +164,10 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
         } else {
-            if (!BuildConfig.DEBUG) {
+            if (BuildConfig.DEBUG) {
                 moveTaskToBack(false)
             } else {
-                super.onBackPressed()
+
             }
         }
     }

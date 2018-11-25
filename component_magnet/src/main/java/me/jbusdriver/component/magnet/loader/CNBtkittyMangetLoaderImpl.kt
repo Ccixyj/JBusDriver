@@ -6,7 +6,7 @@ import org.jsoup.Jsoup
 
 class CNBtkittyMangetLoaderImpl : IMagnetLoader {
 
-    private val search = "http://cnbtkitty.me"
+    private val search = "https://cnbtkitty.me"
 
     override var hasNexPage: Boolean = true
 
