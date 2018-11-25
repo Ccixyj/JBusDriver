@@ -5,7 +5,9 @@ import com.billy.cc.core.component.CC
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
+import io.reactivex.plugins.RxJavaPlugins
 import me.jbusdriver.base.JBusManager
+import me.jbusdriver.base.KLog
 
 /**
  * use only for debug app
@@ -27,6 +29,9 @@ abstract class BaseApp : Application() {
             override fun isLoggable(priority: Int, tag: String?) = true
         })
 
+        RxJavaPlugins.setErrorHandler {
+           KLog.w("error : ${it.message}")
+        }
 
         CC.enableVerboseLog(true)
         CC.enableDebug(true)
