@@ -21,7 +21,6 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.nav_header_main.view.*
-import me.jbusdriver.BuildConfig
 import me.jbusdriver.R
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.AppBaseActivity
@@ -164,11 +163,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
         } else {
-            if (BuildConfig.DEBUG) {
-                moveTaskToBack(false)
-            } else {
-
-            }
+            super.onBackPressed()
         }
     }
 
