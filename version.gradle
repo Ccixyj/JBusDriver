@@ -1,7 +1,7 @@
 ext {
     versions = [
             'compileSdk'                   : 28,
-            'targetSdk'                    : 28,
+            'targetSdk'                    : 27,
             'buildTools'                   : '28.0.3',
 
             'gradle'                       : '3.2.1',
