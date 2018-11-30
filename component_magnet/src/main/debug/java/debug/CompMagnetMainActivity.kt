@@ -7,6 +7,7 @@ import kotlinx.android.synthetic.main.comp_magnet_activity_main.*
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.common.C
 import me.jbusdriver.component.magnet.R
+import me.jbusdriver.component.magnet.loader.IMagnetLoader
 
 class CompMagnetMainActivity : AppCompatActivity() {
 
@@ -25,6 +26,10 @@ class CompMagnetMainActivity : AppCompatActivity() {
         comp_magnet_tv_get_all.setOnClickListener {
             CC.obtainBuilder(C.Components.Manget)
                     .setActionName("allKeys")
+                    .build().call()
+            CC.obtainBuilder(C.Components.Manget)
+                    .setActionName("config.save")
+                    .addParam("keys", IMagnetLoader.MagnetLoaders.keys.toList())
                     .build().call()
         }
 

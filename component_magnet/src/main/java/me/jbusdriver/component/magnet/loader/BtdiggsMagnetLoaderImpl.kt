@@ -23,14 +23,14 @@ class BtdiggsMagnetLoaderImpl : IMagnetLoader {
                 url.startsWith("/magnet") -> {
                     IMagnetLoader.MagnetFormatPrefix + url.removePrefix("/magnet/").removeSuffix(".html")
                 }
-                else -> url
+                else -> "https://www.btdigg.xyz$url"
             }
 
             val labels = it.select(".attr span")
             Magnet(title, labels.component2().text(), labels.component1().text(), realUrl).apply {
-                if (realUrl.startsWith(IMagnetLoader.MagnetFormatPrefix)){
+                if (!realUrl.startsWith(IMagnetLoader.MagnetFormatPrefix)){
                     this.linkLoader = {
-                        (IMagnetLoader.MagnetFormatPrefix + Jsoup.connect(url).get().select(".content .infohash a").text().trim())
+                        (IMagnetLoader.MagnetFormatPrefix + Jsoup.connect(realUrl).get().select(".content .infohash").text().trim())
                     }
                 }
             }
