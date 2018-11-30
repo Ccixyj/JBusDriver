@@ -3,6 +3,7 @@ package me.jbusdriver.component.interceptors
 import com.billy.cc.core.component.CCResult
 import com.billy.cc.core.component.Chain
 import com.billy.cc.core.component.IGlobalCCInterceptor
+import me.jbusdriver.base.JBusManager
 import me.jbusdriver.base.KLog
 
 /**
@@ -15,10 +16,9 @@ class LogInterceptor : IGlobalCCInterceptor {
     override fun priority() = 1
 
     override fun intercept(chain: Chain): CCResult {
-        KLog.d("LogInterceptor============log before:" + chain.cc)
-        chain.cc
+        KLog.d("${JBusManager.context.applicationContext.packageName} log before:" + chain.cc)
         val result = chain.proceed()
-        KLog.d("LogInterceptor============log after:$result")
+        KLog.d("${JBusManager.context.applicationContext.packageName} log after:$result")
         return result
     }
 }

@@ -130,7 +130,7 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
                 saveSp("layout_type", currentLayoutType.toString())
                 recycleView.layoutManager = layoutManager
                 recycleView.adapter = adapter
-                recycleView.layoutManager.scrollToPosition(pos)
+                recycleView.layoutManager?.scrollToPosition(pos)
             }
             /* R.id.action_recommend -> {
                  HotRecommendActivity.start(this.viewContext)

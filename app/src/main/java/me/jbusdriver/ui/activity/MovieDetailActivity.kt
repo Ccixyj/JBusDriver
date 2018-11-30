@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
+import android.support.design.widget.AppBarLayout
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.Toolbar
@@ -18,12 +19,9 @@ import kotlinx.android.synthetic.main.activity_movie_detail.*
 import kotlinx.android.synthetic.main.content_movie_detail.*
 import kotlinx.android.synthetic.main.layout_load_magnet.view.*
 import me.jbusdriver.R
-import me.jbusdriver.base.GlideApp
+import me.jbusdriver.base.*
 import me.jbusdriver.base.common.AppBaseActivity
 import me.jbusdriver.base.common.C
-import me.jbusdriver.base.inflate
-import me.jbusdriver.base.toast
-import me.jbusdriver.base.urlPath
 import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.mvp.MovieDetailContract
 import me.jbusdriver.mvp.bean.Movie
@@ -121,7 +119,10 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
         }
 
-        app_bar.addOnOffsetChangedListener { _, offset -> sr_refresh.isEnabled = Math.abs(offset) <= 1 }
+        app_bar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, offset ->
+            KLog.d("offset : $offset")
+            sr_refresh.isEnabled = offset >= 0
+        })
 
 
         ll_movie_detail.addView(headHolder.view)

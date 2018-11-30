@@ -4,9 +4,9 @@ import me.jbusdriver.base.KLog
 import me.jbusdriver.component.magnet.bean.Magnet
 import org.jsoup.Jsoup
 
-class CNBtkittyImpl : IMagnetLoader {
+class CNBtkittyMangetLoaderImpl : IMagnetLoader {
 
-    private val search = "http://cnbtkitty.me"
+    private val search = "http://cnbtkitty.pw/"
 
     override var hasNexPage: Boolean = true
 
@@ -24,6 +24,10 @@ class CNBtkittyImpl : IMagnetLoader {
                 Jsoup.connect(search).cookie("bk_lan", "zh-cn").data("keyword", key).initHeaders().post()
             } else {
                 if (!searcLinkNext.startsWith("http")) {
+                    val schema = search.split("://").last()
+                    if (!searcLinkNext.contains(schema)) {
+                        searcLinkNext = schema + searcLinkNext
+                    }
                     searcLinkNext = "https://" + searcLinkNext.removePrefix(":").removePrefix("/").removePrefix("/")
                 }
                 Jsoup.connect(searcLinkNext).initHeaders().get()
@@ -36,13 +40,21 @@ class CNBtkittyImpl : IMagnetLoader {
 
 
             return doc.select(".content .list-con").map {
-                val title = it.select("dt").text()
+                val title = it.select("dt").text().trim().removeSuffix("Hot")
                 val ops = it.select(".option span")
 
                 val magent = ops.removeAt(0).select("a").attr("href")
+                ops.removeAt(0)
+                val splitIndex = ops.size / 2
 
-                val date = ops.removeAt(0).text()
-                Magnet(title, ops.text(), date, magent)
+                Magnet(title, ops.take(splitIndex).joinToString(" ") { it.text() }, ops.takeLast(ops.size - splitIndex).joinToString(" ") { it.text() }, magent).apply {
+                    if (!magent.startsWith(IMagnetLoader.MagnetFormatPrefix)) {
+                        this.linkLoader = { url ->
+                            Jsoup.connect(search + url).get().select(".content .magnet a").attr("href")
+                        }
+                    }
+
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -51,8 +63,7 @@ class CNBtkittyImpl : IMagnetLoader {
             KLog.d(b)
 
             KLog.d("recaptcha_widget ${Jsoup.parse(b).select("#recaptcha_widget")}")
-
-            emptyList<Magnet>()
+            emptyList()
         }
 
 

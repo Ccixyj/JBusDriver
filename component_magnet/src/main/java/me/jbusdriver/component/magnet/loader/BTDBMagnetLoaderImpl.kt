@@ -12,7 +12,13 @@ class BTDBMagnetLoaderImpl : IMagnetLoader {
         val url = search.format(key, page)
         val doc = Jsoup.connect(url).get()
 
-        return  doc.select(".search-ret  .search-ret-item").map {
+        val nextHref = doc.select(".pagination  a").last() ?: let {
+            hasNexPage = false
+            return emptyList()
+        }
+        hasNexPage = !(nextHref.attr("href") == "#" && nextHref.className() == "disabled")
+
+        return doc.select(".search-ret  .search-ret-item").map {
             val title = it.select(".item-title").text()
             val meta = it.select(".item-meta-info")
             val metaInfos = meta.select("span").map { it.text() }

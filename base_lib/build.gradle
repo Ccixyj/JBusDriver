@@ -48,7 +48,7 @@ dependencies {
     //view widget
     api "com.afollestad.material-dialogs:core:${versions.material_dialogs_core}"
     api "com.github.CymChad:BaseRecyclerViewAdapterHelper:${versions.BaseRecyclerViewAdapterHelper}"
-    api "com.gyf.barlibrary:barlibrary:${versions.immersionBar}"
+    api "com.gyf.immersionbar:immersionbar:${versions.immersionBar}"
     api "com.github.chrisbanes:PhotoView:${versions.photo_view}"
 
     //okhttp

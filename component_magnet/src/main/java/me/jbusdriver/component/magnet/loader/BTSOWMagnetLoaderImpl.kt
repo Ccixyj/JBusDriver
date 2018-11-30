@@ -6,7 +6,7 @@ import org.jsoup.Jsoup
 
 class BTSOWMagnetLoaderImpl : IMagnetLoader {
     //  key -> page
-    private val search = "http://www.btsows.com/s/%s/%s/"
+    private val search = "http://www.btaaa.com/search/%s_%s.html"
 
     override var hasNexPage: Boolean = true
 

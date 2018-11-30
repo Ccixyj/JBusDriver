@@ -21,7 +21,7 @@ interface IMagnetLoader {
      */
     fun loadMagnets(key: String, page: Int): List<Magnet>
 
-    fun encode(string: String) = Base64.encodeToString(string.toByteArray(), Base64.NO_PADDING or Base64.URL_SAFE)
+    fun encode(string: String) = Base64.encodeToString(string.toByteArray(), Base64.NO_PADDING or Base64.URL_SAFE).trim()
     fun Connection.initHeaders() :Connection = this.userAgent(NetClient.USER_AGENT).followRedirects(true)
             .header("Accept-Encoding", "gzip, deflate, sdch")
             .header("Accept-Language", "zh-CN,zh;q=0.8")
@@ -35,7 +35,7 @@ interface IMagnetLoader {
         /**  "btso.pw" to BtsoPWMagnetLoaderImpl()
          */
         val MagnetLoaders: Map<String, IMagnetLoader> by lazy {
-            mapOf("BTDB" to BTDBMagnetLoaderImpl(),"btdigg" to BtdiggsMagnetLoaderImpl(), "BTSO.PW" to BtsoPWMagnetLoaderImpl(), "TorrentKitty" to TorrentKittyImpl(), "BTSOW" to BTSOWMagnetLoaderImpl(), "CNBtkitty" to CNBtkittyImpl(), "Btanv" to BtanvMagnetLoaderImpl())
+            mapOf("BTDB" to BTDBMagnetLoaderImpl(),"btdigg" to BtdiggsMagnetLoaderImpl(), "BTSO.PW" to BtsoPWMagnetLoaderImpl(), "TorrentKitty" to TorrentKittyMangetLoaderImpl(), "BTSOW" to BTSOWMagnetLoaderImpl(), "CNBtkitty" to CNBtkittyMangetLoaderImpl(), "Btanv" to BtanvMagnetLoaderImpl())
         }
     }
 

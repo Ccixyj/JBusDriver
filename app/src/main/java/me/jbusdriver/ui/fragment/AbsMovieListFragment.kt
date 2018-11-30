@@ -163,13 +163,13 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                                         it.textSize = 11f
                                     }
                                     it.setPadding(dp8, 0, dp8, 0)
-                                    (it.background as? GradientDrawable)?.apply {
+                                    it.background = GradientDrawable().apply {
                                         setColor(backColors.getOrNull(index % 3)
                                                 ?: backColors.first())
-                                        if (holder.itemViewType == OrientationHelper.HORIZONTAL) {
-                                            cornerRadius = dp8 * 1.5f
+                                        cornerRadius = if (holder.itemViewType == OrientationHelper.HORIZONTAL) {
+                                            dp8 * 1.5f
                                         } else {
-                                            cornerRadius = dp8 * 2f
+                                            dp8 * 2f
                                         }
                                     }
                                     it.layoutParams = genLp().apply {
