@@ -11,7 +11,7 @@ JBusDriver
 
 版本
 ---
-[最新版本1.2.14](https://github.com/Ccixyj/JBusDriver/releases)
+[最新版本1.2.15](https://github.com/Ccixyj/JBusDriver/releases)
 
 ###### 如何开车
 
