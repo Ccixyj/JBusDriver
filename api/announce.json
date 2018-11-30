@@ -21,7 +21,7 @@
     "versionCode": 297,
     "versionName": "1.2.15",
     "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/JubsDriver_v1.2.15build477.apk",
-    "desc": "JBusDriver 1.2.15 更新!\r\n1.修复可用的磁力站（btdb，btdigg，cnbitty），无法跳转磁力时请刷新一下。\r\n2.修复已知bug\r\n2.如有提示风险，请忽略（个人emui9.0提示风险）。如有担忧，请移步github查看源码并自行编译。"
+    "desc": "JBusDriver 1.2.15 更新!\r\n1.修复可用的磁力站（btdb，btdigg，cnbitty），无法跳转磁力时请刷新一下。\r\n2.修复已知bug\r\n.3如有提示风险，请忽略（个人emui9.0提示风险）。如有担忧，请移步github查看源码并自行编译。"
   },
   "notice": {
     "id": 10,
