@@ -3,6 +3,7 @@ package me.jbusdriver.component.magnet
 import com.billy.cc.core.component.CC
 import com.billy.cc.core.component.CCResult
 import com.billy.cc.core.component.IComponent
+import me.jbusdriver.base.KLog
 import me.jbusdriver.base.common.C
 import me.jbusdriver.component.magnet.loader.IMagnetLoader.Companion.MagnetLoaders
 import me.jbusdriver.component.magnet.ui.activity.MagnetPagerListActivity
@@ -37,6 +38,7 @@ class ComponentMagnet : IComponent {
                 CC.sendCCResult(cc.callId, CCResult.success(mapOf("keys" to Configuration.getConfigKeys())))
             }
         }
+        KLog.w("not config action for $this")
         return false
     }
 }

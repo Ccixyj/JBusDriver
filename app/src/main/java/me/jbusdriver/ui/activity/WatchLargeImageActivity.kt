@@ -83,14 +83,15 @@ class WatchLargeImageActivity : BaseActivity() {
         iv_download.setOnClickListener {
             Schedulers.io().scheduleDirect {
                 val url = urls[vp_largeImage.currentItem]
-                GlideApp.with(this).asFile().load(url).submit()
+                GlideApp.with(this).download(url).submit()
                         .get(3, TimeUnit.SECONDS)?.let {
                             //copy file
                             val fileName = url.urlPath.split("/").lastOrNull() ?: kotlin.run {
                                 viewContext.toast("无法获取文件名！")
                                 return@scheduleDirect
                             }
-                            it.copyTo(File(imageSaveDir + fileName), true)
+                            val target = File(imageSaveDir + fileName)
+                            it.copyTo(target, true)
                             viewContext.toast("文件保存至${imageSaveDir}下")
                         }
             }.addTo(rxManager)

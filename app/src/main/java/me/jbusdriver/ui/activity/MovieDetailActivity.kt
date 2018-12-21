@@ -137,7 +137,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
                         .addParam("keyword", code)
                         .build().call().let { res ->
                             if (!res.isSuccess) {
-                                toast(res.errorMessage)
+                                toast(res.toString())
                             }
                         }
             }
