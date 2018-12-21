@@ -11,17 +11,17 @@ import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.comp_magnet_layout_swipe_recycle.*
-import me.jbusdriver.base.*
+import me.jbusdriver.base.SchedulersCompat
+import me.jbusdriver.base.browse
 import me.jbusdriver.base.common.AppBaseRecycleFragment
 import me.jbusdriver.base.common.C
+import me.jbusdriver.base.copy
+import me.jbusdriver.base.toast
 import me.jbusdriver.component.magnet.R
 import me.jbusdriver.component.magnet.bean.Magnet
-import me.jbusdriver.component.magnet.loader.IMagnetLoader
-import me.jbusdriver.component.magnet.loader.IMagnetLoader.Companion.MagnetFormatPrefix
 import me.jbusdriver.component.magnet.mvp.MagnetListContract.MagnetListPresenter
 import me.jbusdriver.component.magnet.mvp.MagnetListContract.MagnetListView
 import me.jbusdriver.component.magnet.mvp.presenter.MagnetListPresenterImpl
-import org.jsoup.Jsoup
 
 class MagnetListFragment : AppBaseRecycleFragment<MagnetListPresenter, MagnetListView, Magnet>(), MagnetListView {
 
@@ -51,15 +51,10 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListPresenter, MagnetLis
 
         }.apply {
 
-            fun tryGetMagnet(url: String): Flowable<String> {
-                return Flowable.just(url).flatMap { url ->
-                    if (url.startsWith(MagnetFormatPrefix)) {
-                        Flowable.just(url)
-                    } else {
-                        Flowable.fromCallable { Jsoup.connect(url).get().select(".content .infohash a").text().trim() }
-                                .map { IMagnetLoader.MagnetFormatPrefix + it }
-                                .addUserCase(sec = 6)
-                                .onErrorReturn { url }
+            fun tryGetMagnet(mag: Magnet): Flowable<String> {
+                return Flowable.just(mag).flatMap { mag ->
+                    Flowable.fromCallable {
+                        mag.linkLoader?.invoke(mag.link) ?: mag.link
                     }
                 }
             }
@@ -67,7 +62,7 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListPresenter, MagnetLis
             setOnItemClickListener { adapter, _, position ->
                 (adapter.data.getOrNull(position) as? Magnet)?.let { magnet ->
                     showMagnetLoading()
-                    tryGetMagnet(magnet.link)
+                    tryGetMagnet(magnet)
                             .compose(SchedulersCompat.io()).subscribeBy {
                                 this@MagnetListFragment.adapter.setData(position, magnet.copy(link = it))
                                 viewContext.browse(it) {
@@ -84,7 +79,7 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListPresenter, MagnetLis
                     when (view.id) {
                         R.id.comp_magnet_iv_magnet_copy -> {
 
-                            tryGetMagnet(magnet.link).compose(SchedulersCompat.io()).subscribeBy { url->
+                            tryGetMagnet(magnet).compose(SchedulersCompat.io()).subscribeBy { url ->
                                 this@MagnetListFragment.adapter.setData(position, magnet.copy(link = url))
                                 view.context.apply {
                                     copy(url)

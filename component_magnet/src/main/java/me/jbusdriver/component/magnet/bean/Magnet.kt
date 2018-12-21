@@ -8,5 +8,7 @@ data class Magnet(val name: String, val size: String, val date: String, override
     @Transient
     override var categoryId: Int = LinkCategory.id ?: 10
 
+    @Transient
+    var linkLoader: ((String) -> String)? = null
 
 }

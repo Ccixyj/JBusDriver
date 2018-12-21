@@ -110,7 +110,7 @@ def VersionName() {
     def cmd = ''' git log --tags --simplify-by-decoration --pretty="format:%d" '''
     def tags = cmd.execute().text.readLines()
     logger.quiet(cmd + " >>>> tags  = " + tags)
-    def verName = tags.first().trim().find(Pattern.compile("v[0-9.a-z]+")).substring(1).trim()
+    def verName = tags.first().trim().find(Pattern.compile("v[0-9a-z.-]+")).substring(1).trim()
     logger.quiet(cmd + " >>>> verName  = " + verName)
     cmd = 'git rev-list  --all  --count'
     def code = cmd.execute().text.trim().toInteger()
