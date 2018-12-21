@@ -8,7 +8,7 @@ import me.jbusdriver.base.fromJson
 import me.jbusdriver.common.JBus
 import java.util.*
 
-@Deprecated("not user any more")
+@Deprecated("not use any more")
 object RecommendModel {
     private const val COUNT = "count"
     private const val UID = "uid"

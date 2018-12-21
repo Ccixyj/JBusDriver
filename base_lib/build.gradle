@@ -49,7 +49,7 @@ dependencies {
     api "com.afollestad.material-dialogs:core:${versions.material_dialogs_core}"
     api "com.github.CymChad:BaseRecyclerViewAdapterHelper:${versions.BaseRecyclerViewAdapterHelper}"
     api "com.gyf.immersionbar:immersionbar:${versions.immersionBar}"
-    api "com.github.chrisbanes:PhotoView:${versions.photo_view}"
+    api "com.github.chrisbanes:PhotoView:${versions.photoView}"
 
     //okhttp
     api "com.squareup.okhttp3:okhttp:${versions.okhttp}"

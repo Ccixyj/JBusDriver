@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.view.View
 import kotlinx.android.synthetic.main.base_layout_tab_view_pager.*
 import me.jbusdriver.base.R
+import me.jbusdriver.base.R.id.tabLayout
+import me.jbusdriver.base.R.id.vp_fragment
 import me.jbusdriver.base.common.AppBaseFragment
 import me.jbusdriver.base.mvp.BaseView
 import me.jbusdriver.base.mvp.presenter.BasePresenter
