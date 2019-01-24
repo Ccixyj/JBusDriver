@@ -27,14 +27,12 @@ class BtdiggsMagnetLoaderImpl : IMagnetLoader {
             }
 
             val labels = it.select(".attr span")
-            Magnet(title, labels.component2().text(), labels.component1().text(), realUrl).apply {
-                if (!realUrl.startsWith(IMagnetLoader.MagnetFormatPrefix)){
-                    this.linkLoader = {
-                        (IMagnetLoader.MagnetFormatPrefix + Jsoup.connect(realUrl).get().select(".content .infohash").text().trim())
-                    }
-                }
-            }
+            Magnet(title, labels.component2().text(), labels.component1().text(), realUrl)
         }
 
+    }
+
+    override fun fetchMagnetLink(url: String): String {
+        return (IMagnetLoader.MagnetFormatPrefix + Jsoup.connect(url).get().select(".content .infohash").text().trim())
     }
 }

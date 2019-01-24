@@ -4,7 +4,7 @@ ext {
             'targetSdk'                    : 27,
             'buildTools'                   : '28.0.3',
 
-            'gradle'                       : '3.2.1',
+            'gradle'                       : '3.3.0',
             'kotlin'                       : '1.3.11',
             'supportLibrary'               : '28.0.0',
 

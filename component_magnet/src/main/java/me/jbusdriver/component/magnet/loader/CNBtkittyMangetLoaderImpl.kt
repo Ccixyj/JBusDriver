@@ -6,7 +6,7 @@ import org.jsoup.Jsoup
 
 class CNBtkittyMangetLoaderImpl : IMagnetLoader {
 
-    private val search = "http://cnbtkitty.pw/"
+    private val search = "http://cnbtkitty.ws/"
 
     override var hasNexPage: Boolean = true
 
@@ -17,6 +17,7 @@ class CNBtkittyMangetLoaderImpl : IMagnetLoader {
         manager.setCookiePolicy(java.net.CookiePolicy.ACCEPT_ALL)
         java.net.CookieHandler.setDefault(manager)
     }
+
 
     override fun loadMagnets(key: String, page: Int): List<Magnet> {
         return try {
@@ -47,14 +48,7 @@ class CNBtkittyMangetLoaderImpl : IMagnetLoader {
                 ops.removeAt(0)
                 val splitIndex = ops.size / 2
 
-                Magnet(title, ops.take(splitIndex).joinToString(" ") { it.text() }, ops.takeLast(ops.size - splitIndex).joinToString(" ") { it.text() }, magent).apply {
-                    if (!magent.startsWith(IMagnetLoader.MagnetFormatPrefix)) {
-                        this.linkLoader = { url ->
-                            Jsoup.connect(search + url).get().select(".content .magnet a").attr("href")
-                        }
-                    }
-
-                }
+                Magnet(title, ops.take(splitIndex).joinToString(" ") { it.text() }, ops.takeLast(ops.size - splitIndex).joinToString(" ") { it.text() }, link = magent)
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -67,5 +61,10 @@ class CNBtkittyMangetLoaderImpl : IMagnetLoader {
         }
 
 
+    }
+
+
+    override fun fetchMagnetLink(url: String): String {
+        return Jsoup.connect(search + url).get().select(".content .magnet a").attr("href")
     }
 }

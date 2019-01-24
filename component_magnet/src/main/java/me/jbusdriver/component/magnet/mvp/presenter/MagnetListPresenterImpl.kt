@@ -65,4 +65,6 @@ class MagnetListPresenterImpl(private val magnetLoaderKey: String, private val k
         }
         super.onRefresh()
     }
+
+    override fun fetchMagLink(url: String) = loader.fetchMagnetLink(url)
 }
