@@ -20,6 +20,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:resizeableActivity="true"
+        tools:replace="android:allowBackup"
         android:theme="@style/AppTheme.NoActionBar" >
 
         <meta-data
@@ -33,10 +34,6 @@
         <meta-data
             android:name="UMENG_CHANNEL"
             android:value="${CHANNEL}" />
-
-        <activity
-            android:name="com.tencent.bugly.beta.ui.BetaActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize|locale" />
 
         <activity
             android:name="me.jbusdriver.ui.activity.MainActivity"

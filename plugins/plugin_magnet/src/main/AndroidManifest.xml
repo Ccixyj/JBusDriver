@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="me.jbusdriver.plugin.magnet" >
+    <application>
+        <meta-data
+            android:name="phantom.service.import.PhantomVersionService"
+            android:value="30000"/>
+    </application>
+</manifest>

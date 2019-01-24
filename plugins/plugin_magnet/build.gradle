@@ -1,0 +1,61 @@
+
+project.ext.CurrentAppID ="me.jbusdriver.plugin.magnet"
+apply plugin: 'com.android.application'
+
+
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.wlqq.phantom.plugin'
+
+
+//def CurrentHostId = CurrentAppID
+//println("CurrentAppID =-----> $CurrentAppID")
+
+android {
+    compileSdkVersion versions.compileSdk
+    buildToolsVersion versions.buildTools
+
+    defaultConfig {
+        applicationId CurrentAppID
+        minSdkVersion 16
+        targetSdkVersion versions.targetSdk
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFile project.file('proguard-phantom.pro')
+        }
+
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFile project.file('proguard-phantom.pro')
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            outputFileName = "${variant.applicationId}_${variant.versionName}.apk"
+        }
+    }
+}
+
+dependencies {
+    compileOnly "com.wlqq.phantom:phantom-communication-lib:${versions.phantom.allVersion}"
+    compileOnly "com.wlqq.phantom:phantom-plugin-lib:${versions.phantom.allVersion}"
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+//    implementation "com.android.support:appcompat-v7:${versions.supportLibrary}"
+    implementation "com.android.support:support-v4:${versions.supportLibrary}"
+
+    testImplementation 'junit:junit:4.12'
+}
+
+
+
+apply from: rootProject.file('buildscripts/plugin-common.gradle')

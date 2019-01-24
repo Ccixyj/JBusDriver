@@ -85,4 +85,7 @@ dependencies {
     api "com.umeng.analytics:analytics:${versions.analytics}"
 
 
+    //compileOnly
+    compileOnly "com.wlqq.phantom:phantom-host-lib:${versions.phantom.allVersion}"
+
 }

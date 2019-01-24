@@ -1,0 +1,115 @@
+println("-------------------start plugin config-------------------")
+println("project $project ----> runAsApp : ${project.ext.has('runAsApp') && project.ext.runAsApp}")
+
+
+
+def dependencyMode = GradleVersion.version(project.gradle.gradleVersion) >= GradleVersion.version("4.1") ? 'api' : 'compile'
+if (project.ext.has('runAsApp') && project.ext.runAsApp) {
+    //说明：需要兼容的情况有3种(单独组件作为app运行、打包在主app内、组件在多个app上复用但全局拦截器不同)
+    //     为了兼容以上3种情况，建议将全局拦截器作为一个单独的module，在此处给不同app添加不同拦截器module
+    project.afterEvaluate {
+        def appId = project.android.defaultConfig.applicationId
+        println("$project ----> appid : $appId")
+        if (appId == null || appId.trim() == "") throw GradleException("application must set applicationId")
+    }
+    project.dependencies.add(dependencyMode, "com.wlqq.phantom:phantom-host-lib:${versions.phantom.allVersion}")
+    apply plugin: 'com.wlqq.phantom.host'
+} else {
+
+    apply plugin: 'com.android.application'
+    apply plugin: 'com.wlqq.phantom.plugin'
+    apply plugin: 'kotlin-android'
+    apply plugin: 'kotlin-android-extensions'
+//    println("----> for plugin appid $CurrentAppID")
+    afterEvaluate { project ->
+        project.tasks.assembleDebug.doLast {
+            deletePluginInHost()
+            copyPluginToHost('debug')
+        }
+
+        project.tasks.assembleRelease.doLast {
+            deletePluginInHost()
+            copyPluginToHost('release')
+        }
+    }
+
+    phantomPluginConfig {
+        /*------------------------------ 剔除 support-v4 及其依赖的库 BEGIN ----------------------------*/
+        excludeLib "com.android.support:support-v4:${versions.supportLibrary}"
+        excludeLib "com.android.support:support-core-ui:${versions.supportLibrary}"
+        excludeLib "com.android.support:support-compat:${versions.supportLibrary}"
+        excludeLib "com.android.support:support-media-compat:${versions.supportLibrary}"
+        excludeLib "com.android.support:support-core-utils:${versions.supportLibrary}"
+        excludeLib "com.android.support:support-fragment:${versions.supportLibrary}"
+        excludeLib "com.android.support:support-annotations:${versions.supportLibrary}"
+        excludeLib "com.android.support:cursoradapter:${versions.supportLibrary}"
+        excludeLib "com.android.support:interpolator:${versions.supportLibrary}"
+        excludeLib "com.android.support:versionedparcelable:${versions.supportLibrary}"
+        excludeLib "com.android.support:documentfile:${versions.supportLibrary}"
+        excludeLib "com.android.support:customview:${versions.supportLibrary}"
+        excludeLib "com.android.support:slidingpanelayout:${versions.supportLibrary}"
+        excludeLib "com.android.support:swiperefreshlayout:${versions.supportLibrary}"
+        excludeLib "com.android.support:drawerlayout:${versions.supportLibrary}"
+        excludeLib "com.android.support:coordinatorlayout:${versions.supportLibrary}"
+        excludeLib "com.android.support:loader:${versions.supportLibrary}"
+        excludeLib "com.android.support:viewpager:${versions.supportLibrary}"
+        excludeLib "com.android.support:collections:${versions.supportLibrary}"
+        excludeLib "com.android.support:asynclayoutinflater:${versions.supportLibrary}"
+        excludeLib "com.android.support:print:${versions.supportLibrary}"
+        excludeLib "com.android.support:localbroadcastmanager:${versions.supportLibrary}"
+
+//        excludeLib "android.arch.lifecycle:viewmodel:${androidVersion.archLib}"
+//        excludeLib "android.arch.lifecycle:runtime:${androidVersion.archLib}"
+//        excludeLib "android.arch.lifecycle:common:${androidVersion.archLib}"
+//        excludeLib "android.arch.lifecycle:livedata:${androidVersion.archLib}"
+//        excludeLib "android.arch.lifecycle:livedata-core:${androidVersion.archLib}"
+//        excludeLib "android.arch.core:common:${androidVersion.archLib}"
+        /*------------------------------ 删除 support-v4 及其依赖的库  END  ----------------------------*/
+
+        /*------------------------------ 混淆配置 BEGIN ------------------------------*/
+        libraryJarsProguardFile file('proguard-phantom.pro')
+        /*------------------------------ 混淆配置  END  ------------------------------*/
+
+        /*------------------------------ 快速安装插件配置 BEGIN ------------------------*/
+        // 宿主包名
+        hostApplicationId = CurrentAppID
+        // 宿主 launcher Activity full class name
+        hostAppLauncherActivity = "${CurrentAppID}.MainActivity"
+
+        // 插件包名
+        pluginApplicationId = android.defaultConfig.applicationId
+        // 插件版本名
+        pluginVersionName = android.defaultConfig.versionName
+        /*------------------------------ 快速安装插件配置  END  -------------------------*/
+    }
+
+
+}
+
+println("-------------------end plugin config-------------------")
+
+def deletePluginInHost() {
+    println "deletePluginInHost..."
+    def assetsDir = file(project(':phantom-sample:host').getProjectDir().absolutePath + '/src/main/assets/plugins')
+    if (!assetsDir.exists()) {
+        assetsDir.mkdirs()
+    }
+    assetsDir.eachFile { file ->
+        println "list assets file: " + file.name
+        if (file.name.startsWith(android.defaultConfig.applicationId)) {
+            def ret = file.delete()
+            println "delete assets file: ${file.name}, result: ${ret}"
+        }
+    }
+}
+
+def copyPluginToHost(String dir) {
+    println "copy build plugin to app assets..."
+    copy {
+        from(buildDir.absolutePath + '/outputs/apk/' + dir) {
+            include('*.apk')
+        }
+
+        into(project(':phantom-sample:host').getProjectDir().absolutePath + '/src/main/assets/plugins/')
+    }
+}

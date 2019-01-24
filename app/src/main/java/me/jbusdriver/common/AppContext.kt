@@ -7,16 +7,19 @@ import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
 import com.squareup.leakcanary.LeakCanary
-import com.tencent.tinker.loader.app.TinkerApplication
-import com.tencent.tinker.loader.shareutil.ShareConstants
 import com.umeng.analytics.MobclickAgent
+import com.wlqq.phantom.library.PhantomCore
+import com.wlqq.phantom.library.log.ILogReporter
 import io.reactivex.plugins.RxJavaPlugins
 import me.jbusdriver.BuildConfig
+import me.jbusdriver.base.GSON
 import me.jbusdriver.base.JBusManager
+import me.jbusdriver.base.KLog
 import me.jbusdriver.base.arrayMapof
 import me.jbusdriver.debug.stetho.initializeStetho
 import me.jbusdriver.http.JAVBusService
 import java.io.File
+import java.util.HashMap
 
 
 lateinit var JBus: AppContext
@@ -25,6 +28,16 @@ lateinit var JBus: AppContext
 class AppContext : Application() {
 
     val JBusServices by lazy { arrayMapof<String, JAVBusService>() }
+
+    private val phantomHostConfig by lazy {
+        PhantomCore.Config()
+                .setCheckSignature(!BuildConfig.DEBUG)
+                .setCheckVersion(!BuildConfig.DEBUG)
+                .setDebug(BuildConfig.DEBUG)
+                .setLogLevel(if (BuildConfig.DEBUG) android.util.Log.VERBOSE else android.util.Log.WARN)
+                .setLogReporter(LogReporterImpl())
+    }
+
 
     override fun onCreate() {
         super.onCreate()
@@ -62,6 +75,7 @@ class AppContext : Application() {
             CC.enableRemoteCC(true)
         }
 
+        PhantomCore.getInstance().init(this, phantomHostConfig)
         MobclickAgent.setDebugMode(BuildConfig.DEBUG)
 
         RxJavaPlugins.setErrorHandler {
@@ -89,4 +103,23 @@ class AppContext : Application() {
     }
 
 
+    companion object {
+
+        private class LogReporterImpl : ILogReporter {
+
+            override fun reportException(throwable: Throwable, message: HashMap<String, Any>) {
+                // 使用 Bugly 或其它异常监控平台上报 Phantom 内部捕获的异常
+//                MobclickAgent.reportError(JBus,throwable)
+//                MobclickAgent.reportError(JBus, GSON.toJson(message))
+            }
+
+            override fun reportEvent(eventId: String, label: String, params: HashMap<String, Any>) {
+                // 使用 talkingdata 或其它移动统计平台上报 Phantom 内部自定义事件
+            }
+
+            override fun reportLog(tag: String, message: String) {
+                // 使用 Bugly 或其它异常监控平台上报 Phantom 内部输出的上下文相关日志
+            }
+        }
+    }
 }

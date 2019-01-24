@@ -1,4 +1,4 @@
-apply from: rootProject.file('cc-settings-2-app.gradle')
+apply from: rootProject.file('buildscripts/cc-settings-2-app.gradle')
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
@@ -6,6 +6,9 @@ android {
     compileSdkVersion versions.compileSdk
     buildToolsVersion versions.buildTools
     defaultConfig {
+        if (project.ext.runAsApp) {
+            applicationId "me.jbusdriver.component.magnet"
+        }
         minSdkVersion 16
         targetSdkVersion versions.targetSdk
         versionCode 1

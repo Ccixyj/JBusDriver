@@ -5,6 +5,7 @@ import com.billy.cc.core.component.CC
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
+import com.wlqq.phantom.library.PhantomCore
 import io.reactivex.plugins.RxJavaPlugins
 import me.jbusdriver.base.JBusManager
 import me.jbusdriver.base.KLog
@@ -14,8 +15,18 @@ import me.jbusdriver.base.KLog
  */
 abstract class BaseApp : Application() {
 
+    private val phantomCompConfig by lazy {
+        PhantomCore.Config()
+                .setCheckSignature(false)
+                .setCheckVersion(false)
+                .setDebug(true)
+                .setLogLevel(android.util.Log.VERBOSE)
+    }
+
+
     override fun onCreate() {
         super.onCreate()
+
 
         val formatStrategy = PrettyFormatStrategy.newBuilder()
                 .showThreadInfo(true)  // (Optional) Whether to show thread info or not. Default true
@@ -37,6 +48,7 @@ abstract class BaseApp : Application() {
         CC.enableDebug(true)
         CC.enableRemoteCC(true)
 
+        PhantomCore.getInstance().init(this, phantomCompConfig)
         JBusManager.setContext(this)
         this.registerActivityLifecycleCallbacks(JBusManager)
     }

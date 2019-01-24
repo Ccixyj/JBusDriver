@@ -7,7 +7,11 @@
 //
 //-----------------------------------------------------------
 
-apply from: rootProject.file('cc-settings-2.gradle')
+//#module_name=true 将单独运行的组件从主app打包依赖项中排除
+
+
+apply from: rootProject.file('buildscripts/cc-settings-2.gradle')
+
 
 dependencies {
     implementation project(':base_lib')
@@ -49,3 +53,5 @@ dependencies {
 
 //开启app内部多进程组件调用
 ccregister.multiProcessEnabled = true
+
+apply from: rootProject.file('buildscripts/plugin-common.gradle')

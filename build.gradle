@@ -17,6 +17,11 @@ buildscript {
         classpath "com.billy.android:cc-register:${versions.cc_register}"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
+
+        //plugins
+        classpath "com.wlqq.phantom:phantom-host-gradle:${versions.phantom.allVersion}"
+        classpath "com.wlqq.phantom:phantom-plugin-gradle:${versions.phantom.allVersion}"
+
     }
 }
 
