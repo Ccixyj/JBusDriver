@@ -135,9 +135,9 @@ dependencies {
 
     //    implementation(name: 'bugly_crashreport_upgrade-1.3.5', ext: 'aar')
     // 远程依赖集成方式（推荐）
-    implementation "com.tencent.bugly:crashreport_upgrade:${versions.bugly}"
+//    implementation "com.tencent.bugly:crashreport_upgrade:${versions.bugly}"
     // 指定tinker依赖版本（注：应用升级1.3.5版本起，不再内置tinker）
-    implementation "com.tencent.tinker:tinker-android-lib:${versions.tinker}"
+//    implementation "com.tencent.tinker:tinker-android-lib:${versions.tinker}"
 
     //leak
     debugImplementation "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
@@ -162,7 +162,7 @@ configurations.all { config ->
     }
 }
 
-// 依赖插件脚本
+/*// 依赖插件脚本
 def taskNames = project.gradle.startParameter.taskNames
 def currentTaskName = taskNames.isEmpty() ? "" : taskNames.first()
 // 开启tinker-support插件，默认值true
@@ -175,7 +175,7 @@ if (checkEnable) {
     this.rootProject.extensions.appVerCode = VersionCode()
     this.rootProject.extensions.appVerName = VersionName()
     apply from: 'tinker.gradle'
-}
+}*/
 repositories {
     mavenCentral()
 }

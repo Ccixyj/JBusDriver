@@ -1,5 +1,6 @@
 package me.jbusdriver.common
 
+import android.app.Application
 import android.os.Environment
 import com.billy.cc.core.component.CC
 import com.orhanobut.logger.AndroidLogAdapter
@@ -21,8 +22,7 @@ import java.io.File
 lateinit var JBus: AppContext
 
 
-class AppContext : TinkerApplication(ShareConstants.TINKER_ENABLE_ALL, "me.jbusdriver.common.JBusApplicationLike",
-        "com.tencent.tinker.loader.TinkerLoader", false) {
+class AppContext : Application() {
 
     val JBusServices by lazy { arrayMapof<String, JAVBusService>() }
 

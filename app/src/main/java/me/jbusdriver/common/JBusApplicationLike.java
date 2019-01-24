@@ -1,3 +1,4 @@
+/*
 package me.jbusdriver.common;
 
 import android.annotation.TargetApi;
@@ -15,9 +16,16 @@ import com.tencent.tinker.entry.DefaultApplicationLike;
 
 import java.io.File;
 
+import kotlin.Deprecated;
 import me.jbusdriver.base.JBusManager;
 
 @SuppressWarnings("unused")
+@Deprecated(message = "not use tinker any more")
+
+}
+*/
+
+/*
 public class JBusApplicationLike extends DefaultApplicationLike {
 
     public static final String TAG = "Tinker.JBusApplicationLike";
@@ -72,4 +80,4 @@ public class JBusApplicationLike extends DefaultApplicationLike {
         getApplication().registerActivityLifecycleCallbacks(callbacks);
     }
 
-}
+*/
