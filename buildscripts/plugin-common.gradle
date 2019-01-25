@@ -4,32 +4,34 @@ println("project $project ----> runAsApp : ${project.ext.has('runAsApp') && proj
 
 
 def dependencyMode = GradleVersion.version(project.gradle.gradleVersion) >= GradleVersion.version("4.1") ? 'api' : 'compile'
-if (project.ext.has('runAsApp') && project.ext.runAsApp) {
+if (project.ext.has('runAsApp') && project.ext.runAsApp ) {
     //说明：需要兼容的情况有3种(单独组件作为app运行、打包在主app内、组件在多个app上复用但全局拦截器不同)
     //     为了兼容以上3种情况，建议将全局拦截器作为一个单独的module，在此处给不同app添加不同拦截器module
     project.afterEvaluate {
         def appId = project.android.defaultConfig.applicationId
-        println("$project ----> appid : $appId")
+        println("$project ----> appid : $appId set app as host")
         if (appId == null || appId.trim() == "") throw GradleException("application must set applicationId")
     }
     project.dependencies.add(dependencyMode, "com.wlqq.phantom:phantom-host-lib:${versions.phantom.allVersion}")
     apply plugin: 'com.wlqq.phantom.host'
-} else {
-
-    apply plugin: 'com.android.application'
+} else if(project.name.startsWith("plugin_")){
+    println("$project ---->  set app as client plugin")
     apply plugin: 'com.wlqq.phantom.plugin'
-    apply plugin: 'kotlin-android'
-    apply plugin: 'kotlin-android-extensions'
+
+    project.dependencies.add("compileOnly", "com.wlqq.phantom:phantom-communication-lib:${versions.phantom.allVersion}")
+    project.dependencies.add("compileOnly", "com.wlqq.phantom:phantom-plugin-lib:${versions.phantom.allVersion}")
+
 //    println("----> for plugin appid $CurrentAppID")
     afterEvaluate { project ->
         project.tasks.assembleDebug.doLast {
-            deletePluginInHost()
-            copyPluginToHost('debug')
+            println("$project ----> assembleDebug")
+            deletePluginInHost(deployTargets)
+            copyPluginToHost(deployTargets,'debug')
         }
 
         project.tasks.assembleRelease.doLast {
-            deletePluginInHost()
-            copyPluginToHost('release')
+            deletePluginInHost(deployTargets)
+            copyPluginToHost(deployTargets,'release')
         }
     }
 
@@ -88,28 +90,33 @@ if (project.ext.has('runAsApp') && project.ext.runAsApp) {
 
 println("-------------------end plugin config-------------------")
 
-def deletePluginInHost() {
-    println "deletePluginInHost..."
-    def assetsDir = file(project(':phantom-sample:host').getProjectDir().absolutePath + '/src/main/assets/plugins')
-    if (!assetsDir.exists()) {
-        assetsDir.mkdirs()
-    }
-    assetsDir.eachFile { file ->
-        println "list assets file: " + file.name
-        if (file.name.startsWith(android.defaultConfig.applicationId)) {
-            def ret = file.delete()
-            println "delete assets file: ${file.name}, result: ${ret}"
+def deletePluginInHost(Set<Project> targets) {
+    targets.each { p->
+        def assetsDir = file(p.getProjectDir().absolutePath + '/src/main/assets/plugins')
+        if (!assetsDir.exists()) {
+            assetsDir.mkdirs()
+        }
+        assetsDir.eachFile { file ->
+            println "list assets file: " + file.name
+            if (file.name.startsWith(android.defaultConfig.applicationId)) {
+                def ret = file.delete()
+                println "delete assets file: ${file.name}, result: ${ret}"
+            }
         }
     }
 }
 
-def copyPluginToHost(String dir) {
-    println "copy build plugin to app assets..."
-    copy {
-        from(buildDir.absolutePath + '/outputs/apk/' + dir) {
-            include('*.apk')
+def copyPluginToHost(Set<Project> targets, String dir) {
+
+    targets.each { p ->
+        println "copy build plugin to $p assets... "
+        copy {
+            from(buildDir.absolutePath + '/outputs/apk/' + dir) {
+                include('*.apk')
+            }
+
+            into(p.getProjectDir().absolutePath + '/src/main/assets/plugins/')
         }
 
-        into(project(':phantom-sample:host').getProjectDir().absolutePath + '/src/main/assets/plugins/')
     }
 }

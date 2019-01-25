@@ -1,12 +1,18 @@
+project.ext.CurrentAppID = "me.jbusdriver.plugin.magnet"
 
-project.ext.CurrentAppID ="me.jbusdriver.plugin.magnet"
+def pTagName = project.name.replace("plugin_","")
+project.ext.deployTargets =  rootProject.allprojects.findAll {
+    ( !it.name.startsWith("plugin_") && it.name.endsWith(pTagName) )||   it.name == "app"
+
+}
+println("deployTarget :  ${deployTargets}")
+
 apply plugin: 'com.android.application'
 
 
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.wlqq.phantom.plugin'
-
 
 //def CurrentHostId = CurrentAppID
 //println("CurrentAppID =-----> $CurrentAppID")
@@ -45,8 +51,7 @@ android {
 }
 
 dependencies {
-    compileOnly "com.wlqq.phantom:phantom-communication-lib:${versions.phantom.allVersion}"
-    compileOnly "com.wlqq.phantom:phantom-plugin-lib:${versions.phantom.allVersion}"
+
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
