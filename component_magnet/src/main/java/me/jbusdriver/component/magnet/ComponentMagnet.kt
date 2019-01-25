@@ -3,7 +3,7 @@ package me.jbusdriver.component.magnet
 import com.billy.cc.core.component.CC
 import com.billy.cc.core.component.CCResult
 import com.billy.cc.core.component.IComponent
-import me.jbusdriver.base.*
+import me.jbusdriver.base.KLog
 import me.jbusdriver.base.common.C
 import me.jbusdriver.component.magnet.ui.activity.MagnetPagerListActivity
 import me.jbusdriver.component.magnet.ui.config.Configuration
@@ -17,7 +17,9 @@ class ComponentMagnet : IComponent {
     override fun getName() = C.Components.Manget
 
     override fun onCall(cc: CC): Boolean {
-        require(MagnetPluginHelper.MagnetLoaders.isNotEmpty())
+       if (MagnetPluginHelper.MagnetLoaders.isEmpty()){
+           MagnetPluginHelper.init()
+       }
         val actionName = cc.actionName
         when (actionName) {
             "show" -> {

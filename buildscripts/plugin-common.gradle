@@ -12,8 +12,8 @@ if (project.ext.has('runAsApp') && project.ext.runAsApp) {
         println("$project ----> appid : $appId set app as host ")
         if (appId == null || appId.trim() == "") throw GradleException("application must set applicationId")
     }
-    project.dependencies.add("api", "com.wlqq.phantom:phantom-host-lib:${versions.phantom.allVersion}")
-    project.dependencies.add("api", "com.wlqq.phantom:phantom-communication-lib:${versions.phantom.allVersion}")
+    project.dependencies.add("implementation", "com.wlqq.phantom:phantom-host-lib:${versions.phantom.allVersion}")
+    project.dependencies.add("implementation", "com.wlqq.phantom:phantom-communication-lib:${versions.phantom.allVersion}")
     apply plugin: 'com.wlqq.phantom.host'
 } else if (project.name.startsWith("plugin_")) {
     println("$project ---->  set app as client plugin")
@@ -42,6 +42,10 @@ if (project.ext.has('runAsApp') && project.ext.runAsApp) {
         }
     }
 
+} else if (project.name.startsWith("component_") && !(project.ext.has("alwaysLib") && project.ext.alwaysLib)) {
+    println("$project ---->  set app as impl plugin ")
+    project.dependencies.add("implementation", "com.wlqq.phantom:phantom-host-lib:${versions.phantom.allVersion}")
+    project.dependencies.add("implementation", "com.wlqq.phantom:phantom-communication-lib:${versions.phantom.allVersion}")
 }
 
 println("-------------------end plugin config-------------------")

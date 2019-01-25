@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 import me.jbusdriver.commen.bean.ILink
 import me.jbusdriver.commen.bean.db.MovieCategory
 import org.jsoup.nodes.Document
+import java.util.Collections.emptyList
 
 /**
  * Created by Administrator on 2017/4/16.

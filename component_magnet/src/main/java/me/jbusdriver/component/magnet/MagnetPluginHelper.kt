@@ -9,7 +9,6 @@ import me.jbusdriver.base.JBusManager
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.phantom.installAssetsPlugins
 import me.jbusdriver.plugin.magnet.common.loader.IMagnetLoader
-import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
 object MagnetPluginHelper {
@@ -40,7 +39,7 @@ object MagnetPluginHelper {
                 }).addTo(rxManager)
     }
 
-    fun call(method: String, service: String = MagnetService, vararg p: Any): Any? {
+    fun call(method: String, service: String = MagnetJavaService, vararg p: Any): Any? {
         plugin?.let {
             // 插件 Phantom Service 代理对象
             val service = PhantomServiceManager.getService(PluginMagnetPackage, service)
@@ -50,10 +49,10 @@ object MagnetPluginHelper {
             }
             try {
                 val res = service.call(method, *p)
-                KLog.d("result $res")
+                KLog.d("call $method form service $service result $res")
                 return res
             } catch (e: Exception) {
-                KLog.w("service.call error $e")
+                KLog.w("call $method form service $service error $e")
             }
 
 

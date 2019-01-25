@@ -12,14 +12,12 @@ import com.wlqq.phantom.library.PhantomCore
 import com.wlqq.phantom.library.log.ILogReporter
 import io.reactivex.plugins.RxJavaPlugins
 import me.jbusdriver.BuildConfig
-import me.jbusdriver.base.GSON
 import me.jbusdriver.base.JBusManager
-import me.jbusdriver.base.KLog
 import me.jbusdriver.base.arrayMapof
 import me.jbusdriver.debug.stetho.initializeStetho
 import me.jbusdriver.http.JAVBusService
 import java.io.File
-import java.util.HashMap
+import java.util.*
 
 
 lateinit var JBus: AppContext
@@ -31,24 +29,24 @@ class AppContext : Application() {
 
     private val phantomHostConfig by lazy {
         PhantomCore.Config()
-                .setCheckSignature(!BuildConfig.DEBUG)
-                .setCheckVersion(!BuildConfig.DEBUG)
-                .setDebug(BuildConfig.DEBUG)
-                .setLogLevel(if (BuildConfig.DEBUG) android.util.Log.VERBOSE else android.util.Log.WARN)
+                .setCheckSignature(false)
+                .setCheckVersion(false)
+                .setDebug(true)
+                .setLogLevel(if (true) android.util.Log.VERBOSE else android.util.Log.WARN)
                 .setLogReporter(LogReporterImpl())
     }
 
 
     override fun onCreate() {
         super.onCreate()
-
+        JBusManager.setContext(this)
         if (LeakCanary.isInAnalyzerProcess(this)) {
             // This process is dedicated to LeakCanary for heap analysis.
             // You should not init your app in this process.
             return
         }
 
-        if (BuildConfig.DEBUG) {
+        if (true) {
             LeakCanary.install(this)
 
             initializeStetho(this) //chrome://inspect/#devices
@@ -87,7 +85,6 @@ class AppContext : Application() {
         }
 
         JBus = this
-        JBusManager.setContext(this)
         this.registerActivityLifecycleCallbacks(JBusManager)
     }
 

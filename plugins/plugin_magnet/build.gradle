@@ -25,6 +25,7 @@ android {
         targetSdkVersion versions.targetSdk
         versionCode 1
         versionName "1.0"
+         multiDexEnabled true
     }
 
     buildTypes {
@@ -56,7 +57,7 @@ dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     compileOnly "org.jsoup:jsoup:${versions.jsoup}"
     implementation project(':plugins:plugin_magnet_common')
-//    implementation 'com.android.support:multidex:1.0.3'
+     implementation 'com.android.support:multidex:1.0.3'
 }
 
 phantomPluginConfig {
@@ -87,6 +88,7 @@ phantomPluginConfig {
     excludeLib "com.android.support:print:${versions.supportLibrary}"
     excludeLib "com.android.support:localbroadcastmanager:${versions.supportLibrary}"
 
+
 //        excludeLib "android.arch.lifecycle:viewmodel:${androidVersion.archLib}"
 //        excludeLib "android.arch.lifecycle:runtime:${androidVersion.archLib}"
 //        excludeLib "android.arch.lifecycle:common:${androidVersion.archLib}"
@@ -100,6 +102,10 @@ phantomPluginConfig {
     excludeLib "com.android.support:cardview-v7:${versions.supportLibrary}"
     excludeLib "com.android.support:palette-v7:${versions.supportLibrary}"
     excludeLib "com.android.support.constraint:constraint-layout:${versions.constraint_layout}"
+
+    //kotlin
+//    excludeLib "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+
 
     /*------------------------------ 混淆配置 BEGIN ------------------------------*/
     libraryJarsProguardFile file('proguard-phantom.pro')
