@@ -26,7 +26,7 @@ abstract class BaseApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
+        JBusManager.setContext(this)
 
         val formatStrategy = PrettyFormatStrategy.newBuilder()
                 .showThreadInfo(true)  // (Optional) Whether to show thread info or not. Default true
@@ -49,7 +49,7 @@ abstract class BaseApp : Application() {
         CC.enableRemoteCC(true)
 
         PhantomCore.getInstance().init(this, phantomCompConfig)
-        JBusManager.setContext(this)
+
         this.registerActivityLifecycleCallbacks(JBusManager)
     }
 

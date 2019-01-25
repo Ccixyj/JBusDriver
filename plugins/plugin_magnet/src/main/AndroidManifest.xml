@@ -1,8 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.jbusdriver.plugin.magnet" >
-    <application>
+    <application android:name=".app.PluginMagnetApp">
         <meta-data
             android:name="phantom.service.import.PhantomVersionService"
             android:value="30000"/>
+
+        <meta-data android:name="phantom.hot_upgrade" android:value="true"/>
     </application>
 </manifest>

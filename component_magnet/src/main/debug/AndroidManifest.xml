@@ -7,8 +7,9 @@
         android:name="debug.DebugApp"
         android:allowBackup="false"
         android:icon="@mipmap/comp_magnet_ic_launcher"
-        tools:replace="android:allowBackup"
+        tools:replace="android:allowBackup,android:label"
         android:supportsRtl="true"
+        android:label="@string/comp_magnet_app_name"
         android:theme="@style/AppTheme.NoActionBar">
 
         <activity android:name="debug.CompMagnetMainActivity">

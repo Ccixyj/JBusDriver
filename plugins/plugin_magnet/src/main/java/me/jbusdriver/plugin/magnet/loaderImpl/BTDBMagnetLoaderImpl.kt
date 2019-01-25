@@ -1,6 +1,7 @@
-package me.jbusdriver.component.magnet.loader
+package me.jbusdriver.plugin.magnet.loaderImpl
 
-import me.jbusdriver.component.magnet.bean.Magnet
+import me.jbusdriver.plugin.magnet.common.bean.Magnet
+import me.jbusdriver.plugin.magnet.common.loader.IMagnetLoader
 import org.jsoup.Jsoup
 
 class BTDBMagnetLoaderImpl : IMagnetLoader {

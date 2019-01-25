@@ -52,6 +52,7 @@ private fun getColor(id: Int): Int {
 
 //region Context
 val Main_Worker by lazy { AndroidSchedulers.mainThread().createWorker() }
+val IO_Worker by lazy { Schedulers.io().createWorker() }
 
 fun postMain(block: () -> Unit) = Main_Worker.schedule(block)
 

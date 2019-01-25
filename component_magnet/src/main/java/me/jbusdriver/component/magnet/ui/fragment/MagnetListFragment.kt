@@ -15,11 +15,11 @@ import me.jbusdriver.base.*
 import me.jbusdriver.base.common.AppBaseRecycleFragment
 import me.jbusdriver.base.common.C
 import me.jbusdriver.component.magnet.R
-import me.jbusdriver.component.magnet.bean.Magnet
-import me.jbusdriver.component.magnet.loader.IMagnetLoader
+import me.jbusdriver.plugin.magnet.common.loader.IMagnetLoader
 import me.jbusdriver.component.magnet.mvp.MagnetListContract.MagnetListPresenter
 import me.jbusdriver.component.magnet.mvp.MagnetListContract.MagnetListView
 import me.jbusdriver.component.magnet.mvp.presenter.MagnetListPresenterImpl
+import me.jbusdriver.plugin.magnet.common.bean.Magnet
 
 class MagnetListFragment : AppBaseRecycleFragment<MagnetListPresenter, MagnetListView, Magnet>(), MagnetListView {
 

@@ -10,9 +10,9 @@ import me.jbusdriver.base.mvp.bean.PageInfo
 import me.jbusdriver.base.mvp.bean.ResultPageBean
 import me.jbusdriver.base.mvp.model.BaseModel
 import me.jbusdriver.base.mvp.presenter.AbstractRefreshLoadMorePresenterImpl
-import me.jbusdriver.component.magnet.bean.Magnet
-import me.jbusdriver.component.magnet.loader.IMagnetLoader.Companion.MagnetLoaders
+import me.jbusdriver.component.magnet.MagnetPluginHelper.MagnetLoaders
 import me.jbusdriver.component.magnet.mvp.MagnetListContract
+import me.jbusdriver.plugin.magnet.common.bean.Magnet
 import org.jsoup.nodes.Document
 
 class MagnetListPresenterImpl(private val magnetLoaderKey: String, private val keyword: String) : AbstractRefreshLoadMorePresenterImpl<MagnetListContract.MagnetListView, Magnet>(), MagnetListContract.MagnetListPresenter {

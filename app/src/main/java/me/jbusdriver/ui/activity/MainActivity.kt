@@ -17,6 +17,7 @@ import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
+import com.billy.cc.core.component.CC
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
@@ -24,6 +25,7 @@ import kotlinx.android.synthetic.main.nav_header_main.view.*
 import me.jbusdriver.R
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.AppBaseActivity
+import me.jbusdriver.base.common.C
 import me.jbusdriver.common.JBus
 import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.bean.*

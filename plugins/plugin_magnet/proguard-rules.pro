@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-ignorewarnings
+
+# Phantom Service method
+-keepclassmembers class * {
+    @com.wlqq.phantom.communication.RemoteMethod <methods>;
+}

@@ -1,7 +1,7 @@
-package me.jbusdriver.component.magnet.loader
+package me.jbusdriver.plugin.magnet.loaderImpl
 
-import me.jbusdriver.base.KLog
-import me.jbusdriver.component.magnet.bean.Magnet
+import me.jbusdriver.plugin.magnet.common.bean.Magnet
+import me.jbusdriver.plugin.magnet.common.loader.IMagnetLoader
 import org.jsoup.Jsoup
 
 class CNBtkittyMangetLoaderImpl : IMagnetLoader {
@@ -52,11 +52,6 @@ class CNBtkittyMangetLoaderImpl : IMagnetLoader {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            val d = Jsoup.connect(search).initHeaders().followRedirects(true).execute()
-            val b = d.body()
-            KLog.d(b)
-
-            KLog.d("recaptcha_widget ${Jsoup.parse(b).select("#recaptcha_widget")}")
             emptyList()
         }
 

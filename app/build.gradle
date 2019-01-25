@@ -145,11 +145,12 @@ dependencies {
     // Optional, if you use support library fragments:
     debugImplementation "com.squareup.leakcanary:leakcanary-support-fragment:${versions.leakcanary}"
 
-
-    implementation "com.android.support:multidex:1.0.3" // 多dex配置
-
     //components
     addComponent "component_magnet"
+
+    implementation "com.android.support:multidex:1.0.3" // 多dex配置
+    implementation "com.wlqq.phantom:phantom-host-lib:${versions.phantom.allVersion}"
+    implementation "com.wlqq.phantom:phantom-communication-lib:${versions.phantom.allVersion}"
 }
 
 configurations.all { config ->

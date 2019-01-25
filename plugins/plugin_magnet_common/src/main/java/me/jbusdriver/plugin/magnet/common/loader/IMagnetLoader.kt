@@ -1,0 +1,34 @@
+package me.jbusdriver.plugin.magnet.common.loader
+
+import android.util.Base64
+import me.jbusdriver.plugin.magnet.common.bean.Magnet
+import org.jsoup.Connection
+const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36"
+
+interface IMagnetLoader {
+
+
+    /**
+     * 是否有下一页
+     */
+    var hasNexPage: Boolean
+
+    /**
+     * 放入后台线程执行
+     */
+    fun loadMagnets(key: String, page: Int): List<Magnet>
+
+    fun encode(string: String) = Base64.encodeToString(string.toByteArray(), Base64.NO_PADDING or Base64.URL_SAFE).trim()
+    fun Connection.initHeaders(): Connection = this.userAgent(USER_AGENT).followRedirects(true)
+            .header("Accept-Encoding", "gzip, deflate, sdch")
+            .header("Accept-Language", "zh-CN,zh;q=0.8")
+
+    fun fetchMagnetLink(url:String): String = ""
+
+
+    companion object {
+        const val MagnetFormatPrefix = "magnet:?xt=urn:btih:"
+
+    }
+
+}

@@ -33,7 +33,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     //android support
-    api "com.android.support:appcompat-v7:${versions.supportLibrary}"
+    api "com.android.support:support-v4:${versions.supportLibrary}"
+//    api "com.android.support:appcompat-v7:${versions.supportLibrary}"
     api "com.android.support:design:${versions.supportLibrary}"
     api "com.android.support:cardview-v7:${versions.supportLibrary}"
     api "com.android.support:palette-v7:${versions.supportLibrary}"
@@ -86,6 +87,6 @@ dependencies {
 
 
     //compileOnly
-    compileOnly "com.wlqq.phantom:phantom-host-lib:${versions.phantom.allVersion}"
+//    compileOnly "com.wlqq.phantom:phantom-host-lib:${versions.phantom.allVersion}"
 
 }

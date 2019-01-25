@@ -3,18 +3,19 @@ println("project $project ----> runAsApp : ${project.ext.has('runAsApp') && proj
 
 
 
-def dependencyMode = GradleVersion.version(project.gradle.gradleVersion) >= GradleVersion.version("4.1") ? 'api' : 'compile'
-if (project.ext.has('runAsApp') && project.ext.runAsApp ) {
+
+if (project.ext.has('runAsApp') && project.ext.runAsApp) {
     //说明：需要兼容的情况有3种(单独组件作为app运行、打包在主app内、组件在多个app上复用但全局拦截器不同)
     //     为了兼容以上3种情况，建议将全局拦截器作为一个单独的module，在此处给不同app添加不同拦截器module
     project.afterEvaluate {
         def appId = project.android.defaultConfig.applicationId
-        println("$project ----> appid : $appId set app as host")
+        println("$project ----> appid : $appId set app as host ")
         if (appId == null || appId.trim() == "") throw GradleException("application must set applicationId")
     }
-    project.dependencies.add(dependencyMode, "com.wlqq.phantom:phantom-host-lib:${versions.phantom.allVersion}")
+    project.dependencies.add("api", "com.wlqq.phantom:phantom-host-lib:${versions.phantom.allVersion}")
+    project.dependencies.add("api", "com.wlqq.phantom:phantom-communication-lib:${versions.phantom.allVersion}")
     apply plugin: 'com.wlqq.phantom.host'
-} else if(project.name.startsWith("plugin_")){
+} else if (project.name.startsWith("plugin_")) {
     println("$project ---->  set app as client plugin")
     apply plugin: 'com.wlqq.phantom.plugin'
 
@@ -22,76 +23,32 @@ if (project.ext.has('runAsApp') && project.ext.runAsApp ) {
     project.dependencies.add("compileOnly", "com.wlqq.phantom:phantom-plugin-lib:${versions.phantom.allVersion}")
 
 //    println("----> for plugin appid $CurrentAppID")
+
+    project.android.applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            outputFileName = "${variant.applicationId}_${variant.versionName}.apk"
+        }
+    }
     afterEvaluate { project ->
         project.tasks.assembleDebug.doLast {
             println("$project ----> assembleDebug")
             deletePluginInHost(deployTargets)
-            copyPluginToHost(deployTargets,'debug')
+            copyPluginToHost(deployTargets, 'debug')
         }
 
         project.tasks.assembleRelease.doLast {
             deletePluginInHost(deployTargets)
-            copyPluginToHost(deployTargets,'release')
+            copyPluginToHost(deployTargets, 'release')
         }
     }
-
-    phantomPluginConfig {
-        /*------------------------------ 剔除 support-v4 及其依赖的库 BEGIN ----------------------------*/
-        excludeLib "com.android.support:support-v4:${versions.supportLibrary}"
-        excludeLib "com.android.support:support-core-ui:${versions.supportLibrary}"
-        excludeLib "com.android.support:support-compat:${versions.supportLibrary}"
-        excludeLib "com.android.support:support-media-compat:${versions.supportLibrary}"
-        excludeLib "com.android.support:support-core-utils:${versions.supportLibrary}"
-        excludeLib "com.android.support:support-fragment:${versions.supportLibrary}"
-        excludeLib "com.android.support:support-annotations:${versions.supportLibrary}"
-        excludeLib "com.android.support:cursoradapter:${versions.supportLibrary}"
-        excludeLib "com.android.support:interpolator:${versions.supportLibrary}"
-        excludeLib "com.android.support:versionedparcelable:${versions.supportLibrary}"
-        excludeLib "com.android.support:documentfile:${versions.supportLibrary}"
-        excludeLib "com.android.support:customview:${versions.supportLibrary}"
-        excludeLib "com.android.support:slidingpanelayout:${versions.supportLibrary}"
-        excludeLib "com.android.support:swiperefreshlayout:${versions.supportLibrary}"
-        excludeLib "com.android.support:drawerlayout:${versions.supportLibrary}"
-        excludeLib "com.android.support:coordinatorlayout:${versions.supportLibrary}"
-        excludeLib "com.android.support:loader:${versions.supportLibrary}"
-        excludeLib "com.android.support:viewpager:${versions.supportLibrary}"
-        excludeLib "com.android.support:collections:${versions.supportLibrary}"
-        excludeLib "com.android.support:asynclayoutinflater:${versions.supportLibrary}"
-        excludeLib "com.android.support:print:${versions.supportLibrary}"
-        excludeLib "com.android.support:localbroadcastmanager:${versions.supportLibrary}"
-
-//        excludeLib "android.arch.lifecycle:viewmodel:${androidVersion.archLib}"
-//        excludeLib "android.arch.lifecycle:runtime:${androidVersion.archLib}"
-//        excludeLib "android.arch.lifecycle:common:${androidVersion.archLib}"
-//        excludeLib "android.arch.lifecycle:livedata:${androidVersion.archLib}"
-//        excludeLib "android.arch.lifecycle:livedata-core:${androidVersion.archLib}"
-//        excludeLib "android.arch.core:common:${androidVersion.archLib}"
-        /*------------------------------ 删除 support-v4 及其依赖的库  END  ----------------------------*/
-
-        /*------------------------------ 混淆配置 BEGIN ------------------------------*/
-        libraryJarsProguardFile file('proguard-phantom.pro')
-        /*------------------------------ 混淆配置  END  ------------------------------*/
-
-        /*------------------------------ 快速安装插件配置 BEGIN ------------------------*/
-        // 宿主包名
-        hostApplicationId = CurrentAppID
-        // 宿主 launcher Activity full class name
-        hostAppLauncherActivity = "${CurrentAppID}.MainActivity"
-
-        // 插件包名
-        pluginApplicationId = android.defaultConfig.applicationId
-        // 插件版本名
-        pluginVersionName = android.defaultConfig.versionName
-        /*------------------------------ 快速安装插件配置  END  -------------------------*/
-    }
-
 
 }
 
 println("-------------------end plugin config-------------------")
 
+
 def deletePluginInHost(Set<Project> targets) {
-    targets.each { p->
+    targets.each { p ->
         def assetsDir = file(p.getProjectDir().absolutePath + '/src/main/assets/plugins')
         if (!assetsDir.exists()) {
             assetsDir.mkdirs()

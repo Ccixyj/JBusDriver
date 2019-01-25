@@ -1,7 +1,7 @@
 package me.jbusdriver.component.magnet.ui.config
 
 import me.jbusdriver.base.*
-import me.jbusdriver.component.magnet.loader.IMagnetLoader.Companion.MagnetLoaders
+import me.jbusdriver.component.magnet.MagnetPluginHelper.MagnetLoaders
 
 object Configuration {
     //region magnet
