@@ -1,6 +1,7 @@
 package debug
 
 import android.os.Bundle
+import android.os.Environment
 import com.billy.cc.core.component.CC
 import kotlinx.android.synthetic.main.comp_magnet_activity_main.*
 import me.jbusdriver.base.KLog
@@ -10,12 +11,15 @@ import com.wlqq.phantom.library.PhantomCore
 import com.wlqq.phantom.communication.PhantomServiceManager
 import com.wlqq.phantom.library.proxy.PluginContext
 import io.reactivex.rxkotlin.addTo
+import me.jbusdriver.base.JBusManager
 import me.jbusdriver.base.common.BaseActivity
 import me.jbusdriver.base.phantom.installAssetsPlugins
+import me.jbusdriver.base.phantom.installFromPathDir
 import me.jbusdriver.base.toast
 import me.jbusdriver.component.magnet.MagnetPluginHelper
 import me.jbusdriver.component.magnet.MagnetPluginHelper.MagnetService
 import me.jbusdriver.component.magnet.MagnetPluginHelper.PluginMagnetPackage
+import java.io.File
 import kotlin.concurrent.thread
 
 
@@ -148,6 +152,18 @@ class CompMagnetMainActivity : BaseActivity() {
             MagnetPluginHelper.hasNext("btdigg")
         }
 
+
+        iv_test_update.setOnClickListener {
+
+            installFromPathDir(File(Environment.getExternalStorageDirectory().absolutePath + File.separator + JBusManager.context.packageName + File.separator + "plugins"))
+                    .subscribe({
+                        KLog.d("all plugin $it")
+                        toast("插件已经安装 ${it.joinToString { it.packageName }}")
+                    }, {
+                        KLog.w("erorr $it")
+                    }).addTo(rxManager)
+
+        }
         MagnetPluginHelper.init()
     }
 

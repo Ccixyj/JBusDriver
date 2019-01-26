@@ -37,7 +37,7 @@ import me.jbusdriver.mvp.bean.MenuOp
 import me.jbusdriver.mvp.bean.MenuOpHead
 import me.jbusdriver.ui.adapter.MenuOpAdapter
 import me.jbusdriver.ui.data.AppConfiguration
-import me.jbusdriver.ui.task.CollectService
+import me.jbusdriver.ui.task.JbusIntentService
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -279,7 +279,7 @@ class SettingActivity : BaseActivity() {
                                             .negativeText("取消")
                                             .negativeColor(R.color.secondText.toColorInt())
                                             .onPositive { _, _ ->
-                                                CollectService.startLoadBackUp(viewContext, file)
+                                                JbusIntentService.startLoadBackUp(viewContext, file)
                                             }
                                             .show()
 

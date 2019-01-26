@@ -8,6 +8,8 @@ import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.base.JBusManager
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.phantom.installAssetsPlugins
+import me.jbusdriver.base.phantom.installFromFile
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 object MagnetPluginHelper {
@@ -110,6 +112,16 @@ object MagnetPluginHelper {
             KLog.w("fetchMagLink error $e")
             false
         }
+    }
+
+    fun update(f: File) {
+        //path
+        installFromFile(f)
+                .subscribe({
+                    KLog.d("插件已经安装 $it")
+                }, {
+                    KLog.w("erorr $it")
+                }).addTo(rxManager)
     }
 
 

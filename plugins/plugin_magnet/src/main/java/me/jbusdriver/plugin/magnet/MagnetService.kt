@@ -17,8 +17,9 @@ open class MagnetService {
 
     @RemoteMethod(name = "pluginToast")
     open fun pluginToast(context: Context): String {
-        Toast.makeText(context, "hello from plugin!", Toast.LENGTH_LONG).show()
-        return "hello from plugin!"
+        val info = "hello from plugin! update to version 2!!!!"
+        Toast.makeText(context, info, Toast.LENGTH_LONG).show()
+        return info
     }
 
     @RemoteMethod(name = "getLoader")

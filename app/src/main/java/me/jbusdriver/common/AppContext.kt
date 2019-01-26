@@ -12,6 +12,7 @@ import com.wlqq.phantom.library.PhantomCore
 import com.wlqq.phantom.library.log.ILogReporter
 import io.reactivex.plugins.RxJavaPlugins
 import me.jbusdriver.BuildConfig
+import me.jbusdriver.base.GSON
 import me.jbusdriver.base.JBusManager
 import me.jbusdriver.base.arrayMapof
 import me.jbusdriver.debug.stetho.initializeStetho
@@ -26,13 +27,20 @@ lateinit var JBus: AppContext
 class AppContext : Application() {
 
     val JBusServices by lazy { arrayMapof<String, JAVBusService>() }
+    private val isDebug by lazy {
+        BuildConfig.DEBUG || File(Environment.getExternalStorageDirectory().absolutePath + File.separator +
+                packageName
+                + File.separator + "debug"
+
+        ).exists()
+    }
 
     private val phantomHostConfig by lazy {
         PhantomCore.Config()
-                .setCheckSignature(!BuildConfig.DEBUG)
-                .setCheckVersion(false)
-                .setDebug(true)
-                .setLogLevel(if (true) android.util.Log.VERBOSE else android.util.Log.WARN)
+                .setCheckSignature(!isDebug)
+                .setCheckVersion(!BuildConfig.DEBUG)
+                .setDebug(isDebug)
+                .setLogLevel(if (isDebug) android.util.Log.VERBOSE else android.util.Log.WARN)
                 .setLogReporter(LogReporterImpl())
     }
 
@@ -49,13 +57,6 @@ class AppContext : Application() {
         }
         //插件系统尽早初始化
         PhantomCore.getInstance().init(this, phantomHostConfig)
-
-
-        val isDebug = BuildConfig.DEBUG || File(Environment.getExternalStorageDirectory().absolutePath + File.separator +
-                packageName
-                + File.separator + "debug"
-
-        ).exists()
 
         if (isDebug) {
             LeakCanary.install(this)
@@ -113,8 +114,8 @@ class AppContext : Application() {
 
             override fun reportException(throwable: Throwable, message: HashMap<String, Any>) {
                 // 使用 Bugly 或其它异常监控平台上报 Phantom 内部捕获的异常
-//                MobclickAgent.reportError(JBus,throwable)
-//                MobclickAgent.reportError(JBus, GSON.toJson(message))
+                MobclickAgent.reportError(JBus, throwable)
+                MobclickAgent.reportError(JBus, GSON.toJson(message))
             }
 
             override fun reportEvent(eventId: String, label: String, params: HashMap<String, Any>) {

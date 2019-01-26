@@ -56,7 +56,7 @@
         <activity android:name="me.jbusdriver.ui.activity.SettingActivity" />
 
         <service
-            android:name="me.jbusdriver.ui.task.CollectService"
+            android:name="me.jbusdriver.ui.task.JbusIntentService"
             android:exported="false" />
         <service
             android:name="me.jbusdriver.ui.task.TrimLikeService"

@@ -21,7 +21,7 @@ import me.jbusdriver.base.common.C
 import me.jbusdriver.http.GitHub
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.enums.DataSourceType
-import me.jbusdriver.ui.task.CollectService
+import me.jbusdriver.ui.task.JbusIntentService
 import org.jsoup.Jsoup
 
 class SplashActivity : BaseActivity() {
@@ -33,11 +33,6 @@ class SplashActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
         init()
-        migrate()
-    }
-
-    private fun migrate() {
-        CollectService.startMigrate(this)
     }
 
     private fun init() {
@@ -77,16 +72,16 @@ class SplashActivity : BaseActivity() {
             val urlsFromDisk = CacheLoader.justDisk(C.Cache.BUS_URLS).map {
                 GSON.fromJson<ArrayMap<String, String>>(it)
             }
-            val urlsFromUpdateCache = Flowable.concat(CacheLoader.justLru(C.Cache.ANNOUNCE_URL), GitHub.INSTANCE.announce().addUserCase(4)).firstOrError().toFlowable()
+            val urlsFromUpdateCache = Flowable.concat(CacheLoader.justLru(C.Cache.ANNOUNCE_URL), GitHub.INSTANCE.announceWithPlugin().addUserCase(4)).firstOrError().toFlowable()
                     .map { source ->
                         //放入内存缓存,更新需要
-
                         val r = GSON.fromJson<JsonObject>(source) ?: JsonObject()
                         CacheLoader.cacheLru(C.Cache.ANNOUNCE_VALUE to r)
                         arrayMapof<String, String>().apply {
                             val xyzLoader = r.getAsJsonObject("xyzLoader") ?: JsonObject()
                             JAVBusService.defaultXyzUrl = xyzLoader.get("url")?.asString?.removeSuffix("/").orEmpty()
-                            JAVBusService.xyzHostDomains.addAll(xyzLoader.getAsJsonArray("legacyHost")?.map { it.asString  } ?: emptyList())
+                            JAVBusService.xyzHostDomains.addAll(xyzLoader.getAsJsonArray("legacyHost")?.map { it.asString }
+                                    ?: emptyList())
                             val availableUrls = r.get("backUp")?.asJsonArray
                             //赋值一个默认的(随机)
                             availableUrls?.let {
@@ -139,8 +134,6 @@ class SplashActivity : BaseActivity() {
                             urls[DataSourceType.XYZ_ACTRESSES.key] = urls[DataSourceType.XYZ_ACTRESSES.key]?.replace(baseUrlSuffix, host)
                             urls[DataSourceType.XYZ_GENRE.key] = urls[DataSourceType.XYZ_GENRE.key]?.replace(baseUrlSuffix, host)
                         }
-
-
 
                         CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to urls, C.Cache.DAY * 2) //缓存所有的urls
                         CacheLoader.lru.put(DataSourceType.CENSORED.key + "false", it.second) //默认有种的

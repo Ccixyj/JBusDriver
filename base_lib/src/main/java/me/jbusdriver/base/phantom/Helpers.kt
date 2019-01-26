@@ -7,10 +7,11 @@ import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.base.KLog
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 
 fun installAssetsPlugins(assets: AssetManager, dir: String): Flowable<List<PluginInfo>> {
-    val f =assets.list(dir)
+    val f = assets.list(dir)
     KLog.i("start installAssetsPlugins $assets  ---> $dir ---->${f.joinToString()}")
     return Flowable.just(f)
             .map {
@@ -30,7 +31,7 @@ fun installAssetsPlugins(assets: AssetManager, dir: String): Flowable<List<Plugi
                     KLog.d("install success $this")
                 }
 
-            }.subscribeOn(Schedulers.io())
+            }.subscribeOn(Schedulers.io()).timeout(10, TimeUnit.SECONDS)
 }
 
 /**
@@ -38,11 +39,17 @@ fun installAssetsPlugins(assets: AssetManager, dir: String): Flowable<List<Plugi
  * @param f directory
  */
 fun installFromPathDir(f: File): Flowable<List<PluginInfo>> {
-    require(f.exists())
-    require(f.isDirectory)
+    if (f.exists() && !f.isDirectory) {
+        f.deleteRecursively()
+    }
+    if (!f.exists()) {
+        f.mkdirs()
+        return Flowable.just(emptyList())
+    }
     return Flowable.fromCallable {
+
         f.walkTopDown().filter {
-            it.endsWith(".apk")
+            it.name.endsWith(".apk")
         }.mapNotNull {
             val installResult = PhantomCore.getInstance().installPlugin(it.absolutePath)
             if (installResult.isSuccess && installResult.plugin != null) {
@@ -56,6 +63,27 @@ fun installFromPathDir(f: File): Flowable<List<PluginInfo>> {
             KLog.d("install success $this")
         }
 
-    }.subscribeOn(Schedulers.io())
+    }.subscribeOn(Schedulers.io()).timeout(10, TimeUnit.SECONDS)
+
+}
+
+
+/**
+ * 当前及sub
+ * @param f apk
+ */
+fun installFromFile(f: File): Flowable<PluginInfo> {
+    require(f.exists())
+    return Flowable.fromCallable {
+        val installResult = PhantomCore.getInstance().installPlugin(f.absolutePath)
+        val plugin = installResult.plugin
+        if (installResult.isSuccess) {
+            plugin?.start() ?: throw error("install success , but plugin is null!!!!")
+            plugin
+        } else {
+            // should not happen
+            throw error("install failed : $installResult")
+        }
+    }.subscribeOn(Schedulers.io()).timeout(10, TimeUnit.SECONDS)
 
 }

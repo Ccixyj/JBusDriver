@@ -16,6 +16,8 @@ import me.jbusdriver.http.GitHub
 import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.bean.NoticeBean
 import me.jbusdriver.mvp.bean.UpdateBean
+import me.jbusdriver.mvp.bean.plugin.Plugins
+import me.jbusdriver.ui.task.JbusIntentService
 
 
 class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContract.MainPresenter {
@@ -28,18 +30,24 @@ class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContra
         Flowable.concat<JsonObject>(CacheLoader.justLru(C.Cache.ANNOUNCE_VALUE).map { GSON.fromJson<JsonObject>(it) },
                 GitHub.INSTANCE.announce().addUserCase()
                         .map { GSON.fromJson<JsonObject>(it) } //
-                        )
+        )
                 .firstOrError()
                 .map {
-                    GSON.fromJson(it.get("update"), UpdateBean::class.java) to
-                            GSON.fromJson(it.get("notice"), NoticeBean::class.java)
+                    Triple(GSON.fromJson(it.get("update"), UpdateBean::class.java),
+                            GSON.fromJson(it.get("notice"), NoticeBean::class.java),
+                            GSON.fromJson(it.get("plugins"), Plugins::class.java))
                 }
                 .retry(1)
                 .toFlowable()
-                .compose(SchedulersCompat.io<Pair<UpdateBean,NoticeBean?>>())
+                .compose(SchedulersCompat.io<Triple<UpdateBean, NoticeBean?, Plugins?>>())
                 .subscribeBy(onNext = {
-                    mView?.showContent(it)
-
+                    mView?.showContent(it.first)
+                    mView?.showContent(it.second)
+                    it.third?.internal?.takeIf { it.isNotEmpty() }?.let { plugins ->
+                        mView?.viewContext?.let { ctx ->
+                            JbusIntentService.startDownAndInstallPlugins(ctx, plugins)
+                        }
+                    }
                 }, onError = {
                     KLog.w("fetchUpdate error ${it.message}")
                 })
