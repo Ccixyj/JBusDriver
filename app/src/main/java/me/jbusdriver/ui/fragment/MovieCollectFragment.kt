@@ -18,8 +18,8 @@ import me.jbusdriver.base.GlideApp
 import me.jbusdriver.base.common.AppBaseRecycleFragment
 import me.jbusdriver.base.toast
 import me.jbusdriver.common.toGlideNoHostUrl
-import me.jbusdriver.commen.bean.db.Category
-import me.jbusdriver.commen.bean.db.MovieCategory
+import me.jbusdriver.common.bean.db.Category
+import me.jbusdriver.common.bean.db.MovieCategory
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.mvp.MovieCollectContract
 import me.jbusdriver.mvp.bean.CollectLinkWrapper

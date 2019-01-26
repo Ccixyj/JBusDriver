@@ -1,8 +1,8 @@
 package me.jbusdriver.mvp.bean
 
 import com.chad.library.adapter.base.entity.AbstractExpandableItem
-import me.jbusdriver.commen.bean.db.Category
-import me.jbusdriver.commen.bean.ICollectCategory
+import me.jbusdriver.common.bean.db.Category
+import me.jbusdriver.common.bean.ICollectCategory
 import me.jbusdriver.db.service.CategoryService
 
 /**

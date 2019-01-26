@@ -3,7 +3,7 @@ package me.jbusdriver.mvp.presenter
 import me.jbusdriver.base.mvp.bean.PageInfo
 import me.jbusdriver.base.mvp.model.BaseModel
 import me.jbusdriver.base.mvp.presenter.AbstractRefreshLoadMorePresenterImpl
-import me.jbusdriver.commen.bean.ILink
+import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.mvp.HotRecommendContract
 import org.jsoup.nodes.Document
 import java.util.concurrent.atomic.AtomicInteger

@@ -1,7 +1,7 @@
 package me.jbusdriver.component.magnet.mvp.bean
 
-import me.jbusdriver.commen.bean.ILink
-import me.jbusdriver.commen.bean.db.LinkCategory
+import me.jbusdriver.common.bean.ILink
+import me.jbusdriver.common.bean.db.LinkCategory
 
 data class Magnet(val name: String, val size: String, val date: String, override val link: String) : ILink {
     @Transient

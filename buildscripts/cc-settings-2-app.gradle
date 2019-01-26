@@ -14,8 +14,8 @@ apply from: rootProject.file('buildscripts/cc-settings-2.gradle')
 
 
 dependencies {
-    implementation project(':base_lib')
-    implementation project(':common_bean')
+    implementation project(':libraries:library_base')
+    implementation project(':libraries:library_common_bean')
     //2018-06-03新增：这里是为了示例添加全局拦截器
     if (project.ext.has('runAsApp') && project.ext.runAsApp) {
         //说明：需要兼容的情况有3种(单独组件作为app运行、打包在主app内、组件在多个app上复用但全局拦截器不同)

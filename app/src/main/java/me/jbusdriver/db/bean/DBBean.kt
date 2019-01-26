@@ -3,8 +3,8 @@ package me.jbusdriver.db.bean
 import android.content.Context
 import me.jbusdriver.base.*
 import me.jbusdriver.base.mvp.bean.PageInfo
-import me.jbusdriver.commen.bean.ICollectCategory
-import me.jbusdriver.commen.bean.ILink
+import me.jbusdriver.common.bean.ICollectCategory
+import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.common.JBus
 import me.jbusdriver.common.isEndWithXyzHost
 import me.jbusdriver.http.JAVBusService

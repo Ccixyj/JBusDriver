@@ -7,9 +7,10 @@ println("project $project ----> runAsApp : ${project.ext.has('runAsApp') && proj
 if (project.ext.has('runAsApp') && project.ext.runAsApp) {
     //说明：需要兼容的情况有3种(单独组件作为app运行、打包在主app内、组件在多个app上复用但全局拦截器不同)
     //     为了兼容以上3种情况，建议将全局拦截器作为一个单独的module，在此处给不同app添加不同拦截器module
+    println("$project ----> set app as host ")
     project.afterEvaluate {
         def appId = project.android.defaultConfig.applicationId
-        println("$project ----> appid : $appId set app as host ")
+        println("$project ----> appid : $appId avaliable")
         if (appId == null || appId.trim() == "") throw GradleException("application must set applicationId")
     }
     project.dependencies.add("implementation", "com.wlqq.phantom:phantom-host-lib:${versions.phantom.allVersion}")
@@ -43,7 +44,7 @@ if (project.ext.has('runAsApp') && project.ext.runAsApp) {
     }
 
 } else if (project.name.startsWith("component_") && !(project.ext.has("alwaysLib") && project.ext.alwaysLib)) {
-    println("$project ---->  set app as impl plugin ")
+    println("$project ---->  set app as impl plugin only")
     project.dependencies.add("implementation", "com.wlqq.phantom:phantom-host-lib:${versions.phantom.allVersion}")
     project.dependencies.add("implementation", "com.wlqq.phantom:phantom-communication-lib:${versions.phantom.allVersion}")
 }

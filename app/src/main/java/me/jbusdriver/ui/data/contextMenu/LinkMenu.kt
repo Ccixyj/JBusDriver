@@ -2,7 +2,7 @@ package me.jbusdriver.ui.data.contextMenu
 
 import me.jbusdriver.base.copy
 import me.jbusdriver.base.toast
-import me.jbusdriver.commen.bean.ILink
+import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.common.JBus
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.model.CollectModel

@@ -4,22 +4,15 @@ import android.app.IntentService
 import android.content.Context
 import android.content.Intent
 import android.os.Environment
-import com.google.gson.*
 import com.umeng.analytics.MobclickAgent
-import io.reactivex.Flowable
-import io.reactivex.rxkotlin.addTo
 import me.jbusdriver.base.*
-import me.jbusdriver.commen.bean.ILink
-import me.jbusdriver.common.JBus
 import me.jbusdriver.db.bean.LinkItem
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.db.service.LinkService
-import me.jbusdriver.http.GitHub
-import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.bean.BackUpEvent
+import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.bean.plugin.PluginBean
-import me.jbusdriver.mvp.bean.plugin.Plugins
 import java.io.File
-import java.lang.reflect.Type
 
 class JbusIntentService : IntentService("JbusIntentService") {
 
@@ -36,19 +29,19 @@ class JbusIntentService : IntentService("JbusIntentService") {
     }
 
     private fun handleDownAndInstall(s: String) {
-        val plugins = GSON.fromJson<List<PluginBean>>(s).takeIf { it.isNotEmpty() } ?: return
-        KLog.d("plugins : $plugins")
-        Flowable.fromIterable(plugins)
-                .doOnNext { plugin ->
-                    val fileName = "${plugin.tag}-${plugin.eTag}.apk"
-                    val file = File(fileName)
-                    if (file.exists()    ){
-                        return file
-                    }
-                    return GitHub.INSTANCE.downloadPluginAsync(plugin.url).map {
-                        File("")
-                    }
-                }.subscribe()
+//        val plugins = GSON.fromJson<List<PluginBean>>(s).takeIf { it.isNotEmpty() } ?: return
+//        KLog.d("plugins : $plugins")
+//        Flowable.fromIterable(plugins)
+//                .doOnNext { plugin ->
+//                    val fileName = "${plugin.tag}-${plugin.eTag}.apk"
+//                    val file = File(fileName)
+//                    if (file.exists()    ){
+//                        return file
+//                    }
+//                    return GitHub.INSTANCE.downloadPluginAsync(plugin.url).map {
+//                        File("")
+//                    }
+//                }.subscribe()
     }
 
     private val event: BackUpEvent = BackUpEvent("", 0, 1)

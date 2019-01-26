@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.layout_load_all.view.*
 import me.jbusdriver.R
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.C
-import me.jbusdriver.commen.bean.ILink
+import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.http.RecommendService
 import me.jbusdriver.mvp.LinkListContract

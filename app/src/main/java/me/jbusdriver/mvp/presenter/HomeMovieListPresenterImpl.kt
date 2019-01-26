@@ -7,7 +7,7 @@ import me.jbusdriver.base.common.C
 import me.jbusdriver.base.mvp.bean.PageInfo
 import me.jbusdriver.base.mvp.model.AbstractBaseModel
 import me.jbusdriver.base.mvp.model.BaseModel
-import me.jbusdriver.commen.bean.ILink
+import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.ui.data.AppConfiguration

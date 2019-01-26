@@ -23,8 +23,8 @@ import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.AppBaseRecycleFragment
 import me.jbusdriver.common.toGlideNoHostUrl
-import me.jbusdriver.commen.bean.db.ActressCategory
-import me.jbusdriver.commen.bean.db.Category
+import me.jbusdriver.common.bean.db.ActressCategory
+import me.jbusdriver.common.bean.db.Category
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.mvp.ActressCollectContract
 import me.jbusdriver.mvp.bean.ActressDBType

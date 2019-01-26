@@ -5,12 +5,12 @@ import io.reactivex.Flowable
 import io.reactivex.Observable
 import me.jbusdriver.base.KLog
 import me.jbusdriver.db.DB
-import me.jbusdriver.commen.bean.db.Category
+import me.jbusdriver.common.bean.db.Category
 import me.jbusdriver.db.bean.DBPage
 import me.jbusdriver.db.bean.History
 import me.jbusdriver.db.bean.LinkItem
 import me.jbusdriver.mvp.bean.ActressInfo
-import me.jbusdriver.commen.bean.ILink
+import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.ui.data.AppConfiguration

@@ -1,4 +1,4 @@
 include ':app'
-include ':base_lib'
-include ':component_interceptors', ':common_bean', ':component_magnet'
+include ':component_interceptors',  ':component_magnet'
+include ':libraries:library_base',':libraries:library_common_bean'
 include ':plugins:plugin_magnet'
