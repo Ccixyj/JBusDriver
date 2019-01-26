@@ -29,7 +29,7 @@ class AppContext : Application() {
 
     private val phantomHostConfig by lazy {
         PhantomCore.Config()
-                .setCheckSignature(false)
+                .setCheckSignature(!BuildConfig.DEBUG)
                 .setCheckVersion(false)
                 .setDebug(true)
                 .setLogLevel(if (true) android.util.Log.VERBOSE else android.util.Log.WARN)
@@ -40,13 +40,24 @@ class AppContext : Application() {
     override fun onCreate() {
         super.onCreate()
         JBusManager.setContext(this)
+        JBus = this
+
         if (LeakCanary.isInAnalyzerProcess(this)) {
             // This process is dedicated to LeakCanary for heap analysis.
             // You should not init your app in this process.
             return
         }
+        //插件系统尽早初始化
+        PhantomCore.getInstance().init(this, phantomHostConfig)
 
-        if (true) {
+
+        val isDebug = BuildConfig.DEBUG || File(Environment.getExternalStorageDirectory().absolutePath + File.separator +
+                packageName
+                + File.separator + "debug"
+
+        ).exists()
+
+        if (isDebug) {
             LeakCanary.install(this)
 
             initializeStetho(this) //chrome://inspect/#devices
@@ -60,31 +71,27 @@ class AppContext : Application() {
                     .build()
 
             Logger.addLogAdapter(object : AndroidLogAdapter(formatStrategy) {
-                override fun isLoggable(priority: Int, tag: String?) = BuildConfig.DEBUG || File(Environment.getExternalStorageDirectory().absolutePath + File.separator +
-                        packageName
-                        + File.separator + "debug"
-
-                ).exists()
+                override fun isLoggable(priority: Int, tag: String?) = isDebug
             })
 
 
-            CC.enableVerboseLog(true)
-            CC.enableDebug(true)
-            CC.enableRemoteCC(true)
+            CC.enableVerboseLog(isDebug)
+            CC.enableDebug(isDebug)
+            CC.enableRemoteCC(isDebug)
         }
 
-        PhantomCore.getInstance().init(this, phantomHostConfig)
-        MobclickAgent.setDebugMode(BuildConfig.DEBUG)
+
+        MobclickAgent.setDebugMode(isDebug)
 
         RxJavaPlugins.setErrorHandler {
             try {
-                if (!BuildConfig.DEBUG) MobclickAgent.reportError(this, it)
+                if (!isDebug) MobclickAgent.reportError(this, it)
             } catch (e: Exception) {
                 //ignore  report error
             }
         }
 
-        JBus = this
+
         this.registerActivityLifecycleCallbacks(JBusManager)
     }
 

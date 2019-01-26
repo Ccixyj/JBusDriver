@@ -1,6 +1,9 @@
 package me.jbusdriver.plugin.magnet.loaderImpl
-import me.jbusdriver.plugin.magnet.common.bean.Magnet
-import me.jbusdriver.plugin.magnet.common.loader.IMagnetLoader
+
+import android.util.Log
+
+import me.jbusdriver.plugin.magnet.IMagnetLoader
+import org.json.JSONObject
 import org.jsoup.Jsoup
 
 class BtdiggsMagnetLoaderImpl : IMagnetLoader {
@@ -8,10 +11,13 @@ class BtdiggsMagnetLoaderImpl : IMagnetLoader {
     private val search = "https://www.btdigg.xyz/search/%s/%s/1/0.html"
 
     override var hasNexPage: Boolean = true
+    val TAG = "Btdiggs"
 
-
-    override fun loadMagnets(key: String, page: Int): List<Magnet> {
-        val doc = Jsoup.connect(search.format(encode(key), page)).initHeaders().get()
+    override fun loadMagnets(key: String, page: Int): List<JSONObject> {
+        val url = search.format(encode(key), page)
+        Log.w(TAG, "load url :$url")
+        val doc = Jsoup.connect(url).initHeaders().get()
+        Log.w(TAG, "load doc :${doc.title()}")
         hasNexPage = doc.select(".page-split :last-child[title]").size > 0
         return doc.select(".list dl").map {
             val href = it.select("dt a")
@@ -27,7 +33,14 @@ class BtdiggsMagnetLoaderImpl : IMagnetLoader {
             }
 
             val labels = it.select(".attr span")
-            Magnet(title, labels.component2().text(), labels.component1().text(), realUrl)
+            JSONObject().apply {
+               put("name", title)
+               put("size", labels.component2().text())
+               put("date", labels.component1().text())
+               put("link", realUrl)
+            }
+
+
         }
 
     }

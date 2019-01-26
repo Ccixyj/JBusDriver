@@ -1,7 +1,8 @@
-package me.jbusdriver.plugin.magnet.common.loader
+package me.jbusdriver.plugin.magnet
 
 import android.util.Base64
-import me.jbusdriver.plugin.magnet.common.bean.Magnet
+
+import org.json.JSONObject
 import org.jsoup.Connection
 const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36"
 
@@ -16,7 +17,7 @@ interface IMagnetLoader {
     /**
      * 放入后台线程执行
      */
-    fun loadMagnets(key: String, page: Int): List<Magnet>
+    fun loadMagnets(key: String, page: Int): List<JSONObject>
 
     fun encode(string: String) = Base64.encodeToString(string.toByteArray(), Base64.NO_PADDING or Base64.URL_SAFE).trim()
     fun Connection.initHeaders(): Connection = this.userAgent(USER_AGENT).followRedirects(true)

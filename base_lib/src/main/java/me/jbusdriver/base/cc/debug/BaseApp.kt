@@ -43,12 +43,12 @@ abstract class BaseApp : Application() {
         RxJavaPlugins.setErrorHandler {
            KLog.w("error : ${it.message}")
         }
-
+        PhantomCore.getInstance().init(this, phantomCompConfig)
         CC.enableVerboseLog(true)
         CC.enableDebug(true)
         CC.enableRemoteCC(true)
 
-        PhantomCore.getInstance().init(this, phantomCompConfig)
+
 
         this.registerActivityLifecycleCallbacks(JBusManager)
     }

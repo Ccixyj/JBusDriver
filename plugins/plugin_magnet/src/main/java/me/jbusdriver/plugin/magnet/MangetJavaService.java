@@ -9,7 +9,6 @@ import com.wlqq.phantom.communication.RemoteMethod;
 import java.util.HashMap;
 import java.util.Map;
 
-import me.jbusdriver.plugin.magnet.common.loader.IMagnetLoader;
 import me.jbusdriver.plugin.magnet.loaderImpl.BtGiggImpl;
 
 @PhantomService(name = BuildConfig.APPLICATION_ID + "/MagnetJavaService", version = 1)

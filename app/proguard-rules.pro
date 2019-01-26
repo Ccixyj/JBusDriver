@@ -194,5 +194,3 @@
 }
 
 # Phantom Service method for exclude
--keep public class me.jbusdriver.plugin.magnet.common.loader.IMagnetLoader
--keep public class me.jbusdriver.plugin.magnet.common.bean.Magnet

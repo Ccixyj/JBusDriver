@@ -17,9 +17,6 @@ class ComponentMagnet : IComponent {
     override fun getName() = C.Components.Manget
 
     override fun onCall(cc: CC): Boolean {
-       if (MagnetPluginHelper.MagnetLoaders.isEmpty()){
-           MagnetPluginHelper.init()
-       }
         val actionName = cc.actionName
         when (actionName) {
             "show" -> {
@@ -30,7 +27,7 @@ class ComponentMagnet : IComponent {
 
             }
             "allKeys" -> {
-                CC.sendCCResult(cc.callId, CCResult.success(mapOf("keys" to  MagnetPluginHelper.MagnetLoaders.keys.toList())))
+                CC.sendCCResult(cc.callId, CCResult.success(mapOf("keys" to  MagnetPluginHelper.getLoaderKeys())))
             }
             "config.save" -> {
                 cc.getParamItem<List<String>>("keys")?.let {
@@ -43,7 +40,7 @@ class ComponentMagnet : IComponent {
             "config.getKeys" -> {
                 CC.sendCCResult(cc.callId, CCResult.success(mapOf("keys" to Configuration.getConfigKeys())))
             }
-            else ->{
+            else -> {
                 KLog.w("not config action for $cc")
             }
         }

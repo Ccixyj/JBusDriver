@@ -1,7 +1,9 @@
 package me.jbusdriver.plugin.magnet.loaderImpl
 
-import me.jbusdriver.plugin.magnet.common.bean.Magnet
-import me.jbusdriver.plugin.magnet.common.loader.IMagnetLoader
+
+
+import me.jbusdriver.plugin.magnet.IMagnetLoader
+import org.json.JSONObject
 import org.jsoup.Jsoup
 
 class BTDBMagnetLoaderImpl : IMagnetLoader {
@@ -9,7 +11,7 @@ class BTDBMagnetLoaderImpl : IMagnetLoader {
 
     private val search = "https://btdb.to/q/%s/%s"
 
-    override fun loadMagnets(key: String, page: Int): List<Magnet> {
+    override fun loadMagnets(key: String, page: Int): List<JSONObject> {
         val url = search.format(key, page)
         val doc = Jsoup.connect(url).get()
 
@@ -24,7 +26,12 @@ class BTDBMagnetLoaderImpl : IMagnetLoader {
             val meta = it.select(".item-meta-info")
             val metaInfos = meta.select("span").map { it.text() }
             val link = meta.select(".magnet").attr("href")
-            Magnet(title, metaInfos.getOrNull(0).orEmpty(), metaInfos.getOrNull(2).orEmpty(), link)
+            JSONObject().apply {
+                put("name", title)
+                put("size", metaInfos.getOrNull(0).orEmpty())
+                put("date", metaInfos.getOrNull(2).orEmpty())
+                put("link", link)
+            }
         }
     }
 }

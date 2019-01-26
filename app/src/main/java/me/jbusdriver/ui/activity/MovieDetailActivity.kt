@@ -120,7 +120,6 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         }
 
         app_bar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, offset ->
-            KLog.d("offset : $offset")
             sr_refresh.isEnabled = offset >= 0
         })
 

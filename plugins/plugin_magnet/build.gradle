@@ -25,8 +25,30 @@ android {
         targetSdkVersion versions.targetSdk
         versionCode 1
         versionName "1.0"
-         multiDexEnabled true
+//        multiDexEnabled true
     }
+
+    signingConfigs {
+        release {
+            try {
+                storeFile rootProject.project(":app").file(KEYSTORE_FILE)
+                storePassword KEYSTORE_PASSWORD
+                keyAlias KEYSTORE_ALIAS
+                keyPassword KEY_PASSWORD
+            }
+            catch (ignored) {
+                if (System.getenv("KEYSTORE_FILE") != null) {
+                    storeFile = file(System.getenv("KEYSTORE_FILE"))
+                    storePassword = System.getenv("KEYSTORE_PWD")
+                    keyAlias = System.getenv("KEYSTOREmultiDexEnabled _ALIAS")
+                    keyPassword = System.getenv("KEYSTORE_ALIAS_PWD")
+                } else {
+                    throw GradleException("You should define KEYSTORE_PASSWORD and KEY_PASSWORD in gradle.properties.")
+                }
+            }
+        }
+    }
+
 
     buildTypes {
         debug {
@@ -36,6 +58,7 @@ android {
         }
 
         release {
+            signingConfig signingConfigs.release
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             proguardFile project.file('proguard-phantom.pro')
@@ -54,15 +77,15 @@ dependencies {
 //    implementation "com.android.support:support-v4:${versions.supportLibrary}"
 
     testImplementation 'junit:junit:4.12'
-    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     compileOnly "org.jsoup:jsoup:${versions.jsoup}"
-    implementation project(':plugins:plugin_magnet_common')
-     implementation 'com.android.support:multidex:1.0.3'
+//    implementation "com.google.code.gson:gson:${versions.gson}"
+//    implementation 'com.android.support:multidex:1.0.3'
 }
 
 phantomPluginConfig {
-    excludeClass("me.jbusdriver.plugin.magnet.common.loader.IMagnetLoader")
-    excludeClass("me.jbusdriver.plugin.magnet.common.bean.Magnet")
+//    excludeClass("me.jbusdriver.plugin.magnet.IMagnetLoader")
+//    excludeClass("me.jbusdriver.plugin.magnet.bean.Magnet")
 
     /*------------------------------ 剔除 support-v4 及其依赖的库 BEGIN ----------------------------*/
     excludeLib "com.android.support:support-v4:${versions.supportLibrary}"
@@ -88,7 +111,6 @@ phantomPluginConfig {
     excludeLib "com.android.support:print:${versions.supportLibrary}"
     excludeLib "com.android.support:localbroadcastmanager:${versions.supportLibrary}"
 
-
 //        excludeLib "android.arch.lifecycle:viewmodel:${androidVersion.archLib}"
 //        excludeLib "android.arch.lifecycle:runtime:${androidVersion.archLib}"
 //        excludeLib "android.arch.lifecycle:common:${androidVersion.archLib}"
@@ -105,7 +127,6 @@ phantomPluginConfig {
 
     //kotlin
 //    excludeLib "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
-
 
     /*------------------------------ 混淆配置 BEGIN ------------------------------*/
     libraryJarsProguardFile file('proguard-phantom.pro')

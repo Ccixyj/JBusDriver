@@ -2,20 +2,17 @@ package me.jbusdriver.plugin.magnet.loaderImpl;
 
 import android.util.Base64;
 
-import org.jetbrains.annotations.NotNull;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
-import java.io.IOException;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
+import org.jsoup.Connection;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import kotlin.text.Charsets;
-import me.jbusdriver.plugin.magnet.common.bean.Magnet;
-import me.jbusdriver.plugin.magnet.common.loader.IMagnetLoader;
+;
+import me.jbusdriver.plugin.magnet.IMagnetLoader;
 
 public class BtGiggImpl implements IMagnetLoader {
     private boolean hasNext = true;
@@ -33,16 +30,17 @@ public class BtGiggImpl implements IMagnetLoader {
 
     @NotNull
     @Override
-    public List<Magnet> loadMagnets(@NotNull String key, int page) {
-        List<Magnet> mags = new ArrayList<>();
+    public List<JSONObject> loadMagnets(@NotNull String key, int page) {
+        List<JSONObject> mags = new ArrayList<>();
         String connentUrl = String.format(search, encode(key), page);
+/*
         try {
-            System.out.println("connect : " + connentUrl);
+            Log.d("BtGiggImpl","connect : " + connentUrl);
             Connection c = initHeaders(Jsoup.connect(connentUrl));
             Document doc = c.get();
             setHasNexPage(doc.select(".page-split :last-child[title]").size() > 0);
             Elements elements = doc.select(".list dl");
-
+            Log.d("BtGiggImpl","eles : " + elements);
             for (Element it : elements) {
                 Elements href = it.select("dt a");
                 String title = href.text();
@@ -62,8 +60,9 @@ public class BtGiggImpl implements IMagnetLoader {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("error : " + e);
+            Log.d("BtGiggImpl","error : " + e);
         }
+*/
         return mags;
     }
 

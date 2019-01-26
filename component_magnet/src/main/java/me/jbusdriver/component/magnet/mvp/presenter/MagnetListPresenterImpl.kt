@@ -12,16 +12,12 @@ import me.jbusdriver.base.mvp.bean.ResultPageBean
 import me.jbusdriver.base.mvp.model.BaseModel
 import me.jbusdriver.base.mvp.presenter.AbstractRefreshLoadMorePresenterImpl
 import me.jbusdriver.component.magnet.MagnetPluginHelper
-import me.jbusdriver.component.magnet.MagnetPluginHelper.MagnetLoaders
 import me.jbusdriver.component.magnet.mvp.MagnetListContract
-import me.jbusdriver.plugin.magnet.common.bean.Magnet
+import me.jbusdriver.component.magnet.mvp.bean.Magnet
 import org.jsoup.nodes.Document
 
 class MagnetListPresenterImpl(private val magnetLoaderKey: String, private val keyword: String) : AbstractRefreshLoadMorePresenterImpl<MagnetListContract.MagnetListView, Magnet>(), MagnetListContract.MagnetListPresenter {
 
-    private val loader by lazy {
-        MagnetLoaders[magnetLoaderKey] ?: error("not matched magnet loader")
-    }
 
     override val model: BaseModel<Int, Document>
         get() = error("not call model")
@@ -44,7 +40,13 @@ class MagnetListPresenterImpl(private val magnetLoaderKey: String, private val k
                 val pluginContext = PluginContext(this.mView?.viewContext as Activity, pluginInfo).createContext()
                 service.call("pluginToast", pluginContext)
             }
-            loader.loadMagnets(keyword, page)
+            return@fromCallable try {
+                GSON.fromJson<List<Magnet>>(MagnetPluginHelper.getMagnets(magnetLoaderKey, keyword, page))
+            } catch (e: Exception) {
+                e.printStackTrace()
+                KLog.w("loadMagnets error happen $-> $e")
+                emptyList<Magnet>()
+            }
         }.doOnNext {
             if (it.isNotEmpty() && page <= 1) {
                 CacheLoader.cacheDisk(cacheKey to it)
@@ -62,7 +64,7 @@ class MagnetListPresenterImpl(private val magnetLoaderKey: String, private val k
         onFirstLoad()
     }
 
-    override fun hasLoadNext(): Boolean = loader.hasNexPage.also {
+    override fun hasLoadNext(): Boolean = MagnetPluginHelper.hasNext(magnetLoaderKey).also {
         if (!it) {
             lastPage = pageInfo.activePage
         }
@@ -76,5 +78,5 @@ class MagnetListPresenterImpl(private val magnetLoaderKey: String, private val k
         super.onRefresh()
     }
 
-    override fun fetchMagLink(url: String) = loader.fetchMagnetLink(url)
+    override fun fetchMagLink(url: String) = MagnetPluginHelper.fetchMagLink(magnetLoaderKey, url)
 }

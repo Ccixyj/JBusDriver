@@ -1,7 +1,9 @@
 package me.jbusdriver.plugin.magnet.loaderImpl
-import me.jbusdriver.plugin.magnet.common.loader.IMagnetLoader.Companion.MagnetFormatPrefix
-import me.jbusdriver.plugin.magnet.common.bean.Magnet
-import me.jbusdriver.plugin.magnet.common.loader.IMagnetLoader
+
+import me.jbusdriver.plugin.magnet.IMagnetLoader.Companion.MagnetFormatPrefix
+
+import me.jbusdriver.plugin.magnet.IMagnetLoader
+import org.json.JSONObject
 import org.jsoup.Jsoup
 
 /**
@@ -14,14 +16,20 @@ class BtsoPWMagnetLoaderImpl : IMagnetLoader {
 
     override var hasNexPage: Boolean = true
 
-    override fun loadMagnets(key: String, page: Int): List<Magnet> {
+    override fun loadMagnets(key: String, page: Int): List<JSONObject> {
         val doc = Jsoup.connect(search.format(key.trim(), page)).headers(headers).get()
         hasNexPage = doc.select(".pagination [name=nextpage]").isNotEmpty()
         return doc.select(".data-list [class=row]").map {
             val labels = it.children().map { it.text() }.takeLast(2)
             val href = it.select("a")
             val hash = href.attr("href").split("/").last()
-            Magnet(href.attr("title"), labels.first(), labels.last(), MagnetFormatPrefix + hash)
+            JSONObject().apply {
+                put("name", href.attr("title"))
+                put("size", labels.first())
+                put("date", labels.last())
+                put("link", MagnetFormatPrefix + hash)
+            }
+
         }
 
     }

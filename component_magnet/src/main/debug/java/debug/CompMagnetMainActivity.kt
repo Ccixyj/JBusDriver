@@ -6,21 +6,17 @@ import kotlinx.android.synthetic.main.comp_magnet_activity_main.*
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.common.C
 import me.jbusdriver.component.magnet.R
-import me.jbusdriver.plugin.magnet.common.loader.IMagnetLoader
 import com.wlqq.phantom.library.PhantomCore
 import com.wlqq.phantom.communication.PhantomServiceManager
 import com.wlqq.phantom.library.proxy.PluginContext
-import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
-import me.jbusdriver.base.SchedulersCompat
 import me.jbusdriver.base.common.BaseActivity
 import me.jbusdriver.base.phantom.installAssetsPlugins
 import me.jbusdriver.base.toast
 import me.jbusdriver.component.magnet.MagnetPluginHelper
-import me.jbusdriver.component.magnet.MagnetPluginHelper.MagnetJavaService
 import me.jbusdriver.component.magnet.MagnetPluginHelper.MagnetService
 import me.jbusdriver.component.magnet.MagnetPluginHelper.PluginMagnetPackage
-import me.jbusdriver.component.magnet.MagnetPluginHelper.call
+import kotlin.concurrent.thread
 
 
 class CompMagnetMainActivity : BaseActivity() {
@@ -42,10 +38,11 @@ class CompMagnetMainActivity : BaseActivity() {
         comp_magnet_tv_get_all.setOnClickListener {
             CC.obtainBuilder(C.Components.Manget)
                     .setActionName("allKeys")
-                    .build().call()
+                    .build().callAsync()
+
             CC.obtainBuilder(C.Components.Manget)
                     .setActionName("config.save")
-                    .addParam("keys", MagnetPluginHelper.MagnetLoaders.keys.toList())
+                    .addParam("keys", MagnetPluginHelper.getLoaderKeys())
                     .build().call()
         }
 
@@ -135,44 +132,24 @@ class CompMagnetMainActivity : BaseActivity() {
             }
         }
 
-        iv_test_loader.setOnClickListener {
-            Flowable.just(it)
-                    .map {
-                        val res = call(method = "getLoader", p = *arrayOf("btdigg"))
-                        val cast = (res as? IMagnetLoader)
-                        KLog.d("cast ---> $cast")
-                        cast?.loadMagnets(et_keyword.text.toString(), 1) ?: emptyList()
-                    }.compose(SchedulersCompat.io()).subscribe({
-                        KLog.d("result ---> $it")
-                    }, {
-                        KLog.w("error $it")
-                    }).addTo(rxManager)
-        }
-
-        iv_test_java_loader.setOnClickListener {
-            Flowable.just(it)
-                    .map {
-                        val res =  call(service = MagnetJavaService, method = "getLoader")
-                        val cast = (res as? IMagnetLoader)
-                        KLog.d("cast ---> $cast")
-                        cast?.loadMagnets(et_keyword.text.toString(), 1) ?: emptyList()
-                    }.compose(SchedulersCompat.io()).subscribe({
-                        KLog.d("vresult ---> $it")
-                    }, {
-                        KLog.w("error $it")
-                    }).addTo(rxManager)
-        }
-
         iv_test_loader_keys.setOnClickListener {
-           val res =  MagnetPluginHelper.call(method = "getAllLoaders") as? Map<String,IMagnetLoader> ?: emptyMap()
-            KLog.d("all keys $res")
+            val keys = MagnetPluginHelper.getLoaderKeys()
+            KLog.d("keys $keys")
+        }
+
+        iv_test_load_pag1.setOnClickListener {
+            thread {
+                MagnetPluginHelper.getMagnets("btdigg", et_keyword.text.toString(), 1)
+            }
+
+        }
+
+        iv_test_has_next.setOnClickListener {
+            MagnetPluginHelper.hasNext("btdigg")
         }
 
         MagnetPluginHelper.init()
     }
-
-
-
 
 
 }

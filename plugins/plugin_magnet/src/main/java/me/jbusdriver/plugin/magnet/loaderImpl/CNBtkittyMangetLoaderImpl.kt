@@ -1,7 +1,8 @@
 package me.jbusdriver.plugin.magnet.loaderImpl
 
-import me.jbusdriver.plugin.magnet.common.bean.Magnet
-import me.jbusdriver.plugin.magnet.common.loader.IMagnetLoader
+
+import me.jbusdriver.plugin.magnet.IMagnetLoader
+import org.json.JSONObject
 import org.jsoup.Jsoup
 
 class CNBtkittyMangetLoaderImpl : IMagnetLoader {
@@ -19,7 +20,7 @@ class CNBtkittyMangetLoaderImpl : IMagnetLoader {
     }
 
 
-    override fun loadMagnets(key: String, page: Int): List<Magnet> {
+    override fun loadMagnets(key: String, page: Int): List<JSONObject> {
         return try {
             val doc = if (page == 1) {
                 Jsoup.connect(search).cookie("bk_lan", "zh-cn").data("keyword", key).initHeaders().post()
@@ -48,7 +49,12 @@ class CNBtkittyMangetLoaderImpl : IMagnetLoader {
                 ops.removeAt(0)
                 val splitIndex = ops.size / 2
 
-                Magnet(title, ops.take(splitIndex).joinToString(" ") { it.text() }, ops.takeLast(ops.size - splitIndex).joinToString(" ") { it.text() }, link = magent)
+                JSONObject().apply {
+                    put("name", title)
+                    put("size", ops.take(splitIndex).joinToString(" ") { it.text() })
+                    put("date", ops.takeLast(ops.size - splitIndex).joinToString(" ") { it.text() })
+                    put("link", magent)
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()

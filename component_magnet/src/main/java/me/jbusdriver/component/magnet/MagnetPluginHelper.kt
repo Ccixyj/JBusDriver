@@ -8,7 +8,6 @@ import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.base.JBusManager
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.phantom.installAssetsPlugins
-import me.jbusdriver.plugin.magnet.common.loader.IMagnetLoader
 import java.util.concurrent.TimeUnit
 
 object MagnetPluginHelper {
@@ -17,29 +16,40 @@ object MagnetPluginHelper {
     // 插件 Phantom Service 的 'NAME'
     const val MagnetService = "MagnetService"
     const val MagnetJavaService = "MagnetJavaService"
-    val MagnetLoaders = mutableMapOf<String, IMagnetLoader>()
+    val MagnetLoaders = mutableListOf<String>()
 
     private val plugin
         get() = PhantomCore.getInstance().findPluginInfoByPackageName(PluginMagnetPackage)
 
     private val rxManager by lazy { CompositeDisposable() }
 
-    fun init(){
-        installAssetsPlugins(JBusManager.context.assets, "plugins")
-                .map {
-                    it.find { it.packageName == PluginMagnetPackage }
-                            ?: error("not find magnet plugin")
-                    (call("getAllLoaders") as? Map<String, IMagnetLoader>)?.onEach { t ->
-                        MagnetLoaders.put(t.key, t.value)
-                    }
-                }.timeout(30, TimeUnit.SECONDS).subscribeOn(Schedulers.io()).subscribe({
-                    KLog.d("install plutin success -> $plugin")
-                }, {
-                    KLog.w("install plutin error -> $it")
-                }).addTo(rxManager)
+    fun init() {
+        if (!PhantomCore.getInstance().isPluginInstalled(PluginMagnetPackage)) {
+            installAssetsPlugins(JBusManager.context.assets, "plugins")
+                    .timeout(30, TimeUnit.SECONDS)
+                    .doOnNext {
+                        getLoaderKeys()
+                    }.subscribeOn(Schedulers.io()).subscribe({
+                        KLog.d("install  success -> $plugin")
+                    }, {
+                        KLog.w("install  error -> $it")
+                    }).addTo(rxManager)
+            return
+        }
+        //installed
+        //check start
+        PhantomCore.getInstance().allPlugins.filter { !it.isStarted }.forEach {
+            try {
+                it.start()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                KLog.e("plugin $it can not start!!!")
+            }
+        }
+
     }
 
-    fun call(method: String, service: String = MagnetJavaService, vararg p: Any): Any? {
+    fun call(method: String, service: String = MagnetService, vararg p: Any): Any? {
         plugin?.let {
             // 插件 Phantom Service 代理对象
             val service = PhantomServiceManager.getService(PluginMagnetPackage, service)
@@ -62,8 +72,44 @@ object MagnetPluginHelper {
         return null
     }
 
-    init {
 
+    fun getLoaderKeys() = kotlin.run {
+        if (MagnetLoaders.isNotEmpty()) {
+            return@run MagnetLoaders.toList()
+        }
+        (call("getLoaderKeys") as? List<String>)?.onEach { t ->
+            KLog.i("find loader $t")
+            MagnetLoaders.add(t)
+        }
+        return@run MagnetLoaders.toList()
+    }
+
+    fun getMagnets(loader: String, key: String, page: Int): String {
+        return try {
+            call(method = "getMagnets", p = *arrayOf(loader, key, page)).toString()
+        } catch (e: Exception) {
+            KLog.w("getMagnets error $e")
+            ""
+        }
+    }
+
+    fun fetchMagLink(magnetLoaderKey: String, url: String): String {
+        return try {
+            call(method = "fetchMagLink", p = *arrayOf(magnetLoaderKey, url)).toString()
+        } catch (e: Exception) {
+            KLog.w("fetchMagLink error $e")
+            ""
+        }
+    }
+
+
+    fun hasNext(magnetLoaderKey: String): Boolean {
+        return try {
+            (call(method = "hasNext", p = *arrayOf(magnetLoaderKey)) as? Boolean) ?: false
+        } catch (e: Exception) {
+            KLog.w("fetchMagLink error $e")
+            false
+        }
     }
 
 

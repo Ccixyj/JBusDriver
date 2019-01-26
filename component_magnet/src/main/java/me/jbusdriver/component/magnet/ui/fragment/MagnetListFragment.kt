@@ -15,12 +15,13 @@ import me.jbusdriver.base.*
 import me.jbusdriver.base.common.AppBaseRecycleFragment
 import me.jbusdriver.base.common.C
 import me.jbusdriver.component.magnet.R
-import me.jbusdriver.plugin.magnet.common.loader.IMagnetLoader
 import me.jbusdriver.component.magnet.mvp.MagnetListContract.MagnetListPresenter
 import me.jbusdriver.component.magnet.mvp.MagnetListContract.MagnetListView
+import me.jbusdriver.component.magnet.mvp.bean.Magnet
 import me.jbusdriver.component.magnet.mvp.presenter.MagnetListPresenterImpl
-import me.jbusdriver.plugin.magnet.common.bean.Magnet
 
+
+const val MagnetFormatPrefix = "magnet:?xt=urn:btih:"
 class MagnetListFragment : AppBaseRecycleFragment<MagnetListPresenter, MagnetListView, Magnet>(), MagnetListView {
 
     private val keyword by lazy { arguments?.getString(C.BundleKey.Key_1) ?: error("need keyword") }
@@ -51,7 +52,7 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListPresenter, MagnetLis
 
             fun tryGetMagnetLink(mag: Magnet): Flowable<String> {
                 return Flowable.just(mag).flatMap { mag ->
-                    if (!mag.link.startsWith(IMagnetLoader.MagnetFormatPrefix)) {
+                    if (!mag.link.startsWith(MagnetFormatPrefix)) {
                         Flowable.fromCallable<String> {
                             mBasePresenter?.fetchMagLink(mag.link)
                         }

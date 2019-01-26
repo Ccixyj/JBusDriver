@@ -1,7 +1,3 @@
 
-# excludeClass("me.jbusdriver.plugin.magnet.common.loader.IMagnetLoader")
-#    excludeClass("me.jbusdriver.plugin.magnet.common.bean.Magnet")
-
-
--keep public class me.jbusdriver.plugin.magnet.common.loader.IMagnetLoader
--keep public class me.jbusdriver.plugin.magnet.common.bean.Magnet
+# excludeClass("me.jbusdriver.plugin.magnet.IMagnetLoader")
+#    excludeClass("me.jbusdriver.plugin.magnet.bean.Magnet")
