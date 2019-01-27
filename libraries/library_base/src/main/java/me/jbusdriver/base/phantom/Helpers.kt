@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 
 
 fun installAssetsPlugins(assets: AssetManager, dir: String): Flowable<List<PluginInfo>> {
-    val f = assets.list(dir)
+    val f = assets.list(dir) ?: emptyArray()
     KLog.i("start installAssetsPlugins $assets  ---> $dir ---->${f.joinToString()}")
     return Flowable.just(f)
             .map {
@@ -28,7 +28,9 @@ fun installAssetsPlugins(assets: AssetManager, dir: String): Flowable<List<Plugi
                         }
                     } else null
                 }.apply {
-                    KLog.d("install success $this")
+                    if (this.isNotEmpty()) {
+                        KLog.d("install success $this")
+                    } else error("not find any plugins to install")
                 }
 
             }.subscribeOn(Schedulers.io()).timeout(10, TimeUnit.SECONDS)
