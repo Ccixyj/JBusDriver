@@ -3,9 +3,11 @@ package me.jbusdriver.ui.task
 import android.app.IntentService
 import android.content.Context
 import android.content.Intent
-import android.os.Environment
 import com.umeng.analytics.MobclickAgent
-import me.jbusdriver.base.*
+import me.jbusdriver.base.GSON
+import me.jbusdriver.base.RxBus
+import me.jbusdriver.base.fromJson
+import me.jbusdriver.base.toast
 import me.jbusdriver.db.bean.LinkItem
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.db.service.LinkService
@@ -19,28 +21,10 @@ class LoadCollectService : IntentService("LoadCollectService") {
         if (intent != null) {
             when (intent.action) {
                 ACTION_COLLECT_LOAD -> handleLoadBakUp(File(intent.getStringExtra(ACTION_COLLECT_LOAD)))
-                ACTION_PLUGINS_DOWNLOAD -> handleDownAndInstall(intent.getStringExtra(ACTION_PLUGINS_DOWNLOAD)
-                        ?: "")
                 else -> Unit
             }
 
         }
-    }
-
-    private fun handleDownAndInstall(s: String) {
-//        val plugins = GSON.fromJson<List<PluginBean>>(s).takeIf { it.isNotEmpty() } ?: return
-//        KLog.d("plugins : $plugins")
-//        Flowable.fromIterable(plugins)
-//                .doOnNext { plugin ->
-//                    val fileName = "${plugin.tag}-${plugin.eTag}.apk"
-//                    val file = File(fileName)
-//                    if (file.exists()    ){
-//                        return file
-//                    }
-//                    return GitHub.INSTANCE.downloadPluginAsync(plugin.url).map {
-//                        File("")
-//                    }
-//                }.subscribe()
     }
 
     private val event: BackUpEvent = BackUpEvent("", 0, 1)
@@ -92,27 +76,13 @@ class LoadCollectService : IntentService("LoadCollectService") {
 
     }
 
-
     companion object {
 
         private const val ACTION_COLLECT_LOAD = "me.jbusdriver.ui.task.action.LoadBackUp"
-        private const val ACTION_PLUGINS_DOWNLOAD = "me.jbusdriver.ui.task.action.plugin.download"
-        private val DownLoadPluginDir by lazy {
-            File(Environment.getExternalStorageDirectory().absolutePath + File.separator + JBusManager.context.packageName + File.separator + "plugins")
-        }
-
-
-        fun startLoadBackUp(context: Context, file: File, callBack: ((Int, Int) -> Unit)? = null) {
+        fun startLoadBackUp(context: Context, file: File) {
             val intent = Intent(context, LoadCollectService::class.java)
             intent.action = ACTION_COLLECT_LOAD
             intent.putExtra(ACTION_COLLECT_LOAD, file.absolutePath)
-            context.startService(intent)
-        }
-
-        fun startDownAndInstallPlugins(context: Context, plugins: List<String>) {
-            val intent = Intent(context, LoadCollectService::class.java)
-            intent.action = ACTION_PLUGINS_DOWNLOAD
-            intent.putExtra(ACTION_PLUGINS_DOWNLOAD, plugins.toJsonString())
             context.startService(intent)
         }
     }

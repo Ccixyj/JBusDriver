@@ -42,10 +42,6 @@ class PluginService : IntentService("LoadCollectService") {
     companion object {
 
         private const val ACTION_PLUGINS_DOWNLOAD = "me.jbusdriver.ui.task.action.plugin.download"
-        private val DownLoadPluginDir by lazy {
-            File(Environment.getExternalStorageDirectory().absolutePath + File.separator + JBusManager.context.packageName + File.separator + "plugins")
-        }
-
 
         fun startDownAndInstallPlugins(context: Context, plugins: List<PluginBean>) {
             val intent = Intent(context, PluginService::class.java)

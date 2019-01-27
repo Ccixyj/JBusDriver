@@ -31,6 +31,7 @@ class PluginManagerComponent : IComponent {
                 plugins?.internal?.takeIf { it.isNotEmpty() }?.let { plugins ->
                     val unChecks = plugins.mapNotNull { plugin ->
                         return@mapNotNull try {
+                            //set dir
                             val eTag = plugin.eTag.trim()
                             val fileName = "${plugin.tag}-$eTag.apk"
                             val file = File(fileName)
@@ -51,7 +52,7 @@ class PluginManagerComponent : IComponent {
                                 file.deleteRecursively()
                                 plugin
                             }
-                            null
+                            plugin
                         } catch (e: Exception) {
                             plugin
                         }
@@ -59,6 +60,7 @@ class PluginManagerComponent : IComponent {
                     KLog.i("need install plugins $unChecks")
 
                     installPlugins(unChecks)
+                    CC.sendCCResult(cc.callId, CCResult.success())
                 } ?: kotlin.run {
                     CC.sendCCResult(cc.callId, CCResult.error("$action not find plugin for ${cc.params}"))
                 }

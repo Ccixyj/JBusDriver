@@ -58,9 +58,6 @@
         <service
             android:name="me.jbusdriver.ui.task.LoadCollectService"
             android:exported="false" />
-        <service
-            android:name="me.jbusdriver.ui.task.TrimLikeService"
-            android:exported="false" />
 
        <!-- <activity android:name="me.jbusdriver.ui.activity.HotRecommendActivity" />-->
     </application>
