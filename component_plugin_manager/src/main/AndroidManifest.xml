@@ -1,2 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="me.jbusdriver.component.plugin.manager" />
+    package="me.jbusdriver.component.plugin.manager">
+
+    <application></application>
+</manifest>

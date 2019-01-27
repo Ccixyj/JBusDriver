@@ -1,4 +1,4 @@
-package me.jbusdriver.mvp.bean.plugin
+package me.jbusdriver.component.plugin.manager.plugin
 
 data class PluginBean(val versionCode: Int, val versionName: String, val url: String, val tag: String, val desc: String, val eTag: String) : Comparable<PluginBean> {
 

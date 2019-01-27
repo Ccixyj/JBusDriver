@@ -37,7 +37,6 @@ class CompMagnetMainActivity : BaseActivity() {
                         KLog.d("install result $result")
                     }
         }
-
         //"allKeys" , "config.save" , "config.getKeys"
         comp_magnet_tv_get_all.setOnClickListener {
             CC.obtainBuilder(C.Components.Manget)

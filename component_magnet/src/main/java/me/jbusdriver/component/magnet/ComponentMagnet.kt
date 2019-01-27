@@ -27,7 +27,7 @@ class ComponentMagnet : IComponent {
 
             }
             "allKeys" -> {
-                CC.sendCCResult(cc.callId, CCResult.success(mapOf("keys" to  MagnetPluginHelper.getLoaderKeys())))
+                CC.sendCCResult(cc.callId, CCResult.success(mapOf("keys" to MagnetPluginHelper.getLoaderKeys())))
             }
             "config.save" -> {
                 cc.getParamItem<List<String>>("keys")?.let {
@@ -43,6 +43,7 @@ class ComponentMagnet : IComponent {
             else -> {
                 KLog.w("not config action for $cc")
             }
+
         }
 
         return false

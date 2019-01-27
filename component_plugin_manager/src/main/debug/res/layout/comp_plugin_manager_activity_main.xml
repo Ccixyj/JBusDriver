@@ -6,4 +6,11 @@
     android:layout_height="match_parent"
     tools:context="debug.activity.CompPluginManagerActivity">
 
+
+    <TextView
+        android:id="@+id/comp_plugin_manager_tv_install"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="check and install" />
+
 </android.support.constraint.ConstraintLayout>

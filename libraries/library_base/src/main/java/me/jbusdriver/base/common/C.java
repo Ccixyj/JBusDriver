@@ -21,9 +21,10 @@ public class C {
     public static class Components {
 
         /**
-         * @see  "me.jbusdriver.component.magnet.ComponentMagnet"
+         * @see "me.jbusdriver.component.magnet.ComponentMagnet"
          */
-        public static final String Manget = "ComponentMagnet";
+        public static final String Manget = "C_Magnet";
+        public static final String PluginManager = "C_PluginManager";
     }
 
 

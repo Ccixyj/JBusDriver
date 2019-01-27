@@ -12,6 +12,13 @@
 
 apply from: rootProject.file('buildscripts/cc-settings-2.gradle')
 
+//默认开启kotlin
+//if (project.ext.has('runAsApp') && project.ext.runAsApp) {
+//    project.apply plugin: 'kotlin-android'
+//    project.apply plugin: 'kotlin-android-extensions'
+//    project.apply plugin: 'kotlin-kapt'//kapt3插件
+//}
+
 
 dependencies {
     implementation project(':libraries:library_base')

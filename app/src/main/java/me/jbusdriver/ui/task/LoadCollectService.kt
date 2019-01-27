@@ -11,7 +11,6 @@ import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.db.service.LinkService
 import me.jbusdriver.mvp.bean.BackUpEvent
 import me.jbusdriver.mvp.bean.convertDBItem
-import me.jbusdriver.mvp.bean.plugin.PluginBean
 import java.io.File
 
 class LoadCollectService : IntentService("LoadCollectService") {
@@ -110,7 +109,7 @@ class LoadCollectService : IntentService("LoadCollectService") {
             context.startService(intent)
         }
 
-        fun startDownAndInstallPlugins(context: Context, plugins: List<PluginBean>) {
+        fun startDownAndInstallPlugins(context: Context, plugins: List<String>) {
             val intent = Intent(context, LoadCollectService::class.java)
             intent.action = ACTION_PLUGINS_DOWNLOAD
             intent.putExtra(ACTION_PLUGINS_DOWNLOAD, plugins.toJsonString())

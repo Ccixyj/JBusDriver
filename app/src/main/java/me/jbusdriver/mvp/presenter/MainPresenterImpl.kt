@@ -1,5 +1,7 @@
 package me.jbusdriver.mvp.presenter
 
+import android.app.Activity
+import com.billy.cc.core.component.CC
 import com.google.gson.JsonObject
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
@@ -11,7 +13,6 @@ import me.jbusdriver.http.GitHub
 import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.bean.NoticeBean
 import me.jbusdriver.mvp.bean.UpdateBean
-import me.jbusdriver.mvp.bean.plugin.Plugins
 
 
 class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContract.MainPresenter {
@@ -29,18 +30,25 @@ class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContra
                 .map {
                     Triple(GSON.fromJson(it.get("update"), UpdateBean::class.java),
                             GSON.fromJson(it.get("notice"), NoticeBean::class.java),
-                            GSON.fromJson(it.get("plugins"), Plugins::class.java))
+                            it.getAsJsonObject("plugins") ?: JsonObject())
                 }
                 .retry(1)
                 .toFlowable()
-                .compose(SchedulersCompat.io<Triple<UpdateBean, NoticeBean?, Plugins?>>())
+                .compose(SchedulersCompat.io<Triple<UpdateBean, NoticeBean?, JsonObject>>())
                 .subscribeBy(onNext = {
                     mView?.showContent(it.first)
                     mView?.showContent(it.second)
-                    it.third?.internal?.takeIf { it.isNotEmpty() }?.let { plugins ->
+                    if (it.third.size() > 0) {
                         mView?.viewContext?.let { ctx ->
-                            //LoadCollectService.startDownAndInstallPlugins(ctx, plugins)
+                            //检查内部plugin是否需要更新级初始化
+                            CC.obtainBuilder(C.Components.PluginManager)
+                                    .setActionName("plugins.init")
+                                    .addParam("plugins", it.third)
+                                    .cancelOnDestroyWith(this.mView as? Activity)
+                                    .build()
+                                    .callAsync()
                         }
+
                     }
                 }, onError = {
                     KLog.w("fetchUpdate error ${it.message}")
