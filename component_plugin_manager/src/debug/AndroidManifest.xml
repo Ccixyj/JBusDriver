@@ -12,7 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         tools:replace="android:allowBackup,android:label">
-        <activity android:name="debug.activity.CompPluginManagerActivity"></activity>
+        <activity android:name="debug.activity.CompPluginManagerActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

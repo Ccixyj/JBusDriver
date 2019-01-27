@@ -75,7 +75,7 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
 
             mSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String): Boolean {
-                    if (TextUtils.isEmpty(query)) viewContext.toast("关键字不能为空!")
+                    if (TextUtils.isEmpty(query)) toast("关键字不能为空!")
                     gotoSearchResult(query)
 
                     return true
@@ -153,7 +153,7 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
     protected fun showPageDialog(info: PageInfo) {
         if (info.referPages.isEmpty()) return
         if (info.referPages.size == 1 && info.referPages.first() == 1) {
-            viewContext.toast("当前共一页")
+            toast("当前共一页")
             return
         }
         val seekView = viewContext.inflate(R.layout.layout_seek_page)
@@ -196,13 +196,13 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
                 .input("输入跳转页码", null, false) { dialog, input ->
                     input.toString().toIntOrNull()?.let {
                         if (it < 1) {
-                            viewContext.toast("必须输入大于0的整数!")
+                            toast("必须输入大于0的整数!")
                             return@input
                         }
                         mBasePresenter?.jumpToPage(it)
                         dialog.dismiss()
                     } ?: let {
-                        viewContext.toast("必须输入数字!")
+                        toast("必须输入数字!")
                     }
                 }
                 .autoDismiss(false)

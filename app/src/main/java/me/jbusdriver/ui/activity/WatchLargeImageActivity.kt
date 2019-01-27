@@ -18,9 +18,9 @@ import com.bumptech.glide.request.transition.Transition
 import com.gyf.barlibrary.ImmersionBar
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
-import me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_watch_large_image.*
 import kotlinx.android.synthetic.main.layout_large_image_item.view.*
+import me.jbusdriver.R
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.BaseActivity
 import me.jbusdriver.base.http.OnProgressListener
@@ -87,12 +87,12 @@ class WatchLargeImageActivity : BaseActivity() {
                         .get(3, TimeUnit.SECONDS)?.let {
                             //copy file
                             val fileName = url.urlPath.split("/").lastOrNull() ?: kotlin.run {
-                                viewContext.toast("无法获取文件名！")
+                                toast("无法获取文件名！")
                                 return@scheduleDirect
                             }
                             val target = File(imageSaveDir + fileName)
                             it.copyTo(target, true)
-                            viewContext.toast("文件保存至${imageSaveDir}下")
+                            toast("文件保存至${imageSaveDir}下")
                         }
             }.addTo(rxManager)
 

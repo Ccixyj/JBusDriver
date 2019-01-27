@@ -91,7 +91,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
         if (page >= 1) {
             pageInfo = pageInfo.copy(activePage = page, nextPage = page)
 //            if (page > lastPage) {
-//                mView?.viewContext?.toast("当前最多${lastPage}页")
+//                toasttoast("当前最多${lastPage}页")
 //                return
 //            }
 

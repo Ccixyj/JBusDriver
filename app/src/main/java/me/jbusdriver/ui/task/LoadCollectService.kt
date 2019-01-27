@@ -51,7 +51,7 @@ class LoadCollectService : IntentService("LoadCollectService") {
         try {
             val all = GSON.fromJson<List<LinkItem>>(file.readText()) ?: emptyList()
             if (all.isEmpty()) {
-                applicationContext.toast("没有要备份的内容！")
+                toast("没有要备份的内容！")
                 return
             }
             val s = all.size
@@ -82,12 +82,12 @@ class LoadCollectService : IntentService("LoadCollectService") {
                 }
             }
 
-            applicationContext.toast("恢复备份成功")
+            toast("恢复备份成功")
             RxBus.post(event.copy(total = s, index = s))
         } catch (e: Exception) {
             e.printStackTrace()
             MobclickAgent.reportError(this@LoadCollectService, "恢复出错：$e")
-            applicationContext.toast("恢复失败,请重新打开app")
+            toast("恢复失败,请重新打开app")
             RxBus.post(event.copy(total = 0, index = 0))
         }
 

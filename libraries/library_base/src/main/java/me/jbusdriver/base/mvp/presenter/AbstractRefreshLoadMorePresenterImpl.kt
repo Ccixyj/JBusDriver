@@ -63,12 +63,12 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
             return@Function when {
                 (it is HttpException && it.code() == 404) -> {
                     //404 视为没有数据
-                    mView?.viewContext?.toast("第${page}页没有数据")
+                    toast("第${page}页没有数据")
                     if (curPage.nextPage > 1 && curPage.activePage > 0) pageInfo = pageInfo.copy(activePage = pageInfo.nextPage - 1)//重置前一页pageInfo
                     Flowable.just(ResultPageBean.emptyPage(curPage))
                 }
                 it is TimeoutException -> {
-                    mView?.viewContext?.toast("第${page}页请求超时,请过会再次尝试")
+                   toast("第${page}页请求超时,请过会再次尝试")
                     Flowable.just(ResultPageBean.emptyPage(curPage))
                 }
                 else -> throw  it

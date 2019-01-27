@@ -3,7 +3,6 @@ package me.jbusdriver.mvp.model
 import com.afollestad.materialdialogs.MaterialDialog
 import me.jbusdriver.base.JBusManager
 import me.jbusdriver.base.toast
-import me.jbusdriver.common.JBus
 import me.jbusdriver.db.bean.LinkItem
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.db.service.LinkService
@@ -30,7 +29,7 @@ object CollectModel {
      */
     fun addToCollect(data: LinkItem): Boolean {
         LinkService.saveOrUpdate(listOf(data))
-        JBus.toast("收藏成功")
+        toast("收藏成功")
 
         return true
     }
@@ -38,7 +37,7 @@ object CollectModel {
     fun has(data: LinkItem) = LinkService.hasByKey(data) >= 1
 
     fun removeCollect(data: LinkItem) = LinkService.remove(data).also {
-        JBus.toast("已经取消收藏")
+        toast("已经取消收藏")
     }
 
 

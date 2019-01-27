@@ -23,7 +23,7 @@ object CacheLoader {
         KLog.t(TAG).d("max availMem = $memSize")
         if (memoryInfo.lowMemory) {
             KLog.w("可能的内存不足")
-            JBusManager.context.toast("当前可用内存:$memSize,请注意释放内存")
+            toast("当前可用内存:$memSize,请注意释放内存")
         }
         val cacheSize = if (memoryInfo.availMem > 32 * 1024 * 1024) 4 * 1024 * 1024 else 2 * 1024 * 1024
         KLog.t(TAG).d("max cacheSize = ${cacheSize.toLong().formatFileSize()}")

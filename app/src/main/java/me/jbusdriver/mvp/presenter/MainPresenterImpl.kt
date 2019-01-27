@@ -4,20 +4,14 @@ import com.google.gson.JsonObject
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import me.jbusdriver.base.GSON
-import me.jbusdriver.base.KLog
-import me.jbusdriver.base.addUserCase
-import me.jbusdriver.base.fromJson
+import me.jbusdriver.base.*
 import me.jbusdriver.base.common.C
-import me.jbusdriver.base.CacheLoader
-import me.jbusdriver.base.SchedulersCompat
 import me.jbusdriver.base.mvp.presenter.BasePresenterImpl
 import me.jbusdriver.http.GitHub
 import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.bean.NoticeBean
 import me.jbusdriver.mvp.bean.UpdateBean
 import me.jbusdriver.mvp.bean.plugin.Plugins
-import me.jbusdriver.ui.task.LoadCollectService
 
 
 class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContract.MainPresenter {
@@ -45,7 +39,7 @@ class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContra
                     mView?.showContent(it.second)
                     it.third?.internal?.takeIf { it.isNotEmpty() }?.let { plugins ->
                         mView?.viewContext?.let { ctx ->
-                            LoadCollectService.startDownAndInstallPlugins(ctx, plugins)
+                            //LoadCollectService.startDownAndInstallPlugins(ctx, plugins)
                         }
                     }
                 }, onError = {

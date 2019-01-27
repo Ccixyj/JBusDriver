@@ -105,11 +105,11 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
 
                     action["取消收藏"] = {
                         if (CollectModel.removeCollect(it.convertDBItem())) {
-                            viewContext.toast("取消收藏成功")
+                            toast("取消收藏成功")
                             adapter.data.removeAt(position)
                             adapter.notifyItemRemoved(position)
                         } else {
-                            viewContext.toast("已经取消了")
+                            toast("已经取消了")
                         }
                     }
                     MaterialDialog.Builder(viewContext).content(link.des)
@@ -141,7 +141,7 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
                         try {
                             CategoryService.delete(it, 3) //link 数据库中默认为3 具体可以有3..6
                         } catch (e: Exception) {
-                            viewContext.toast("不能删除默认分类")
+                            toast("不能删除默认分类")
                         }
                     }
                 }

@@ -15,10 +15,10 @@ object LinkMenu {
     val movieActions by lazy {
         mapOf("复制标题" to { movie: Movie ->
             JBus.copy(movie.title)
-            JBus.toast("已复制")
+            toast("已复制")
         }, "复制番号" to { movie: Movie ->
             JBus.copy(movie.code)
-            JBus.toast("已复制")
+            toast("已复制")
         }, "收藏" to { movie: Movie ->
             CollectModel.addToCollectForCategory(movie.convertDBItem())
         }, "取消收藏" to { movie: Movie ->
@@ -30,7 +30,7 @@ object LinkMenu {
     val actressActions by lazy {
         mapOf("复制名字" to { act: ActressInfo ->
             JBus.copy(act.name)
-            JBus.toast("已复制")
+            toast("已复制")
         }, "收藏" to { act: ActressInfo ->
             CollectModel.addToCollectForCategory(act.convertDBItem())
         }, "取消收藏" to { act: ActressInfo ->
@@ -43,7 +43,7 @@ object LinkMenu {
     val linkActions by lazy {
         mapOf("复制" to { link: ILink ->
             JBus.copy(link.des.substring(link.des.indexOf(" ").coerceAtLeast(0)))
-            JBus.toast("已复制")
+            toast("已复制")
         }, "收藏" to { link ->
             CollectModel.addToCollectForCategory(link.convertDBItem())
         }, "取消收藏" to { link ->

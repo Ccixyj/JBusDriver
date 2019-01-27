@@ -1,6 +1,5 @@
 package me.jbusdriver.base
 
-import android.content.Context
 import android.net.Uri
 import android.support.v4.util.LruCache
 import android.widget.Toast
@@ -32,9 +31,10 @@ val GSON by lazy {
     }).serializeNulls().create()
 }
 
+
 private val TOAST: Toast by lazy { Toast.makeText(JBusManager.context.applicationContext, "", Toast.LENGTH_LONG) }
 
-fun Context.toast(str: String, duration: Int = Toast.LENGTH_LONG) {
+fun toast(str: String, duration: Int = Toast.LENGTH_LONG) {
     postMain {
         TOAST.setText(str)
         TOAST.duration = duration

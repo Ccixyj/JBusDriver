@@ -141,7 +141,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
     override fun gotoSearchResult(query: String) {
         (mBasePresenter as?  LinkAbsPresenterImpl<*>)?.let {
             if (isSearch) {
-                viewContext.toast("新搜索 : $query")
+                toast("新搜索 : $query")
                 RxBus.post(SearchWord(query))
             } else {
                 super.gotoSearchResult(query)
