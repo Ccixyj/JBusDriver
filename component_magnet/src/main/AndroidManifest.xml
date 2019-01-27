@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="me.jbusdriver.component.magnet">
     <application >
-        <activity android:name="debug.CompMagnetMainActivity"></activity>
         <activity
             android:name=".ui.activity.MagnetPagerListActivity"
             android:launchMode="singleTop" />

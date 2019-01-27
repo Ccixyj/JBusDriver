@@ -17,7 +17,7 @@ import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.bean.NoticeBean
 import me.jbusdriver.mvp.bean.UpdateBean
 import me.jbusdriver.mvp.bean.plugin.Plugins
-import me.jbusdriver.ui.task.JbusIntentService
+import me.jbusdriver.ui.task.LoadCollectService
 
 
 class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContract.MainPresenter {
@@ -45,7 +45,7 @@ class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContra
                     mView?.showContent(it.second)
                     it.third?.internal?.takeIf { it.isNotEmpty() }?.let { plugins ->
                         mView?.viewContext?.let { ctx ->
-                            JbusIntentService.startDownAndInstallPlugins(ctx, plugins)
+                            LoadCollectService.startDownAndInstallPlugins(ctx, plugins)
                         }
                     }
                 }, onError = {

@@ -14,7 +14,7 @@ import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.bean.plugin.PluginBean
 import java.io.File
 
-class JbusIntentService : IntentService("JbusIntentService") {
+class LoadCollectService : IntentService("LoadCollectService") {
 
     override fun onHandleIntent(intent: Intent?) {
         if (intent != null) {
@@ -77,7 +77,7 @@ class JbusIntentService : IntentService("JbusIntentService") {
                     LinkService.saveOrUpdate(item)
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    MobclickAgent.reportError(this@JbusIntentService, "恢复数据出错: $e")
+                    MobclickAgent.reportError(this@LoadCollectService, "恢复数据出错: $e")
                     LinkService.saveOrUpdate(linkItem)
                 }
             }
@@ -86,7 +86,7 @@ class JbusIntentService : IntentService("JbusIntentService") {
             RxBus.post(event.copy(total = s, index = s))
         } catch (e: Exception) {
             e.printStackTrace()
-            MobclickAgent.reportError(this@JbusIntentService, "恢复出错：$e")
+            MobclickAgent.reportError(this@LoadCollectService, "恢复出错：$e")
             applicationContext.toast("恢复失败,请重新打开app")
             RxBus.post(event.copy(total = 0, index = 0))
         }
@@ -104,14 +104,14 @@ class JbusIntentService : IntentService("JbusIntentService") {
 
 
         fun startLoadBackUp(context: Context, file: File, callBack: ((Int, Int) -> Unit)? = null) {
-            val intent = Intent(context, JbusIntentService::class.java)
+            val intent = Intent(context, LoadCollectService::class.java)
             intent.action = ACTION_COLLECT_LOAD
             intent.putExtra(ACTION_COLLECT_LOAD, file.absolutePath)
             context.startService(intent)
         }
 
         fun startDownAndInstallPlugins(context: Context, plugins: List<PluginBean>) {
-            val intent = Intent(context, JbusIntentService::class.java)
+            val intent = Intent(context, LoadCollectService::class.java)
             intent.action = ACTION_PLUGINS_DOWNLOAD
             intent.putExtra(ACTION_PLUGINS_DOWNLOAD, plugins.toJsonString())
             context.startService(intent)

@@ -21,7 +21,6 @@ import me.jbusdriver.base.common.C
 import me.jbusdriver.http.GitHub
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.enums.DataSourceType
-import me.jbusdriver.ui.task.JbusIntentService
 import org.jsoup.Jsoup
 
 class SplashActivity : BaseActivity() {
