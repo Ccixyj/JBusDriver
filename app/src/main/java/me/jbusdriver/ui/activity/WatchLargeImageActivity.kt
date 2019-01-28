@@ -41,7 +41,7 @@ class WatchLargeImageActivity : BaseActivity() {
     private val index by lazy { intent.getIntExtra(INDEX, -1) }
     private val imageSaveDir by lazy {
         val pathSuffix = File.separator + "download" + File.separator + "image" + File.separator
-        createDir(Environment.getExternalStorageDirectory().absolutePath + File.separator + JBus.packageName + pathSuffix)
+        createDir(Environment.getExternalStorageDirectory().absolutePath + File.separator + JBusManager.context.applicationContext.packageName + pathSuffix)
                 ?: createDir(JBus.externalCacheDir.absolutePath + JBus.packageName + pathSuffix)
                 ?: error("cant not create collect dir in anywhere")
 

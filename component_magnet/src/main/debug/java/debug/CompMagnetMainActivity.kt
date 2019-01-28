@@ -1,11 +1,14 @@
 package debug
 
+import android.Manifest
 import android.os.Bundle
 import android.os.Environment
 import com.billy.cc.core.component.CC
+import com.tbruyelle.rxpermissions2.RxPermissions
 import com.wlqq.phantom.communication.PhantomServiceManager
 import com.wlqq.phantom.library.PhantomCore
 import com.wlqq.phantom.library.proxy.PluginContext
+import io.reactivex.BackpressureStrategy
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.comp_magnet_activity_main.*
 import me.jbusdriver.base.JBusManager
@@ -79,8 +82,6 @@ class CompMagnetMainActivity : BaseActivity() {
 
                 KLog.w("erorr $it")
             }).addTo(rxManager)
-
-
         }
         iv_test_plugin.setOnClickListener {
             val pluginInfo = PhantomCore.getInstance().findPluginInfoByPackageName(PluginMagnetPackage)
@@ -153,14 +154,17 @@ class CompMagnetMainActivity : BaseActivity() {
 
 
         iv_test_update.setOnClickListener {
-
-            installFromPathDir(File(Environment.getExternalStorageDirectory().absolutePath + File.separator + JBusManager.context.packageName + File.separator + "plugins"))
-                    .subscribe({
+            RxPermissions(this).request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    .toFlowable(BackpressureStrategy.LATEST)
+                    .flatMap {
+                        return@flatMap installFromPathDir(File(Environment.getExternalStorageDirectory().absolutePath + File.separator + JBusManager.context.packageName + File.separator + "plugins"))
+                    }.subscribe({
                         KLog.d("all plugin $it")
                         toast("插件已经安装 ${it.joinToString { it.packageName }}")
                     }, {
                         KLog.w("erorr $it")
                     }).addTo(rxManager)
+
 
         }
         MagnetPluginHelper.init()

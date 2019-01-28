@@ -114,15 +114,7 @@ object MagnetPluginHelper {
         }
     }
 
-    fun update(f: File) {
-        //path
-        installFromFile(f)
-                .subscribe({
-                    KLog.d("插件已经安装 $it")
-                }, {
-                    KLog.w("erorr $it")
-                }).addTo(rxManager)
-    }
+    fun update(f: File) =installFromFile(f)
 
 
 }

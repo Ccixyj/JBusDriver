@@ -1,6 +1,7 @@
 package me.jbusdriver.base.phantom
 
 import android.content.res.AssetManager
+import com.tbruyelle.rxpermissions2.RxPermissions
 import com.wlqq.phantom.library.PhantomCore
 import com.wlqq.phantom.library.pm.PluginInfo
 import io.reactivex.Flowable
@@ -38,6 +39,7 @@ fun installAssetsPlugins(assets: AssetManager, dir: String): Flowable<List<Plugi
 
 /**
  * 当前及sub
+ *  *** 如果使用sd卡,需要获取外置sd权限***
  * @param f directory
  */
 fun installFromPathDir(f: File): Flowable<List<PluginInfo>> {

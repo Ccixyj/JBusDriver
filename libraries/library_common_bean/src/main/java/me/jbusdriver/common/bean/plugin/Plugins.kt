@@ -1,4 +1,4 @@
-package me.jbusdriver.component.plugin.manager.plugin
+package me.jbusdriver.common.bean.plugin
 
 class Plugins {
     val internal: List<PluginBean> = emptyList()

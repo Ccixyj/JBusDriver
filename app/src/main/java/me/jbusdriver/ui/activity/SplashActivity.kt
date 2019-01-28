@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.util.ArrayMap
+import com.billy.cc.core.component.CCUtil.put
 import com.google.gson.JsonObject
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.umeng.analytics.MobclickAgent

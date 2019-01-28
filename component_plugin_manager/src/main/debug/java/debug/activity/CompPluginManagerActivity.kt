@@ -9,6 +9,7 @@ import me.jbusdriver.base.GSON
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.common.C
 import me.jbusdriver.base.fromJson
+import me.jbusdriver.component.plugin.manager.PluginManagerComponent
 import me.jbusdriver.component.plugin.manager.R
 
 class CompPluginManagerActivity : AppCompatActivity() {
@@ -17,9 +18,9 @@ class CompPluginManagerActivity : AppCompatActivity() {
    {
     "internal": [
       {
+        "name": "me.jbusdriver.plugin.magnet",
         "versionCode": 2,
         "versionName": "1.0.0",
-        "tag": "plugin.magnet",
         "url": "https://github.com/Ccixyj/jbusfile/blob/master/plugins/me.jbusdriver.plugin.magnet_1.0.0.apk?raw=true",
         "desc": "[内部插件]磁力链接解析插件",
         "eTag": "FE950EAAEF74590B8FC59B354F27EB9F"
@@ -35,9 +36,11 @@ class CompPluginManagerActivity : AppCompatActivity() {
         setContentView(R.layout.comp_plugin_manager_activity_main)
         val plugins = GSON.fromJson<JsonObject>(jsonStr)
         comp_plugin_manager_tv_install.setOnClickListener {
+
             KLog.d("comp_plugin_manager_tv_install $plugins")
             CC.obtainBuilder(C.Components.PluginManager)
                     .setActionName("plugins.init")
+                    .setContext(this)
                     .addParam("plugins", plugins)
                     .build().callAsync()
 

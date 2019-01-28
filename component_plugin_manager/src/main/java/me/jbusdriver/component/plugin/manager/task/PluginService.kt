@@ -3,11 +3,8 @@ package me.jbusdriver.component.plugin.manager.task
 import android.app.IntentService
 import android.content.Context
 import android.content.Intent
-import android.os.Environment
-import me.jbusdriver.base.JBusManager
 import me.jbusdriver.base.toJsonString
-import me.jbusdriver.component.plugin.manager.plugin.PluginBean
-import java.io.File
+import me.jbusdriver.common.bean.plugin.PluginBean
 
 class PluginService : IntentService("LoadCollectService") {
 

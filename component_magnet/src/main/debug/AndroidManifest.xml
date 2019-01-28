@@ -1,16 +1,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="me.jbusdriver.component.magnet">
+
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name="debug.DebugMagnetApp"
         android:allowBackup="false"
         android:icon="@mipmap/comp_magnet_ic_launcher"
-        tools:replace="android:allowBackup,android:label"
-        android:supportsRtl="true"
         android:label="@string/comp_magnet_app_name"
-        android:theme="@style/AppTheme.NoActionBar">
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme.NoActionBar"
+        tools:replace="android:allowBackup,android:label">
 
         <activity android:name="debug.CompMagnetMainActivity">
             <intent-filter>
