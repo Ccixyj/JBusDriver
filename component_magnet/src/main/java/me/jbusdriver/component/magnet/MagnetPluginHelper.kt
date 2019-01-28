@@ -114,7 +114,7 @@ object MagnetPluginHelper {
         }
     }
 
-    fun update(f: File) =installFromFile(f)
+    fun installApkFile(f: File) =installFromFile(f)
 
 
 }

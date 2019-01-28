@@ -10,17 +10,17 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 interface OnProgressListener {
 
-    fun onProgress(imageUrl: String, bytesRead: Long, totalBytes: Long, isDone: Boolean, exception: GlideException?)
+    fun onProgress(url: String, bytesRead: Long, totalBytes: Long, isDone: Boolean, exception: Exception?)
 }
 
 private val listeners by lazy { CopyOnWriteArrayList<WeakReference<OnProgressListener>>() }
 
-val GlideProgressListener
+val GlobalProgressListener
     get() = object : OnProgressListener {
-        override fun onProgress(imageUrl: String, bytesRead: Long, totalBytes: Long, isDone: Boolean, exception: GlideException?) {
+        override fun onProgress(url: String, bytesRead: Long, totalBytes: Long, isDone: Boolean, exception: Exception?) {
             if (listeners.isEmpty()) return
             listeners.forEach {
-                it.get()?.onProgress(imageUrl, bytesRead, totalBytes, isDone, exception)
+                it.get()?.onProgress(url, bytesRead, totalBytes, isDone, exception)
                         ?: listeners.remove(it)
             }
         }

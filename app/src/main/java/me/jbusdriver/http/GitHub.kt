@@ -20,9 +20,6 @@ interface GitHub {
     @GET("https://raw.githubusercontent.com/Ccixyj/JBusDriver/plugin/api/announce.json")
     fun announceWithPlugin(): Flowable<String>
 
-    @Streaming
-    @GET
-    fun downloadPluginAsync(@Url fileUrl: String): Flowable<ResponseBody>
 
     companion object{
         val INSTANCE by lazy { NetClient.getRetrofit("https://raw.githubusercontent.com/").create(GitHub::class.java) }

@@ -148,7 +148,7 @@ class WatchLargeImageActivity : BaseActivity() {
                     .priority(priority)
                     .into(object : DrawableImageViewTarget(view.pv_image_large) {
                         val listener = object : OnProgressListener {
-                            override fun onProgress(imageUrl: String, bytesRead: Long, totalBytes: Long, isDone: Boolean, exception: GlideException?) {
+                            override fun onProgress(imageUrl: String, bytesRead: Long, totalBytes: Long, isDone: Boolean, exception: Exception?) {
                                 if (totalBytes == 0L) return
                                 if (url != imageUrl) return
                                 postMain {

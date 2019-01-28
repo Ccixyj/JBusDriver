@@ -24,6 +24,22 @@ class CompPluginManagerActivity : AppCompatActivity() {
         "url": "https://github.com/Ccixyj/jbusfile/blob/master/plugins/me.jbusdriver.plugin.magnet_1.0.0.apk?raw=true",
         "desc": "[内部插件]磁力链接解析插件",
         "eTag": "FE950EAAEF74590B8FC59B354F27EB9F"
+      },
+      {
+        "name": "me.jbusdriver.plugin.magnet1",
+        "versionCode": 2,
+        "versionName": "1.0.0",
+        "url": "http://192.168.1.179:8080/static/1.apk",
+        "desc": "[内部插件]磁力链接解析插件",
+        "eTag": "FE950EAAEF74590B8FC59B354F27EB9F"
+      },
+      {
+        "name": "me.jbusdriver.plugin.magnet2",
+        "versionCode": 2,
+        "versionName": "1.0.0",
+        "url": "http://192.168.1.179:8080/static/2.apk",
+        "desc": "[内部插件]磁力链接解析插件",
+        "eTag": "FE950EAAEF74590B8FC59B354F27EB9F"
       }
      ]
    }

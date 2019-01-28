@@ -23,7 +23,7 @@ object NetClient {
     private const val TAG = "NetClient"
     const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36"
     // private val gsonConverterFactory = GsonConverterFactory.create(GSON)
-    private val rxJavaCallAdapterFactory = RxJava2CallAdapterFactory.create()
+
     private val EXIST_MAGNET_INTERCEPTOR by lazy {
         Interceptor { chain ->
             var request = chain.request()
@@ -34,13 +34,13 @@ object NetClient {
             chain.proceed(request)
         }
     }
-
-    private val PROGRESS_INTERCEPTOR by lazy {
+    val RxJavaCallAdapterFactory = RxJava2CallAdapterFactory.create()
+    val PROGRESS_INTERCEPTOR by lazy {
         Interceptor { chain ->
             val request = chain.request()
             val response = chain.proceed(request)
             return@Interceptor response.newBuilder()
-                    .body(ProgressResponseBody(request.url().toString(), response.body(), GlideProgressListener))
+                    .body(ProgressResponseBody(request.url().toString(), response.body(), GlobalProgressListener))
                     .build()
         }
     }
@@ -66,9 +66,11 @@ object NetClient {
                 }
     }
 
-    fun getRetrofit(baseUrl: String, handleJson: Boolean = false) = Retrofit.Builder().client(okHttpClient).baseUrl(baseUrl)
-            .addConverterFactory(if (handleJson) jsonConv else strConv)
-            .addCallAdapterFactory(rxJavaCallAdapterFactory).build()!!
+    fun getRetrofit(baseUrl: String = "https://raw.githubusercontent.com/", handleJson: Boolean = false, client: OkHttpClient = okHttpClient): Retrofit =
+            Retrofit.Builder().client(client).apply {
+                if (baseUrl.isNotEmpty()) this.baseUrl(baseUrl)
+            }.addConverterFactory(if (handleJson) jsonConv else strConv)
+                    .addCallAdapterFactory(RxJavaCallAdapterFactory).build()
 
     //endregion
 
@@ -100,7 +102,6 @@ object NetClient {
         val client = OkHttpClient.Builder()
                 .readTimeout((20 * 1000).toLong(), TimeUnit.MILLISECONDS)
                 .connectTimeout((15 * 1000).toLong(), TimeUnit.MILLISECONDS)
-                .addNetworkInterceptor(StethoInterceptor())
                 .addNetworkInterceptor(PROGRESS_INTERCEPTOR)
         if (BuildConfig.DEBUG) {
             client.addInterceptor(LoggerInterceptor("OK_HTTP"))

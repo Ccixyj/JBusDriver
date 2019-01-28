@@ -4,7 +4,7 @@
     package="me.jbusdriver.component.plugin.manager">
 
 
-
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:name="debug.DebugPluginManagerApp"
         android:allowBackup="false"
@@ -19,6 +19,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name=".task.PluginService"/>
     </application>
 
 </manifest>

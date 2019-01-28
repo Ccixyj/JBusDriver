@@ -56,7 +56,7 @@
         <activity android:name="me.jbusdriver.ui.activity.SettingActivity" />
 
         <service
-            android:name="me.jbusdriver.ui.task.LoadCollectService"
+            android:name=".ui.task.LoadCollectService"
             android:exported="false" />
 
        <!-- <activity android:name="me.jbusdriver.ui.activity.HotRecommendActivity" />-->

@@ -44,8 +44,7 @@ class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContra
                             CC.obtainBuilder(C.Components.PluginManager)
                                     .setActionName("plugins.init")
                                     .addParam("plugins", it.third)
-                                    .setContext(this.mView as? Activity)
-                                    .cancelOnDestroyWith(this.mView as? Activity)
+                                    .cancelOnDestroyWith(ctx as? Activity)
                                     .build()
                                     .callAsync()
                         }
