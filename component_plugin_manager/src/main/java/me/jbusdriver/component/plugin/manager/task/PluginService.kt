@@ -64,7 +64,7 @@ class PluginService : IntentService("PluginService") {
                         f.delete()
                         Flowable.error<Pair<File, PluginBean>>(e)
                     }
-                }.sequentialDelayError().subscribe({
+                }.sequentialDelayError().blockingSubscribe({
                     KLog.d("download end $it")
                     removeProgressListener(pnl)
                 }, {
@@ -75,9 +75,9 @@ class PluginService : IntentService("PluginService") {
 
     }
 
-    override fun onCreate() {
-        super.onCreate()
-        KLog.w("service destoryed")
+    override fun onDestroy() {
+        super.onDestroy()
+        KLog.w("service onDestroy")
     }
 
     companion object {
