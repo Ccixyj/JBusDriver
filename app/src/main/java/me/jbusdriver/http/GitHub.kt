@@ -16,9 +16,9 @@ interface GitHub {
     @GET("https://raw.githubusercontent.com/Ccixyj/JBusDriver/master/api/announce.json")
     fun announce(): Flowable<String>
 
-
-    @GET("https://raw.githubusercontent.com/Ccixyj/JBusDriver/plugin/api/announce.json")
-    fun announceWithPlugin(): Flowable<String>
+//
+//    @GET("https://raw.githubusercontent.com/Ccixyj/JBusDriver/plugin/api/announce.json")
+//    fun announceWithPlugin(): Flowable<String>
 
 
     companion object{

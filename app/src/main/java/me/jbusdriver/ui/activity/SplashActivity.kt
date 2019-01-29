@@ -72,7 +72,7 @@ class SplashActivity : BaseActivity() {
             val urlsFromDisk = CacheLoader.justDisk(C.Cache.BUS_URLS).map {
                 GSON.fromJson<ArrayMap<String, String>>(it)
             }
-            val urlsFromUpdateCache = Flowable.concat(CacheLoader.justLru(C.Cache.ANNOUNCE_URL), GitHub.INSTANCE.announceWithPlugin().addUserCase(4)).firstOrError().toFlowable()
+            val urlsFromUpdateCache = Flowable.concat(CacheLoader.justLru(C.Cache.ANNOUNCE_URL), GitHub.INSTANCE.announce().addUserCase(4)).firstOrError().toFlowable()
                     .map { source ->
                         //放入内存缓存,更新需要
                         val r = GSON.fromJson<JsonObject>(source) ?: JsonObject()
