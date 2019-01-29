@@ -159,8 +159,7 @@ class PluginManagerComponent : IComponent {
          * call comp install for  plugin file
          */
         fun checkInstall(plugin: PluginBean, pluginFile: File) {
-            KLog.i("checkInstall -> $plugin")
-            KLog.i("checkInstall Plugin_Maps -> $Plugin_Maps")
+            KLog.i("checkInstall $plugin for $pluginFile Plugin_Maps -> $Plugin_Maps")
             val where = Plugin_Maps.filter { it.value.find { it.name == plugin.name } != null }.keys
             where.forEach {
                 CC.obtainBuilder(it)

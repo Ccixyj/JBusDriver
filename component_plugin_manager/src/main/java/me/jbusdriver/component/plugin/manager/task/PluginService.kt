@@ -4,8 +4,6 @@ import android.app.IntentService
 import android.content.Context
 import android.content.Intent
 import io.reactivex.Flowable
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.base.GSON
 import me.jbusdriver.base.KLog
@@ -16,7 +14,6 @@ import me.jbusdriver.base.http.removeProgressListener
 import me.jbusdriver.base.toJsonString
 import me.jbusdriver.common.bean.plugin.PluginBean
 import me.jbusdriver.component.plugin.manager.PluginManagerComponent
-import okio.Okio
 import java.io.File
 
 class PluginService : IntentService("PluginService") {
@@ -67,7 +64,7 @@ class PluginService : IntentService("PluginService") {
                             }
                             f
                         }.onSuccess {
-                            PluginManagerComponent.checkInstall(plugin = pluginBean, pluginFile = f)
+                            PluginManagerComponent.checkInstall(plugin = pluginBean, pluginFile = it)
                         }.onFailure {
                             f.delete()
                         }
