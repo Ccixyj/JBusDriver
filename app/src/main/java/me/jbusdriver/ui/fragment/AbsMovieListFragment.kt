@@ -18,7 +18,7 @@ import com.chad.library.adapter.base.util.MultiTypeDelegate
 import me.jbusdriver.R
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.C
-import me.jbusdriver.commen.bean.ILink
+import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.common.isEndWithXyzHost
 import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.mvp.bean.Movie

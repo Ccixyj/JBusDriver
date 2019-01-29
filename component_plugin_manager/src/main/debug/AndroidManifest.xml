@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="me.jbusdriver.component.plugin.manager">
+
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <application
+        android:name="debug.DebugPluginManagerApp"
+        android:allowBackup="false"
+        android:label="@string/comp_plugin_manager_app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme.NoActionBar"
+        tools:replace="android:allowBackup,android:label">
+        <activity android:name="debug.activity.CompPluginManagerActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service android:name=".task.PluginService"/>
+    </application>
+
+</manifest>

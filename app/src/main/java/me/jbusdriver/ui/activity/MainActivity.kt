@@ -17,6 +17,7 @@ import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
+import com.billy.cc.core.component.CC
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
@@ -24,6 +25,7 @@ import kotlinx.android.synthetic.main.nav_header_main.view.*
 import me.jbusdriver.R
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.AppBaseActivity
+import me.jbusdriver.base.common.C
 import me.jbusdriver.common.JBus
 import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.bean.*
@@ -157,7 +159,6 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
     }
 
 
-
     override fun onBackPressed() {
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -211,8 +212,8 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
     @SuppressLint("ResourceAsColor")
     override fun <T> showContent(data: T?) {
-        if (data is Pair<*, *> && data.first is UpdateBean) {
-            val bean = data.first as UpdateBean
+        if (data is UpdateBean) {
+            val bean = data as UpdateBean
             if (viewContext.packageInfo?.versionCode ?: -1 < bean.versionCode) {
                 MaterialDialog.Builder(this).title("更新(${bean.versionName})")
                         .content(bean.desc)
@@ -223,11 +224,13 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                             browse(bean.url)
                         }
                         .dismissListener {
-                            showNotice(data.second)
+                            showNotice(data)
                         }
                         .show()
-            } else {
-                showNotice(data.second)
+            }
+
+            if (data is NoticeBean) {
+                showNotice(data)
             }
         }
 

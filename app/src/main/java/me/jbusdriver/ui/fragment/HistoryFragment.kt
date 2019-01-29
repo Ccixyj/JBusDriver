@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.base.GlideApp
 import me.jbusdriver.base.common.AppBaseRecycleFragment
-import me.jbusdriver.commen.bean.ILink
+import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.db.bean.History
 import me.jbusdriver.mvp.HistoryContract

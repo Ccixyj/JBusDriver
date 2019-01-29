@@ -5,7 +5,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_actress.view.*
-import me.jbusdriver.base.KLog
 import me.jbusdriver.base.inflate
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.ui.activity.MovieListActivity

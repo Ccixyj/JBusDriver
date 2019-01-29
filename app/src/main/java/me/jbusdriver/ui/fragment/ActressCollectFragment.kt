@@ -23,8 +23,8 @@ import kotlinx.android.synthetic.main.layout_swipe_recycle.*
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.AppBaseRecycleFragment
 import me.jbusdriver.common.toGlideNoHostUrl
-import me.jbusdriver.commen.bean.db.ActressCategory
-import me.jbusdriver.commen.bean.db.Category
+import me.jbusdriver.common.bean.db.ActressCategory
+import me.jbusdriver.common.bean.db.Category
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.mvp.ActressCollectContract
 import me.jbusdriver.mvp.bean.ActressDBType
@@ -138,11 +138,11 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 
                     action["取消收藏"] = {
                         if (CollectModel.removeCollect(it.convertDBItem())) {
-                            viewContext.toast("取消收藏成功")
+                            toast("取消收藏成功")
                             adapter.data.removeAt(position)
                             adapter.notifyItemRemoved(position)
                         } else {
-                            viewContext.toast("已经取消了")
+                            toast("已经取消了")
                         }
                     }
 
@@ -176,7 +176,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                         try {
                             CategoryService.delete(it, ActressDBType)
                         } catch (e: Exception) {
-                            viewContext.toast("不能删除默认分类")
+                            toast("不能删除默认分类")
                         }
                     }
                 }

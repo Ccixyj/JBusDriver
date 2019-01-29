@@ -4,8 +4,8 @@ import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.db.SupportSQLiteOpenHelper
 import android.database.sqlite.SQLiteDatabase
 import me.jbusdriver.base.KLog
-import me.jbusdriver.commen.bean.db.CategoryTable
-import me.jbusdriver.commen.bean.db.AllFirstParentDBCategoryGroup
+import me.jbusdriver.common.bean.db.CategoryTable
+import me.jbusdriver.common.bean.db.AllFirstParentDBCategoryGroup
 
 
 //region history

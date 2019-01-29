@@ -20,7 +20,8 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:resizeableActivity="true"
-        android:theme="@style/AppTheme.NoActionBar">
+        tools:replace="android:allowBackup"
+        android:theme="@style/AppTheme.NoActionBar" >
 
         <meta-data
             android:name="android.max_aspect"
@@ -33,10 +34,6 @@
         <meta-data
             android:name="UMENG_CHANNEL"
             android:value="${CHANNEL}" />
-
-        <activity
-            android:name="com.tencent.bugly.beta.ui.BetaActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize|locale" />
 
         <activity
             android:name="me.jbusdriver.ui.activity.MainActivity"
@@ -59,10 +56,7 @@
         <activity android:name="me.jbusdriver.ui.activity.SettingActivity" />
 
         <service
-            android:name="me.jbusdriver.ui.task.CollectService"
-            android:exported="false" />
-        <service
-            android:name="me.jbusdriver.ui.task.TrimLikeService"
+            android:name=".ui.task.LoadCollectService"
             android:exported="false" />
 
        <!-- <activity android:name="me.jbusdriver.ui.activity.HotRecommendActivity" />-->

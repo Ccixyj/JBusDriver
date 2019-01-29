@@ -2,7 +2,7 @@ package me.jbusdriver.mvp.presenter
 
 import me.jbusdriver.mvp.bean.parseActressList
 import me.jbusdriver.mvp.bean.ActressInfo
-import me.jbusdriver.commen.bean.ILink
+import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.base.mvp.bean.PageInfo
 import org.jsoup.nodes.Document
 

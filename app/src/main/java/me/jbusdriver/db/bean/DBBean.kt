@@ -1,11 +1,13 @@
 package me.jbusdriver.db.bean
 
 import android.content.Context
-import me.jbusdriver.base.*
+import me.jbusdriver.base.GSON
+import me.jbusdriver.base.fromJson
 import me.jbusdriver.base.mvp.bean.PageInfo
-import me.jbusdriver.commen.bean.ICollectCategory
-import me.jbusdriver.commen.bean.ILink
-import me.jbusdriver.common.JBus
+import me.jbusdriver.base.toast
+import me.jbusdriver.base.urlHost
+import me.jbusdriver.common.bean.ICollectCategory
+import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.common.isEndWithXyzHost
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.*
@@ -32,7 +34,7 @@ data class History(val type: Int, val createTime: Date, val jsonStr: String, var
         when (type) {
             1 -> MovieDetailActivity.start(context, getLinkItem() as Movie, true)
             in 2..6 -> MovieListActivity.reloadFromHistory(context, this)
-            else -> JBus.toast("没有可以跳转的界面")
+            else -> toast("没有可以跳转的界面")
         }
 
     }

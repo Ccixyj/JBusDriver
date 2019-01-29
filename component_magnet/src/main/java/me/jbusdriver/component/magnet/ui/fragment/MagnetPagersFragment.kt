@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment
 import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.base.common.C
 import me.jbusdriver.base.ui.fragment.TabViewPagerFragment
-import me.jbusdriver.component.magnet.loader.IMagnetLoader.Companion.MagnetLoaders
+import me.jbusdriver.component.magnet.MagnetPluginHelper
 import me.jbusdriver.component.magnet.mvp.MagnetPagerContract.MagnetPagerPresenter
 import me.jbusdriver.component.magnet.mvp.MagnetPagerContract.MagnetPagerView
 import me.jbusdriver.component.magnet.mvp.presenter.MagnetPagerPresenterImpl
@@ -23,8 +23,11 @@ class MagnetPagersFragment : TabViewPagerFragment<MagnetPagerPresenter, MagnetPa
     override fun createPresenter() = MagnetPagerPresenterImpl()
 
     override val mTitles: List<String> by lazy {
-        val allKeys = MagnetLoaders.keys
-        Configuration.getConfigKeys().filter { allKeys.contains(it) }.apply {
+        val allKeys = MagnetPluginHelper.getLoaderKeys()
+        Configuration.getConfigKeys().filter { allKeys.contains(it) }.toMutableList().apply {
+            if (this.isEmpty()){
+                this.addAll(Configuration.getConfigKeys())
+            }
             Schedulers.single().scheduleDirect {
                 Configuration.saveMagnetKeys(this)
             }

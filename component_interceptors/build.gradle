@@ -1,5 +1,5 @@
 ext.alwaysLib = true //虽然apply了cc-settings-2.gradle，但一直作为library编译，否则别的组件依赖此module时会报错
-apply from: rootProject.file('cc-settings-2.gradle')
+apply from: rootProject.file('buildscripts/cc-settings-2.gradle')
 apply plugin: 'kotlin-android'
 
 
@@ -26,6 +26,6 @@ android {
 }
 
 dependencies {
-    implementation project(':base_lib')
+    implementation project(':libraries:library_base')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
 }

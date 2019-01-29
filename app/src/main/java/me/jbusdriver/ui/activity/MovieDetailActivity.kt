@@ -120,7 +120,6 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         }
 
         app_bar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, offset ->
-            KLog.d("offset : $offset")
             sr_refresh.isEnabled = offset >= 0
         })
 
@@ -137,7 +136,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
                         .addParam("keyword", code)
                         .build().call().let { res ->
                             if (!res.isSuccess) {
-                                toast(res.errorMessage)
+                                toast(res.toString())
                             }
                         }
             }

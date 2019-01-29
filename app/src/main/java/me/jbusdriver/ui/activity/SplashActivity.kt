@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.util.ArrayMap
+import com.billy.cc.core.component.CCUtil.put
 import com.google.gson.JsonObject
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.umeng.analytics.MobclickAgent
@@ -21,7 +22,6 @@ import me.jbusdriver.base.common.C
 import me.jbusdriver.http.GitHub
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.enums.DataSourceType
-import me.jbusdriver.ui.task.CollectService
 import org.jsoup.Jsoup
 
 class SplashActivity : BaseActivity() {
@@ -33,11 +33,6 @@ class SplashActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
         init()
-        migrate()
-    }
-
-    private fun migrate() {
-        CollectService.startMigrate(this)
     }
 
     private fun init() {
@@ -80,7 +75,6 @@ class SplashActivity : BaseActivity() {
             val urlsFromUpdateCache = Flowable.concat(CacheLoader.justLru(C.Cache.ANNOUNCE_URL), GitHub.INSTANCE.announce().addUserCase(4)).firstOrError().toFlowable()
                     .map { source ->
                         //放入内存缓存,更新需要
-
                         val r = GSON.fromJson<JsonObject>(source) ?: JsonObject()
                         CacheLoader.cacheLru(C.Cache.ANNOUNCE_VALUE to r)
                         arrayMapof<String, String>().apply {
@@ -103,14 +97,12 @@ class SplashActivity : BaseActivity() {
                     .flatMap {
                         urls = it
                         val mapFlow = GSON.fromJson<List<String>>(it[DataSourceType.CENSORED.key]
-                                ?: "").map { url ->
-                            Flowable.combineLatest(Flowable.just<String>(url),
-                                    JAVBusService.INSTANCE.get(url).addUserCase(15).onErrorReturnItem("").doOnNext {
-                                        KLog.d("prefetch urls : $url  -> ${it?.take(30)} success")
-                                    },
+                                ?: "").map {
+                            Flowable.combineLatest(Flowable.just<String>(it),
+                                    JAVBusService.INSTANCE.get(it).addUserCase(15).onErrorReturnItem(""),
                                     BiFunction<String, String?, Pair<String, String>> { t1, t2 -> t1 to t2 })
                         }
-                        Flowable.mergeDelayError(mapFlow).parallel().filter { it.second.isNotBlank() }.sequential()
+                        Flowable.mergeDelayError(mapFlow).filter { it.second.isNotBlank() }.take(1)
                     }
                     .firstOrError()
                     .doOnError { CacheLoader.acache.remove(C.Cache.ANNOUNCE_URL) }
@@ -142,8 +134,6 @@ class SplashActivity : BaseActivity() {
                             urls[DataSourceType.XYZ_ACTRESSES.key] = urls[DataSourceType.XYZ_ACTRESSES.key]?.replace(baseUrlSuffix, host)
                             urls[DataSourceType.XYZ_GENRE.key] = urls[DataSourceType.XYZ_GENRE.key]?.replace(baseUrlSuffix, host)
                         }
-
-
 
                         CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to urls, C.Cache.DAY * 2) //缓存所有的urls
                         CacheLoader.lru.put(DataSourceType.CENSORED.key + "false", it.second) //默认有种的

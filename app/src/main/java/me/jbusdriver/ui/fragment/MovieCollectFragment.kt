@@ -18,8 +18,8 @@ import me.jbusdriver.base.GlideApp
 import me.jbusdriver.base.common.AppBaseRecycleFragment
 import me.jbusdriver.base.toast
 import me.jbusdriver.common.toGlideNoHostUrl
-import me.jbusdriver.commen.bean.db.Category
-import me.jbusdriver.commen.bean.db.MovieCategory
+import me.jbusdriver.common.bean.db.Category
+import me.jbusdriver.common.bean.db.MovieCategory
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.mvp.MovieCollectContract
 import me.jbusdriver.mvp.bean.CollectLinkWrapper
@@ -107,11 +107,11 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
                     action.remove("收藏")
                     action["取消收藏"] = {
                         if (CollectModel.removeCollect(it.convertDBItem())) {
-                            viewContext.toast("取消收藏成功")
+                            toast("取消收藏成功")
                             adapter.data.removeAt(position)
                             adapter.notifyItemRemoved(position)
                         } else {
-                            viewContext.toast("已经取消了")
+                            toast("已经取消了")
                         }
                     }
 
@@ -145,7 +145,7 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
                         try {
                             CategoryService.delete(it, MovieDBType)
                         } catch (e: Exception) {
-                            viewContext.toast("不能删除默认分类")
+                            toast("不能删除默认分类")
                         }
                     }
                 }

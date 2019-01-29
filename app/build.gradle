@@ -3,7 +3,7 @@ import java.util.regex.Pattern
 
 ext.mainApp = true //如果此module为主app module，一直以application方式编译，则启用这一行
 //ext.alwaysLib = true //如果此module为基础库，一直以library方式编译，则启用这一行
-apply from: rootProject.file("cc-settings-2-app.gradle")
+apply from: rootProject.file("buildscripts/cc-settings-2-app.gradle")
 //注意：最好放在build.gradle中代码的第一行
 
 
@@ -135,9 +135,9 @@ dependencies {
 
     //    implementation(name: 'bugly_crashreport_upgrade-1.3.5', ext: 'aar')
     // 远程依赖集成方式（推荐）
-    implementation "com.tencent.bugly:crashreport_upgrade:${versions.bugly}"
+//    implementation "com.tencent.bugly:crashreport_upgrade:${versions.bugly}"
     // 指定tinker依赖版本（注：应用升级1.3.5版本起，不再内置tinker）
-    implementation "com.tencent.tinker:tinker-android-lib:${versions.tinker}"
+//    implementation "com.tencent.tinker:tinker-android-lib:${versions.tinker}"
 
     //leak
     debugImplementation "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
@@ -145,11 +145,12 @@ dependencies {
     // Optional, if you use support library fragments:
     debugImplementation "com.squareup.leakcanary:leakcanary-support-fragment:${versions.leakcanary}"
 
-
-    implementation "com.android.support:multidex:1.0.3" // 多dex配置
-
     //components
     addComponent "component_magnet"
+
+    implementation "com.android.support:multidex:1.0.3" // 多dex配置
+    implementation "com.wlqq.phantom:phantom-host-lib:${versions.phantom.allVersion}"
+    implementation "com.wlqq.phantom:phantom-communication-lib:${versions.phantom.allVersion}"
 }
 
 configurations.all { config ->
@@ -162,7 +163,7 @@ configurations.all { config ->
     }
 }
 
-// 依赖插件脚本
+/*// 依赖插件脚本
 def taskNames = project.gradle.startParameter.taskNames
 def currentTaskName = taskNames.isEmpty() ? "" : taskNames.first()
 // 开启tinker-support插件，默认值true
@@ -175,7 +176,7 @@ if (checkEnable) {
     this.rootProject.extensions.appVerCode = VersionCode()
     this.rootProject.extensions.appVerName = VersionName()
     apply from: 'tinker.gradle'
-}
+}*/
 repositories {
     mavenCentral()
 }

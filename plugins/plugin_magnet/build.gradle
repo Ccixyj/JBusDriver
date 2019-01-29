@@ -1,0 +1,149 @@
+project.ext.CurrentAppID = "me.jbusdriver.plugin.magnet"
+
+def pTagName = project.name.replace("plugin_", "")
+project.ext.deployTargets = rootProject.allprojects.findAll {
+    (!it.name.startsWith("plugin_") && it.name.endsWith(pTagName)) || it.name == "app"
+
+}
+println("deployTarget :  ${deployTargets}")
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.wlqq.phantom.plugin'
+
+//def CurrentHostId = CurrentAppID
+//println("CurrentAppID =-----> $CurrentAppID")
+
+android {
+    compileSdkVersion versions.compileSdk
+    buildToolsVersion versions.buildTools
+
+    defaultConfig {
+        applicationId CurrentAppID
+        minSdkVersion 16
+        targetSdkVersion versions.targetSdk
+        versionCode 1
+        versionName "1.0"
+//        multiDexEnabled true
+    }
+
+    signingConfigs {
+        release {
+            try {
+                storeFile rootProject.project(":app").file(KEYSTORE_FILE)
+                storePassword KEYSTORE_PASSWORD
+                keyAlias KEYSTORE_ALIAS
+                keyPassword KEY_PASSWORD
+            }
+            catch (ignored) {
+                if (System.getenv("KEYSTORE_FILE") != null) {
+                    storeFile = file(System.getenv("KEYSTORE_FILE"))
+                    storePassword = System.getenv("KEYSTORE_PWD")
+                    keyAlias = System.getenv("KEYSTOREmultiDexEnabled _ALIAS")
+                    keyPassword = System.getenv("KEYSTORE_ALIAS_PWD")
+                } else {
+                    throw GradleException("You should define KEYSTORE_PASSWORD and KEY_PASSWORD in gradle.properties.")
+                }
+            }
+        }
+    }
+
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFile project.file('proguard-phantom.pro')
+        }
+
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFile project.file('proguard-phantom.pro')
+        }
+    }
+
+
+}
+
+dependencies {
+
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+//    implementation "com.android.support:appcompat-v7:${versions.supportLibrary}"
+//    implementation "com.android.support:support-v4:${versions.supportLibrary}"
+
+    testImplementation 'junit:junit:4.12'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+    compileOnly "org.jsoup:jsoup:${versions.jsoup}"
+//    implementation "com.google.code.gson:gson:${versions.gson}"
+//    implementation 'com.android.support:multidex:1.0.3'
+}
+
+phantomPluginConfig {
+//    excludeClass("me.jbusdriver.plugin.magnet.IMagnetLoader")
+//    excludeClass("me.jbusdriver.plugin.magnet.bean.Magnet")
+
+    /*------------------------------ 剔除 support-v4 及其依赖的库 BEGIN ----------------------------*/
+    excludeLib "com.android.support:support-v4:${versions.supportLibrary}"
+    excludeLib "com.android.support:support-core-ui:${versions.supportLibrary}"
+    excludeLib "com.android.support:support-compat:${versions.supportLibrary}"
+    excludeLib "com.android.support:support-media-compat:${versions.supportLibrary}"
+    excludeLib "com.android.support:support-core-utils:${versions.supportLibrary}"
+    excludeLib "com.android.support:support-fragment:${versions.supportLibrary}"
+    excludeLib "com.android.support:support-annotations:${versions.supportLibrary}"
+    excludeLib "com.android.support:cursoradapter:${versions.supportLibrary}"
+    excludeLib "com.android.support:interpolator:${versions.supportLibrary}"
+    excludeLib "com.android.support:versionedparcelable:${versions.supportLibrary}"
+    excludeLib "com.android.support:documentfile:${versions.supportLibrary}"
+    excludeLib "com.android.support:customview:${versions.supportLibrary}"
+    excludeLib "com.android.support:slidingpanelayout:${versions.supportLibrary}"
+    excludeLib "com.android.support:swiperefreshlayout:${versions.supportLibrary}"
+    excludeLib "com.android.support:drawerlayout:${versions.supportLibrary}"
+    excludeLib "com.android.support:coordinatorlayout:${versions.supportLibrary}"
+    excludeLib "com.android.support:loader:${versions.supportLibrary}"
+    excludeLib "com.android.support:viewpager:${versions.supportLibrary}"
+    excludeLib "com.android.support:collections:${versions.supportLibrary}"
+    excludeLib "com.android.support:asynclayoutinflater:${versions.supportLibrary}"
+    excludeLib "com.android.support:print:${versions.supportLibrary}"
+    excludeLib "com.android.support:localbroadcastmanager:${versions.supportLibrary}"
+
+//        excludeLib "android.arch.lifecycle:viewmodel:${androidVersion.archLib}"
+//        excludeLib "android.arch.lifecycle:runtime:${androidVersion.archLib}"
+//        excludeLib "android.arch.lifecycle:common:${androidVersion.archLib}"
+//        excludeLib "android.arch.lifecycle:livedata:${androidVersion.archLib}"
+//        excludeLib "android.arch.lifecycle:livedata-core:${androidVersion.archLib}"
+//        excludeLib "android.arch.core:common:${androidVersion.archLib}"
+    /*------------------------------ 删除 support-v4 及其依赖的库  END  ----------------------------*/
+
+    excludeLib "com.android.support:appcompat-v7:${versions.supportLibrary}"
+    excludeLib "com.android.support:design:${versions.supportLibrary}"
+    excludeLib "com.android.support:cardview-v7:${versions.supportLibrary}"
+    excludeLib "com.android.support:palette-v7:${versions.supportLibrary}"
+    excludeLib "com.android.support.constraint:constraint-layout:${versions.constraint_layout}"
+
+    //kotlin
+//    excludeLib "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+
+    /*------------------------------ 混淆配置 BEGIN ------------------------------*/
+    libraryJarsProguardFile file('proguard-phantom.pro')
+    /*------------------------------ 混淆配置  END  ------------------------------*/
+
+    /*------------------------------ 快速安装插件配置 BEGIN ------------------------*/
+    // 宿主包名
+    hostApplicationId = CurrentAppID
+    // 宿主 launcher Activity full class name
+    hostAppLauncherActivity = "${CurrentAppID}.MainActivity"
+
+    // 插件包名
+    pluginApplicationId = android.defaultConfig.applicationId
+    // 插件版本名
+    pluginVersionName = android.defaultConfig.versionName
+    /*------------------------------ 快速安装插件配置  END  -------------------------*/
+}
+
+
+apply from: rootProject.file('buildscripts/plugin-common.gradle')

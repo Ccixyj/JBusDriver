@@ -13,7 +13,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import me.jbusdriver.R
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.C
-import me.jbusdriver.commen.bean.ILink
+import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.common.isEndWithXyzHost
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.bean.*
@@ -141,7 +141,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
     override fun gotoSearchResult(query: String) {
         (mBasePresenter as?  LinkAbsPresenterImpl<*>)?.let {
             if (isSearch) {
-                viewContext.toast("新搜索 : $query")
+                toast("新搜索 : $query")
                 RxBus.post(SearchWord(query))
             } else {
                 super.gotoSearchResult(query)

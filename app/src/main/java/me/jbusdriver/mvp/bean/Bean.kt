@@ -2,10 +2,10 @@ package me.jbusdriver.mvp.bean
 
 import me.jbusdriver.base.toJsonString
 import me.jbusdriver.base.urlPath
-import me.jbusdriver.commen.bean.ICollectCategory
-import me.jbusdriver.commen.bean.ILink
-import me.jbusdriver.commen.bean.db.AllFirstParentDBCategoryGroup
-import me.jbusdriver.commen.bean.db.LinkCategory
+import me.jbusdriver.common.bean.ICollectCategory
+import me.jbusdriver.common.bean.ILink
+import me.jbusdriver.common.bean.db.AllFirstParentDBCategoryGroup
+import me.jbusdriver.common.bean.db.LinkCategory
 import me.jbusdriver.db.bean.LinkItem
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.ui.data.enums.SearchType

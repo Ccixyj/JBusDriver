@@ -4,15 +4,15 @@ ext {
             'targetSdk'                    : 27,
             'buildTools'                   : '28.0.3',
 
-            'gradle'                       : '3.2.1',
-            'kotlin'                       : '1.3.0',
+            'gradle'                       : '3.1.4',
+            'kotlin'                       : '1.3.20',
             'supportLibrary'               : '28.0.0',
 
-            'okhttp'                       : '3.11.0',
-            'retrofit'                     : '2.4.0',
-            'rxjava'                       : '2.2.3',
+            'okhttp'                       : '3.12.0',
+            'retrofit'                     : '2.5.0',
+            'rxjava'                       : '2.2.4',
             'rxandroid'                    : '2.1.0',
-            'rxkotlin'                     : '2.2.0',
+            'rxkotlin'                     : '2.3.0',
             'rxrelay'                      : '2.1.0',
             'sqlbrite'                     : '3.2.0',
             'db_framework'                 : '1.1.1',
@@ -29,17 +29,23 @@ ext {
             'immersionBar'                 : '2.3.1',
             'flowlayoutmanager'            : '1.2.3.2',
             'bubbleseekbar'                : '3.16',
-            'photo_view'                   : '2.1.4',
+            'photoView'                    : "2.1.4",
 
-            'tinker'                       : '1.9.9',
-            'tinker_support'               : '1.1.5',
-            'bugly'                        : '1.3.6',
+//            'tinker'                       : '1.9.9',
+//            'tinker_support'               : '1.1.5',
+//            'bugly'                        : '1.3.6',
             'cc_register'                  : '1.0.6',
             'cc'                           : '2.1.1',
 
+
             'analytics'                    : '6.1.4',
             'leakcanary'                   : '1.6.2',
-            'stetho'                       : '1.5.0'
+            'stetho'                       : '1.5.0',
+            'phantom'                      : [
+                    allVersion   : "3.1.2",
+                    allVersionInt: 30102,
+            ]
+
 
     ]
 }

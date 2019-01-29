@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.layout_load_all.view.*
 import me.jbusdriver.R
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.C
-import me.jbusdriver.commen.bean.ILink
+import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.http.RecommendService
 import me.jbusdriver.mvp.LinkListContract
@@ -103,7 +103,7 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
             if (isSearch) {
 //                it.linkData.query = query
 //                it.onRefresh()
-                viewContext.toast("新搜索 : $query")
+                toast("新搜索 : $query")
                 RxBus.post(SearchWord(query))
             } else {
                 super.gotoSearchResult(query)
@@ -219,13 +219,13 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
             RecommendService.INSTANCE.putRecommends(params).map {
                 RecommendModel.save(likeKey, uid)
                 it["message"]?.asString?.let {
-                    viewContext.toast(it)
+                    toast(it)
                 }
                 return@map Math.min(c + 1, 3)
             }
         }.onErrorReturn {
             it.message?.let {
-                viewContext.toast(it)
+                toast(it)
             }
             3
         }.compose(SchedulersCompat.io()).subscribeWith(object : SimpleSubscriber<Int>() {

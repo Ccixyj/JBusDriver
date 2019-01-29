@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="me.jbusdriver.component.magnet">
-    <application>
-        <activity android:name="debug.CompMagnetMainActivity"></activity>
+    <application >
         <activity
             android:name=".ui.activity.MagnetPagerListActivity"
             android:launchMode="singleTop" />

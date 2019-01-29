@@ -6,8 +6,8 @@ import com.squareup.sqlbrite3.BriteDatabase
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.getIntByColumn
 import me.jbusdriver.base.getStringByColumn
-import me.jbusdriver.commen.bean.db.CategoryTable
-import me.jbusdriver.commen.bean.db.Category
+import me.jbusdriver.common.bean.db.CategoryTable
+import me.jbusdriver.common.bean.db.Category
 import java.util.concurrent.TimeUnit
 
 /**

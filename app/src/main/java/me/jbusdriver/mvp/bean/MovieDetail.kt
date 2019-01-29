@@ -1,9 +1,9 @@
 package me.jbusdriver.mvp.bean
 
 import me.jbusdriver.base.urlHost
-import me.jbusdriver.commen.bean.ILink
-import me.jbusdriver.commen.bean.db.ActressCategory
-import me.jbusdriver.commen.bean.db.LinkCategory
+import me.jbusdriver.common.bean.ILink
+import me.jbusdriver.common.bean.db.ActressCategory
+import me.jbusdriver.common.bean.db.LinkCategory
 import java.io.Serializable
 
 /**

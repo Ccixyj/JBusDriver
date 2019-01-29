@@ -11,6 +11,8 @@ interface MagnetPagerContract {
 
 interface MagnetListContract {
     interface MagnetListView : BaseView.BaseListWithRefreshView
-    interface MagnetListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<MagnetListView>, BasePresenter.LazyLoaderPresenter
+    interface MagnetListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<MagnetListView>, BasePresenter.LazyLoaderPresenter{
+        fun fetchMagLink(url:String):String
+    }
 }
 

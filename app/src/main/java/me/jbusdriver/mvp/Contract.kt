@@ -3,7 +3,7 @@ package me.jbusdriver.mvp
 import me.jbusdriver.base.mvp.BaseView
 import me.jbusdriver.base.mvp.bean.PageInfo
 import me.jbusdriver.base.mvp.presenter.BasePresenter
-import me.jbusdriver.commen.bean.ILink
+import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.mvp.bean.ActressInfo
 import me.jbusdriver.mvp.bean.Genre
 import me.jbusdriver.mvp.bean.Movie

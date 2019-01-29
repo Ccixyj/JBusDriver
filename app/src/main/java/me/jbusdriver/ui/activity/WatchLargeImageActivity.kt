@@ -18,9 +18,9 @@ import com.bumptech.glide.request.transition.Transition
 import com.gyf.barlibrary.ImmersionBar
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
-import me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_watch_large_image.*
 import kotlinx.android.synthetic.main.layout_large_image_item.view.*
+import me.jbusdriver.R
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.BaseActivity
 import me.jbusdriver.base.http.OnProgressListener
@@ -41,7 +41,7 @@ class WatchLargeImageActivity : BaseActivity() {
     private val index by lazy { intent.getIntExtra(INDEX, -1) }
     private val imageSaveDir by lazy {
         val pathSuffix = File.separator + "download" + File.separator + "image" + File.separator
-        createDir(Environment.getExternalStorageDirectory().absolutePath + File.separator + JBus.packageName + pathSuffix)
+        createDir(Environment.getExternalStorageDirectory().absolutePath + File.separator + JBusManager.context.applicationContext.packageName + pathSuffix)
                 ?: createDir(JBus.externalCacheDir.absolutePath + JBus.packageName + pathSuffix)
                 ?: error("cant not create collect dir in anywhere")
 
@@ -83,15 +83,16 @@ class WatchLargeImageActivity : BaseActivity() {
         iv_download.setOnClickListener {
             Schedulers.io().scheduleDirect {
                 val url = urls[vp_largeImage.currentItem]
-                GlideApp.with(this).asFile().load(url).submit()
+                GlideApp.with(this).download(url).submit()
                         .get(3, TimeUnit.SECONDS)?.let {
                             //copy file
                             val fileName = url.urlPath.split("/").lastOrNull() ?: kotlin.run {
-                                viewContext.toast("无法获取文件名！")
+                                toast("无法获取文件名！")
                                 return@scheduleDirect
                             }
-                            it.copyTo(File(imageSaveDir + fileName), true)
-                            viewContext.toast("文件保存至${imageSaveDir}下")
+                            val target = File(imageSaveDir + fileName)
+                            it.copyTo(target, true)
+                            toast("文件保存至${imageSaveDir}下")
                         }
             }.addTo(rxManager)
 
@@ -147,7 +148,7 @@ class WatchLargeImageActivity : BaseActivity() {
                     .priority(priority)
                     .into(object : DrawableImageViewTarget(view.pv_image_large) {
                         val listener = object : OnProgressListener {
-                            override fun onProgress(imageUrl: String, bytesRead: Long, totalBytes: Long, isDone: Boolean, exception: GlideException?) {
+                            override fun onProgress(imageUrl: String, bytesRead: Long, totalBytes: Long, isDone: Boolean, exception: Exception?) {
                                 if (totalBytes == 0L) return
                                 if (url != imageUrl) return
                                 postMain {

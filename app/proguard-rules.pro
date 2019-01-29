@@ -180,9 +180,17 @@
 
 
 #hotfix
--dontwarn com.tencent.bugly.**
--keep public class com.tencent.bugly.**{*;}
+#-dontwarn com.tencent.bugly.**
+#-keep public class com.tencent.bugly.**{*;}
 # tinker混淆规则
--dontwarn com.tencent.tinker.**
--keep class com.tencent.tinker.** { *; }
+#-dontwarn com.tencent.tinker.**
+#-keep class com.tencent.tinker.** { *; }
 #hotfix end
+
+
+# Phantom Service method
+-keepclassmembers class * {
+    @com.wlqq.phantom.communication.RemoteMethod <methods>;
+}
+
+# Phantom Service method for exclude

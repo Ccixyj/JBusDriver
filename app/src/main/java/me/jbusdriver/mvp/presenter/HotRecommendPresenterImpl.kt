@@ -3,7 +3,7 @@ package me.jbusdriver.mvp.presenter
 import me.jbusdriver.base.mvp.bean.PageInfo
 import me.jbusdriver.base.mvp.model.BaseModel
 import me.jbusdriver.base.mvp.presenter.AbstractRefreshLoadMorePresenterImpl
-import me.jbusdriver.commen.bean.ILink
+import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.mvp.HotRecommendContract
 import org.jsoup.nodes.Document
 import java.util.concurrent.atomic.AtomicInteger
@@ -31,7 +31,7 @@ class HotRecommendPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HotRecomm
                             val bean = GSON.fromJson<RecommendRespBean>(String(Base64.decode(it, Base64.DEFAULT or Base64.URL_SAFE)))
                             if (!Uri.parse(bean.key.url).isAbsolute) {
                                 val images = JAVBusService.defaultImageUrlHosts.flatMap { it.value }.map {
-                                    mView?.viewContext?.let { c ->
+                                    toastlet { c ->
                                         Glide.with(c).load((it + bean.key.img).toGlideNoHostUrl).submit()
                                     }
                                     it + bean.key.img
@@ -48,7 +48,7 @@ class HotRecommendPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HotRecomm
                         {
                             mView?.showContents(it.data)
                             mView?.loadMoreEnd()
-                            mView?.viewContext?.toast("加载成功！")
+                            toasttoast("加载成功！")
 
                         }, {
                     it.printStackTrace()

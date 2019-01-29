@@ -13,10 +13,15 @@ buildscript {
         classpath "com.android.tools.build:gradle:${versions.gradle}"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
         // tinkersupport插件, 其中lastest.release指拉取最新版本，也可以指定明确版本号，例如1.0.4
-        classpath "com.tencent.bugly:tinker-support:${versions.tinker_support}"
+//        classpath "com.tencent.bugly:tinker-support:${versions.tinker_support}"
         classpath "com.billy.android:cc-register:${versions.cc_register}"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
+
+        //plugins
+        classpath "com.wlqq.phantom:phantom-host-gradle:${versions.phantom.allVersion}"
+        classpath "com.wlqq.phantom:phantom-plugin-gradle:${versions.phantom.allVersion}"
+
     }
 }
 

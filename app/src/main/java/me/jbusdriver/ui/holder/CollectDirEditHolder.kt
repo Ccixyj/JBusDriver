@@ -10,12 +10,12 @@ import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-import me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_collect_dir_edit.view.*
+import me.jbusdriver.R
 import me.jbusdriver.base.inflate
 import me.jbusdriver.base.toast
-import me.jbusdriver.commen.bean.db.AllFirstParentDBCategoryGroup
-import me.jbusdriver.commen.bean.db.Category
+import me.jbusdriver.common.bean.db.AllFirstParentDBCategoryGroup
+import me.jbusdriver.common.bean.db.Category
 
 
 /**
@@ -63,12 +63,12 @@ class CollectDirEditHolder(context: Context, parentCategory: Category) : BaseHol
                     val txt = tv_add_category_name.text.toString().trim()
                     val add = if (txt.isNotBlank()) {
                         if (collectDirs.any { it.name == txt }) {
-                            context.toast("$txt 分类已存在")
+                            toast("$txt 分类已存在")
                             false
                         } else true
 
                     } else {
-                        context.toast("请输入收藏夹名称")
+                        toast("请输入收藏夹名称")
                         false
                     }
 
