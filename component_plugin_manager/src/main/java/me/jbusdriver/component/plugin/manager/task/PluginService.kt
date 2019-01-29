@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.base.GSON
 import me.jbusdriver.base.KLog
@@ -42,27 +43,34 @@ class PluginService : IntentService("PluginService") {
         KLog.d("handleDownAndInstall ----> $plugins")
         val pnl = object : OnProgressListener {
             override fun onProgress(url: String, bytesRead: Long, totalBytes: Long, isDone: Boolean, exception: Exception?) {
-                KLog.d("download $url , $bytesRead $totalBytes $isDone")
+//                KLog.d("download $url , $bytesRead $totalBytes $isDone")
             }
         }
         addProgressListener(pnl)
+
         Flowable.fromIterable(plugins)
                 .parallel()
                 .runOn(Schedulers.io())//指定在哪些线程上并发执行
-                .flatMap {
-                    val f = PluginManagerComponent.getPluginDownloadFile(it)
+                .flatMap { pluginBean ->
+                    val f: File = PluginManagerComponent.getPluginDownloadFile(pluginBean)
                     try {
-
                         f.createNewFile()
-                        service.downloadPluginAsync(it.url).map { body ->
-                            Okio.buffer(Okio.sink(f))
-                                    .writeAll(body.source())
-                            f to plugins
-
-                        }
                     } catch (e: Exception) {
                         f.delete()
-                        Flowable.error<Pair<File, PluginBean>>(e)
+                        throw e
+                    }
+                    return@flatMap service.downloadPluginAsync(pluginBean.url).map { body ->
+                        kotlin.runCatching {
+                            f.outputStream().use {
+                                body.byteStream().copyTo(f.outputStream())
+                                body.close()
+                            }
+                            f
+                        }.onSuccess {
+                            PluginManagerComponent.checkInstall(plugin = pluginBean, pluginFile = f)
+                        }.onFailure {
+                            f.delete()
+                        }
                     }
                 }.sequentialDelayError().blockingSubscribe({
                     KLog.d("download end $it")
