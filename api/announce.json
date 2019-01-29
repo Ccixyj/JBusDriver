@@ -26,17 +26,5 @@
   "notice": {
     "id": 10,
     "content": "提示：\r\n1.无法跳转磁力时请刷新一下即可。\r\n2.如有提示风险，请忽略（个人emui9.0提示风险）。如有担忧，请移步github查看源码并自行编译。"
-  },
-  "plugins": {
-    "internal": [
-      {
-        "name": "me.jbusdriver.plugin.magnet",
-        "versionCode": 2,
-        "versionName": "1.0.0",
-        "url": "https://github.com/Ccixyj/jbusfile/blob/master/plugins/me.jbusdriver.plugin.magnet_1.0.0.apk?raw=true",
-        "desc": "[内部插件]磁力链接解析插件",
-        "eTag": "FE950EAAEF74590B8FC59B354F27EB9F"
-      }
-    ]
   }
 }
