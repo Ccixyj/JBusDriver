@@ -32,14 +32,6 @@ class MagnetListPresenterImpl(private val magnetLoaderKey: String, private val k
         val cache = Flowable.concat(CacheLoader.justLru(cacheKey), CacheLoader.justDisk(cacheKey)).firstElement().map { GSON.fromJson<List<Magnet>>(it) }.toFlowable()
         val loaderFormNet = Flowable.fromCallable {
             // 插件 Phantom Service 代理对象
-            Main_Worker.schedule {
-                PhantomServiceManager.getService(MagnetPluginHelper.MagnetService)
-                val service = PhantomServiceManager.getService(MagnetPluginHelper.PluginMagnetPackage, MagnetPluginHelper.MagnetService)
-                val pluginInfo = PhantomCore.getInstance().findPluginInfoByPackageName(MagnetPluginHelper.PluginMagnetPackage)
-                        ?: error("not service info")
-                val pluginContext = PluginContext(this.mView?.viewContext as Activity, pluginInfo).createContext()
-                service.call("pluginToast", pluginContext)
-            }
             return@fromCallable try {
                 GSON.fromJson<List<Magnet>>(MagnetPluginHelper.getMagnets(magnetLoaderKey, keyword, page))
             } catch (e: Exception) {
