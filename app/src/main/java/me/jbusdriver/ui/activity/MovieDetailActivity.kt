@@ -131,7 +131,7 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
             this.tv_movie_look_magnet.paintFlags = this.tv_movie_look_magnet.paintFlags or Paint.UNDERLINE_TEXT_FLAG
             setOnClickListener {
                 val code = movie?.code?.replace("-", " ") ?: url.urlPath
-                CC.obtainBuilder(C.Components.Manget)
+                CC.obtainBuilder(C.Components.Magnet)
                         .setActionName("show")
                         .addParam("keyword", code)
                         .build().call().let { res ->

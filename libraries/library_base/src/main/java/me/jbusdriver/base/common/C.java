@@ -20,12 +20,14 @@ public class C {
 
     public static class Components {
 
-        /**
-         * @see "me.jbusdriver.component.magnet.ComponentMagnet"
-         */
-        public static final String Manget = "C_Magnet";
+        public static final String Magnet = "C_Magnet";
         public static final String PluginManager = "C_PluginManager";
     }
+    public static class PluginComponents {
+
+        public static final String PluginMagnet = "C_Magnet_Plugin";
+    }
+
 
 
     public static class SavedInstanceState {

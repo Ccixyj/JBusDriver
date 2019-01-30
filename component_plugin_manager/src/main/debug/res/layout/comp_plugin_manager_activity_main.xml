@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="debug.activity.CompPluginManagerActivity">
 
 
@@ -13,4 +14,14 @@
         android:layout_height="wrap_content"
         android:text="check and install" />
 
-</android.support.constraint.ConstraintLayout>
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/material_16dp" />
+    <TextView
+        android:id="@+id/comp_plugin_manager_iv_test_callback"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="iv_test_callback" />
+
+
+</LinearLayout>

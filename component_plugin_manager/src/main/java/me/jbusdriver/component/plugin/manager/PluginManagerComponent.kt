@@ -6,6 +6,7 @@ import com.billy.cc.core.component.CC
 import com.billy.cc.core.component.CCResult
 import com.billy.cc.core.component.IComponent
 import com.google.gson.JsonObject
+import io.reactivex.Flowable
 import me.jbusdriver.base.GSON
 import me.jbusdriver.base.IO_Worker
 import me.jbusdriver.base.JBusManager
@@ -17,6 +18,7 @@ import me.jbusdriver.component.plugin.manager.task.PluginService
 import java.io.File
 import java.nio.channels.FileChannel
 import java.security.MessageDigest
+import java.util.concurrent.TimeUnit
 
 
 class PluginManagerComponent : IComponent {
@@ -30,9 +32,7 @@ class PluginManagerComponent : IComponent {
         try {
             when (val action = cc.actionName) {
                 "plugins.init" -> {
-                    // it.third?.internal?.takeIf { it.isNotEmpty() }?.let { plugins ->
-                    //
-                    //             }
+                    // async call
                     val plugins = GSON.fromJson(cc.getParamItem<JsonObject>("plugins"), Plugins::class.java)
                             ?: error("need param plugins ")
                     //后续操作
@@ -42,7 +42,7 @@ class PluginManagerComponent : IComponent {
                     return true
                 }
                 else -> {
-                    CC.sendCCResult(cc.callId, CCResult.error("not config action $action for $cc"))
+                    CC.sendCCResult(cc.callId, CCResult.errorUnsupportedActionName())
                 }
             }
         } catch (e: Exception) {
@@ -60,14 +60,16 @@ class PluginManagerComponent : IComponent {
             val need = checkPluginNeedUpdate(it)
             validateDownload(cc, need)
         }
-        CC.sendCCResult(cc.callId, CCResult.success())
+        if (!cc.isStopped) {
+            CC.sendCCResult(cc.callId, CCResult.success())
+        }
     }
 
     /**
      * plugin not download
      */
     private fun validateDownload(cc: CC, plugins: List<PluginBean>) {
-        val donw = mutableListOf<PluginBean>()
+        val downs = mutableListOf<PluginBean>()
         plugins.forEach { plugin ->
             try {
                 //set dir
@@ -84,18 +86,18 @@ class PluginManagerComponent : IComponent {
                         checkInstall(plugin, file)
                     } else {
                         //需要重新下载
-                        donw.add(plugin)
+                        downs.add(plugin)
                     }
                 } else {
-                    donw.add(plugin)
+                    downs.add(plugin)
                 }
             } catch (e: Exception) {
                 KLog.w("validateDownload error $e")
             }
         }
         //donwload
-        if (donw.isNotEmpty()) {
-            downloadPlugins(cc.context, donw)
+        if (downs.isNotEmpty()) {
+            downloadPlugins(cc.context, downs)
         }
 
     }
@@ -122,8 +124,12 @@ class PluginManagerComponent : IComponent {
 
         }
 
+        /**
+         * 获取支持插件的组件相关信息
+         * @see me.jbusdriver.base.common.C.PluginComponents
+         */
         private fun checkPluginsInComps() {
-            com.wlqq.phantom.library.utils.ReflectUtils.getAllFieldsList(C.Components::class.java).mapNotNull {
+            com.wlqq.phantom.library.utils.ReflectUtils.getAllFieldsList(C.PluginComponents::class.java).mapNotNull {
                 try {
                     if (it.type != String::class.java) return@mapNotNull null
                     val name = it.get(C.Components::class.java)?.toString()
@@ -156,7 +162,7 @@ class PluginManagerComponent : IComponent {
         }
 
         /**
-         * call comp install for  plugin file
+         * call comp install for  plugin file at last
          */
         fun checkInstall(plugin: PluginBean, pluginFile: File) {
             KLog.i("checkInstall $plugin for $pluginFile Plugin_Maps -> $Plugin_Maps")

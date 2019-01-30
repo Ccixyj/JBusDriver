@@ -161,7 +161,7 @@ class SettingActivity : BaseActivity() {
 
     private fun loadMagNetConfig() {
 
-        CC.obtainBuilder(C.Components.Manget)
+        CC.obtainBuilder(C.Components.Magnet)
                 .setActionName("allKeys")
                 .setTimeout(3000L)
                 .build().callAsyncCallbackOnMainThread { cc, result ->
@@ -170,7 +170,7 @@ class SettingActivity : BaseActivity() {
                     } else emptyList()
 
 
-                    val configKeyRes = CC.obtainBuilder(C.Components.Manget)
+                    val configKeyRes = CC.obtainBuilder(C.Components.Magnet)
                             .setActionName("config.getKeys")
                             .build().call()
                     val configMagnetKeys = if (configKeyRes.isSuccess) {
@@ -216,7 +216,7 @@ class SettingActivity : BaseActivity() {
                                                 ?: emptyList()
                                         selectCopy.clear()
                                         selectCopy.addAll(selected)
-                                        CC.obtainBuilder(C.Components.Manget)
+                                        CC.obtainBuilder(C.Components.Magnet)
                                                 .setActionName("config.save")
                                                 .addParam("keys", selectCopy)
                                                 .build().callAsync()

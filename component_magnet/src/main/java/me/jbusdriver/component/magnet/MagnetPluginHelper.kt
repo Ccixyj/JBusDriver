@@ -7,18 +7,19 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.base.JBusManager
 import me.jbusdriver.base.KLog
-import me.jbusdriver.base.phantom.installAssetsPlugins
-import me.jbusdriver.base.phantom.installFromFile
+import me.jbusdriver.base.phantom.*
+import me.jbusdriver.component.magnet.MagnetPluginHelper.call
 import java.io.File
 import java.util.concurrent.TimeUnit
 
 object MagnetPluginHelper {
 
     const val PluginMagnetPackage = "me.jbusdriver.plugin.magnet"
-    // 插件 Phantom Service 的 'NAME'
     const val MagnetService = "MagnetService"
     const val MagnetJavaService = "MagnetJavaService"
-    val MagnetLoaders = mutableListOf<String>()
+
+
+    private val MagnetLoaders = mutableSetOf<String>()
 
     private val plugin
         get() = PhantomCore.getInstance().findPluginInfoByPackageName(PluginMagnetPackage)
@@ -51,70 +52,46 @@ object MagnetPluginHelper {
 
     }
 
-    fun call(method: String, service: String = MagnetService, vararg p: Any): Any? {
-        plugin?.let {
-            // 插件 Phantom Service 代理对象
-            val service = PhantomServiceManager.getService(PluginMagnetPackage, service)
-            if (service == null) {
-                KLog.w("not find service ")
-                return@let
-            }
-            try {
-                val res = service.call(method, *p)
-                KLog.d("call $method form service $service result $res")
-                return res
-            } catch (e: Exception) {
-                KLog.w("call $method form service $service error $e")
-            }
-
-
-        } ?: kotlin.run {
-            KLog.w("not find plugin info")
+    /**
+     * call method throw exception value if null or error
+     */
+    @Throws
+    fun call(method: String, serviceName: String = MagnetService, vararg p: Any): Any {
+        if (plugin == null) {
+            error("call method $method but plugin is null ,is plugin init success?")
         }
-        return null
+        return pluginServiceCall(PluginMagnetPackage, serviceName, method, p)
     }
 
 
-    fun getLoaderKeys() = kotlin.run {
-        if (MagnetLoaders.isNotEmpty()) {
-            return@run MagnetLoaders.toList()
+    fun getLoaderKeys() = kotlin.runCatching {
+        if (MagnetLoaders.size > 3) {
+            return@runCatching MagnetLoaders.toList()
         }
         (call("getLoaderKeys") as? List<String>)?.onEach { t ->
             KLog.i("find loader $t")
             MagnetLoaders.add(t)
         }
-        return@run MagnetLoaders.toList()
-    }
+        return@runCatching MagnetLoaders.toList()
+    }.getOrNull() ?: MagnetLoaders.toList()
 
-    fun getMagnets(loader: String, key: String, page: Int): String {
-        return try {
-            call(method = "getMagnets", p = *arrayOf(loader, key, page)).toString()
-        } catch (e: Exception) {
-            KLog.w("getMagnets error $e")
-            ""
-        }
-    }
+    fun getMagnets(loader: String, key: String, page: Int) = kotlin.runCatching {
+        call(method = "getMagnets", p = *arrayOf(loader, key, page)).toString()
+    }.getOrNull() ?: ""
 
-    fun fetchMagLink(magnetLoaderKey: String, url: String): String {
-        return try {
-            call(method = "fetchMagLink", p = *arrayOf(magnetLoaderKey, url)).toString()
-        } catch (e: Exception) {
-            KLog.w("fetchMagLink error $e")
-            ""
-        }
-    }
+    fun fetchMagLink(magnetLoaderKey: String, url: String) =
+            kotlin.runCatching { call(method = "fetchMagLink", p = *arrayOf(magnetLoaderKey, url)).toString() }
+                    .getOrNull() ?: ""
 
 
-    fun hasNext(magnetLoaderKey: String): Boolean {
-        return try {
-            (call(method = "hasNext", p = *arrayOf(magnetLoaderKey)) as? Boolean) ?: false
-        } catch (e: Exception) {
-            KLog.w("fetchMagLink error $e")
-            false
-        }
-    }
+    fun hasNext(magnetLoaderKey: String) = kotlin.runCatching {
+        (call(method = "hasNext", p = *arrayOf(magnetLoaderKey)) as? Boolean) ?: false
+    }.getOrNull() ?: false
 
-    fun installApkFile(f: File) =installFromFile(f)
+    /**
+     * 从file安装apk插件
+     */
+    fun installApkFile(f: File) = installFromFile(f)
 
 
 }

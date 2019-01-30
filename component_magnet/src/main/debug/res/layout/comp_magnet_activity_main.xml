@@ -110,11 +110,24 @@
         android:layout_height="wrap_content"
         android:text="iv_test_has_next" />
 
-
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/material_16dp" />
     <TextView
         android:id="@+id/iv_test_update"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="iv_test_update" />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/material_16dp" />
+
+    <TextView
+        android:id="@+id/iv_test_callback"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="iv_test_callback" />
+
 
 </LinearLayout>

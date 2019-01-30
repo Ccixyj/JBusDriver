@@ -33,7 +33,7 @@ class CompMagnetMainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.comp_magnet_activity_main)
         comp_magnet_tv_go_search.setOnClickListener {
-            CC.obtainBuilder(C.Components.Manget)
+            CC.obtainBuilder(C.Components.Magnet)
                     .setActionName("show")
                     .addParam("keyword", et_keyword.text.toString())
                     .build().callAsync { cc, result ->
@@ -42,29 +42,29 @@ class CompMagnetMainActivity : BaseActivity() {
         }
         //"allKeys" , "config.save" , "config.getKeys"
         comp_magnet_tv_get_all.setOnClickListener {
-            CC.obtainBuilder(C.Components.Manget)
+            CC.obtainBuilder(C.Components.Magnet)
                     .setActionName("allKeys")
                     .build().callAsync()
 
-            CC.obtainBuilder(C.Components.Manget)
+            CC.obtainBuilder(C.Components.Magnet)
                     .setActionName("config.save")
                     .addParam("keys", MagnetPluginHelper.getLoaderKeys())
                     .build().call()
         }
 
         comp_magnet_tv_config_get.setOnClickListener {
-            CC.obtainBuilder(C.Components.Manget)
+            CC.obtainBuilder(C.Components.Magnet)
                     .setActionName("config.getKeys")
                     .build().call()
         }
 
         comp_magnet_tv_config_save.setOnClickListener {
-            val res = CC.obtainBuilder(C.Components.Manget)
+            val res = CC.obtainBuilder(C.Components.Magnet)
                     .setActionName("allKeys")
                     .build().call()
             if (res.isSuccess) {
                 val allKeys = res.getDataItem<List<String>>("keys")
-                CC.obtainBuilder(C.Components.Manget)
+                CC.obtainBuilder(C.Components.Magnet)
                         .setActionName("config.save")
                         .addParam("keys", allKeys.shuffled().take((Math.random() * allKeys.size).toInt().coerceIn(1..allKeys.size)))
                         .build().call()
@@ -167,6 +167,15 @@ class CompMagnetMainActivity : BaseActivity() {
 
 
         }
+
+        val callBack = { p: Int -> KLog.d("progress ---> $p") }
+        iv_test_callback.setOnClickListener {
+            CC.obtainBuilder(C.Components.PluginManager)
+                    .setActionName("callback")
+                    .setParamWithNoKey(callBack)
+                    .build().callAsync()
+        }
+
         MagnetPluginHelper.init()
     }
 

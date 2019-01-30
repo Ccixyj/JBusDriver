@@ -53,6 +53,15 @@ class CompPluginManagerActivity : AppCompatActivity() {
                     .build().callAsync()
 
         }
+
+
+        val callBack = { p: Int -> KLog.d("progress ---> $p") }
+        comp_plugin_manager_iv_test_callback.setOnClickListener {
+            CC.obtainBuilder(C.Components.PluginManager)
+                    .setActionName("callback")
+                    .setParamWithNoKey(callBack)
+                    .build().call()
+        }
     }
 
 }

@@ -2,6 +2,7 @@ package me.jbusdriver.base.phantom
 
 import android.content.res.AssetManager
 import com.tbruyelle.rxpermissions2.RxPermissions
+import com.wlqq.phantom.communication.PhantomServiceManager
 import com.wlqq.phantom.library.PhantomCore
 import com.wlqq.phantom.library.pm.PluginInfo
 import io.reactivex.Flowable
@@ -90,4 +91,26 @@ fun installFromFile(f: File): Flowable<PluginInfo> {
         }
     }.subscribeOn(Schedulers.io()).timeout(10, TimeUnit.SECONDS)
 
+}
+
+
+/**
+ * call method throw exception value if null or error
+ */
+@Throws
+fun pluginServiceCall(packageName: String, serviceName: String, method: String, vararg p: Any): Any {
+    // 插件 Phantom Service 代理对象
+    val service = PhantomServiceManager.getService(packageName, serviceName)
+    if (service == null) {
+        KLog.w("not find service")
+        error("call method $method but plugin is null")
+    }
+    try {
+        val res = service.call(method, *p)
+        KLog.d("call $method form service $service result $res")
+        if (res == null) error("call method $method but plugin is null")
+        return res
+    } catch (e: Exception) {
+        error(e)
+    }
 }
