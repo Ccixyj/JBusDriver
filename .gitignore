@@ -40,13 +40,12 @@ captures/
 *.iml
 *.ipr
 *.iws
-.idea/
+
 
 
 
 # Keystore files
 *.jks
-/.idea/
 /gradle/
 /projectFilesBackup/.idea
 /gradlew
