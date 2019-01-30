@@ -8,7 +8,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import com.bumptech.glide.request.target.DrawableImageViewTarget
-import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_actress_attr.view.*
@@ -18,11 +17,9 @@ import me.jbusdriver.base.*
 import me.jbusdriver.base.common.C
 import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.common.toGlideNoHostUrl
-import me.jbusdriver.http.RecommendService
 import me.jbusdriver.mvp.LinkListContract
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.model.CollectModel
-import me.jbusdriver.mvp.model.RecommendModel
 import me.jbusdriver.mvp.presenter.LinkAbsPresenterImpl
 import me.jbusdriver.mvp.presenter.MovieLinkPresenterImpl
 import me.jbusdriver.ui.activity.SearchResultActivity
@@ -34,7 +31,7 @@ import me.jbusdriver.ui.activity.SearchResultActivity
 class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkListView {
     private val link by lazy {
         val link = arguments?.getSerializable(C.BundleKey.Key_1)  as? ILink
-                ?: error("no link data ")
+            ?: error("no link data ")
         link
     }
 
@@ -111,8 +108,10 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         }
     }
 
-    override fun createPresenter() = MovieLinkPresenterImpl(link, arguments?.getBoolean(LinkableListFragment.MENU_SHOW_ALL, false)
-            ?: false, isHistory)
+    override fun createPresenter() = MovieLinkPresenterImpl(
+        link, arguments?.getBoolean(LinkableListFragment.MENU_SHOW_ALL, false)
+            ?: false, isHistory
+    )
 
     override fun <T> showContent(data: T?) {
         if (data is String) {
@@ -145,7 +144,8 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
         is ActressAttrs -> {
             this.viewContext.inflate(R.layout.layout_actress_attr).apply {
                 //img
-                GlideApp.with(this@LinkedMovieListFragment).load(data.imageUrl.toGlideNoHostUrl).into(DrawableImageViewTarget(this.iv_actress_avatar))
+                GlideApp.with(this@LinkedMovieListFragment).load(data.imageUrl.toGlideNoHostUrl)
+                    .into(DrawableImageViewTarget(this.iv_actress_avatar))
                 //title
                 this.ll_attr_container.addView(generateTextView().apply {
                     textSize = 16f
@@ -197,43 +197,6 @@ class LinkedMovieListFragment : AbsMovieListFragment(), LinkListContract.LinkLis
     private fun generateTextView() = TextView(this.viewContext).apply {
         textSize = 11.5f
         setTextColor(R.color.secondText.toColorInt())
-    }
-
-    @Deprecated("not user any more")
-    fun likeIt(act: ActressInfo, reason: String?) {
-        val likeKey = act.name + act.avatar.urlPath + "_like"
-        Flowable.fromCallable {
-            RecommendModel.getLikeCount(likeKey)
-        }.flatMap { c ->
-            if (c > 3) {
-                error("一天点赞最多3次")
-            }
-            val uid = RecommendModel.getLikeUID(likeKey)
-            val params = arrayMapof(
-                    "uid" to uid,
-                    "key" to RecommendBean(name = act.name, img = act.avatar, url = act.link).toJsonString()
-            )
-            if (reason.orEmpty().isNotBlank()) {
-                params.put("reason", reason)
-            }
-            RecommendService.INSTANCE.putRecommends(params).map {
-                RecommendModel.save(likeKey, uid)
-                it["message"]?.asString?.let {
-                    toast(it)
-                }
-                return@map Math.min(c + 1, 3)
-            }
-        }.onErrorReturn {
-            it.message?.let {
-                toast(it)
-            }
-            3
-        }.compose(SchedulersCompat.io()).subscribeWith(object : SimpleSubscriber<Int>() {
-            override fun onNext(t: Int) {
-                super.onNext(t)
-//                changeLikeIcon(t)
-            }
-        }).addTo(rxManager)
     }
 
 

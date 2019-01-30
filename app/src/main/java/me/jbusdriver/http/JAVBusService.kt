@@ -1,9 +1,7 @@
 package me.jbusdriver.http
 
-import android.support.v4.util.ArrayMap
 import io.reactivex.Flowable
-import me.jbusdriver.base.*
-import me.jbusdriver.base.common.C
+import me.jbusdriver.base.KLog
 import me.jbusdriver.base.http.NetClient
 import me.jbusdriver.common.JBus
 import retrofit2.http.GET
@@ -31,8 +29,6 @@ interface JAVBusService {
         }
 
 
-
-
         var INSTANCE = getInstance(defaultFastUrl)
         fun getInstance(source: String): JAVBusService {
             KLog.d("instances : ${JBus.JBusServices}, defaultFastUrl : $defaultFastUrl")
@@ -42,7 +38,8 @@ interface JAVBusService {
             }
         }
 
-        private fun createService(url: String) = NetClient.getRetrofit(if (!url.endsWith("/")) "$url/" else url).create(JAVBusService::class.java)
+        private fun createService(url: String) =
+            NetClient.getRetrofit(if (!url.endsWith("/")) "$url/" else url).create(JAVBusService::class.java)
 
     }
 }

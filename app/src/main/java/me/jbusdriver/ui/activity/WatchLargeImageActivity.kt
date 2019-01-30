@@ -11,12 +11,13 @@ import android.support.v4.view.ViewPager
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Priority
-import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.gyf.barlibrary.ImmersionBar
+import io.reactivex.Single
 import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_watch_large_image.*
 import kotlinx.android.synthetic.main.layout_large_image_item.view.*
@@ -26,10 +27,9 @@ import me.jbusdriver.base.common.BaseActivity
 import me.jbusdriver.base.http.OnProgressListener
 import me.jbusdriver.base.http.addProgressListener
 import me.jbusdriver.base.http.removeProgressListener
-import me.jbusdriver.common.JBus
 import me.jbusdriver.common.toGlideNoHostUrl
 import java.io.File
-import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 
 
 class WatchLargeImageActivity : BaseActivity() {
@@ -40,10 +40,11 @@ class WatchLargeImageActivity : BaseActivity() {
     private val imageViewList: ArrayList<View> = arrayListOf()
     private val index by lazy { intent.getIntExtra(INDEX, -1) }
     private val imageSaveDir by lazy {
+        val packageName = JBusManager.context.packageName
         val pathSuffix = File.separator + "download" + File.separator + "image" + File.separator
-        createDir(Environment.getExternalStorageDirectory().absolutePath + File.separator + JBusManager.context.applicationContext.packageName + pathSuffix)
-                ?: createDir(JBus.externalCacheDir.absolutePath + JBus.packageName + pathSuffix)
-                ?: error("cant not create collect dir in anywhere")
+        createDir(Environment.getExternalStorageDirectory().absolutePath + File.separator + packageName + pathSuffix)
+            ?: createDir(JBusManager.context.cacheDir.absolutePath + packageName + pathSuffix)
+            ?: error("cant not create collect dir in anywhere")
 
     }
 
@@ -81,20 +82,19 @@ class WatchLargeImageActivity : BaseActivity() {
         this@WatchLargeImageActivity.tv_url_index.text = "${vp_largeImage.currentItem + 1} / ${imageViewList.size}"
 
         iv_download.setOnClickListener {
-            Schedulers.io().scheduleDirect {
-                val url = urls[vp_largeImage.currentItem]
-                GlideApp.with(this).download(url).submit()
-                        .get(3, TimeUnit.SECONDS)?.let {
-                            //copy file
-                            val fileName = url.urlPath.split("/").lastOrNull() ?: kotlin.run {
-                                toast("无法获取文件名！")
-                                return@scheduleDirect
-                            }
-                            val target = File(imageSaveDir + fileName)
-                            it.copyTo(target, true)
-                            toast("文件保存至${imageSaveDir}下")
-                        }
-            }.addTo(rxManager)
+            val url = urls[vp_largeImage.currentItem]
+            val fileName = url.urlPath.split("/").lastOrNull()
+                ?: "${System.currentTimeMillis()}-${(Random(System.currentTimeMillis()).nextFloat() * 1000).toInt()}.jpg"
+            Single.fromFuture(GlideApp.with(this).download(url).submit())
+                .doOnSuccess { source ->
+                    //copy file
+                    val target = File(imageSaveDir + fileName)
+                    source.copyTo(target, true)
+                }.subscribeOn(Schedulers.io())
+                .subscribeBy {
+                    toast("文件保存至${imageSaveDir}下")
+                }
+                .addTo(rxManager)
 
         }
 
@@ -141,49 +141,55 @@ class WatchLargeImageActivity : BaseActivity() {
             }
             val url = urls[position]
             GlideApp.with(this@WatchLargeImageActivity)
-                    .load(url.toGlideNoHostUrl)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .error(R.drawable.ic_image_error)
-                    .fitCenter()
-                    .priority(priority)
-                    .into(object : DrawableImageViewTarget(view.pv_image_large) {
-                        val listener = object : OnProgressListener {
-                            override fun onProgress(imageUrl: String, bytesRead: Long, totalBytes: Long, isDone: Boolean, exception: Exception?) {
-                                if (totalBytes == 0L) return
-                                if (url != imageUrl) return
-                                postMain {
-                                    //view.pb_hor_progress.visibility = View.GONE
-                                    view.pb_hor_progress.isIndeterminate = false
-                                    view.pb_hor_progress?.apply {
-                                        progress = (bytesRead * 1.0f / totalBytes * 100.0f).toInt()
-                                    }
-                                }
-
-                                if (isDone) {
-                                    removeProgressListener(this)
+                .load(url.toGlideNoHostUrl)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .error(R.drawable.ic_image_error)
+                .fitCenter()
+                .priority(priority)
+                .into(object : DrawableImageViewTarget(view.pv_image_large) {
+                    val listener = object : OnProgressListener {
+                        override fun onProgress(
+                            imageUrl: String,
+                            bytesRead: Long,
+                            totalBytes: Long,
+                            isDone: Boolean,
+                            exception: Exception?
+                        ) {
+                            if (totalBytes == 0L) return
+                            if (url != imageUrl) return
+                            postMain {
+                                //view.pb_hor_progress.visibility = View.GONE
+                                view.pb_hor_progress.isIndeterminate = false
+                                view.pb_hor_progress?.apply {
+                                    progress = (bytesRead * 1.0f / totalBytes * 100.0f).toInt()
                                 }
                             }
-                        }
 
-                        override fun onLoadStarted(placeholder: Drawable?) {
-                            view.pb_hor_progress?.animate()?.alpha(1f)?.setDuration(300)?.start()
-                            addProgressListener(listener)
-                            super.onLoadStarted(placeholder)
+                            if (isDone) {
+                                removeProgressListener(this)
+                            }
                         }
+                    }
 
-                        override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                            super.onResourceReady(resource, transition)
-                            view.pb_hor_progress?.animate()?.alpha(0f)?.setDuration(300)?.start()
-                            removeProgressListener(listener)
-                        }
+                    override fun onLoadStarted(placeholder: Drawable?) {
+                        view.pb_hor_progress?.animate()?.alpha(1f)?.setDuration(300)?.start()
+                        addProgressListener(listener)
+                        super.onLoadStarted(placeholder)
+                    }
 
-                        override fun onLoadFailed(errorDrawable: Drawable?) {
-                            super.onLoadFailed(errorDrawable)
-                            removeProgressListener(listener)
-                            view.pb_hor_progress?.animate()?.alpha(0f)?.setDuration(300)?.start()
-                        }
+                    override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                        super.onResourceReady(resource, transition)
+                        view.pb_hor_progress?.animate()?.alpha(0f)?.setDuration(300)?.start()
+                        removeProgressListener(listener)
+                    }
 
-                    })
+                    override fun onLoadFailed(errorDrawable: Drawable?) {
+                        super.onLoadFailed(errorDrawable)
+                        removeProgressListener(listener)
+                        view.pb_hor_progress?.animate()?.alpha(0f)?.setDuration(300)?.start()
+                    }
+
+                })
         }
 
         override fun getCount() = imageViewList.size//返回页卡的数量

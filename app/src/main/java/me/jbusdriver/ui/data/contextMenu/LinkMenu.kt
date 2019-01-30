@@ -2,9 +2,12 @@ package me.jbusdriver.ui.data.contextMenu
 
 import me.jbusdriver.base.copy
 import me.jbusdriver.base.toast
-import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.common.JBus
-import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.common.bean.ILink
+import me.jbusdriver.mvp.bean.ActressInfo
+import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.mvp.bean.convertDBItem
+import me.jbusdriver.mvp.bean.des
 import me.jbusdriver.mvp.model.CollectModel
 
 /**

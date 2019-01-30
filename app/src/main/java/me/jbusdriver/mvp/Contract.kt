@@ -26,7 +26,8 @@ interface LinkListContract {
         fun moveTo(pos: Int)
     }
 
-    interface LinkListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<LinkListView>, BasePresenter.LazyLoaderPresenter {
+    interface LinkListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<LinkListView>,
+        BasePresenter.LazyLoaderPresenter {
         fun setAll(iaAll: Boolean)
         fun jumpToPage(page: Int)
         fun isPrevPageLoaded(currentPage: Int): Boolean
@@ -43,7 +44,7 @@ interface MovieDetailContract {
     }
 
     interface MovieDetailPresenter : BasePresenter<MovieDetailView>, BasePresenter.RefreshPresenter {
-        fun loadDetail(url:String)
+        fun loadDetail(url: String)
 
     }
 }
@@ -61,16 +62,20 @@ interface MineCollectContract {
 
 interface MovieCollectContract {
     interface MovieCollectView : BaseView.BaseListWithRefreshView
-    interface MovieCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<MovieCollectView>, BaseCollectPresenter<Movie>, BasePresenter.LazyLoaderPresenter
+    interface MovieCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<MovieCollectView>,
+        BaseCollectPresenter<Movie>, BasePresenter.LazyLoaderPresenter
 }
+
 interface ActressCollectContract {
     interface ActressCollectView : BaseView.BaseListWithRefreshView
-    interface ActressCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<ActressCollectView>,BaseCollectPresenter<ActressInfo>, BasePresenter.LazyLoaderPresenter
+    interface ActressCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<ActressCollectView>,
+        BaseCollectPresenter<ActressInfo>, BasePresenter.LazyLoaderPresenter
 }
 
 interface LinkCollectContract {
     interface LinkCollectView : BaseView.BaseListWithRefreshView
-    interface LinkCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<LinkCollectView>, BaseCollectPresenter<ILink>, BasePresenter.LazyLoaderPresenter
+    interface LinkCollectPresenter : BasePresenter.BaseRefreshLoadMorePresenter<LinkCollectView>,
+        BaseCollectPresenter<ILink>, BasePresenter.LazyLoaderPresenter
 }
 
 interface GenrePageContract {
@@ -87,22 +92,22 @@ interface GenreListContract {
         val data: List<Genre>
     }
 
-    interface GenreListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<GenreListView>, BasePresenter.LazyLoaderPresenter
+    interface GenreListPresenter : BasePresenter.BaseRefreshLoadMorePresenter<GenreListView>,
+        BasePresenter.LazyLoaderPresenter
 }
 
 
 interface HistoryContract {
     interface HistoryView : BaseView.BaseListWithRefreshView
 
-    interface HistoryPresenter : BasePresenter.BaseRefreshLoadMorePresenter<HistoryView>, BasePresenter.LazyLoaderPresenter {
+    interface HistoryPresenter : BasePresenter.BaseRefreshLoadMorePresenter<HistoryView>,
+        BasePresenter.LazyLoaderPresenter {
         fun clearHistory()
     }
 }
 
 
-
-
 interface HotRecommendContract {
     interface HotRecommendView : BaseView.BaseListWithRefreshView
-    interface HotRecommendPresenter :  BasePresenter.BaseRefreshLoadMorePresenter<HotRecommendView>
+    interface HotRecommendPresenter : BasePresenter.BaseRefreshLoadMorePresenter<HotRecommendView>
 }

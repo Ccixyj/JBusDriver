@@ -16,7 +16,13 @@ import me.jbusdriver.ui.activity.MovieListActivity
 import java.util.*
 
 
-data class LinkItem(val type: Int, val createTime: Date, val key: String, val jsonStr: String, var categoryId: Int = -1) {
+data class LinkItem(
+    val type: Int,
+    val createTime: Date,
+    val key: String,
+    val jsonStr: String,
+    var categoryId: Int = -1
+) {
     var id: Int? = null
     fun getLinkValue(): ILink = doGet(type, jsonStr).also {
         if (it is ICollectCategory) {
@@ -57,11 +63,17 @@ private fun doGet(type: Int, jsonStr: String) = when (type) {
     return@let when (data) {
         is Movie -> {
             val linkChange = data.link.urlHost != host
-            data.copy(link = if (linkChange) data.link.replace(data.link.urlHost, host) else data.link, imageUrl = /*if (imageChange) data.imageUrl.replace(data.imageUrl.urlHost, imageHost) else*/ data.imageUrl)
+            data.copy(
+                link = if (linkChange) data.link.replace(data.link.urlHost, host) else data.link,
+                imageUrl = /*if (imageChange) data.imageUrl.replace(data.imageUrl.urlHost, imageHost) else*/ data.imageUrl
+            )
         }
         is ActressInfo -> {
             val linkChange = data.link.urlHost != host
-            data.copy(link = if (linkChange) data.link.replace(data.link.urlHost, host) else data.link, avatar = /*if (imageChange) data.avatar.replace(data.avatar.urlHost, imageHost) else*/ data.avatar)
+            data.copy(
+                link = if (linkChange) data.link.replace(data.link.urlHost, host) else data.link,
+                avatar = /*if (imageChange) data.avatar.replace(data.avatar.urlHost, imageHost) else*/ data.avatar
+            )
         }
         else -> {
             val linkChange = data.link.urlHost != host

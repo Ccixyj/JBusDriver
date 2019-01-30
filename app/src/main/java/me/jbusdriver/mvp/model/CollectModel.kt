@@ -49,14 +49,14 @@ object CollectModel {
             if (cs.size > 1) {
                 JBusManager.manager.lastOrNull()?.get()?.let {
                     MaterialDialog.Builder(it).title("选择添加的分类")
-                            .items(cs.map { it.name })
-                            .itemsCallbackSingleChoice(0) { _, _, i, _ ->
-                                data.categoryId = cs.getOrNull(i)?.id ?: -1
-                                callBack.invoke(addToCollect(data))
-                                return@itemsCallbackSingleChoice true
-                            }
-                            .positiveText("添加")
-                            .show()
+                        .items(cs.map { it.name })
+                        .itemsCallbackSingleChoice(0) { _, _, i, _ ->
+                            data.categoryId = cs.getOrNull(i)?.id ?: -1
+                            callBack.invoke(addToCollect(data))
+                            return@itemsCallbackSingleChoice true
+                        }
+                        .positiveText("添加")
+                        .show()
                     return
                 }
             }

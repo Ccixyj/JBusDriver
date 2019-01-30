@@ -21,9 +21,10 @@ class MagnetPagerListActivity : BaseActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setTitle(keyword)
         //go to SearchResultPagesFragment
-        supportFragmentManager.beginTransaction().replace(R.id.comp_magnet_fl_magnet_list, MagnetPagersFragment().apply {
-            arguments = Bundle().apply { putString(C.BundleKey.Key_1, keyword) }
-        }).commit()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.comp_magnet_fl_magnet_list, MagnetPagersFragment().apply {
+                arguments = Bundle().apply { putString(C.BundleKey.Key_1, keyword) }
+            }).commit()
 
     }
 
@@ -33,7 +34,7 @@ class MagnetPagerListActivity : BaseActivity() {
 
     companion object {
         fun start(cc: CC, keyword: String) {
-            context.startActivity(CCUtil.createNavigateIntent(cc,MagnetPagerListActivity::class.java).apply {
+            context.startActivity(CCUtil.createNavigateIntent(cc, MagnetPagerListActivity::class.java).apply {
                 putExtra(C.BundleKey.Key_1, keyword)
             })
         }

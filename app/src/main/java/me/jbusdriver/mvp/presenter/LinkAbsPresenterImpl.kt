@@ -22,7 +22,8 @@ import java.util.concurrent.ConcurrentSkipListMap
 /**
  * Created by Administrator on 2017/5/10 0010.
  */
-abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistory: Boolean = false) : AbstractRefreshLoadMorePresenterImpl<LinkListContract.LinkListView, T>(), LinkListContract.LinkListPresenter {
+abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistory: Boolean = false) :
+    AbstractRefreshLoadMorePresenterImpl<LinkListContract.LinkListView, T>(), LinkListContract.LinkListPresenter {
 
 
     private var reachableMaxPage = 1
@@ -30,7 +31,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
     open var IsAll = false
     private val urlPath by lazy {
         (linkData as? PageLink)?.link?.urlPath?.replace("/${linkData.page}", "")
-                ?: linkData.link.urlPath
+            ?: linkData.link.urlPath
     }
     private val dataPageCache by lazy { ConcurrentSkipListMap<Int, Int>() }
 
@@ -63,13 +64,14 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
     /*不需要*/
     override val model: BaseModel<Int, Document> = object : BaseModel<Int, Document> {
         override fun requestFor(t: Int) =
-                (if (t == 1) linkData.link else "${linkData.link.urlHost}$urlPath/$t").let {
-                    JAVBusService.INSTANCE.get(it, if (IsAll) "all" else null).addUserCase().map { Jsoup.parse(it) }
-                }.doOnNext {
-                    if (t == 1) CacheLoader.lru.put("${linkData.link}$IsAll", it.toString())
-                }
+            (if (t == 1) linkData.link else "${linkData.link.urlHost}$urlPath/$t").let {
+                JAVBusService.INSTANCE.get(it, if (IsAll) "all" else null).addUserCase().map { Jsoup.parse(it) }
+            }.doOnNext {
+                if (t == 1) CacheLoader.lru.put("${linkData.link}$IsAll", it.toString())
+            }
 
-        override fun requestFromCache(t: Int) = Flowable.concat(CacheLoader.justLru(linkData.link).map { Jsoup.parse(it) }, requestFor(t))
+        override fun requestFromCache(t: Int) =
+            Flowable.concat(CacheLoader.justLru(linkData.link).map { Jsoup.parse(it) }, requestFor(t))
                 .firstOrError().toFlowable()
     }
 
@@ -137,8 +139,10 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
         try {
             when (mView?.pageMode) {
                 AppConfiguration.PageMode.Page -> {
-                    reachableMaxPage = Math.max(reachableMaxPage, pageInfo.referPages.lastOrNull()
-                            ?: 1)
+                    reachableMaxPage = Math.max(
+                        reachableMaxPage, pageInfo.referPages.lastOrNull()
+                            ?: 1
+                    )
 
                     if (pageInfo.activePage == 1) {
                         //第一页:正常加载 ,因为会重置列表,不需要考虑其他情况
@@ -202,7 +206,10 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
     override val currentPageInfo: PageInfo
         get() {
             //   lock.readLock().lock()
-            return pageInfo.copy(activePage = Math.max(1, pageInfo.activePage), referPages = (1..reachableMaxPage).toList()).apply {
+            return pageInfo.copy(
+                activePage = Math.max(1, pageInfo.activePage),
+                referPages = (1..reachableMaxPage).toList()
+            ).apply {
                 // lock.readLock().unlock()
             }
         }

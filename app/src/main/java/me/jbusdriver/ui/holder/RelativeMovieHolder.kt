@@ -11,15 +11,17 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
-import me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_relative_movies.view.*
-import me.jbusdriver.base.*
+import me.jbusdriver.R
+import me.jbusdriver.base.GlideApp
+import me.jbusdriver.base.SchedulersCompat
+import me.jbusdriver.base.SimpleSubscriber
+import me.jbusdriver.base.inflate
 import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.activity.MovieDetailActivity
-
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import java.util.*
@@ -32,7 +34,8 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
     val view by lazy {
         weakRef.get()?.let {
             it.inflate(R.layout.layout_detail_relative_movies).apply {
-                rv_recycle_relative_movies.layoutManager = LinearLayoutManager(it, LinearLayoutManager.HORIZONTAL, false)
+                rv_recycle_relative_movies.layoutManager =
+                        LinearLayoutManager(it, LinearLayoutManager.HORIZONTAL, false)
                 relativeAdapter.bindToRecyclerView(rv_recycle_relative_movies)
                 rv_recycle_relative_movies.isNestedScrollingEnabled = true
                 relativeAdapter.setOnItemClickListener { _, v, position ->
@@ -53,11 +56,11 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
                         }
 
                         MaterialDialog.Builder(view.context).title(movie.title)
-                                .items(action.keys)
-                                .itemsCallback { _, _, _, text ->
-                                    action[text]?.invoke(movie)
-                                }
-                                .show()
+                            .items(action.keys)
+                            .itemsCallback { _, _, _, text ->
+                                action[text]?.invoke(movie)
+                            }
+                            .show()
                     }
                     return@setOnItemLongClickListener true
                 }
@@ -68,18 +71,24 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
     private val relativeAdapter: BaseQuickAdapter<Movie, BaseViewHolder> by lazy {
         object : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.layout_detail_relative_movies_item) {
             override fun convert(holder: BaseViewHolder, item: Movie) {
-                GlideApp.with(holder.itemView.context).asBitmap().load(item.imageUrl.toGlideNoHostUrl).into(object : BitmapImageViewTarget(holder.getView(R.id.iv_relative_movie_image)) {
-                    override fun setResource(resource: Bitmap?) {
-                        super.setResource(resource)
-                        resource?.let {
+                GlideApp.with(holder.itemView.context).asBitmap().load(item.imageUrl.toGlideNoHostUrl)
+                    .into(object : BitmapImageViewTarget(holder.getView(R.id.iv_relative_movie_image)) {
+                        override fun setResource(resource: Bitmap?) {
+                            super.setResource(resource)
+                            resource?.let {
 
-                            Flowable.just(it).map {
-                                Palette.from(it).generate()
-                            }.compose(SchedulersCompat.io())
+                                Flowable.just(it).map {
+                                    Palette.from(it).generate()
+                                }.compose(SchedulersCompat.io())
                                     .subscribeWith(object : SimpleSubscriber<Palette>() {
                                         override fun onNext(it: Palette) {
                                             super.onNext(it)
-                                            val swatch = listOfNotNull(it.lightMutedSwatch, it.lightVibrantSwatch, it.vibrantSwatch, it.mutedSwatch)
+                                            val swatch = listOfNotNull(
+                                                it.lightMutedSwatch,
+                                                it.lightVibrantSwatch,
+                                                it.vibrantSwatch,
+                                                it.mutedSwatch
+                                            )
                                             if (!swatch.isEmpty()) {
                                                 swatch[randomNum(swatch.size)].let {
                                                     holder.setBackgroundColor(R.id.tv_relative_movie_title, it.rgb)
@@ -91,14 +100,14 @@ class RelativeMovieHolder(context: Context) : BaseHolder(context) {
                                     .addTo(rxManager)
 
 
-                            /*  Palette.from(it).generate {
+                                /*  Palette.from(it).generate {
 
-                              }.let {
-                                  paletteReq.add(it)
-                              }*/
+                                  }.let {
+                                      paletteReq.add(it)
+                                  }*/
+                            }
                         }
-                    }
-                })
+                    })
                 //加载名字
                 holder.setText(R.id.tv_relative_movie_title, item.title)
             }

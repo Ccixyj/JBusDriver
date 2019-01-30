@@ -10,20 +10,21 @@ import me.jbusdriver.base.mvp.model.BaseModel
 import me.jbusdriver.base.mvp.presenter.BasePresenterImpl
 import me.jbusdriver.common.isEndWithXyzHost
 import me.jbusdriver.http.JAVBusService
-import me.jbusdriver.mvp.bean.parseMovieDetails
 import me.jbusdriver.mvp.MovieDetailContract
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.MovieDetail
 import me.jbusdriver.mvp.bean.checkUrl
+import me.jbusdriver.mvp.bean.parseMovieDetails
 import org.jsoup.Jsoup
 
-class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenterImpl<MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailPresenter {
+class MovieDetailPresenterImpl(private val fromHistory: Boolean) :
+    BasePresenterImpl<MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailPresenter {
 
 
     private val loadFromNet = { s: String ->
         JAVBusService.INSTANCE.get(s).addUserCase().map { parseMovieDetails(Jsoup.parse(it)) }
-                .doOnNext { s.urlPath.let { key -> CacheLoader.cacheDisk(key to it) } }
-                ?: Flowable.empty()
+            .doOnNext { s.urlPath.let { key -> CacheLoader.cacheDisk(key to it) } }
+            ?: Flowable.empty()
     }
     val model: BaseModel<String, MovieDetail> = object : AbstractBaseModel<String, MovieDetail>(loadFromNet) {
         override fun requestFromCache(t: String): Flowable<MovieDetail> {
@@ -66,28 +67,30 @@ class MovieDetailPresenterImpl(private val fromHistory: Boolean) : BasePresenter
 
     override fun loadDetail(url: String) {
         model.requestFromCache(url).compose(SchedulersCompat.io())
-                .compose(SchedulersCompat.io())
-                .doOnTerminate { mView?.dismissLoading() }
-                .subscribeWith(object : SimpleSubscriber<MovieDetail>() {
-                    override fun onStart() {
-                        super.onStart()
-                        mView?.showLoading()
-                    }
+            .compose(SchedulersCompat.io())
+            .doOnTerminate { mView?.dismissLoading() }
+            .subscribeWith(object : SimpleSubscriber<MovieDetail>() {
+                override fun onStart() {
+                    super.onStart()
+                    mView?.showLoading()
+                }
 
-                    override fun onNext(t: MovieDetail) {
-                        super.onNext(t)
-                        mView?.showContent(t.generateMovie(url))
-                        mView?.showContent(t)
-                    }
-                })
-                .addTo(rxManager)
+                override fun onNext(t: MovieDetail) {
+                    super.onNext(t)
+                    mView?.showContent(t.generateMovie(url))
+                    mView?.showContent(t)
+                }
+            })
+            .addTo(rxManager)
 
     }
 
     fun MovieDetail.generateMovie(url: String): Movie {
         val code = headers.first().value.trim()
-        return Movie(title.replace(code, "", true).trim(), this.cover.replace("cover", "thumb").replace("_b", ""),
-                code, headers.component2().value, url)
+        return Movie(
+            title.replace(code, "", true).trim(), this.cover.replace("cover", "thumb").replace("_b", ""),
+            code, headers.component2().value, url
+        )
     }
 
 

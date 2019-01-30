@@ -106,16 +106,19 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                 }
 
                 multiTypeDelegate
-                        .registerItemType(-1, R.layout.layout_pager_section_item)
-                        .registerItemType(OrientationHelper.VERTICAL, R.layout.layout_page_line_movie_item)
-                        .registerItemType(OrientationHelper.HORIZONTAL, R.layout.layout_page_line_movie_item_hor)
+                    .registerItemType(-1, R.layout.layout_pager_section_item)
+                    .registerItemType(OrientationHelper.VERTICAL, R.layout.layout_page_line_movie_item)
+                    .registerItemType(OrientationHelper.HORIZONTAL, R.layout.layout_page_line_movie_item_hor)
 
             }
 
             private val dp8 by lazy { this@AbsMovieListFragment.viewContext.dpToPx(8f) }
             private val backColors = listOf(0xff2195f3.toInt(), 0xff4caf50.toInt(), 0xffff0030.toInt()) //蓝,绿,红
 
-            private fun genLp() = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, this@AbsMovieListFragment.viewContext.dpToPx(24f)).apply {
+            private fun genLp() = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                this@AbsMovieListFragment.viewContext.dpToPx(24f)
+            ).apply {
                 gravity = Gravity.CENTER_VERTICAL
             }
 
@@ -126,8 +129,10 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                         holder.setText(R.id.tv_page_num, item.title)
                         val currentPage = item.title.toIntOrNull()
                         if (currentPage != null) {
-                            holder.setGone(R.id.tv_load_prev, mBasePresenter?.isPrevPageLoaded(currentPage)
-                                    ?: true)
+                            holder.setGone(
+                                R.id.tv_load_prev, mBasePresenter?.isPrevPageLoaded(currentPage)
+                                    ?: true
+                            )
                             holder.getView<View>(R.id.tv_load_prev)?.setOnClickListener {
                                 mBasePresenter?.jumpToPage(currentPage - 1)
                             }
@@ -146,12 +151,14 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
 
 
                         holder.setText(R.id.tv_movie_title, item.title)
-                                .setText(R.id.tv_movie_date, item.date)
-                                .setText(R.id.tv_movie_code, item.code)
+                            .setText(R.id.tv_movie_date, item.date)
+                            .setText(R.id.tv_movie_code, item.code)
 
 
-                        GlideApp.with(this@AbsMovieListFragment).load(item.imageUrl.toGlideNoHostUrl).placeholder(R.drawable.ic_place_holder)
-                                .error(R.drawable.ic_place_holder).centerCrop().into(DrawableImageViewTarget(holder.getView(R.id.iv_movie_img)))
+                        GlideApp.with(this@AbsMovieListFragment).load(item.imageUrl.toGlideNoHostUrl)
+                            .placeholder(R.drawable.ic_place_holder)
+                            .error(R.drawable.ic_place_holder).centerCrop()
+                            .into(DrawableImageViewTarget(holder.getView(R.id.iv_movie_img)))
 
 
                         with(holder.getView<LinearLayout>(R.id.ll_movie_hot)) {
@@ -164,8 +171,10 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                                     }
                                     it.setPadding(dp8, 0, dp8, 0)
                                     it.background = GradientDrawable().apply {
-                                        setColor(backColors.getOrNull(index % 3)
-                                                ?: backColors.first())
+                                        setColor(
+                                            backColors.getOrNull(index % 3)
+                                                ?: backColors.first()
+                                        )
                                         cornerRadius = if (holder.itemViewType == OrientationHelper.HORIZONTAL) {
                                             dp8 * 1.5f
                                         } else {
@@ -190,8 +199,9 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                             }
                             it.setOnLongClickListener {
 
-                                val action = (if (CollectModel.has(item.convertDBItem())) LinkMenu.movieActions.minus("收藏")
-                                else LinkMenu.movieActions.minus("取消收藏")).toMutableMap()
+                                val action =
+                                    (if (CollectModel.has(item.convertDBItem())) LinkMenu.movieActions.minus("收藏")
+                                    else LinkMenu.movieActions.minus("取消收藏")).toMutableMap()
                                 if (AppConfiguration.enableCategory) {
                                     val ac = action.remove("收藏")
                                     if (ac != null) {
@@ -199,12 +209,12 @@ abstract class AbsMovieListFragment : LinkableListFragment<Movie>() {
                                     }
                                 }
                                 MaterialDialog.Builder(viewContext).title(item.code)
-                                        .content(item.title)
-                                        .items(action.keys)
-                                        .itemsCallback { _, _, _, text ->
-                                            action[text]?.invoke(item)
-                                        }
-                                        .show()
+                                    .content(item.title)
+                                    .items(action.keys)
+                                    .itemsCallback { _, _, _, text ->
+                                        action[text]?.invoke(item)
+                                    }
+                                    .show()
                                 return@setOnLongClickListener true
                             }
 

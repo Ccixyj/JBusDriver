@@ -16,20 +16,22 @@ fun parseMovieDetails(doc: Document): MovieDetail {
     val headersContainer = roeMovie.select(".info")
 
     headersContainer.select("p[class!=star-show]:has(span:not([class=genre])):not(:has(a))")
-            .mapTo(headers) {
-                val split = it.text().split(":")
-                Header(split.first(), split.getOrNull(1)?.trim() ?: "", "")
-            } //解析普通信息
+        .mapTo(headers) {
+            val split = it.text().split(":")
+            Header(split.first(), split.getOrNull(1)?.trim() ?: "", "")
+        } //解析普通信息
 
     val content = doc.select("[name=description]").attr("content")?.trim() ?: ""
     headers.add(Header("描述", content, ""))
 
     headersContainer.select("p[class!=star-show]:has(span:not([class=genre])):has(a)")
-            .mapTo(headers) {
-                val split = it.text().split(":")
-                Header(split.first(), split.getOrNull(1)?.trim()
-                        ?: "", it.select("p a").attr("href"))
-            }//解析附带跳转信息
+        .mapTo(headers) {
+            val split = it.text().split(":")
+            Header(
+                split.first(), split.getOrNull(1)?.trim()
+                    ?: "", it.select("p a").attr("href")
+            )
+        }//解析附带跳转信息
 
     val geneses = headersContainer.select(".genre:has(a[href*=genre])").map {
         Genre(it.text(), it.select("a").attr("href"))

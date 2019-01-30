@@ -3,8 +3,8 @@ package me.jbusdriver.ui.holder
 import android.content.Context
 import android.view.View
 import com.xiaofeng.flowlayoutmanager.FlowLayoutManager
-import me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_genres.view.*
+import me.jbusdriver.R
 import me.jbusdriver.base.inflate
 import me.jbusdriver.mvp.bean.Genre
 import me.jbusdriver.ui.adapter.GenreAdapter

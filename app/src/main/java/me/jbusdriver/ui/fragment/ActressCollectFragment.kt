@@ -16,15 +16,15 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
-import me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_menu_op_head.view.*
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
+import me.jbusdriver.R
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.AppBaseRecycleFragment
-import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.common.bean.db.ActressCategory
 import me.jbusdriver.common.bean.db.Category
+import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.mvp.ActressCollectContract
 import me.jbusdriver.mvp.bean.ActressDBType
@@ -34,14 +34,15 @@ import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.mvp.presenter.ActressCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieListActivity
-
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import me.jbusdriver.ui.holder.CollectDirEditHolder
 import java.util.*
 
 
-class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.ActressCollectPresenter, ActressCollectContract.ActressCollectView, CollectLinkWrapper<ActressInfo>>(), ActressCollectContract.ActressCollectView {
+class ActressCollectFragment :
+    AppBaseRecycleFragment<ActressCollectContract.ActressCollectPresenter, ActressCollectContract.ActressCollectView, CollectLinkWrapper<ActressInfo>>(),
+    ActressCollectContract.ActressCollectView {
 
 
     override val swipeView: SwipeRefreshLayout? by lazy { sr_refresh }
@@ -61,15 +62,21 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                         val actress = requireNotNull(item.linkBean)
 
                         GlideApp.with(holder.itemView.context).asBitmap().load(actress.avatar.toGlideNoHostUrl)
-                                .error(R.drawable.ic_nowprinting).into(object : BitmapImageViewTarget(holder.getView(R.id.iv_actress_avatar)) {
-                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                Flowable.just(resource).map {
-                                    Palette.from(resource).generate()
-                                }.compose(SchedulersCompat.io())
+                            .error(R.drawable.ic_nowprinting)
+                            .into(object : BitmapImageViewTarget(holder.getView(R.id.iv_actress_avatar)) {
+                                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                    Flowable.just(resource).map {
+                                        Palette.from(resource).generate()
+                                    }.compose(SchedulersCompat.io())
                                         .subscribeWith(object : SimpleSubscriber<Palette>() {
                                             override fun onNext(t: Palette) {
                                                 super.onNext(t)
-                                                val swatch = listOfNotNull(t.lightMutedSwatch, t.lightVibrantSwatch, t.vibrantSwatch, t.mutedSwatch)
+                                                val swatch = listOfNotNull(
+                                                    t.lightMutedSwatch,
+                                                    t.lightVibrantSwatch,
+                                                    t.vibrantSwatch,
+                                                    t.mutedSwatch
+                                                )
                                                 if (!swatch.isEmpty()) {
                                                     swatch[randomNum(swatch.size)].let {
                                                         holder.setBackgroundColor(R.id.tv_actress_name, it.rgb)
@@ -80,9 +87,9 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                                         })
                                         .addTo(rxManager)
 
-                                super.onResourceReady(resource, transition)
-                            }
-                        })
+                                    super.onResourceReady(resource, transition)
+                                }
+                            })
                         //加载名字
                         holder.setText(R.id.tv_actress_name, actress.name)
 
@@ -92,7 +99,10 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
 
                     else -> {
                         setFullSpan(holder)
-                        holder.setText(R.id.tv_nav_menu_name, " ${if (item.isExpanded) "👇" else "👆"} " + item.category.name)
+                        holder.setText(
+                            R.id.tv_nav_menu_name,
+                            " ${if (item.isExpanded) "👇" else "👆"} " + item.category.name
+                        )
                     }
                 }
 
@@ -100,7 +110,7 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
         }.apply {
             setOnItemClickListener { _, view, position ->
                 val data = this@ActressCollectFragment.adapter.getData().getOrNull(position)
-                        ?: return@setOnItemClickListener
+                    ?: return@setOnItemClickListener
                 data.linkBean?.let {
                     MovieListActivity.start(viewContext, it)
                 } ?: apply {
@@ -123,14 +133,14 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                             if (last.isNotEmpty()) {
                                 action.put("移到分类...") { link ->
                                     MaterialDialog.Builder(viewContext).title("选择目录")
-                                            .items(last.map { it.name })
-                                            .itemsCallbackSingleChoice(-1) { _, _, w, _ ->
-                                                last.getOrNull(w)?.let {
-                                                    mBasePresenter?.setCategory(link, it)
-                                                    mBasePresenter?.onRefresh()
-                                                }
-                                                return@itemsCallbackSingleChoice true
-                                            }.show()
+                                        .items(last.map { it.name })
+                                        .itemsCallbackSingleChoice(-1) { _, _, w, _ ->
+                                            last.getOrNull(w)?.let {
+                                                mBasePresenter?.setCategory(link, it)
+                                                mBasePresenter?.onRefresh()
+                                            }
+                                            return@itemsCallbackSingleChoice true
+                                        }.show()
                                 }
                             }
                         }
@@ -147,11 +157,11 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
                     }
 
                     MaterialDialog.Builder(viewContext).title(act.name)
-                            .items(action.keys)
-                            .itemsCallback { _, _, _, text ->
-                                action[text]?.invoke(act)
-                            }
-                            .show()
+                        .items(action.keys)
+                        .itemsCallback { _, _, _, text ->
+                            action[text]?.invoke(act)
+                        }
+                        .show()
 
                 }
                 true
@@ -168,8 +178,10 @@ class ActressCollectFragment : AppBaseRecycleFragment<ActressCollectContract.Act
         super.onCreateOptionsMenu(menu, inflater)
         menu?.findItem(R.id.action_collect_dir_edit)?.setOnMenuItemClickListener {
 
-            holder.showDialogWithData(mBasePresenter?.collectGroupMap?.keys?.toList()
-                    ?: emptyList()) { delActionsParams, addActionsParams ->
+            holder.showDialogWithData(
+                mBasePresenter?.collectGroupMap?.keys?.toList()
+                    ?: emptyList()
+            ) { delActionsParams, addActionsParams ->
                 KLog.d("$delActionsParams $addActionsParams")
                 if (delActionsParams.isNotEmpty()) {
                     delActionsParams.forEach {

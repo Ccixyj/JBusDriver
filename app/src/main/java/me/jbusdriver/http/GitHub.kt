@@ -3,10 +3,6 @@ package me.jbusdriver.http
 import io.reactivex.Flowable
 import me.jbusdriver.base.http.NetClient
 import retrofit2.http.GET
-import retrofit2.http.Url
-import okhttp3.ResponseBody
-import retrofit2.http.Streaming
-
 
 
 /**
@@ -21,7 +17,7 @@ interface GitHub {
 //    fun announceWithPlugin(): Flowable<String>
 
 
-    companion object{
+    companion object {
         val INSTANCE by lazy { NetClient.getRetrofit("https://raw.githubusercontent.com/").create(GitHub::class.java) }
     }
 }

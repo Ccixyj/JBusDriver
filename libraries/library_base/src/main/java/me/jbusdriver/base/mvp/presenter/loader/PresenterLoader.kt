@@ -2,7 +2,6 @@ package me.jbusdriver.base.mvp.presenter.loader
 
 import android.content.Context
 import android.support.v4.content.Loader
-import me.jbusdriver.base.KLog
 import me.jbusdriver.base.mvp.presenter.BasePresenter
 
 /**
@@ -29,7 +28,7 @@ class PresenterLoader<T : BasePresenter<*>>
 
  * @param context used to retrieve the application context.
  */
-(context: Context, private val factory: PresenterFactory<T>) : Loader<T>(context) {
+    (context: Context, private val factory: PresenterFactory<T>) : Loader<T>(context) {
 
     private var presenter: T? = null
 

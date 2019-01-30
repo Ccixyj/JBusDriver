@@ -37,7 +37,16 @@ const val GenreDBType = 4
 const val SearchLinkDBType = 5
 const val PageLinkDBType = 6
 
-val AllDBType by lazy { listOf(MovieDBType, ActressDBType, HeaderDBType, GenreDBType, SearchLinkDBType, PageLinkDBType) }
+val AllDBType by lazy {
+    listOf(
+        MovieDBType,
+        ActressDBType,
+        HeaderDBType,
+        GenreDBType,
+        SearchLinkDBType,
+        PageLinkDBType
+    )
+}
 
 val ILink.DBtype: Int
     inline get() = when (this) {
@@ -55,11 +64,13 @@ val ILink.uniqueKey: String
         else -> link.urlPath
     }
 
-fun ILink.convertDBItem() = LinkItem(this.DBtype, Date(), this.uniqueKey, this.toJsonString(),
-        when {
-            this is ICollectCategory && this.categoryId > 0 -> categoryId
-            else -> AllFirstParentDBCategoryGroup[this.DBtype]?.id ?: LinkCategory.id ?: -1
-        })
+fun ILink.convertDBItem() = LinkItem(
+    this.DBtype, Date(), this.uniqueKey, this.toJsonString(),
+    when {
+        this is ICollectCategory && this.categoryId > 0 -> categoryId
+        else -> AllFirstParentDBCategoryGroup[this.DBtype]?.id ?: LinkCategory.id ?: -1
+    }
+)
 
 data class PageLink(val page: Int, val title: String /*XX类型*/, override val link: String) : ILink {
     @Transient

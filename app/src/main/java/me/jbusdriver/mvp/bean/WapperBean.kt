@@ -1,20 +1,23 @@
 package me.jbusdriver.mvp.bean
 
 import com.chad.library.adapter.base.entity.AbstractExpandableItem
-import me.jbusdriver.common.bean.db.Category
 import me.jbusdriver.common.bean.ICollectCategory
+import me.jbusdriver.common.bean.db.Category
 import me.jbusdriver.db.service.CategoryService
 
 /**
  * Created by Administrator on 2017/9/26 0026.
  */
 
-class CollectLinkWrapper<T : ICollectCategory>(private val categoryDec: Category? = null, val linkBean: T? = null) : AbstractExpandableItem<CollectLinkWrapper<T>>() {
+class CollectLinkWrapper<T : ICollectCategory>(private val categoryDec: Category? = null, val linkBean: T? = null) :
+    AbstractExpandableItem<CollectLinkWrapper<T>>() {
 
 
     val category by lazy {
-        categoryDec ?: CategoryService.getById(subItems?.firstOrNull()?.linkBean?.categoryId
-                ?: error("category exist and  id must > 0"))
+        categoryDec ?: CategoryService.getById(
+            subItems?.firstOrNull()?.linkBean?.categoryId
+                ?: error("category exist and  id must > 0")
+        )
         ?: error("category exist and  id must > 0")
     }
 

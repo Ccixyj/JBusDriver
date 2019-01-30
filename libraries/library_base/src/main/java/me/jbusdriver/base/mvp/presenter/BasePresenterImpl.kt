@@ -10,7 +10,8 @@ import kotlin.properties.Delegates
  */
 open class BasePresenterImpl<V : BaseView> : BasePresenter<V> {
 
-    @JvmField protected var mView: V? = null
+    @JvmField
+    protected var mView: V? = null
     private var isFirstStart: Boolean by Delegates.notNull()
     protected val rxManager by lazy { CompositeDisposable() }
     private val TAG: String by lazy { this.javaClass.simpleName }

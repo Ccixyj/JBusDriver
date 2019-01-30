@@ -1,4 +1,4 @@
-package me.jbusdriver.db
+package me.jbusdriver.base.db
 
 import android.content.Context
 import android.content.ContextWrapper
@@ -17,7 +17,7 @@ abstract class SDCardDatabaseContext
  *
  * @param base 上下文环境
  */
-(base: Context) : ContextWrapper(base) {
+    (base: Context) : ContextWrapper(base) {
 
 
     /*根目录下目录，数据库所在目录*/
@@ -89,8 +89,11 @@ abstract class SDCardDatabaseContext
 
     }
 
-    override fun openOrCreateDatabase(name: String, mode: Int, factory: SQLiteDatabase.CursorFactory?) = SQLiteDatabase.openOrCreateDatabase(getDatabasePath(name), null)
+    override fun openOrCreateDatabase(name: String, mode: Int, factory: SQLiteDatabase.CursorFactory?) =
+        SQLiteDatabase.openOrCreateDatabase(getDatabasePath(name), null)
 
-    override fun openOrCreateDatabase(name: String, mode: Int, factory: SQLiteDatabase.CursorFactory?,
-                                      errorHandler: DatabaseErrorHandler?) = SQLiteDatabase.openOrCreateDatabase(getDatabasePath(name), null)
+    override fun openOrCreateDatabase(
+        name: String, mode: Int, factory: SQLiteDatabase.CursorFactory?,
+        errorHandler: DatabaseErrorHandler?
+    ) = SQLiteDatabase.openOrCreateDatabase(getDatabasePath(name), null)
 }

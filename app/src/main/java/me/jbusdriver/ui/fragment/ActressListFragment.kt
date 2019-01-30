@@ -29,7 +29,7 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
 
     private val link by lazy {
         val link = arguments?.getSerializable(C.BundleKey.Key_1)  as? ILink
-                ?: error("no link data ")
+            ?: error("no link data ")
         link
     }
 
@@ -79,7 +79,12 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
 
     private val isSearch by lazy { link is SearchLink && activity != null && activity is SearchResultActivity }
 
-    override val layoutManager: RecyclerView.LayoutManager  by lazy { StaggeredGridLayoutManager(viewContext.spanCount, OrientationHelper.VERTICAL) }
+    override val layoutManager: RecyclerView.LayoutManager  by lazy {
+        StaggeredGridLayoutManager(
+            viewContext.spanCount,
+            OrientationHelper.VERTICAL
+        )
+    }
     override val adapter by lazy { ActressInfoAdapter(rxManager) }
 
     override fun createPresenter() = ActressLinkPresenterImpl(link)
@@ -164,7 +169,8 @@ class ActressListFragment : LinkableListFragment<ActressInfo>() {
         }
 
         fun newInstance(type: DataSourceType) = ActressListFragment().apply {
-            val urls = CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { GSON.fromJson<ArrayMap<String, String>>(it) }
+            val urls =
+                CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { GSON.fromJson<ArrayMap<String, String>>(it) }
                     ?: arrayMapof()
             val url = urls[type.key] ?: JAVBusService.defaultFastUrl+"/actresses"
             arguments = Bundle().apply {

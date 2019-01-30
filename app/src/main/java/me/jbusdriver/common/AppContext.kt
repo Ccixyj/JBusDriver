@@ -28,20 +28,21 @@ class AppContext : Application() {
 
     val JBusServices by lazy { arrayMapof<String, JAVBusService>() }
     private val isDebug by lazy {
-        BuildConfig.DEBUG || File(Environment.getExternalStorageDirectory().absolutePath + File.separator +
-                packageName
-                + File.separator + "debug"
+        BuildConfig.DEBUG || File(
+            Environment.getExternalStorageDirectory().absolutePath + File.separator +
+                    packageName
+                    + File.separator + "debug"
 
         ).exists()
     }
 
     private val phantomHostConfig by lazy {
         PhantomCore.Config()
-                .setCheckSignature(!isDebug)
-                .setCheckVersion(!BuildConfig.DEBUG)
-                .setDebug(isDebug)
-                .setLogLevel(if (isDebug) android.util.Log.VERBOSE else android.util.Log.WARN)
-                .setLogReporter(LogReporterImpl())
+            .setCheckSignature(!isDebug)
+            .setCheckVersion(!BuildConfig.DEBUG)
+            .setDebug(isDebug)
+            .setLogLevel(if (isDebug) android.util.Log.VERBOSE else android.util.Log.WARN)
+            .setLogReporter(LogReporterImpl())
     }
 
 
@@ -64,12 +65,12 @@ class AppContext : Application() {
             initializeStetho(this) //chrome://inspect/#devices
 
             val formatStrategy = PrettyFormatStrategy.newBuilder()
-                    .showThreadInfo(true)  // (Optional) Whether to show thread info or not. Default true
-                    .methodCount(2)         // (Optional) How many method line to show. Default 2
-                    .methodOffset(0)        // (Optional) Hides internal method calls up to offset. Default 5
-                    // .logStrategy(customLog) // (Optional) Changes the log strategy to print out. Default LogCat
-                    .tag("old_driver")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
-                    .build()
+                .showThreadInfo(true)  // (Optional) Whether to show thread info or not. Default true
+                .methodCount(2)         // (Optional) How many method line to show. Default 2
+                .methodOffset(0)        // (Optional) Hides internal method calls up to offset. Default 5
+                // .logStrategy(customLog) // (Optional) Changes the log strategy to print out. Default LogCat
+                .tag("old_driver")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
+                .build()
 
             Logger.addLogAdapter(object : AndroidLogAdapter(formatStrategy) {
                 override fun isLoggable(priority: Int, tag: String?) = isDebug

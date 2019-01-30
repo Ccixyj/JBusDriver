@@ -6,8 +6,8 @@ import com.squareup.sqlbrite3.BriteDatabase
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.getIntByColumn
 import me.jbusdriver.base.getStringByColumn
-import me.jbusdriver.common.bean.db.CategoryTable
 import me.jbusdriver.common.bean.db.Category
+import me.jbusdriver.common.bean.db.CategoryTable
 import java.util.concurrent.TimeUnit
 
 /**
@@ -35,12 +35,16 @@ class CategoryDao(private val db: BriteDatabase) {
     }
 
     fun findById(cId: Int): Category? {
-        return db.query("select * from ${CategoryTable.TABLE_NAME}  where ${CategoryTable.COLUMN_ID} = ?", cId.toString())?.let {
-                KLog.d("cursor :$it")
-            if (it.moveToFirst()){
-                return  Category(it.getStringByColumn(CategoryTable.COLUMN_NAME)
+        return db.query(
+            "select * from ${CategoryTable.TABLE_NAME}  where ${CategoryTable.COLUMN_ID} = ?",
+            cId.toString()
+        )?.let {
+            KLog.d("cursor :$it")
+            if (it.moveToFirst()) {
+                return Category(
+                    it.getStringByColumn(CategoryTable.COLUMN_NAME)
                         ?: "", it.getIntByColumn(CategoryTable.COLUMN_P_ID),
-                        it.getStringByColumn(CategoryTable.COLUMN_TREE) ?: ""
+                    it.getStringByColumn(CategoryTable.COLUMN_TREE) ?: ""
                 ).apply {
                     id = it.getIntByColumn(CategoryTable.COLUMN_ID)
                 }
@@ -52,23 +56,35 @@ class CategoryDao(private val db: BriteDatabase) {
     }
 
     private fun toCategory(it: Cursor): Category {
-        return Category(it.getStringByColumn(CategoryTable.COLUMN_NAME)
+        return Category(
+            it.getStringByColumn(CategoryTable.COLUMN_NAME)
                 ?: "", it.getIntByColumn(CategoryTable.COLUMN_P_ID),
-                it.getStringByColumn(CategoryTable.COLUMN_TREE) ?: ""
+            it.getStringByColumn(CategoryTable.COLUMN_TREE) ?: ""
         ).apply {
             id = it.getIntByColumn(CategoryTable.COLUMN_ID)
         }
     }
 
     fun queryTreeByLike(like: String): List<Category> {
-        return db.createQuery(CategoryTable.TABLE_NAME, "select * from ${CategoryTable.TABLE_NAME}  where ${CategoryTable.COLUMN_TREE} like ? ORDER BY ${CategoryTable.COLUMN_ORDER} DESC", like)
-                .mapToList { toCategory(it) }.timeout(6, TimeUnit.SECONDS).blockingFirst()
+        return db.createQuery(
+            CategoryTable.TABLE_NAME,
+            "select * from ${CategoryTable.TABLE_NAME}  where ${CategoryTable.COLUMN_TREE} like ? ORDER BY ${CategoryTable.COLUMN_ORDER} DESC",
+            like
+        )
+            .mapToList { toCategory(it) }.timeout(6, TimeUnit.SECONDS).blockingFirst()
     }
 
     fun update(category: Category): Boolean {
         KLog.d("update $category")
         return try {
-            ioBlock { db.update(CategoryTable.TABLE_NAME, SQLiteDatabase.CONFLICT_REPLACE, category.cv(true), CategoryTable.COLUMN_ID + " = ${category.id!!} ") > 0 }
+            ioBlock {
+                db.update(
+                    CategoryTable.TABLE_NAME,
+                    SQLiteDatabase.CONFLICT_REPLACE,
+                    category.cv(true),
+                    CategoryTable.COLUMN_ID + " = ${category.id!!} "
+                ) > 0
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             false

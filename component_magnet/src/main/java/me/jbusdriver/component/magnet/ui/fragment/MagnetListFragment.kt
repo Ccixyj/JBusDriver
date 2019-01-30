@@ -22,6 +22,7 @@ import me.jbusdriver.component.magnet.mvp.presenter.MagnetListPresenterImpl
 
 
 const val MagnetFormatPrefix = "magnet:?xt=urn:btih:"
+
 class MagnetListFragment : AppBaseRecycleFragment<MagnetListPresenter, MagnetListView, Magnet>(), MagnetListView {
 
     private val keyword by lazy { arguments?.getString(C.BundleKey.Key_1) ?: error("need keyword") }
@@ -43,9 +44,9 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListPresenter, MagnetLis
 
             override fun convert(helper: BaseViewHolder, item: Magnet) {
                 helper.setText(R.id.comp_magnet_tv_magnet_title, item.name)
-                        .setText(R.id.comp_magnet_tv_magnet_date, item.date)
-                        .setText(R.id.comp_magnet_tv_magnet_size, item.size)
-                        .addOnClickListener(R.id.comp_magnet_iv_magnet_copy)
+                    .setText(R.id.comp_magnet_tv_magnet_date, item.date)
+                    .setText(R.id.comp_magnet_tv_magnet_size, item.size)
+                    .addOnClickListener(R.id.comp_magnet_iv_magnet_copy)
             }
 
         }.apply {
@@ -66,13 +67,13 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListPresenter, MagnetLis
                 (adapter.data.getOrNull(position) as? Magnet)?.let { magnet ->
                     showMagnetLoading()
                     tryGetMagnetLink(magnet)
-                            .compose(SchedulersCompat.io()).subscribeBy {
-                                this@MagnetListFragment.adapter.setData(position, magnet.copy(link = it))
-                                KLog.d("magnet $it")
-                                viewContext.browse(it) {
-                                    placeDialogHolder?.dismiss()
-                                }
-                            }.addTo(rxManager)
+                        .compose(SchedulersCompat.io()).subscribeBy {
+                            this@MagnetListFragment.adapter.setData(position, magnet.copy(link = it))
+                            KLog.d("magnet $it")
+                            viewContext.browse(it) {
+                                placeDialogHolder?.dismiss()
+                            }
+                        }.addTo(rxManager)
 
                 }
 

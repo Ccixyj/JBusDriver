@@ -69,12 +69,14 @@ fun Context.dpToPx(dp: Float) = (dp * this.displayMetrics.density + 0.5).toInt()
 fun Context.pxToDp(px: Float) = (px / this.displayMetrics.density + 0.5).toInt()
 
 
-private fun inflateView(context: Context, layoutResId: Int, parent: ViewGroup?,
-                        attachToRoot: Boolean): View =
-        LayoutInflater.from(context).inflate(layoutResId, parent, attachToRoot)
+private fun inflateView(
+    context: Context, layoutResId: Int, parent: ViewGroup?,
+    attachToRoot: Boolean
+): View =
+    LayoutInflater.from(context).inflate(layoutResId, parent, attachToRoot)
 
 fun Context.inflate(layoutResId: Int, parent: ViewGroup? = null, attachToRoot: Boolean = false): View =
-        inflateView(this, layoutResId, parent, attachToRoot)
+    inflateView(this, layoutResId, parent, attachToRoot)
 //endregion
 
 
@@ -91,10 +93,10 @@ fun Any?.toJsonString() = GSON.toJson(this)
 
 //region http
 fun <R> Flowable<R>.addUserCase(sec: Int = 12) =
-        this.timeout(sec.toLong(), TimeUnit.SECONDS, Schedulers.io()) //超时
-                .subscribeOn(Schedulers.io())
-                .take(1)
-                .filter { it != null }
+    this.timeout(sec.toLong(), TimeUnit.SECONDS, Schedulers.io()) //超时
+        .subscribeOn(Schedulers.io())
+        .take(1)
+        .filter { it != null }
 //endregion
 
 //region screenWidth
@@ -146,7 +148,8 @@ fun Context.paste(): String? {
 val Context.packageInfo: PackageInfo?
     get() = try {
         this.packageManager.getPackageInfo(
-                this.packageName, 0)
+            this.packageName, 0
+        )
     } catch (e: Exception) {
         e.printStackTrace()
         null
@@ -155,11 +158,11 @@ val Context.packageInfo: PackageInfo?
 
 //region cursor
 fun Cursor.getStringByColumn(colName: String): String? =
-        try {
-            this.getString(this.getColumnIndexOrThrow(colName))
-        } catch (ex: Exception) {
-            ""
-        }
+    try {
+        this.getString(this.getColumnIndexOrThrow(colName))
+    } catch (ex: Exception) {
+        ""
+    }
 
 fun Cursor.getIntByColumn(colName: String): Int = try {
     this.getInt(this.getColumnIndexOrThrow(colName))
@@ -190,7 +193,14 @@ fun Context.browse(url: String, errorHandler: (Throwable) -> Unit = {}) {
 
 /*SharedPreferences*/
 
-fun getSp(key: String): String? = JBusManager.context.applicationContext.getSharedPreferences("config", Context.MODE_PRIVATE).getString(key, null)
-fun saveSp(key: String, value: String) = Schedulers.io().scheduleDirect { JBusManager.context.applicationContext.getSharedPreferences("config", Context.MODE_PRIVATE).edit().putString(key, value).apply() }
+fun getSp(key: String): String? =
+    JBusManager.context.applicationContext.getSharedPreferences("config", Context.MODE_PRIVATE).getString(key, null)
+
+fun saveSp(key: String, value: String) = Schedulers.io().scheduleDirect {
+    JBusManager.context.applicationContext.getSharedPreferences(
+        "config",
+        Context.MODE_PRIVATE
+    ).edit().putString(key, value).apply()
+}
 
 

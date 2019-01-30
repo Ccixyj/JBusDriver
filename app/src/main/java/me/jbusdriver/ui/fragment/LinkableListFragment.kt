@@ -24,7 +24,9 @@ import me.jbusdriver.mvp.bean.PageChangeEvent
 import me.jbusdriver.ui.activity.SearchResultActivity
 import me.jbusdriver.ui.data.AppConfiguration
 
-abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract.LinkListPresenter, LinkListContract.LinkListView, T>(), LinkListContract.LinkListView {
+abstract class LinkableListFragment<T> :
+    AppBaseRecycleFragment<LinkListContract.LinkListPresenter, LinkListContract.LinkListView, T>(),
+    LinkListContract.LinkListView {
 
     override val layoutId: Int = R.layout.layout_swipe_recycle
 
@@ -32,7 +34,11 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
     override val recycleView: RecyclerView  by lazy { rv_recycle }
     override val layoutManager: RecyclerView.LayoutManager
         get() = when (currentLayoutType) {
-            OrientationHelper.VERTICAL -> layoutManagers.getOrPut(OrientationHelper.VERTICAL) { LinearLayoutManager(viewContext) }
+            OrientationHelper.VERTICAL -> layoutManagers.getOrPut(OrientationHelper.VERTICAL) {
+                LinearLayoutManager(
+                    viewContext
+                )
+            }
             OrientationHelper.HORIZONTAL -> layoutManagers.getOrPut(OrientationHelper.HORIZONTAL) {
                 StaggeredGridLayoutManager(2, OrientationHelper.VERTICAL).apply {
                 }
@@ -43,7 +49,7 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
     private val layoutManagers = hashMapOf<Int, RecyclerView.LayoutManager>()
 
     private var currentLayoutType = getSp("layout_type")?.toIntOrNull()
-            ?: OrientationHelper.VERTICAL
+        ?: OrientationHelper.VERTICAL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,10 +58,10 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
 
     private fun bindRx() {
         RxBus.toFlowable(PageChangeEvent::class.java)
-                .subscribeBy(onNext = {
-                    activity?.invalidateOptionsMenu() //刷新菜单
-                    mBasePresenter?.onRefresh()
-                }).addTo(rxManager)
+            .subscribeBy(onNext = {
+                activity?.invalidateOptionsMenu() //刷新菜单
+                mBasePresenter?.onRefresh()
+            }).addTo(rxManager)
     }
 
 
@@ -121,11 +127,17 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
             R.id.action_switch_layout -> {
                 val pos = when (val lm = recycleView.layoutManager) {
                     is LinearLayoutManager -> lm.findFirstVisibleItemPosition()
-                    is StaggeredGridLayoutManager -> lm.findFirstCompletelyVisibleItemPositions(intArrayOf(0, 0)).firstOrNull()
-                            ?: 0
+                    is StaggeredGridLayoutManager -> lm.findFirstCompletelyVisibleItemPositions(
+                        intArrayOf(
+                            0,
+                            0
+                        )
+                    ).firstOrNull()
+                        ?: 0
                     else -> 0
                 }
-                currentLayoutType = if (currentLayoutType == OrientationHelper.HORIZONTAL) OrientationHelper.VERTICAL else OrientationHelper.HORIZONTAL
+                currentLayoutType =
+                        if (currentLayoutType == OrientationHelper.HORIZONTAL) OrientationHelper.VERTICAL else OrientationHelper.HORIZONTAL
                 //save config
                 saveSp("layout_type", currentLayoutType.toString())
                 recycleView.layoutManager = layoutManager
@@ -179,38 +191,38 @@ abstract class LinkableListFragment<T> : AppBaseRecycleFragment<LinkListContract
             }
         }
         MaterialDialog.Builder(viewContext).customView(seekView, false)
-                .neutralText("输入页码").onNeutral { dialog, _ ->
-                    showEditDialog(info)
-                    dialog.dismiss()
-                }.positiveText("跳转").onPositive { _, _ ->
-                    seekView.bsb_seek_page?.progress?.let {
-                        mBasePresenter?.jumpToPage(it)
-                        adapter.notifyLoadMoreToLoading()
-                    }
-                }.show()
+            .neutralText("输入页码").onNeutral { dialog, _ ->
+                showEditDialog(info)
+                dialog.dismiss()
+            }.positiveText("跳转").onPositive { _, _ ->
+                seekView.bsb_seek_page?.progress?.let {
+                    mBasePresenter?.jumpToPage(it)
+                    adapter.notifyLoadMoreToLoading()
+                }
+            }.show()
 
     }
 
     private fun showEditDialog(info: PageInfo) {
         MaterialDialog.Builder(viewContext).title("输入页码:")
-                .input("输入跳转页码", null, false) { dialog, input ->
-                    input.toString().toIntOrNull()?.let {
-                        if (it < 1) {
-                            toast("必须输入大于0的整数!")
-                            return@input
-                        }
-                        mBasePresenter?.jumpToPage(it)
-                        dialog.dismiss()
-                    } ?: let {
-                        toast("必须输入数字!")
+            .input("输入跳转页码", null, false) { dialog, input ->
+                input.toString().toIntOrNull()?.let {
+                    if (it < 1) {
+                        toast("必须输入大于0的整数!")
+                        return@input
                     }
-                }
-                .autoDismiss(false)
-                .inputType(InputType.TYPE_CLASS_NUMBER)
-                .neutralText("选择页码").onNeutral { dialog, _ ->
-                    showPageDialog(info)
+                    mBasePresenter?.jumpToPage(it)
                     dialog.dismiss()
-                }.show()
+                } ?: let {
+                    toast("必须输入数字!")
+                }
+            }
+            .autoDismiss(false)
+            .inputType(InputType.TYPE_CLASS_NUMBER)
+            .neutralText("选择页码").onNeutral { dialog, _ ->
+                showPageDialog(info)
+                dialog.dismiss()
+            }.show()
     }
 
 

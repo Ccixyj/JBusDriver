@@ -13,12 +13,20 @@ import me.jbusdriver.ui.data.AppConfiguration
 /**
  * since 1.1 remove info menu
  */
-class MineCollectFragment : TabViewPagerFragment<MineCollectContract.MineCollectPresenter, MineCollectContract.MineCollectView>(), MineCollectContract.MineCollectView {
+class MineCollectFragment :
+    TabViewPagerFragment<MineCollectContract.MineCollectPresenter, MineCollectContract.MineCollectView>(),
+    MineCollectContract.MineCollectView {
     override fun createPresenter() = MineCollectPresenterImpl()
 
     override val mTitles: List<String> by lazy { listOf("电影", "演员", "链接") }
 
-    override val mFragments: List<Fragment> by lazy { listOf(MovieCollectFragment.newInstance(), ActressCollectFragment.newInstance(), LinkCollectFragment.newInstance()) }
+    override val mFragments: List<Fragment> by lazy {
+        listOf(
+            MovieCollectFragment.newInstance(),
+            ActressCollectFragment.newInstance(),
+            LinkCollectFragment.newInstance()
+        )
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -35,7 +35,7 @@ class MenuOpAdapter(data: List<MultiItemEntity>) : BaseMultiItemQuickAdapter<Mul
             Expand_Type_Item -> {
                 (item as? MenuOp)?.let {
                     holder.setText(R.id.tv_menu_op_name, it.name)
-                            .setChecked(R.id.cb_nav_menu, it.isHow)
+                        .setChecked(R.id.cb_nav_menu, it.isHow)
                 }
             }
         }

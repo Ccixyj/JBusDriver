@@ -32,7 +32,6 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
 
-
     override fun onResume() {
         super.onResume()
         MobclickAgent.onResume(this)

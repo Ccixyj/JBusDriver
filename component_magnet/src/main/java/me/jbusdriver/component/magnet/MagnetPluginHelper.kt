@@ -1,14 +1,14 @@
 package me.jbusdriver.component.magnet
 
-import com.wlqq.phantom.communication.PhantomServiceManager
 import com.wlqq.phantom.library.PhantomCore
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.base.JBusManager
 import me.jbusdriver.base.KLog
-import me.jbusdriver.base.phantom.*
-import me.jbusdriver.component.magnet.MagnetPluginHelper.call
+import me.jbusdriver.base.phantom.installAssetsPlugins
+import me.jbusdriver.base.phantom.installFromFile
+import me.jbusdriver.base.phantom.pluginServiceCall
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -29,14 +29,14 @@ object MagnetPluginHelper {
     fun init() {
         if (!PhantomCore.getInstance().isPluginInstalled(PluginMagnetPackage)) {
             installAssetsPlugins(JBusManager.context.assets, "plugins")
-                    .timeout(30, TimeUnit.SECONDS)
-                    .doOnNext {
-                        getLoaderKeys()
-                    }.subscribeOn(Schedulers.io()).subscribe({
-                        KLog.d("install  success -> $plugin")
-                    }, {
-                        KLog.w("install  error -> $it")
-                    }).addTo(rxManager)
+                .timeout(30, TimeUnit.SECONDS)
+                .doOnNext {
+                    getLoaderKeys()
+                }.subscribeOn(Schedulers.io()).subscribe({
+                    KLog.d("install  success -> $plugin")
+                }, {
+                    KLog.w("install  error -> $it")
+                }).addTo(rxManager)
             return
         }
         //installed
@@ -80,8 +80,8 @@ object MagnetPluginHelper {
     }.getOrNull() ?: ""
 
     fun fetchMagLink(magnetLoaderKey: String, url: String) =
-            kotlin.runCatching { call(method = "fetchMagLink", p = *arrayOf(magnetLoaderKey, url)).toString() }
-                    .getOrNull() ?: ""
+        kotlin.runCatching { call(method = "fetchMagLink", p = *arrayOf(magnetLoaderKey, url)).toString() }
+            .getOrNull() ?: ""
 
 
     fun hasNext(magnetLoaderKey: String) = kotlin.runCatching {

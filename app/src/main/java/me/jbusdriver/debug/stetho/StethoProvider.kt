@@ -13,17 +13,20 @@ import java.io.File
 
 fun initializeStetho(context: Context) {
     // See also: Stetho.initializeWithDefaults(Context)
-    Stetho.initialize(Stetho.newInitializerBuilder(context)
+    Stetho.initialize(
+        Stetho.newInitializerBuilder(context)
             .enableWebKitInspector(ExtInspectorModulesProvider(context))
-            .build())
+            .build()
+    )
 }
 
-private class ExtInspectorModulesProvider internal constructor(private val mContext: Context) : InspectorModulesProvider {
+private class ExtInspectorModulesProvider internal constructor(private val mContext: Context) :
+    InspectorModulesProvider {
 
     override fun get(): Iterable<ChromeDevtoolsDomain> {
         return Stetho.DefaultInspectorModulesBuilder(mContext)
-                .provideDatabaseDriver(createCollectDBDriver(mContext))
-                .finish()
+            .provideDatabaseDriver(createCollectDBDriver(mContext))
+            .finish()
     }
 
     private fun createCollectDBDriver(context: Context): SqliteDatabaseDriver {

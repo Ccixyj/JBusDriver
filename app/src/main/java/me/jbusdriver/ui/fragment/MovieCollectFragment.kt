@@ -10,16 +10,16 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-import me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_menu_op_head.view.*
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
+import me.jbusdriver.R
 import me.jbusdriver.base.GlideApp
 import me.jbusdriver.base.common.AppBaseRecycleFragment
 import me.jbusdriver.base.toast
-import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.common.bean.db.Category
 import me.jbusdriver.common.bean.db.MovieCategory
+import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.mvp.MovieCollectContract
 import me.jbusdriver.mvp.bean.CollectLinkWrapper
@@ -33,7 +33,9 @@ import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import me.jbusdriver.ui.holder.CollectDirEditHolder
 
-class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCollectPresenter, MovieCollectContract.MovieCollectView, CollectLinkWrapper<Movie>>(), MovieCollectContract.MovieCollectView {
+class MovieCollectFragment :
+    AppBaseRecycleFragment<MovieCollectContract.MovieCollectPresenter, MovieCollectContract.MovieCollectView, CollectLinkWrapper<Movie>>(),
+    MovieCollectContract.MovieCollectView {
 
     override val swipeView: SwipeRefreshLayout? by lazy { sr_refresh }
     override val recycleView: RecyclerView by lazy { rv_recycle }
@@ -49,11 +51,13 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
                         val movie = requireNotNull(item.linkBean)
 
                         holder.setText(R.id.tv_movie_title, movie.title)
-                                .setText(R.id.tv_movie_date, movie.date)
-                                .setText(R.id.tv_movie_code, movie.code)
+                            .setText(R.id.tv_movie_date, movie.date)
+                            .setText(R.id.tv_movie_code, movie.code)
 
-                        GlideApp.with(viewContext).load(movie.imageUrl.toGlideNoHostUrl).placeholder(R.drawable.ic_place_holder)
-                                .error(R.drawable.ic_place_holder).centerCrop().into(DrawableImageViewTarget(holder.getView(R.id.iv_movie_img)))
+                        GlideApp.with(viewContext).load(movie.imageUrl.toGlideNoHostUrl)
+                            .placeholder(R.drawable.ic_place_holder)
+                            .error(R.drawable.ic_place_holder).centerCrop()
+                            .into(DrawableImageViewTarget(holder.getView(R.id.iv_movie_img)))
 
                         holder.getView<View>(R.id.card_movie_item)?.setOnClickListener {
                             MovieDetailActivity.start(viewContext, movie)
@@ -63,7 +67,10 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
 
                     else -> {
                         setFullSpan(holder)
-                        holder.setText(R.id.tv_nav_menu_name, " ${if (item.isExpanded) "👇" else "👆"} " + item.category.name)
+                        holder.setText(
+                            R.id.tv_nav_menu_name,
+                            " ${if (item.isExpanded) "👇" else "👆"} " + item.category.name
+                        )
                     }
                 }
 
@@ -71,7 +78,7 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
         }.apply {
             setOnItemClickListener { _, view, position ->
                 val data = this@MovieCollectFragment.adapter.getData().getOrNull(position)
-                        ?: return@setOnItemClickListener
+                    ?: return@setOnItemClickListener
                 data.linkBean?.let {
                     MovieDetailActivity.start(viewContext, it)
                 } ?: apply {
@@ -91,14 +98,14 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
                             if (last.isNotEmpty()) {
                                 action.put("移到分类...") { link ->
                                     MaterialDialog.Builder(viewContext).title("选择目录")
-                                            .items(last.map { it.name })
-                                            .itemsCallbackSingleChoice(-1) { _, _, w, _ ->
-                                                last.getOrNull(w)?.let {
-                                                    mBasePresenter?.setCategory(link, it)
-                                                    mBasePresenter?.onRefresh()
-                                                }
-                                                return@itemsCallbackSingleChoice true
-                                            }.show()
+                                        .items(last.map { it.name })
+                                        .itemsCallbackSingleChoice(-1) { _, _, w, _ ->
+                                            last.getOrNull(w)?.let {
+                                                mBasePresenter?.setCategory(link, it)
+                                                mBasePresenter?.onRefresh()
+                                            }
+                                            return@itemsCallbackSingleChoice true
+                                        }.show()
                                 }
                             }
                         }
@@ -116,12 +123,12 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
                     }
 
                     MaterialDialog.Builder(viewContext).title(movie.code)
-                            .content(movie.title)
-                            .items(action.keys)
-                            .itemsCallback { _, _, _, text ->
-                                action[text]?.invoke(movie)
-                            }
-                            .show()
+                        .content(movie.title)
+                        .items(action.keys)
+                        .itemsCallback { _, _, _, text ->
+                            action[text]?.invoke(movie)
+                        }
+                        .show()
 
                 }
                 true
@@ -138,8 +145,10 @@ class MovieCollectFragment : AppBaseRecycleFragment<MovieCollectContract.MovieCo
         super.onCreateOptionsMenu(menu, inflater)
         menu?.findItem(R.id.action_collect_dir_edit)?.setOnMenuItemClickListener {
 
-            holder.showDialogWithData(mBasePresenter?.collectGroupMap?.keys?.toList()
-                    ?: emptyList()) { delActionsParams, addActionsParams ->
+            holder.showDialogWithData(
+                mBasePresenter?.collectGroupMap?.keys?.toList()
+                    ?: emptyList()
+            ) { delActionsParams, addActionsParams ->
                 if (delActionsParams.isNotEmpty()) {
                     delActionsParams.forEach {
                         try {

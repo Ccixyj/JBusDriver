@@ -1,8 +1,7 @@
 package me.jbusdriver.plugin.magnet.loaderImpl
 
-import me.jbusdriver.plugin.magnet.IMagnetLoader.Companion.MagnetFormatPrefix
-
 import me.jbusdriver.plugin.magnet.IMagnetLoader
+import me.jbusdriver.plugin.magnet.IMagnetLoader.Companion.MagnetFormatPrefix
 import org.json.JSONObject
 import org.jsoup.Jsoup
 
@@ -17,8 +16,8 @@ class BTSOWMagnetLoaderImpl : IMagnetLoader {
         val doc = Jsoup.connect(url).initHeaders().get()
         val dataNodes = doc.select(".btsowlist .row")
         hasNexPage = (doc.select(".pagination a").lastOrNull()?.attr("href")?.split("/")
-                ?.lastOrNull { it.isNotBlank() && it.toIntOrNull() != null }?.toIntOrNull()
-                ?: -1) > 0
+            ?.lastOrNull { it.isNotBlank() && it.toIntOrNull() != null }?.toIntOrNull()
+            ?: -1) > 0
         return dataNodes.map {
             val hrefNode = it.select("a")
             val childs = it.children()

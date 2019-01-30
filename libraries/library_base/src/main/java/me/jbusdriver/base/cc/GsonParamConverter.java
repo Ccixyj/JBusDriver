@@ -1,7 +1,6 @@
 package me.jbusdriver.base.cc;
 
 import com.billy.cc.core.component.IParamJsonConverter;
-
 import me.jbusdriver.base.GobalKt;
 
 /**

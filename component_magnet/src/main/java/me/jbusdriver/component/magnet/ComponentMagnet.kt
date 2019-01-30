@@ -20,7 +20,7 @@ class ComponentMagnet : IComponent {
             when (actionName) {
                 "show" -> {
                     val keyWord = cc.getParamItem<String>("keyword")
-                            ?: error("show activity must pass keyword")
+                        ?: error("show activity must pass keyword")
                     MagnetPagerListActivity.start(cc, keyWord)
                     CC.sendCCResult(cc.callId, CCResult.success())
                 }
@@ -29,7 +29,7 @@ class ComponentMagnet : IComponent {
                 }
                 "config.save" -> {
                     val keys = cc.getParamItem<List<String>>("keys")
-                            ?: error("call config.save must past keys")
+                        ?: error("call config.save must past keys")
                     Configuration.saveMagnetKeys(keys)
                     CC.sendCCResult(cc.callId, CCResult.success())
 

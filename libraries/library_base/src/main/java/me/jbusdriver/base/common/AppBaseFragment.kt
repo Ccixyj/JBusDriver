@@ -22,7 +22,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**
  * Created by Administrator on 2016/7/21 0021.
  */
-abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), LoaderManager.LoaderCallbacks<P>, PresenterFactory<P>, BaseView {
+abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), LoaderManager.LoaderCallbacks<P>,
+    PresenterFactory<P>, BaseView {
 
     /**
      * Do we need to call [.doStart] from the [.onLoadFinished] method.
@@ -41,14 +42,19 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mFirstStart = savedInstanceState == null || savedInstanceState.getBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE)
-        mUniqueLoaderIdentifier = savedInstanceState?.getInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE) ?: AppBaseActivity.sViewCounter.incrementAndGet()
+        mFirstStart = savedInstanceState == null ||
+                savedInstanceState.getBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE)
+        mUniqueLoaderIdentifier = savedInstanceState?.getInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE) ?:
+                AppBaseActivity.sViewCounter.incrementAndGet()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         require(activity != null)
-        activity!!.intent.putExtra(C.SavedInstanceState.LOADER_SAVED_STATES + mUniqueLoaderIdentifier, savedInstanceState)
+        activity!!.intent.putExtra(
+            C.SavedInstanceState.LOADER_SAVED_STATES + mUniqueLoaderIdentifier,
+            savedInstanceState
+        )
         loaderManager.initLoader(mUniqueLoaderIdentifier, null, this).startLoading()
     }
 
@@ -181,7 +187,7 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
 
 
     override fun onCreateLoader(id: Int, args: Bundle?) =
-            PresenterLoader(viewContext, this)
+        PresenterLoader(viewContext, this)
 
     /**
      * fragment 会回调两次

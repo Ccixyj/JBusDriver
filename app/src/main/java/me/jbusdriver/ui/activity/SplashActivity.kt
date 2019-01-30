@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.util.ArrayMap
-import com.billy.cc.core.component.CCUtil.put
 import com.google.gson.JsonObject
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.umeng.analytics.MobclickAgent
@@ -37,32 +36,32 @@ class SplashActivity : BaseActivity() {
 
     private fun init() {
         RxPermissions(this).request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .flatMap {
-                    initUrls()
+            .flatMap {
+                initUrls()
+            }
+            .doOnError {
+                KLog.e("获取可用url错误 :$it")
+                MobclickAgent.reportError(viewContext, it)
+                CacheLoader.acache.remove(C.Cache.BUS_URLS)
+            }
+            .retry(1)
+            .doFinally {
+                postMain {
+                    toast("load url : ${JAVBusService.defaultFastUrl}")
+                    MainActivity.start(this)
+                    finish()
+                }.addTo(rxManager)
+            }
+            .subscribeBy(onNext = {
+                it.get(DataSourceType.CENSORED.key)?.let {
+                    JAVBusService.defaultFastUrl = it.urlHost
                 }
-                .doOnError {
-                    KLog.e("获取可用url错误 :$it")
-                    MobclickAgent.reportError(viewContext, it)
-                    CacheLoader.acache.remove(C.Cache.BUS_URLS)
-                }
-                .retry(1)
-                .doFinally {
-                    postMain {
-                        toast("load url : ${JAVBusService.defaultFastUrl}")
-                        MainActivity.start(this)
-                        finish()
-                    }.addTo(rxManager)
-                }
-                .subscribeBy(onNext = {
-                    it.get(DataSourceType.CENSORED.key)?.let {
-                        JAVBusService.defaultFastUrl = it.urlHost
-                    }
-                }, onError = {
-                    it.printStackTrace()
-                    KLog.w("init urls error : $it")
-                }, onComplete = {
-                })
-                .addTo(rxManager)
+            }, onError = {
+                it.printStackTrace()
+                KLog.w("init urls error : $it")
+            }, onComplete = {
+            })
+            .addTo(rxManager)
 
     }
 
@@ -72,7 +71,9 @@ class SplashActivity : BaseActivity() {
             val urlsFromDisk = CacheLoader.justDisk(C.Cache.BUS_URLS).map {
                 GSON.fromJson<ArrayMap<String, String>>(it)
             }
-            val urlsFromUpdateCache = Flowable.concat(CacheLoader.justLru(C.Cache.ANNOUNCE_URL), GitHub.INSTANCE.announce().addUserCase(4)).firstOrError().toFlowable()
+            val urlsFromUpdateCache =
+                Flowable.concat(CacheLoader.justLru(C.Cache.ANNOUNCE_URL), GitHub.INSTANCE.announce().addUserCase(4))
+                    .firstOrError().toFlowable()
                     .map { source ->
                         //放入内存缓存,更新需要
                         val r = GSON.fromJson<JsonObject>(source) ?: JsonObject()
@@ -81,7 +82,7 @@ class SplashActivity : BaseActivity() {
                             val xyzLoader = r.getAsJsonObject("xyzLoader") ?: JsonObject()
                             JAVBusService.defaultXyzUrl = xyzLoader.get("url")?.asString?.removeSuffix("/").orEmpty()
                             JAVBusService.xyzHostDomains.addAll(xyzLoader.getAsJsonArray("legacyHost")?.map { it.asString }
-                                    ?: emptyList())
+                                ?: emptyList())
                             val availableUrls = r.get("backUp")?.asJsonArray
                             //赋值一个默认的(随机)
                             availableUrls?.let {
@@ -96,11 +97,13 @@ class SplashActivity : BaseActivity() {
                     }
                     .flatMap {
                         urls = it
-                        val mapFlow = GSON.fromJson<List<String>>(it[DataSourceType.CENSORED.key]
-                                ?: "").map {
+                        val mapFlow = GSON.fromJson<List<String>>(
+                            it[DataSourceType.CENSORED.key]
+                                ?: ""
+                        ).map {
                             Flowable.combineLatest(Flowable.just<String>(it),
-                                    JAVBusService.INSTANCE.get(it).addUserCase(15).onErrorReturnItem(""),
-                                    BiFunction<String, String?, Pair<String, String>> { t1, t2 -> t1 to t2 })
+                                JAVBusService.INSTANCE.get(it).addUserCase(15).onErrorReturnItem(""),
+                                BiFunction<String, String?, Pair<String, String>> { t1, t2 -> t1 to t2 })
                         }
                         Flowable.mergeDelayError(mapFlow).filter { it.second.isNotBlank() }.take(1)
                     }
@@ -117,8 +120,12 @@ class SplashActivity : BaseActivity() {
                         }
                         urls[DataSourceType.XYZ.key]?.let {
                             //欧美
-                            urls[DataSourceType.XYZ_ACTRESSES.key] = "$it/${DataSourceType.XYZ_ACTRESSES.key.split("/").last()}"
-                            urls.put(DataSourceType.XYZ_GENRE.key, "$it/${DataSourceType.XYZ_GENRE.key.split("/").last()}")
+                            urls[DataSourceType.XYZ_ACTRESSES.key] =
+                                    "$it/${DataSourceType.XYZ_ACTRESSES.key.split("/").last()}"
+                            urls.put(
+                                DataSourceType.XYZ_GENRE.key,
+                                "$it/${DataSourceType.XYZ_GENRE.key.split("/").last()}"
+                            )
                         }
                         urls[DataSourceType.CENSORED.key] = it.first
 
@@ -131,8 +138,10 @@ class SplashActivity : BaseActivity() {
                             val host = JAVBusService.xyzHostDomains.firstOrNull() ?: "work"
                             val baseUrlSuffix = urls[DataSourceType.XYZ.key]?.substringAfterLast(".").orEmpty()
                             urls[DataSourceType.XYZ.key] = urls[DataSourceType.XYZ.key]?.replace(baseUrlSuffix, host)
-                            urls[DataSourceType.XYZ_ACTRESSES.key] = urls[DataSourceType.XYZ_ACTRESSES.key]?.replace(baseUrlSuffix, host)
-                            urls[DataSourceType.XYZ_GENRE.key] = urls[DataSourceType.XYZ_GENRE.key]?.replace(baseUrlSuffix, host)
+                            urls[DataSourceType.XYZ_ACTRESSES.key] =
+                                    urls[DataSourceType.XYZ_ACTRESSES.key]?.replace(baseUrlSuffix, host)
+                            urls[DataSourceType.XYZ_GENRE.key] =
+                                    urls[DataSourceType.XYZ_GENRE.key]?.replace(baseUrlSuffix, host)
                         }
 
                         CacheLoader.cacheLruAndDisk(C.Cache.BUS_URLS to urls, C.Cache.DAY * 2) //缓存所有的urls
@@ -141,8 +150,8 @@ class SplashActivity : BaseActivity() {
                         urls
                     }.toFlowable()
             return Flowable.concat<ArrayMap<String, String>>(urlsFromDisk, urlsFromUpdateCache)
-                    .firstElement().toObservable()
-                    .subscribeOn(Schedulers.io())
+                .firstElement().toObservable()
+                .subscribeOn(Schedulers.io())
         } else CacheLoader.justLru(C.Cache.BUS_URLS).map {
             GSON.fromJson<ArrayMap<String, String>>(it)
         }.toObservable()

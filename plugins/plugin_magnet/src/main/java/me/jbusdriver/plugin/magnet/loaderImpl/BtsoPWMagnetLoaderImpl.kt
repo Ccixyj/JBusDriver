@@ -1,8 +1,7 @@
 package me.jbusdriver.plugin.magnet.loaderImpl
 
-import me.jbusdriver.plugin.magnet.IMagnetLoader.Companion.MagnetFormatPrefix
-
 import me.jbusdriver.plugin.magnet.IMagnetLoader
+import me.jbusdriver.plugin.magnet.IMagnetLoader.Companion.MagnetFormatPrefix
 import org.json.JSONObject
 import org.jsoup.Jsoup
 

@@ -19,7 +19,8 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * Created by Administrator on 2016/7/21 0021.
  */
-abstract class AppBaseActivity<P : BasePresenter<V>, in V : BaseView> : BaseActivity(), LoaderManager.LoaderCallbacks<P>, PresenterFactory<P>, BaseView {
+abstract class AppBaseActivity<P : BasePresenter<V>, in V : BaseView> : BaseActivity(),
+    LoaderManager.LoaderCallbacks<P>, PresenterFactory<P>, BaseView {
     /**
      * Do we need to call [.doStart] from the [.onLoadFinished] method.
      * Will be true if SPresenter wasn't loaded when [.onStart] is reached
@@ -34,8 +35,10 @@ abstract class AppBaseActivity<P : BasePresenter<V>, in V : BaseView> : BaseActi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //  UIHelper.$optimizeBackgroundOverdraw(this);
-        mFirstStart = savedInstanceState == null || savedInstanceState.getBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE)
-        mUniqueLoaderIdentifier = savedInstanceState?.getInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE) ?: sViewCounter.incrementAndGet()
+        mFirstStart = savedInstanceState == null ||
+                savedInstanceState.getBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE)
+        mUniqueLoaderIdentifier = savedInstanceState?.getInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE) ?:
+                sViewCounter.incrementAndGet()
         setContentView(this.inflate(layoutId))
         supportLoaderManager.initLoader(mUniqueLoaderIdentifier, savedInstanceState, this@AppBaseActivity)
         if (savedInstanceState != null) {

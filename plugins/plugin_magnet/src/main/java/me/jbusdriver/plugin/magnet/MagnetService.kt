@@ -34,8 +34,10 @@ open class MagnetService {
 
     @RemoteMethod(name = "getMagnets")
     open fun getMagnets(loader: String, key: String, page: Int): String {
-        return JSONArray(MagnetLoaders.Loaders.get(loader)?.loadMagnets(key, page)
-                ?: emptyList<JSONObject>()).toString()
+        return JSONArray(
+            MagnetLoaders.Loaders.get(loader)?.loadMagnets(key, page)
+                ?: emptyList<JSONObject>()
+        ).toString()
 
     }
 

@@ -10,16 +10,14 @@ import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-import me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_header.view.*
-import me.jbusdriver.base.KLog
+import me.jbusdriver.R
 import me.jbusdriver.base.inflate
 import me.jbusdriver.mvp.bean.Header
 import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.bean.des
 import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.activity.MovieListActivity
-
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 
@@ -73,16 +71,16 @@ class HeaderHolder(context: Context) : BaseHolder(context) {
                     }
 
                     MaterialDialog.Builder(holder.itemView.context).title(item.name).content(item.des)
-                            .items(action.keys)
-                            .itemsCallback { _, _, _, text ->
-                                action[text]?.invoke(item)
-                            }.show()
+                        .items(action.keys)
+                        .itemsCallback { _, _, _, text ->
+                            action[text]?.invoke(item)
+                        }.show()
                     return@setOnLongClickListener true
 
                 }
             }
             holder.setText(R.id.tv_head_name, item.name)
-                    .setText(R.id.tv_head_value, item.value)
+                .setText(R.id.tv_head_value, item.value)
         }
     }
 

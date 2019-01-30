@@ -19,8 +19,10 @@ open class AppGlideOptions : AppGlideModule() {
     }
 
     override fun registerComponents(context: Context, glide: Glide, registry: Registry) {
-        registry.append(GlideNoHostUrl::class.java, InputStream::class.java,
-                NoHostImageLoader.Factory())
+        registry.append(
+            GlideNoHostUrl::class.java, InputStream::class.java,
+            NoHostImageLoader.Factory()
+        )
     }
 
 

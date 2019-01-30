@@ -34,10 +34,10 @@ class BtdiggsMagnetLoaderImpl : IMagnetLoader {
 
             val labels = it.select(".attr span")
             JSONObject().apply {
-               put("name", title)
-               put("size", labels.component2().text())
-               put("date", labels.component1().text())
-               put("link", realUrl)
+                put("name", title)
+                put("size", labels.component2().text())
+                put("date", labels.component1().text())
+                put("link", realUrl)
             }
 
 

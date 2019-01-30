@@ -11,7 +11,8 @@ import org.jsoup.nodes.Document
 /**
  * 网页链接列表
  */
-class MovieLinkPresenterImpl(val link: ILink, isAllFromBundle: Boolean, isHis: Boolean) : LinkAbsPresenterImpl<Movie>(link, isHis) {
+class MovieLinkPresenterImpl(val link: ILink, isAllFromBundle: Boolean, isHis: Boolean) :
+    LinkAbsPresenterImpl<Movie>(link, isHis) {
 
     override var IsAll = isAllFromBundle
 
@@ -26,7 +27,7 @@ class MovieLinkPresenterImpl(val link: ILink, isAllFromBundle: Boolean, isHis: B
             mView?.showContent(it)
         }
 
-        return loadMovieFromDoc( str).let {
+        return loadMovieFromDoc(str).let {
             when (mView?.pageMode) {
                 AppConfiguration.PageMode.Page -> {
                     listOf(newPageMovie(pageInfo.activePage, pageInfo.referPages)) + it

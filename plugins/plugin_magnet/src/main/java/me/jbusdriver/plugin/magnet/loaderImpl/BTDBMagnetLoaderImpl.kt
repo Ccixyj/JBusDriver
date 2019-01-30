@@ -1,7 +1,6 @@
 package me.jbusdriver.plugin.magnet.loaderImpl
 
 
-
 import me.jbusdriver.plugin.magnet.IMagnetLoader
 import org.json.JSONObject
 import org.jsoup.Jsoup

@@ -36,23 +36,23 @@ class CollectDirEditHolder(context: Context, parentCategory: Category) : BaseHol
                 tv_category_add.setOnClickListener {
                     AnimatorSet().apply {
                         playTogether(
-                                ObjectAnimator.ofFloat(ll_add_category, "alpha", 1.0f, 0.0f),
-                                ObjectAnimator.ofFloat(ll_add_category_edit, "alpha", 0.0f, 1.0f),
-                                ObjectAnimator.ofFloat(ll_add_category_edit, "translationY", 60f, 0f).apply {
-                                    addListener(
+                            ObjectAnimator.ofFloat(ll_add_category, "alpha", 1.0f, 0.0f),
+                            ObjectAnimator.ofFloat(ll_add_category_edit, "alpha", 0.0f, 1.0f),
+                            ObjectAnimator.ofFloat(ll_add_category_edit, "translationY", 60f, 0f).apply {
+                                addListener(
 
-                                            object : AnimatorListenerAdapter() {
-                                                override fun onAnimationStart(animation: Animator?) {
-                                                    ll_add_category_edit.visibility = View.VISIBLE
-                                                }
+                                    object : AnimatorListenerAdapter() {
+                                        override fun onAnimationStart(animation: Animator?) {
+                                            ll_add_category_edit.visibility = View.VISIBLE
+                                        }
 
-                                                override fun onAnimationEnd(animation: Animator?) {
-                                                    ll_add_category.visibility = View.GONE
-                                                }
-                                            }
-                                    )
+                                        override fun onAnimationEnd(animation: Animator?) {
+                                            ll_add_category.visibility = View.GONE
+                                        }
+                                    }
+                                )
 
-                                })
+                            })
                         duration = 300
 
                     }.start()
@@ -73,8 +73,10 @@ class CollectDirEditHolder(context: Context, parentCategory: Category) : BaseHol
                     }
 
                     if (add) {
-                        val category = Category(txt, parentCategory.id
-                                ?: -1, "${parentCategory.id}/")
+                        val category = Category(
+                            txt, parentCategory.id
+                                ?: -1, "${parentCategory.id}/"
+                        )
                         addActionsParams.add(category)
                         categoryAdapter.addData(category)
                         categoryAdapter.notifyItemChanged(categoryAdapter.data.size - 1)
@@ -83,19 +85,19 @@ class CollectDirEditHolder(context: Context, parentCategory: Category) : BaseHol
 
                     AnimatorSet().apply {
                         playTogether(
-                                ObjectAnimator.ofFloat(ll_add_category, "alpha", 0.0f, 1.0f),
-                                ObjectAnimator.ofFloat(ll_add_category_edit, "alpha", 1.0f, 0.0f),
-                                ObjectAnimator.ofFloat(ll_add_category_edit, "translationY", 0f, -60f).apply {
-                                    addListener(
-                                            object : AnimatorListenerAdapter() {
-                                                override fun onAnimationEnd(animation: Animator?) {
-                                                    ll_add_category.visibility = View.VISIBLE
-                                                    ll_add_category_edit.visibility = View.GONE
-                                                }
-                                            }
-                                    )
+                            ObjectAnimator.ofFloat(ll_add_category, "alpha", 0.0f, 1.0f),
+                            ObjectAnimator.ofFloat(ll_add_category_edit, "alpha", 1.0f, 0.0f),
+                            ObjectAnimator.ofFloat(ll_add_category_edit, "translationY", 0f, -60f).apply {
+                                addListener(
+                                    object : AnimatorListenerAdapter() {
+                                        override fun onAnimationEnd(animation: Animator?) {
+                                            ll_add_category.visibility = View.VISIBLE
+                                            ll_add_category_edit.visibility = View.GONE
+                                        }
+                                    }
+                                )
 
-                                }
+                            }
                         )
                         duration = 300
                     }.start()
@@ -131,8 +133,8 @@ class CollectDirEditHolder(context: Context, parentCategory: Category) : BaseHol
             private val exclude = AllFirstParentDBCategoryGroup.mapNotNull { it.value.id }
             override fun convert(holder: BaseViewHolder, item: Category) {
                 holder.setText(R.id.tv_category_name, item.name)
-                        .setVisible(R.id.tv_category_delete, item.id !in exclude)
-                        .addOnClickListener(R.id.tv_category_delete)
+                    .setVisible(R.id.tv_category_delete, item.id !in exclude)
+                    .addOnClickListener(R.id.tv_category_delete)
             }
         }
     }
@@ -150,10 +152,10 @@ class CollectDirEditHolder(context: Context, parentCategory: Category) : BaseHol
         categoryAdapter.addData(data)
 
         MaterialDialog.Builder(view.context).customView(view, true)
-                .dismissListener {
-                    callback.invoke(delActionsParams, addActionsParams)
-                }
-                .show()
+            .dismissListener {
+                callback.invoke(delActionsParams, addActionsParams)
+            }
+            .show()
 
     }
 }

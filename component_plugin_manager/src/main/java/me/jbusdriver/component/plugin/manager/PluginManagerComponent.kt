@@ -6,7 +6,6 @@ import com.billy.cc.core.component.CC
 import com.billy.cc.core.component.CCResult
 import com.billy.cc.core.component.IComponent
 import com.google.gson.JsonObject
-import io.reactivex.Flowable
 import me.jbusdriver.base.GSON
 import me.jbusdriver.base.IO_Worker
 import me.jbusdriver.base.JBusManager
@@ -18,7 +17,6 @@ import me.jbusdriver.component.plugin.manager.task.PluginService
 import java.io.File
 import java.nio.channels.FileChannel
 import java.security.MessageDigest
-import java.util.concurrent.TimeUnit
 
 
 class PluginManagerComponent : IComponent {
@@ -34,7 +32,7 @@ class PluginManagerComponent : IComponent {
                 "plugins.init" -> {
                     // async call
                     val plugins = GSON.fromJson(cc.getParamItem<JsonObject>("plugins"), Plugins::class.java)
-                            ?: error("need param plugins ")
+                        ?: error("need param plugins ")
                     //后续操作
                     IO_Worker.schedule {
                         initPlugins(cc, plugins)
@@ -113,8 +111,10 @@ class PluginManagerComponent : IComponent {
 
         private val Plugin_Maps = mutableMapOf<String, List<PluginBean>>()
         private val pluginsDir by lazy {
-            File(Environment.getExternalStorageDirectory().absolutePath + File.separator +
-                    JBusManager.context.applicationContext.packageName + File.separator + "plugins" + File.separator)
+            File(
+                Environment.getExternalStorageDirectory().absolutePath + File.separator +
+                        JBusManager.context.applicationContext.packageName + File.separator + "plugins" + File.separator
+            )
         }
 
         fun getPluginDownloadFile(plugin: PluginBean) = kotlin.run {
@@ -133,13 +133,13 @@ class PluginManagerComponent : IComponent {
                 try {
                     if (it.type != String::class.java) return@mapNotNull null
                     val name = it.get(C.Components::class.java)?.toString()
-                            ?: return@mapNotNull null
+                        ?: return@mapNotNull null
                     CC.obtainBuilder(name)
-                            .setActionName("plugins.all")
-                            .build().call()
-                            .getDataItem<List<PluginBean>>("plugins")?.apply {
-                                Plugin_Maps[name] = this
-                            }
+                        .setActionName("plugins.all")
+                        .build().call()
+                        .getDataItem<List<PluginBean>>("plugins")?.apply {
+                            Plugin_Maps[name] = this
+                        }
                 } catch (e: Exception) {
                     null
                 }
@@ -169,10 +169,10 @@ class PluginManagerComponent : IComponent {
             val where = Plugin_Maps.filter { it.value.find { it.name == plugin.name } != null }.keys
             where.forEach {
                 CC.obtainBuilder(it)
-                        .setActionName("plugins.install")
-                        .addParam("path", pluginFile.absolutePath)
-                        .setTimeout(10)
-                        .build().callAsync()
+                    .setActionName("plugins.install")
+                    .addParam("path", pluginFile.absolutePath)
+                    .setTimeout(10)
+                    .build().callAsync()
             }
         }
 

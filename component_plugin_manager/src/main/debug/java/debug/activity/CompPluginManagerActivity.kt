@@ -9,7 +9,6 @@ import me.jbusdriver.base.GSON
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.common.C
 import me.jbusdriver.base.fromJson
-import me.jbusdriver.component.plugin.manager.PluginManagerComponent
 import me.jbusdriver.component.plugin.manager.R
 
 class CompPluginManagerActivity : AppCompatActivity() {
@@ -47,10 +46,10 @@ class CompPluginManagerActivity : AppCompatActivity() {
 
             KLog.d("comp_plugin_manager_tv_install $plugins")
             CC.obtainBuilder(C.Components.PluginManager)
-                    .setActionName("plugins.init")
-                    .setContext(this)
-                    .addParam("plugins", plugins)
-                    .build().callAsync()
+                .setActionName("plugins.init")
+                .setContext(this)
+                .addParam("plugins", plugins)
+                .build().callAsync()
 
         }
 
@@ -58,9 +57,9 @@ class CompPluginManagerActivity : AppCompatActivity() {
         val callBack = { p: Int -> KLog.d("progress ---> $p") }
         comp_plugin_manager_iv_test_callback.setOnClickListener {
             CC.obtainBuilder(C.Components.PluginManager)
-                    .setActionName("callback")
-                    .setParamWithNoKey(callBack)
-                    .build().call()
+                .setActionName("callback")
+                .setParamWithNoKey(callBack)
+                .build().call()
         }
     }
 
