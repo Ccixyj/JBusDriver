@@ -1,6 +1,7 @@
 package me.jbusdriver.common
 
 import android.app.Application
+import android.content.Context
 import android.os.Environment
 import com.billy.cc.core.component.CC
 import com.orhanobut.logger.AndroidLogAdapter
@@ -8,6 +9,7 @@ import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
 import com.squareup.leakcanary.LeakCanary
 import com.umeng.analytics.MobclickAgent
+import com.umeng.commonsdk.UMConfigure
 import com.wlqq.phantom.library.PhantomCore
 import com.wlqq.phantom.library.log.ILogReporter
 import io.reactivex.plugins.RxJavaPlugins
@@ -82,8 +84,10 @@ class AppContext : Application() {
             CC.enableRemoteCC(isDebug)
         }
 
-
-        MobclickAgent.setDebugMode(isDebug)
+        UMConfigure.init(this, UMConfigure.DEVICE_TYPE_PHONE, null)
+        UMConfigure.setLogEnabled(isDebug)
+        MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_AUTO)
+        MobclickAgent.setCatchUncaughtExceptions(true)
 
         RxJavaPlugins.setErrorHandler {
             try {

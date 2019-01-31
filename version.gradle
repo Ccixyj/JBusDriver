@@ -34,8 +34,6 @@ ext {
             'cc_register'                  : '1.0.7',
             'cc'                           : '2.1.2',
 
-
-            'analytics'                    : '6.1.4',
             'leakcanary'                   : '1.6.2',
             'stetho'                       : '1.5.0',
             'phantom'                      : [

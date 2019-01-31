@@ -19,7 +19,6 @@ object CacheLoader {
         //获得系统可用内存，保存在MemoryInfo对象上
         myActivityManager.getMemoryInfo(memoryInfo)
         val memSize = memoryInfo.availMem.formatFileSize()
-        KLog.t(TAG).d("memoryInfo -> $memoryInfo")
         KLog.t(TAG).d("max availMem = $memSize")
         if (memoryInfo.lowMemory) {
             KLog.w("可能的内存不足")
@@ -82,14 +81,12 @@ object CacheLoader {
     fun fromLruAsync(key: String): Flowable<String> =
         Flowable.interval(0, 800, TimeUnit.MILLISECONDS, Schedulers.io()).flatMap {
             val v = lru[key]
-            KLog.i("fromLruAsync : $key ,$v")
             v?.let { Flowable.just(it) } ?: Flowable.empty()
         }.timeout(6, TimeUnit.SECONDS, Flowable.empty()).take(1).subscribeOn(Schedulers.io())
 
     fun fromDiskAsync(key: String, add2Lru: Boolean = true): Flowable<String> =
         Flowable.interval(0, 800, TimeUnit.MILLISECONDS, Schedulers.io()).flatMap {
             val v = acache.getAsString(key)
-            KLog.i("fromDiskAsync : $key ,$v")
             v?.let { Flowable.just(it) } ?: Flowable.empty()
         }.timeout(6, TimeUnit.SECONDS, Flowable.empty()).take(1).doOnNext { if (add2Lru) lru.put(key, it) }.subscribeOn(
             Schedulers.io()
@@ -98,13 +95,11 @@ object CacheLoader {
 
     fun justLru(key: String): Flowable<String> {
         val v = lru[key]
-        KLog.i("justLru : $key ,$v")
         return v?.let { Flowable.just(v) } ?: Flowable.empty()
     }
 
     fun justDisk(key: String, add2Lru: Boolean = true): Flowable<String> {
         val v = acache.getAsString(key)
-        KLog.i("justDisk : $key add lru $add2Lru,$v")
         return v?.let { Flowable.just(v).doOnError { if (add2Lru) lru.put(key, v) } }
             ?: Flowable.empty()
     }

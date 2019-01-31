@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.umeng.analytics.MobclickAgent
 import io.reactivex.disposables.CompositeDisposable
 import me.jbusdriver.base.JBusManager
 import me.jbusdriver.base.KLog
@@ -23,6 +24,16 @@ open class BaseFragment : Fragment() {
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
+
+    override fun onResume() {
+        super.onResume()
+        MobclickAgent.onPageStart(TAG)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MobclickAgent.onPageEnd(TAG)
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

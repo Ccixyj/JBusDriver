@@ -80,10 +80,13 @@ dependencies {
     //stetho
     api "com.facebook.stetho:stetho:${versions.stetho}"
     api "com.facebook.stetho:stetho-okhttp3:${versions.stetho}"
+
     //cc
     api "com.billy.android:cc:${versions.cc}"
 
-    api "com.umeng.analytics:analytics:${versions.analytics}"
+    //umneg
+    api  'com.umeng.umsdk:analytics:8.0.0'
+    api  'com.umeng.umsdk:common:2.0.0'
 
 
     //compileOnly
