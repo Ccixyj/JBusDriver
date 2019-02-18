@@ -1,3 +1,4 @@
+/*
 package me.jbusdriver.debug.stetho
 
 import android.content.Context
@@ -35,4 +36,4 @@ private class ExtInspectorModulesProvider internal constructor(private val mCont
         }, DefaultDatabaseConnectionProvider())
     }
 
-}
+}*/

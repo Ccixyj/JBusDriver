@@ -3,11 +3,11 @@ package me.jbusdriver.base.http
 import android.content.Context
 import android.net.ConnectivityManager
 import android.text.TextUtils
-import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.gson.JsonObject
 import me.jbusdriver.base.BuildConfig
 import me.jbusdriver.base.GSON
 import okhttp3.*
+import retrofit2.CallAdapter
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -35,7 +35,7 @@ object NetClient {
             chain.proceed(request)
         }
     }
-    val RxJavaCallAdapterFactory = RxJava2CallAdapterFactory.create()
+    val RxJavaCallAdapterFactory: CallAdapter.Factory = RxJava2CallAdapterFactory.create()
     val PROGRESS_INTERCEPTOR by lazy {
         Interceptor { chain ->
             val request = chain.request()
@@ -90,12 +90,12 @@ object NetClient {
     private val okHttpClient by lazy {
         //设置缓存路径
 
+        // .addNetworkInterceptor(StethoInterceptor())
         val client = OkHttpClient.Builder()
             .writeTimeout((30 * 1000).toLong(), TimeUnit.MILLISECONDS)
             .readTimeout((20 * 1000).toLong(), TimeUnit.MILLISECONDS)
             .connectTimeout((15 * 1000).toLong(), TimeUnit.MILLISECONDS)
             .addNetworkInterceptor(EXIST_MAGNET_INTERCEPTOR)
-            .addNetworkInterceptor(StethoInterceptor())
             .cookieJar(object : CookieJar {
                 private val cookieStore = HashMap<HttpUrl, List<Cookie>>()
 

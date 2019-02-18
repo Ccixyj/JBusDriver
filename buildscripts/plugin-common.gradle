@@ -20,6 +20,11 @@ if (project.ext.has('runAsApp') && project.ext.runAsApp) {
     println("$project ---->  set app as client plugin")
     apply plugin: 'com.wlqq.phantom.plugin'
 
+    android.compileOptions{
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
     project.dependencies.add("compileOnly", "com.wlqq.phantom:phantom-communication-lib:${versions.phantom.allVersion}")
     project.dependencies.add("compileOnly", "com.wlqq.phantom:phantom-plugin-lib:${versions.phantom.allVersion}")
 

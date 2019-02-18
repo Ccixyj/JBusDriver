@@ -23,6 +23,11 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
 }
 
 dependencies {
@@ -78,8 +83,8 @@ dependencies {
     api "android.arch.persistence:db-framework:${versions.db_framework}"
 
     //stetho
-    api "com.facebook.stetho:stetho:${versions.stetho}"
-    api "com.facebook.stetho:stetho-okhttp3:${versions.stetho}"
+//    api "com.facebook.stetho:stetho:${versions.stetho}"
+//    api "com.facebook.stetho:stetho-okhttp3:${versions.stetho}"
 
     //cc
     api "com.billy.android:cc:${versions.cc}"

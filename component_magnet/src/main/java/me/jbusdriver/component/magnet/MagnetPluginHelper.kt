@@ -56,7 +56,7 @@ object MagnetPluginHelper {
      * call method throw exception value if null or error
      */
     @Throws
-    fun call(method: String, serviceName: String = MagnetService, vararg p: Any): Any {
+    fun call(method: String, serviceName: String = MagnetService, p: Array<Any> = emptyArray()): Any {
         if (plugin == null) {
             error("call method $method but plugin is null ,is plugin init success?")
         }
@@ -76,16 +76,16 @@ object MagnetPluginHelper {
     }.getOrNull() ?: MagnetLoaders.toList()
 
     fun getMagnets(loader: String, key: String, page: Int) = kotlin.runCatching {
-        call(method = "getMagnets", p = *arrayOf(loader, key, page)).toString()
+        call(method = "getMagnets", p = arrayOf(loader, key, page)).toString()
     }.getOrNull() ?: ""
 
     fun fetchMagLink(magnetLoaderKey: String, url: String) =
-        kotlin.runCatching { call(method = "fetchMagLink", p = *arrayOf(magnetLoaderKey, url)).toString() }
+        kotlin.runCatching { call(method = "fetchMagLink", p = arrayOf(magnetLoaderKey, url)).toString() }
             .getOrNull() ?: ""
 
 
     fun hasNext(magnetLoaderKey: String) = kotlin.runCatching {
-        (call(method = "hasNext", p = *arrayOf(magnetLoaderKey)) as? Boolean) ?: false
+        (call(method = "hasNext", p = arrayOf(magnetLoaderKey)) as? Boolean) ?: false
     }.getOrNull() ?: false
 
     /**

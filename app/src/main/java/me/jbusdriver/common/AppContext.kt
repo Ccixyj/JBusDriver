@@ -1,7 +1,6 @@
 package me.jbusdriver.common
 
 import android.app.Application
-import android.content.Context
 import android.os.Environment
 import com.billy.cc.core.component.CC
 import com.orhanobut.logger.AndroidLogAdapter
@@ -17,7 +16,6 @@ import me.jbusdriver.BuildConfig
 import me.jbusdriver.base.GSON
 import me.jbusdriver.base.JBusManager
 import me.jbusdriver.base.arrayMapof
-import me.jbusdriver.debug.stetho.initializeStetho
 import me.jbusdriver.http.JAVBusService
 import java.io.File
 import java.util.*
@@ -64,7 +62,7 @@ class AppContext : Application() {
         if (isDebug) {
             LeakCanary.install(this)
 
-            initializeStetho(this) //chrome://inspect/#devices
+//            initializeStetho(this) //chrome://inspect/#devices
 
             val formatStrategy = PrettyFormatStrategy.newBuilder()
                 .showThreadInfo(true)  // (Optional) Whether to show thread info or not. Default true
