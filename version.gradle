@@ -1,12 +1,12 @@
 ext {
     versions = [
-            'compileSdk'                   : 27,
-            'targetSdk'                    : 27,
+            'compileSdk'                   : 28,
+            'targetSdk'                    : 28,
             'buildTools'                   : '28.0.3',
 
             'gradle'                       : '3.1.4',
             'kotlin'                       : '1.3.20',
-            'supportLibrary'               : '27.1.1',
+            'supportLibrary'               : '28.0.0',
 
             'okhttp'                       : '3.13.1',
             'retrofit'                     : '2.5.0',

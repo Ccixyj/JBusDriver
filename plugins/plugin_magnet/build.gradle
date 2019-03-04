@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         applicationId CurrentAppID
-        minSdkVersion 16
+        minSdkVersion 18
         targetSdkVersion versions.targetSdk
         versionCode 1
         versionName "1.0"
@@ -86,7 +86,7 @@ dependencies {
 phantomPluginConfig {
 //    excludeClass("me.jbusdriver.plugin.magnet.IMagnetLoader")
 //    excludeClass("me.jbusdriver.plugin.magnet.bean.Magnet")
-
+    def  archLib= '1.1.1'
     /*------------------------------ 剔除 support-v4 及其依赖的库 BEGIN ----------------------------*/
     excludeLib "com.android.support:support-v4:${versions.supportLibrary}"
     excludeLib "com.android.support:support-core-ui:${versions.supportLibrary}"
@@ -111,14 +111,13 @@ phantomPluginConfig {
     excludeLib "com.android.support:print:${versions.supportLibrary}"
     excludeLib "com.android.support:localbroadcastmanager:${versions.supportLibrary}"
 
-//        excludeLib "android.arch.lifecycle:viewmodel:${androidVersion.archLib}"
-//        excludeLib "android.arch.lifecycle:runtime:${androidVersion.archLib}"
-//        excludeLib "android.arch.lifecycle:common:${androidVersion.archLib}"
-//        excludeLib "android.arch.lifecycle:livedata:${androidVersion.archLib}"
-//        excludeLib "android.arch.lifecycle:livedata-core:${androidVersion.archLib}"
-//        excludeLib "android.arch.core:common:${androidVersion.archLib}"
+    excludeLib "android.arch.lifecycle:viewmodel:${archLib}"
+    excludeLib "android.arch.lifecycle:runtime:${archLib}"
+    excludeLib "android.arch.lifecycle:common:${archLib}"
+    excludeLib "android.arch.lifecycle:livedata:${archLib}"
+    excludeLib "android.arch.lifecycle:livedata-core:${archLib}"
+    excludeLib "android.arch.core:common:${archLib}"
     /*------------------------------ 删除 support-v4 及其依赖的库  END  ----------------------------*/
-
     excludeLib "com.android.support:appcompat-v7:${versions.supportLibrary}"
     excludeLib "com.android.support:design:${versions.supportLibrary}"
     excludeLib "com.android.support:cardview-v7:${versions.supportLibrary}"

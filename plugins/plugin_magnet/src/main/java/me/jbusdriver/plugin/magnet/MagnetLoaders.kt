@@ -1,6 +1,6 @@
 package me.jbusdriver.plugin.magnet
 
-import me.jbusdriver.plugin.magnet.loaderImpl.*
+import me.jbusdriver.plugin.magnet.loaders.*
 
 object MagnetLoaders {
     /**  "btso.pw" to BtsoPWMagnetLoaderImpl()

@@ -1,4 +1,4 @@
-package me.jbusdriver.plugin.magnet.loaderImpl
+package me.jbusdriver.plugin.magnet.loaders
 
 import me.jbusdriver.plugin.magnet.IMagnetLoader
 import org.json.JSONObject

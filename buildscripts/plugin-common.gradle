@@ -82,6 +82,10 @@ def copyPluginToHost(Set<Project> targets, String dir) {
                 include('*.apk')
             }
 
+            if(dir == 'debug'){
+                rename ".apk", "_${dir}.apk"
+            }
+
             into(p.getProjectDir().absolutePath + '/src/main/assets/plugins/')
         }
 

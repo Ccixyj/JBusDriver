@@ -10,7 +10,7 @@ android {
         if (project.ext.runAsApp) {
             applicationId "me.jbusdriver.component.plugin.manager"
         }
-        minSdkVersion 16
+        minSdkVersion 18
         targetSdkVersion versions.targetSdk
         versionCode 1
         versionName "1.0"
