@@ -153,6 +153,7 @@ class PluginManagerComponent : IComponent {
          */
         fun checkPluginNeedUpdate(plugins: List<PluginBean>): List<PluginBean> {
             val allInstalled = Plugin_Maps.values.flatten()
+            KLog.d("all installed plugin : $allInstalled")
             return plugins.filter { pl ->
                 val installPlugin = allInstalled.find {
                     it.name == pl.name
