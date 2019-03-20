@@ -8,7 +8,8 @@ import me.jbusdriver.mvp.HotRecommendContract
 import org.jsoup.nodes.Document
 import java.util.concurrent.atomic.AtomicInteger
 
-class HotRecommendPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HotRecommendContract.HotRecommendView, ILink>(), HotRecommendContract.HotRecommendPresenter {
+class HotRecommendPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HotRecommendContract.HotRecommendView, ILink>(),
+    HotRecommendContract.HotRecommendPresenter {
 
     private val count = AtomicInteger(1)
 
@@ -59,7 +60,7 @@ class HotRecommendPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HotRecomm
     }
 
     override fun onLoadMore() {
-        if (lastPage <  count.incrementAndGet()) {
+        if (lastPage < count.incrementAndGet()) {
             count.set(1)
         }
         loadData4Page(count.get())

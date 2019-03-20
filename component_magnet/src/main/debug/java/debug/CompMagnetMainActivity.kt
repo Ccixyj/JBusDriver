@@ -34,40 +34,43 @@ class CompMagnetMainActivity : BaseActivity() {
         setContentView(R.layout.comp_magnet_activity_main)
         comp_magnet_tv_go_search.setOnClickListener {
             CC.obtainBuilder(C.Components.Magnet)
-                    .setActionName("show")
-                    .addParam("keyword", et_keyword.text.toString())
-                    .build().callAsync { cc, result ->
-                        KLog.d("install result $result")
-                    }
+                .setActionName("show")
+                .addParam("keyword", et_keyword.text.toString())
+                .build().callAsync { cc, result ->
+                    KLog.d("install result $result")
+                }
         }
         //"allKeys" , "config.save" , "config.getKeys"
         comp_magnet_tv_get_all.setOnClickListener {
             CC.obtainBuilder(C.Components.Magnet)
-                    .setActionName("allKeys")
-                    .build().callAsync()
+                .setActionName("allKeys")
+                .build().callAsync()
 
             CC.obtainBuilder(C.Components.Magnet)
-                    .setActionName("config.save")
-                    .addParam("keys", MagnetPluginHelper.getLoaderKeys())
-                    .build().call()
+                .setActionName("config.save")
+                .addParam("keys", MagnetPluginHelper.getLoaderKeys())
+                .build().call()
         }
 
         comp_magnet_tv_config_get.setOnClickListener {
             CC.obtainBuilder(C.Components.Magnet)
-                    .setActionName("config.getKeys")
-                    .build().call()
+                .setActionName("config.getKeys")
+                .build().call()
         }
 
         comp_magnet_tv_config_save.setOnClickListener {
             val res = CC.obtainBuilder(C.Components.Magnet)
-                    .setActionName("allKeys")
-                    .build().call()
+                .setActionName("allKeys")
+                .build().call()
             if (res.isSuccess) {
                 val allKeys = res.getDataItem<List<String>>("keys")
                 CC.obtainBuilder(C.Components.Magnet)
-                        .setActionName("config.save")
-                        .addParam("keys", allKeys.shuffled().take((Math.random() * allKeys.size).toInt().coerceIn(1..allKeys.size)))
-                        .build().call()
+                    .setActionName("config.save")
+                    .addParam(
+                        "keys",
+                        allKeys.shuffled().take((Math.random() * allKeys.size).toInt().coerceIn(1..allKeys.size))
+                    )
+                    .build().call()
             } else {
                 KLog.w("error get all key : ${res.errorMessage}")
             }
@@ -154,16 +157,19 @@ class CompMagnetMainActivity : BaseActivity() {
 
 
         iv_test_update.setOnClickListener {
-            RxPermissions(this).request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    .toFlowable(BackpressureStrategy.LATEST)
-                    .flatMap {
-                        return@flatMap installFromPathDir(File(Environment.getExternalStorageDirectory().absolutePath + File.separator + JBusManager.context.packageName + File.separator + "plugins"))
-                    }.subscribe({
-                        KLog.d("all plugin $it")
-                        toast("插件已经安装 ${it.joinToString { it.packageName }}")
-                    }, {
-                        KLog.w("erorr $it")
-                    }).addTo(rxManager)
+            RxPermissions(this).request(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+                .toFlowable(BackpressureStrategy.LATEST)
+                .flatMap {
+                    return@flatMap installFromPathDir(File(Environment.getExternalStorageDirectory().absolutePath + File.separator + JBusManager.context.packageName + File.separator + "plugins"))
+                }.subscribe({
+                    KLog.d("all plugin $it")
+                    toast("插件已经安装 ${it.joinToString { it.packageName }}")
+                }, {
+                    KLog.w("erorr $it")
+                }).addTo(rxManager)
 
 
         }
@@ -171,9 +177,9 @@ class CompMagnetMainActivity : BaseActivity() {
         val callBack = { p: Int -> KLog.d("progress ---> $p") }
         iv_test_callback.setOnClickListener {
             CC.obtainBuilder(C.Components.PluginManager)
-                    .setActionName("callback")
-                    .setParamWithNoKey(callBack)
-                    .build().callAsync()
+                .setActionName("callback")
+                .setParamWithNoKey(callBack)
+                .build().callAsync()
         }
 
         MagnetPluginHelper.init()

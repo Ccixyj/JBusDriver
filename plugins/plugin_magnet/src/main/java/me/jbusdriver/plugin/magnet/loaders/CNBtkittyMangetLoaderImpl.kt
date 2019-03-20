@@ -1,17 +1,17 @@
-package me.jbusdriver.plugin.magnet.loaderImpl
+package me.jbusdriver.plugin.magnet.loaders
 
 
 import me.jbusdriver.plugin.magnet.IMagnetLoader
+import me.jbusdriver.plugin.magnet.loaders.Helper.gzDeflateBase64
 import org.json.JSONObject
 import org.jsoup.Jsoup
 
 class CNBtkittyMangetLoaderImpl : IMagnetLoader {
 
-    private val search = "http://cnbtkitty.ws/"
+    private val search = "http://btkitty.pet/search/%s/%s/0/0.html"
 
     override var hasNexPage: Boolean = true
 
-    var searcLinkNext = ""
 
     init {
         val manager = java.net.CookieManager()
@@ -22,24 +22,9 @@ class CNBtkittyMangetLoaderImpl : IMagnetLoader {
 
     override fun loadMagnets(key: String, page: Int): List<JSONObject> {
         return try {
-            val doc = if (page == 1) {
-                Jsoup.connect(search).cookie("bk_lan", "zh-cn").data("keyword", key).initHeaders().post()
-            } else {
-                if (!searcLinkNext.startsWith("http")) {
-                    val schema = search.split("://").last()
-                    if (!searcLinkNext.contains(schema)) {
-                        searcLinkNext = schema + searcLinkNext
-                    }
-                    searcLinkNext = "https://" + searcLinkNext.removePrefix(":").removePrefix("/").removePrefix("/")
-                }
-                Jsoup.connect(searcLinkNext).initHeaders().get()
-            }
+            val doc = Jsoup.connect(search.format(gzDeflateBase64(key) , page)).get()
             val nextPages = doc.select(".pagination strong~a")
             hasNexPage = nextPages.size > 0
-            if (hasNexPage) {
-                searcLinkNext = nextPages.first().attr("href")
-            }
-
 
             return doc.select(".content .list-con").map {
                 val title = it.select("dt").text().trim().removeSuffix("Hot")

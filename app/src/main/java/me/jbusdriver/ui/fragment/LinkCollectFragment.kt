@@ -11,29 +11,33 @@ import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-import me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_menu_op_head.view.*
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
+import me.jbusdriver.R
+import me.jbusdriver.base.common.AppBaseRecycleFragment
 import me.jbusdriver.base.dpToPx
 import me.jbusdriver.base.toast
-import me.jbusdriver.base.common.AppBaseRecycleFragment
 import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.common.bean.db.Category
 import me.jbusdriver.common.bean.db.LinkCategory
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.mvp.LinkCollectContract
-import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.bean.CollectLinkWrapper
+import me.jbusdriver.mvp.bean.SearchLink
+import me.jbusdriver.mvp.bean.convertDBItem
+import me.jbusdriver.mvp.bean.des
 import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.mvp.presenter.LinkCollectPresenterImpl
 import me.jbusdriver.ui.activity.MovieListActivity
 import me.jbusdriver.ui.activity.SearchResultActivity
-
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.contextMenu.LinkMenu
 import me.jbusdriver.ui.holder.CollectDirEditHolder
 
-class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkCollectPresenter, LinkCollectContract.LinkCollectView, CollectLinkWrapper<ILink>>(), LinkCollectContract.LinkCollectView {
+class LinkCollectFragment :
+    AppBaseRecycleFragment<LinkCollectContract.LinkCollectPresenter, LinkCollectContract.LinkCollectView, CollectLinkWrapper<ILink>>(),
+    LinkCollectContract.LinkCollectView {
 
     override val swipeView: SwipeRefreshLayout? by lazy { sr_refresh }
     override val recycleView: RecyclerView by lazy { rv_recycle }
@@ -54,19 +58,22 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
                         val dp8 = mContext.dpToPx(8f)
                         holder.itemView.setPadding(dp8 * 2, dp8, dp8 * 2, dp8)
                         holder.setText(R.id.tv_head_name, des.firstOrNull())
-                                .setText(R.id.tv_head_value, des.lastOrNull())
+                            .setText(R.id.tv_head_value, des.lastOrNull())
 
                     }
                     else -> {
                         setFullSpan(holder)
-                        holder.setText(R.id.tv_nav_menu_name, " ${if (collect.isExpanded) "👇" else "👆"} " + collect.category.name)
+                        holder.setText(
+                            R.id.tv_nav_menu_name,
+                            " ${if (collect.isExpanded) "👇" else "👆"} " + collect.category.name
+                        )
                     }
                 }
             }
         }.apply {
             setOnItemClickListener { _, view, position ->
                 val data = this@LinkCollectFragment.adapter.getData().getOrNull(position)
-                        ?: return@setOnItemClickListener
+                    ?: return@setOnItemClickListener
                 data.linkBean?.let {
                     if (it is SearchLink) {
                         SearchResultActivity.start(viewContext, it.query)
@@ -90,14 +97,14 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
                             if (last.isNotEmpty()) {
                                 action.put("移到分类...") { link ->
                                     MaterialDialog.Builder(viewContext).title("选择目录")
-                                            .items(last.map { it.name })
-                                            .itemsCallbackSingleChoice(-1) { _, _, w, _ ->
-                                                last.getOrNull(w)?.let {
-                                                    mBasePresenter?.setCategory(link, it)
-                                                    mBasePresenter?.onRefresh()
-                                                }
-                                                return@itemsCallbackSingleChoice true
-                                            }.show()
+                                        .items(last.map { it.name })
+                                        .itemsCallbackSingleChoice(-1) { _, _, w, _ ->
+                                            last.getOrNull(w)?.let {
+                                                mBasePresenter?.setCategory(link, it)
+                                                mBasePresenter?.onRefresh()
+                                            }
+                                            return@itemsCallbackSingleChoice true
+                                        }.show()
                                 }
                             }
                         }
@@ -113,10 +120,10 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
                         }
                     }
                     MaterialDialog.Builder(viewContext).content(link.des)
-                            .items(action.keys)
-                            .itemsCallback { _, _, _, text ->
-                                action[text]?.invoke(link)
-                            }.show()
+                        .items(action.keys)
+                        .itemsCallback { _, _, _, text ->
+                            action[text]?.invoke(link)
+                        }.show()
 
                 }
                 true
@@ -134,8 +141,10 @@ class LinkCollectFragment : AppBaseRecycleFragment<LinkCollectContract.LinkColle
         super.onCreateOptionsMenu(menu, inflater)
         menu?.findItem(R.id.action_collect_dir_edit)?.setOnMenuItemClickListener {
 
-            holder.showDialogWithData(mBasePresenter?.collectGroupMap?.keys?.toList()
-                    ?: emptyList()) { delActionsParams, addActionsParams ->
+            holder.showDialogWithData(
+                mBasePresenter?.collectGroupMap?.keys?.toList()
+                    ?: emptyList()
+            ) { delActionsParams, addActionsParams ->
                 if (delActionsParams.isNotEmpty()) {
                     delActionsParams.forEach {
                         try {

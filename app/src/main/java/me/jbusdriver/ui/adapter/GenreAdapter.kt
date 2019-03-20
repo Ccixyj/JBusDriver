@@ -6,8 +6,8 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import me.jbusdriver.R
-import me.jbusdriver.mvp.bean.Genre
 import me.jbusdriver.common.bean.ILink
+import me.jbusdriver.mvp.bean.Genre
 import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.bean.des
 import me.jbusdriver.mvp.model.CollectModel
@@ -50,10 +50,10 @@ open class GenreAdapter : BaseQuickAdapter<Genre, BaseViewHolder>(R.layout.layou
                 }
 
                 MaterialDialog.Builder(view.context).title(item.name).content(item.des)
-                        .items(action.keys)
-                        .itemsCallback { _, _, _, text ->
-                            action[text]?.invoke(item)
-                        }.show()
+                    .items(action.keys)
+                    .itemsCallback { _, _, _, text ->
+                        action[text]?.invoke(item)
+                    }.show()
             }
             true
         }

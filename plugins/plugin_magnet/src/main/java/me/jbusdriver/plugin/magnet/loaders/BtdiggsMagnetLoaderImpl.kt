@@ -1,8 +1,9 @@
-package me.jbusdriver.plugin.magnet.loaderImpl
+package me.jbusdriver.plugin.magnet.loaders
 
 import android.util.Log
 
 import me.jbusdriver.plugin.magnet.IMagnetLoader
+import me.jbusdriver.plugin.magnet.loaders.Helper.encodeBase64
 import org.json.JSONObject
 import org.jsoup.Jsoup
 
@@ -14,7 +15,7 @@ class BtdiggsMagnetLoaderImpl : IMagnetLoader {
     val TAG = "Btdiggs"
 
     override fun loadMagnets(key: String, page: Int): List<JSONObject> {
-        val url = search.format(encode(key), page)
+        val url = search.format(encodeBase64(key), page)
         Log.w(TAG, "load url :$url")
         val doc = Jsoup.connect(url).initHeaders().get()
         Log.w(TAG, "load doc :${doc.title()}")
@@ -34,10 +35,10 @@ class BtdiggsMagnetLoaderImpl : IMagnetLoader {
 
             val labels = it.select(".attr span")
             JSONObject().apply {
-               put("name", title)
-               put("size", labels.component2().text())
-               put("date", labels.component1().text())
-               put("link", realUrl)
+                put("name", title)
+                put("size", labels.component2().text())
+                put("date", labels.component1().text())
+                put("link", realUrl)
             }
 
 
@@ -49,3 +50,4 @@ class BtdiggsMagnetLoaderImpl : IMagnetLoader {
         return (IMagnetLoader.MagnetFormatPrefix + Jsoup.connect(url).get().select(".content .infohash").text().trim())
     }
 }
+

@@ -18,7 +18,8 @@ import java.util.concurrent.TimeoutException
  * Created by Administrator on 2016/9/6 0006.
  * 通用下拉加在更多 , 上拉刷新处理 处理,可单独使用其中一部分
  */
-abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRefreshView, T> : BasePresenterImpl<V>(), BasePresenter.BaseRefreshLoadMorePresenter<V> {
+abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRefreshView, T> : BasePresenterImpl<V>(),
+    BasePresenter.BaseRefreshLoadMorePresenter<V> {
 
     protected var pageInfo = PageInfo()
     protected var lastPage: Int = Int.MAX_VALUE
@@ -33,8 +34,10 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
     override fun onLoadMore() {
         when {
             hasLoadNext() -> loadData4Page(pageInfo.nextPage)
-            pageInfo.nextPage >= Math.max(pageInfo.activePage, pageInfo.referPages.lastOrNull()
-                    ?: 1) -> {
+            pageInfo.nextPage >= Math.max(
+                pageInfo.activePage, pageInfo.referPages.lastOrNull()
+                    ?: 1
+            ) -> {
                 lastPage = pageInfo.activePage
                 mView?.loadMoreEnd()
             }
@@ -64,18 +67,19 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
                 (it is HttpException && it.code() == 404) -> {
                     //404 视为没有数据
                     toast("第${page}页没有数据")
-                    if (curPage.nextPage > 1 && curPage.activePage > 0) pageInfo = pageInfo.copy(activePage = pageInfo.nextPage - 1)//重置前一页pageInfo
+                    if (curPage.nextPage > 1 && curPage.activePage > 0) pageInfo =
+                            pageInfo.copy(activePage = pageInfo.nextPage - 1)//重置前一页pageInfo
                     Flowable.just(ResultPageBean.emptyPage(curPage))
                 }
                 it is TimeoutException -> {
-                   toast("第${page}页请求超时,请过会再次尝试")
+                    toast("第${page}页请求超时,请过会再次尝试")
                     Flowable.just(ResultPageBean.emptyPage(curPage))
                 }
                 else -> throw  it
             }
         }).compose(SchedulersCompat.io())
-                .subscribeWith(ListDefaultSubscriber(curPage))
-                .addTo(rxManager)
+            .subscribeWith(ListDefaultSubscriber(curPage))
+            .addTo(rxManager)
 
     }
 
@@ -91,13 +95,16 @@ abstract class AbstractRefreshLoadMorePresenterImpl<V : BaseView.BaseListWithRef
                 if (it.isEmpty()) current
                 else it.attr("href")
             }
-            val pages = select(".pagination a:not([id])").mapNotNull { it.attr("href").split("/").lastOrNull()?.toIntOrNull() }
+            val pages =
+                select(".pagination a:not([id])").mapNotNull { it.attr("href").split("/").lastOrNull()?.toIntOrNull() }
 
 
-            return PageInfo(current.split("/").lastOrNull()?.toIntOrNull()
+            return PageInfo(
+                current.split("/").lastOrNull()?.toIntOrNull()
                     ?: 0,
-                    next.split("/").lastOrNull()?.toIntOrNull() ?: 0
-                    , pages).apply {
+                next.split("/").lastOrNull()?.toIntOrNull() ?: 0
+                , pages
+            ).apply {
                 if (pages.isNotEmpty()) {
                     lastPage = pages.last()
 

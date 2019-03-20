@@ -13,13 +13,13 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.chad.library.adapter.base.loadmore.SimpleLoadMoreView
 import io.reactivex.Flowable
-import me.jbusdriver.base.KLog
 import me.jbusdriver.base.R
 import me.jbusdriver.base.dpToPx
 import me.jbusdriver.base.mvp.BaseView
 import me.jbusdriver.base.mvp.presenter.BasePresenter
 
-abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePresenter<V>, V : BaseView.BaseListWithRefreshView, M> : AppBaseFragment<P, V>(), BaseView.BaseListWithRefreshView {
+abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePresenter<V>, V : BaseView.BaseListWithRefreshView, M> :
+    AppBaseFragment<P, V>(), BaseView.BaseListWithRefreshView {
 
     /**
      * view 销毁后获取时要从view中重新获取; ex : 切换横竖屏
@@ -39,8 +39,10 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
         recycleView.layoutManager = layoutManager
 
         adapter.openLoadAnimation {
-            arrayOf(ObjectAnimator.ofFloat(it, "alpha", 0.0f, 1.0f),
-                    ObjectAnimator.ofFloat(it, "translationY", 120f, 0f))
+            arrayOf(
+                ObjectAnimator.ofFloat(it, "alpha", 0.0f, 1.0f),
+                ObjectAnimator.ofFloat(it, "translationY", 120f, 0f)
+            )
         }
         swipeView?.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimaryLight)
         swipeView?.setOnRefreshListener { mBasePresenter?.onRefresh() }
@@ -123,9 +125,11 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
             override fun getEmptyView(): View {
                 return TextView(context).apply {
                     text = tip
-                    layoutParams = ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, context.dpToPx(36f)).apply {
-                        gravity = Gravity.CENTER
-                    }
+                    layoutParams =
+                            ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, context.dpToPx(36f))
+                                .apply {
+                                    gravity = Gravity.CENTER
+                                }
                 }
 
             }
@@ -135,9 +139,11 @@ abstract class AppBaseRecycleFragment<P : BasePresenter.BaseRefreshLoadMorePrese
             override fun getEmptyView(): View {
                 return TextView(context).apply {
                     text = tip
-                    layoutParams = ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, context.dpToPx(36f)).apply {
-                        gravity = Gravity.CENTER
-                    }
+                    layoutParams =
+                            ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, context.dpToPx(36f))
+                                .apply {
+                                    gravity = Gravity.CENTER
+                                }
                 }
 
             }

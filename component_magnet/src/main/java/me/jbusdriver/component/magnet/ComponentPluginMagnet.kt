@@ -31,7 +31,7 @@ class ComponentPluginMagnet : IComponent {
                 "plugins.install" -> {
                     //async call
                     val pluginPath = cc.getParamItem<String>("path")
-                            ?: error("must past apk's path")
+                        ?: error("must past apk's path")
                     installPlugin(cc, pluginPath)
                     return true
                 }
@@ -49,18 +49,21 @@ class ComponentPluginMagnet : IComponent {
     }
 
     private fun getAllPlugin(cc: CC) {
-        CC.sendCCResult(cc.callId, CCResult.success(mapOf("plugins" to PhantomCore.getInstance().allPlugins.map { it.toPluginBean() })))
+        CC.sendCCResult(
+            cc.callId,
+            CCResult.success(mapOf("plugins" to PhantomCore.getInstance().allPlugins.map { it.toPluginBean() }))
+        )
     }
 
     @SuppressLint("CheckResult")
     private fun installPlugin(cc: CC, path: String) {
         MagnetPluginHelper.installApkFile(File(path)).timeout(10, TimeUnit.SECONDS).subscribeOn(Schedulers.io())
-                .timeout(10, TimeUnit.SECONDS)
-                .filter { !cc.isStopped }
-                .subscribe({
-                    CC.sendCCResult(cc.callId, CCResult.success("plugin", it.toPluginBean()))
-                }, {
-                    CC.sendCCResult(cc.callId, CCResult.error("install error $it"))
-                })
+            .timeout(10, TimeUnit.SECONDS)
+            .filter { !cc.isStopped }
+            .subscribe({
+                CC.sendCCResult(cc.callId, CCResult.success("plugin", it.toPluginBean()))
+            }, {
+                CC.sendCCResult(cc.callId, CCResult.error("install error $it"))
+            })
     }
 }

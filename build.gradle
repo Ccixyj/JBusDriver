@@ -4,7 +4,8 @@ buildscript {
     apply from: this.file("version.gradle")
     repositories {
 //        maven { url 'https://mirrors.huaweicloud.com/repository/maven/' }
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven {   url 'http://maven.aliyun.com/' }
+        maven { url 'https://dl.bintray.com/umsdk/release' }
         jcenter()
         google()
         maven { url "https://jitpack.io" }
@@ -28,7 +29,8 @@ buildscript {
 allprojects {
     repositories {
 //        maven { url 'https://mirrors.huaweicloud.com/repository/maven/' }
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven {   url 'http://maven.aliyun.com/' }
+        maven { url 'https://dl.bintray.com/umsdk/release' }
         jcenter()
         google()
         maven { url "https://jitpack.io" }

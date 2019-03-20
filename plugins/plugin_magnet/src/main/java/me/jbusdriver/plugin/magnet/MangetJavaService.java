@@ -5,11 +5,11 @@ import android.widget.Toast;
 
 import com.wlqq.phantom.communication.PhantomService;
 import com.wlqq.phantom.communication.RemoteMethod;
+import me.jbusdriver.plugin.magnet.loaders.BtanvMagnetLoaderImpl;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import me.jbusdriver.plugin.magnet.loaderImpl.BtGiggImpl;
 
 @PhantomService(name = BuildConfig.APPLICATION_ID + "/MagnetJavaService", version = 1)
 public class MangetJavaService {
@@ -29,7 +29,7 @@ public class MangetJavaService {
     @RemoteMethod(name = "getAllLoaders")
     public Map<String, IMagnetLoader> getAllLoaders() {
         Map<String, IMagnetLoader> s = new HashMap<>();
-        s.put("bgg", new BtGiggImpl());
+        s.put("bgg", new BtanvMagnetLoaderImpl());
         return s;
     }
 }

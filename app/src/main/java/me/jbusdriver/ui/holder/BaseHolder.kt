@@ -9,9 +9,9 @@ import java.lang.ref.WeakReference
  */
 open class BaseHolder(context: Context) {
     protected val weakRef by lazy { WeakReference(context) }
-    protected val rxManager by  lazy { CompositeDisposable() }
+    protected val rxManager by lazy { CompositeDisposable() }
 
-    open fun release(){
+    open fun release() {
         rxManager.clear()
         rxManager.dispose()
         weakRef.clear()

@@ -17,7 +17,6 @@ import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
-import com.billy.cc.core.component.CC
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
@@ -25,14 +24,14 @@ import kotlinx.android.synthetic.main.nav_header_main.view.*
 import me.jbusdriver.R
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.AppBaseActivity
-import me.jbusdriver.base.common.C
 import me.jbusdriver.common.JBus
 import me.jbusdriver.mvp.MainContract
 import me.jbusdriver.mvp.bean.*
 import me.jbusdriver.mvp.presenter.MainPresenterImpl
 import java.util.concurrent.TimeUnit
 
-class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.MainView>(), NavigationView.OnNavigationItemSelectedListener, MainContract.MainView {
+class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.MainView>(),
+    NavigationView.OnNavigationItemSelectedListener, MainContract.MainView {
 
     private val navigationView by lazy { findViewById<NavigationView>(R.id.nav_view) }
     private var selectMenu: MenuItem? = null
@@ -47,28 +46,28 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
     private fun bindRx() {
         RxBus.toFlowable(MenuChangeEvent::class.java)
-                .delay(100, TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成
-                .compose(SchedulersCompat.computation())
-                .subscribeBy {
-                    val mayAdded = MenuOp.Ops.map { it.id.toString() }
-                    supportFragmentManager.fragments.filter { it.tag in mayAdded }.forEach {
-                        supportFragmentManager.beginTransaction().remove(it).commitNowAllowingStateLoss()
-                    }
-
-                    initFragments()
+            .delay(100, TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成
+            .compose(SchedulersCompat.computation())
+            .subscribeBy {
+                val mayAdded = MenuOp.Ops.map { it.id.toString() }
+                supportFragmentManager.fragments.filter { it.tag in mayAdded }.forEach {
+                    supportFragmentManager.beginTransaction().remove(it).commitNowAllowingStateLoss()
                 }
-                .addTo(rxManager)
+
+                initFragments()
+            }
+            .addTo(rxManager)
 
         RxBus.toFlowable(CategoryChangeEvent::class.java)
-                .debounce(500, TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成
-                .compose(SchedulersCompat.computation())
-                .subscribeBy {
-                    supportFragmentManager.findFragmentByTag(R.id.mine_collect.toString())?.let {
-                        supportFragmentManager.beginTransaction().remove(it).commitNowAllowingStateLoss()
-                    }
-                    if (selectMenu?.itemId == R.id.mine_collect) setNavSelected()
+            .debounce(500, TimeUnit.MILLISECONDS) //稍微延迟,否则设置可能没有完成
+            .compose(SchedulersCompat.computation())
+            .subscribeBy {
+                supportFragmentManager.findFragmentByTag(R.id.mine_collect.toString())?.let {
+                    supportFragmentManager.beginTransaction().remove(it).commitNowAllowingStateLoss()
+                }
+                if (selectMenu?.itemId == R.id.mine_collect) setNavSelected()
 
-                }.addTo(rxManager)
+            }.addTo(rxManager)
 
     }
 
@@ -78,7 +77,8 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         setSupportActionBar(toolbar)
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         val toggle = ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+            this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        )
         drawer.addDrawerListener(toggle)
         toggle.syncState()
 
@@ -145,10 +145,10 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
     private fun setNavSelected() {
         val id = (MenuOp.Ops - MenuOp.mine).find { it.isHow }?.id
-                ?: MenuOp.Ops.find { it.isHow }?.id ?: let {
-                    toast("至少配置一项菜单!!!!")
-                    return
-                }
+            ?: MenuOp.Ops.find { it.isHow }?.id ?: let {
+                toast("至少配置一项菜单!!!!")
+                return
+            }
         val menuId = intent.getIntExtra("MenuSelectedItemId", id)
         val select = navigationView.menu.findItem(menuId)
         select?.let {
@@ -216,17 +216,17 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
             val bean = data as UpdateBean
             if (viewContext.packageInfo?.versionCode ?: -1 < bean.versionCode) {
                 MaterialDialog.Builder(this).title("更新(${bean.versionName})")
-                        .content(bean.desc)
-                        .neutralText("下次更新")
-                        .neutralColor(R.color.secondText)
-                        .positiveText("更新")
-                        .onPositive { _, _ ->
-                            browse(bean.url)
-                        }
-                        .dismissListener {
-                            showNotice(data)
-                        }
-                        .show()
+                    .content(bean.desc)
+                    .neutralText("下次更新")
+                    .neutralColor(R.color.secondText)
+                    .positiveText("更新")
+                    .onPositive { _, _ ->
+                        browse(bean.url)
+                    }
+                    .dismissListener {
+                        showNotice(data)
+                    }
+                    .show()
             }
 
             if (data is NoticeBean) {
@@ -239,16 +239,20 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
     @SuppressLint("ResourceAsColor")
     private fun showNotice(notice: Any?) {
         val shared by lazy { getSharedPreferences("config", Context.MODE_PRIVATE) }
-        if (notice != null && notice is NoticeBean && !TextUtils.isEmpty(notice.content) && notice.id > 0 && shared.getInt(NoticeIgnoreID, -1) < notice.id) {
+        if (notice != null && notice is NoticeBean && !TextUtils.isEmpty(notice.content) && notice.id > 0 && shared.getInt(
+                NoticeIgnoreID,
+                -1
+            ) < notice.id
+        ) {
             MaterialDialog.Builder(this).title("公告")
-                    .content(notice.content!!)
-                    .neutralText("忽略该提示")
-                    .neutralColor(R.color.secondText)
-                    .onNeutral { _, _ ->
-                        shared.edit().putInt(NoticeIgnoreID, notice.id).apply()
-                    }
-                    .positiveText("知道了")
-                    .show()
+                .content(notice.content!!)
+                .neutralText("忽略该提示")
+                .neutralColor(R.color.secondText)
+                .onNeutral { _, _ ->
+                    shared.edit().putInt(NoticeIgnoreID, notice.id).apply()
+                }
+                .positiveText("知道了")
+                .show()
         }
     }
 

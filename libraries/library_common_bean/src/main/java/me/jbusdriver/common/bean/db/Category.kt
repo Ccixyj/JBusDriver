@@ -18,9 +18,10 @@ data class Category(val name: String, val pid: Int = -1, val tree: String, var o
     }
 
     override fun equals(other: Any?) =
-            other?.let { (it as? Category)?.id == this.id } ?: false
+        other?.let { (it as? Category)?.id == this.id } ?: false
 
-    fun equalAll(other: Category?) = other?.let { it.id == this.id && it.name == this.name && it.pid == this.pid && it.tree == this.tree }
+    fun equalAll(other: Category?) =
+        other?.let { it.id == this.id && it.name == this.name && it.pid == this.pid && it.tree == this.tree }
             ?: false
 }
 

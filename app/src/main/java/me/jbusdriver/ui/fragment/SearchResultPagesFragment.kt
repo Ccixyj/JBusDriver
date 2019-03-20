@@ -11,7 +11,9 @@ import me.jbusdriver.ui.data.enums.SearchType
 /**
  * Created by Administrator on 2017/7/17 0017.
  */
-class SearchResultPagesFragment : TabViewPagerFragment<MineCollectContract.MineCollectPresenter, MineCollectContract.MineCollectView>(), MineCollectContract.MineCollectView {
+class SearchResultPagesFragment :
+    TabViewPagerFragment<MineCollectContract.MineCollectPresenter, MineCollectContract.MineCollectView>(),
+    MineCollectContract.MineCollectView {
 
     private val searchWord by lazy { arguments?.getString(C.BundleKey.Key_1) ?: error("must set search word") }
 

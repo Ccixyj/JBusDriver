@@ -8,6 +8,7 @@ import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
 import com.squareup.leakcanary.LeakCanary
 import com.umeng.analytics.MobclickAgent
+import com.umeng.commonsdk.UMConfigure
 import com.wlqq.phantom.library.PhantomCore
 import com.wlqq.phantom.library.log.ILogReporter
 import io.reactivex.plugins.RxJavaPlugins
@@ -15,7 +16,6 @@ import me.jbusdriver.BuildConfig
 import me.jbusdriver.base.GSON
 import me.jbusdriver.base.JBusManager
 import me.jbusdriver.base.arrayMapof
-import me.jbusdriver.debug.stetho.initializeStetho
 import me.jbusdriver.http.JAVBusService
 import java.io.File
 import java.util.*
@@ -28,20 +28,21 @@ class AppContext : Application() {
 
     val JBusServices by lazy { arrayMapof<String, JAVBusService>() }
     private val isDebug by lazy {
-        BuildConfig.DEBUG || File(Environment.getExternalStorageDirectory().absolutePath + File.separator +
-                packageName
-                + File.separator + "debug"
+        BuildConfig.DEBUG || File(
+            Environment.getExternalStorageDirectory().absolutePath + File.separator +
+                    packageName
+                    + File.separator + "debug"
 
         ).exists()
     }
 
     private val phantomHostConfig by lazy {
         PhantomCore.Config()
-                .setCheckSignature(!isDebug)
-                .setCheckVersion(!BuildConfig.DEBUG)
-                .setDebug(isDebug)
-                .setLogLevel(if (isDebug) android.util.Log.VERBOSE else android.util.Log.WARN)
-                .setLogReporter(LogReporterImpl())
+            .setCheckSignature(!isDebug)
+            .setCheckVersion(!BuildConfig.DEBUG)
+            .setDebug(isDebug)
+            .setLogLevel(if (isDebug) android.util.Log.VERBOSE else android.util.Log.WARN)
+            .setLogReporter(LogReporterImpl())
     }
 
 
@@ -61,15 +62,15 @@ class AppContext : Application() {
         if (isDebug) {
             LeakCanary.install(this)
 
-            initializeStetho(this) //chrome://inspect/#devices
+//            initializeStetho(this) //chrome://inspect/#devices
 
             val formatStrategy = PrettyFormatStrategy.newBuilder()
-                    .showThreadInfo(true)  // (Optional) Whether to show thread info or not. Default true
-                    .methodCount(2)         // (Optional) How many method line to show. Default 2
-                    .methodOffset(0)        // (Optional) Hides internal method calls up to offset. Default 5
-                    // .logStrategy(customLog) // (Optional) Changes the log strategy to print out. Default LogCat
-                    .tag("old_driver")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
-                    .build()
+                .showThreadInfo(true)  // (Optional) Whether to show thread info or not. Default true
+                .methodCount(2)         // (Optional) How many method line to show. Default 2
+                .methodOffset(0)        // (Optional) Hides internal method calls up to offset. Default 5
+                // .logStrategy(customLog) // (Optional) Changes the log strategy to print out. Default LogCat
+                .tag("old_driver")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
+                .build()
 
             Logger.addLogAdapter(object : AndroidLogAdapter(formatStrategy) {
                 override fun isLoggable(priority: Int, tag: String?) = isDebug
@@ -81,8 +82,10 @@ class AppContext : Application() {
             CC.enableRemoteCC(isDebug)
         }
 
-
-        MobclickAgent.setDebugMode(isDebug)
+        UMConfigure.init(this, UMConfigure.DEVICE_TYPE_PHONE, null)
+        UMConfigure.setLogEnabled(isDebug)
+        MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_AUTO)
+        MobclickAgent.setCatchUncaughtExceptions(true)
 
         RxJavaPlugins.setErrorHandler {
             try {

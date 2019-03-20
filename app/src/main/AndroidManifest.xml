@@ -58,8 +58,6 @@
         <service
             android:name=".ui.task.LoadCollectService"
             android:exported="false" />
-
-       <!-- <activity android:name="me.jbusdriver.ui.activity.HotRecommendActivity" />-->
     </application>
 
 </manifest>

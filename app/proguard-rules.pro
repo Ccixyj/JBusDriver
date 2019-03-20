@@ -153,7 +153,20 @@
 # Jsou end
 
 #umeng
--keep class com.umeng.commonsdk.** {*;}
+-keep class com.umeng.** {*;}
+
+-keepclassmembers class * {
+   public <init> (org.json.JSONObject);
+}
+
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+-keep public class me.jbusdriver.**.R$*{
+public static final int *;
+}
 #umeng end
 
 

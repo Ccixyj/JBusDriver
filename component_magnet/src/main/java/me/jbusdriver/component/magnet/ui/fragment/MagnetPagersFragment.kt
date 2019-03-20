@@ -25,7 +25,7 @@ class MagnetPagersFragment : TabViewPagerFragment<MagnetPagerPresenter, MagnetPa
     override val mTitles: List<String> by lazy {
         val allKeys = MagnetPluginHelper.getLoaderKeys()
         Configuration.getConfigKeys().filter { allKeys.contains(it) }.toMutableList().apply {
-            if (this.isEmpty()){
+            if (this.isEmpty()) {
                 this.addAll(Configuration.getConfigKeys())
             }
             Schedulers.single().scheduleDirect {

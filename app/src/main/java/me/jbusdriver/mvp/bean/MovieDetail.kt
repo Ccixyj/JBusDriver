@@ -10,22 +10,23 @@ import java.io.Serializable
  * Created by Administrator on 2017/4/16.
  */
 
-data class MovieDetail(val title: String,
-                       val content: String,
-                       val cover: String, //封面
-                       val headers: List<Header>,
-        /*
-          val code: String,
-        val publishDate: String,
-         val director: Pair<String, String>, //导演
-        val studio: Pair<String, String>, //製作商
-        val label: Pair<String, String>, //發行商
-        val series: Pair<String, String>, //系列*/
-                       val genres: List<Genre>, //類別
-                       val actress: List<ActressInfo>, //出演
-                       val imageSamples: List<ImageSample>, //截圖
-                       val relatedMovies: List<Movie> //推薦
-        //  val magnets: MutableList<Magnet> = mutableListOf() //磁力链接
+data class MovieDetail(
+    val title: String,
+    val content: String,
+    val cover: String, //封面
+    val headers: List<Header>,
+    /*
+      val code: String,
+    val publishDate: String,
+     val director: Pair<String, String>, //导演
+    val studio: Pair<String, String>, //製作商
+    val label: Pair<String, String>, //發行商
+    val series: Pair<String, String>, //系列*/
+    val genres: List<Genre>, //類別
+    val actress: List<ActressInfo>, //出演
+    val imageSamples: List<ImageSample>, //截圖
+    val relatedMovies: List<Movie> //推薦
+    //  val magnets: MutableList<Magnet> = mutableListOf() //磁力链接
 )
 
 interface IAttr : Serializable
@@ -41,14 +42,18 @@ data class Genre(val name: String, override val link: String) : ILink {
     override var categoryId: Int = LinkCategory.id ?: 10
 }
 
-data class ActressInfo(val name: String, val avatar: String, override val link: String, @Transient var tag: String? = null) : ILink {
+data class ActressInfo(
+    val name: String,
+    val avatar: String,
+    override val link: String, @Transient var tag: String? = null
+) : ILink {
 
     @Transient
     override var categoryId: Int = ActressCategory.id ?: 2
 
 
-
-    override fun toString() = "ActressInfo(name='$name', avatar='$avatar', link='$link', tag=$tag  categoryId $categoryId) "
+    override fun toString() =
+        "ActressInfo(name='$name', avatar='$avatar', link='$link', tag=$tag  categoryId $categoryId) "
 
 }
 

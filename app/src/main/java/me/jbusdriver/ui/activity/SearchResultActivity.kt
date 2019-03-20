@@ -5,8 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import me.jbusdriver.R
 import kotlinx.android.synthetic.main.activity_search_result.*
+import me.jbusdriver.R
 import me.jbusdriver.base.RxBus
 import me.jbusdriver.base.common.BaseActivity
 import me.jbusdriver.base.common.C
@@ -28,9 +28,9 @@ class SearchResultActivity : BaseActivity() {
             arguments = Bundle().apply { putString(C.BundleKey.Key_1, searchWord) }
         }).commit()
 
-        RxBus.toFlowable(SearchWord::class.java).subscribeBy{
-           setTitle(it.query)
-        } .addTo(rxManager)
+        RxBus.toFlowable(SearchWord::class.java).subscribeBy {
+            setTitle(it.query)
+        }.addTo(rxManager)
     }
 
     private fun setTitle(title: String) {

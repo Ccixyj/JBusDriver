@@ -1,9 +1,5 @@
 package me.jbusdriver.component.magnet.mvp.presenter
 
-import android.app.Activity
-import com.wlqq.phantom.communication.PhantomServiceManager
-import com.wlqq.phantom.library.PhantomCore
-import com.wlqq.phantom.library.proxy.PluginContext
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.addTo
 import me.jbusdriver.base.*
@@ -16,7 +12,9 @@ import me.jbusdriver.component.magnet.mvp.MagnetListContract
 import me.jbusdriver.component.magnet.mvp.bean.Magnet
 import org.jsoup.nodes.Document
 
-class MagnetListPresenterImpl(private val magnetLoaderKey: String, private val keyword: String) : AbstractRefreshLoadMorePresenterImpl<MagnetListContract.MagnetListView, Magnet>(), MagnetListContract.MagnetListPresenter {
+class MagnetListPresenterImpl(private val magnetLoaderKey: String, private val keyword: String) :
+    AbstractRefreshLoadMorePresenterImpl<MagnetListContract.MagnetListView, Magnet>(),
+    MagnetListContract.MagnetListPresenter {
 
 
     override val model: BaseModel<Int, Document>
@@ -29,7 +27,8 @@ class MagnetListPresenterImpl(private val magnetLoaderKey: String, private val k
         val curPage = PageInfo(page, page + 1)
         val cacheKey = "${magnetLoaderKey}_${keyword}_${curPage.activePage}"
         //page 1
-        val cache = Flowable.concat(CacheLoader.justLru(cacheKey), CacheLoader.justDisk(cacheKey)).firstElement().map { GSON.fromJson<List<Magnet>>(it) }.toFlowable()
+        val cache = Flowable.concat(CacheLoader.justLru(cacheKey), CacheLoader.justDisk(cacheKey)).firstElement()
+            .map { GSON.fromJson<List<Magnet>>(it) }.toFlowable()
         val loaderFormNet = Flowable.fromCallable {
             // 插件 Phantom Service 代理对象
             return@fromCallable try {
@@ -46,10 +45,10 @@ class MagnetListPresenterImpl(private val magnetLoaderKey: String, private val k
             }
         }
         Flowable.concat(cache, loaderFormNet).firstOrError().toFlowable()
-                .map { ResultPageBean(curPage, it) }
-                .compose(SchedulersCompat.io())
-                .subscribeWith(ListDefaultSubscriber(curPage))
-                .addTo(rxManager)
+            .map { ResultPageBean(curPage, it) }
+            .compose(SchedulersCompat.io())
+            .subscribeWith(ListDefaultSubscriber(curPage))
+            .addTo(rxManager)
     }
 
     override fun lazyLoad() {

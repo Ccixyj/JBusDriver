@@ -26,11 +26,7 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         KLog.t(TAG).d("onCreate $savedInstanceState")
         super.onCreate(savedInstanceState)
-        MobclickAgent.setDebugMode(BuildConfig.DEBUG)
-        MobclickAgent.openActivityDurationTrack(BuildConfig.DEBUG)
-        MobclickAgent.setScenarioType(this, MobclickAgent.EScenarioType.E_UM_NORMAL)
     }
-
 
 
     override fun onResume() {

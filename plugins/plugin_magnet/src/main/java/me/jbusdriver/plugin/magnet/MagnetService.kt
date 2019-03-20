@@ -17,7 +17,7 @@ open class MagnetService {
 
     @RemoteMethod(name = "pluginToast")
     open fun pluginToast(context: Context): String {
-        val info = "$context hello from plugin! " //update to version 2!!!!
+        val info = "$context hello from plugin! test2" //update to version 2!!!!
         Toast.makeText(context, info, Toast.LENGTH_LONG).show()
         return info
     }
@@ -34,8 +34,10 @@ open class MagnetService {
 
     @RemoteMethod(name = "getMagnets")
     open fun getMagnets(loader: String, key: String, page: Int): String {
-        return JSONArray(MagnetLoaders.Loaders.get(loader)?.loadMagnets(key, page)
-                ?: emptyList<JSONObject>()).toString()
+        return JSONArray(
+            MagnetLoaders.Loaders.get(loader)?.loadMagnets(key, page)
+                ?: emptyList<JSONObject>()
+        ).toString()
 
     }
 

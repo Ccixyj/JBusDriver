@@ -19,9 +19,12 @@ import kotlinx.android.synthetic.main.activity_movie_detail.*
 import kotlinx.android.synthetic.main.content_movie_detail.*
 import kotlinx.android.synthetic.main.layout_load_magnet.view.*
 import me.jbusdriver.R
-import me.jbusdriver.base.*
+import me.jbusdriver.base.GlideApp
 import me.jbusdriver.base.common.AppBaseActivity
 import me.jbusdriver.base.common.C
+import me.jbusdriver.base.inflate
+import me.jbusdriver.base.toast
+import me.jbusdriver.base.urlPath
 import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.mvp.MovieDetailContract
 import me.jbusdriver.mvp.bean.Movie
@@ -33,7 +36,9 @@ import me.jbusdriver.mvp.presenter.MovieDetailPresenterImpl
 import me.jbusdriver.ui.holder.*
 
 
-class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPresenter, MovieDetailContract.MovieDetailView>(), MovieDetailContract.MovieDetailView {
+class MovieDetailActivity :
+    AppBaseActivity<MovieDetailContract.MovieDetailPresenter, MovieDetailContract.MovieDetailView>(),
+    MovieDetailContract.MovieDetailView {
 
     private val statusBarHeight by lazy { ImmersionBar.getActionBarHeight(this) }
 
@@ -127,18 +132,24 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         ll_movie_detail.addView(headHolder.view)
         ll_movie_detail.addView(sampleHolder.view)
         ll_movie_detail.addView(viewContext.inflate(R.layout.layout_load_magnet).apply {
-            this.tv_movie_look_magnet.setTextColor(ResourcesCompat.getColor(this@apply.resources, R.color.colorPrimaryDark, null))
+            this.tv_movie_look_magnet.setTextColor(
+                ResourcesCompat.getColor(
+                    this@apply.resources,
+                    R.color.colorPrimaryDark,
+                    null
+                )
+            )
             this.tv_movie_look_magnet.paintFlags = this.tv_movie_look_magnet.paintFlags or Paint.UNDERLINE_TEXT_FLAG
             setOnClickListener {
                 val code = movie?.code?.replace("-", " ") ?: url.urlPath
                 CC.obtainBuilder(C.Components.Magnet)
-                        .setActionName("show")
-                        .addParam("keyword", code)
-                        .build().call().let { res ->
-                            if (!res.isSuccess) {
-                                toast(res.toString())
-                            }
+                    .setActionName("show")
+                    .addParam("keyword", code)
+                    .build().call().let { res ->
+                        if (!res.isSuccess) {
+                            toast(res.toString())
                         }
+                    }
             }
         })
         ll_movie_detail.addView(actressHolder.view)
@@ -165,8 +176,10 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
         ImmersionBar.with(this).destroy()
     }
 
-    override fun createPresenter() = MovieDetailPresenterImpl(intent?.getBooleanExtra(C.BundleKey.Key_2, false)
-            ?: false)
+    override fun createPresenter() = MovieDetailPresenterImpl(
+        intent?.getBooleanExtra(C.BundleKey.Key_2, false)
+            ?: false
+    )
 
     override val layoutId = R.layout.activity_movie_detail
 
@@ -201,12 +214,16 @@ class MovieDetailActivity : AppBaseActivity<MovieDetailContract.MovieDetailPrese
 
             supportActionBar?.title = data.title
             //cover fixme
-            iv_movie_cover.setOnClickListener { WatchLargeImageActivity.startShow(this, listOf(data.cover) + data.imageSamples.map { it.image }) }
+            iv_movie_cover.setOnClickListener {
+                WatchLargeImageActivity.startShow(
+                    this,
+                    listOf(data.cover) + data.imageSamples.map { it.image })
+            }
             GlideApp.with(this)
-                    .load(data.cover.toGlideNoHostUrl)
-                    .centerCrop()
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(DrawableImageViewTarget(iv_movie_cover))
+                .load(data.cover.toGlideNoHostUrl)
+                .centerCrop()
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(DrawableImageViewTarget(iv_movie_cover))
             //animation
             ll_movie_detail.y = ll_movie_detail.y + 120
             ll_movie_detail.alpha = 0f

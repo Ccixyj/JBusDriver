@@ -8,15 +8,16 @@ import android.widget.Toast
 import me.jbusdriver.R
 import me.jbusdriver.base.common.AppBaseActivity
 import me.jbusdriver.base.common.C
+import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.db.bean.History
 import me.jbusdriver.mvp.MovieParseContract
-import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.mvp.bean.des
 import me.jbusdriver.mvp.presenter.MovieParsePresenterImpl
 import me.jbusdriver.ui.fragment.LinkableListFragment
 import me.jbusdriver.ui.fragment.LinkedMovieListFragment
 
-class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter, MovieParseContract.MovieParseView>(), MovieParseContract.MovieParseView {
+class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter, MovieParseContract.MovieParseView>(),
+    MovieParseContract.MovieParseView {
 
 
     override fun createPresenter() = MovieParsePresenterImpl()
@@ -30,9 +31,10 @@ class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setToolBar()
-        supportFragmentManager.beginTransaction().replace(R.id.fl_container, LinkedMovieListFragment.newInstance(linkData).apply {
-            arguments?.putAll(intent.extras)
-        }).commitAllowingStateLoss()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fl_container, LinkedMovieListFragment.newInstance(linkData).apply {
+                arguments?.putAll(intent.extras)
+            }).commitAllowingStateLoss()
     }
 
     private fun setToolBar() {

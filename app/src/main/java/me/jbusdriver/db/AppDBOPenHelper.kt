@@ -4,8 +4,8 @@ import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.db.SupportSQLiteOpenHelper
 import android.database.sqlite.SQLiteDatabase
 import me.jbusdriver.base.KLog
-import me.jbusdriver.common.bean.db.CategoryTable
 import me.jbusdriver.common.bean.db.AllFirstParentDBCategoryGroup
+import me.jbusdriver.common.bean.db.CategoryTable
 
 
 //region history
@@ -97,7 +97,13 @@ class CollectDBCallBack : SupportSQLiteOpenHelper.Callback(COLLECT_DB_VERSION) {
         db?.execSQL(CREATE_COLLECT_CATEGORY_SQL)
         AllFirstParentDBCategoryGroup.forEach {
             db?.insert(CategoryTable.TABLE_NAME, SQLiteDatabase.CONFLICT_NONE, it.value.cv())
-            db?.update(CategoryTable.TABLE_NAME, SQLiteDatabase.CONFLICT_NONE, it.value.cv(), CategoryTable.COLUMN_ID + " = ${it.value.id!!} ",null)
+            db?.update(
+                CategoryTable.TABLE_NAME,
+                SQLiteDatabase.CONFLICT_NONE,
+                it.value.cv(),
+                CategoryTable.COLUMN_ID + " = ${it.value.id!!} ",
+                null
+            )
         }
 //        AllFirstParentDBCategoryGroup.forEach {
 //            try {

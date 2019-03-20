@@ -4,11 +4,11 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.util.ArrayMap
 import android.view.View
+import me.jbusdriver.base.CacheLoader
 import me.jbusdriver.base.GSON
 import me.jbusdriver.base.arrayMapof
-import me.jbusdriver.base.fromJson
 import me.jbusdriver.base.common.C
-import me.jbusdriver.base.CacheLoader
+import me.jbusdriver.base.fromJson
 import me.jbusdriver.base.ui.fragment.TabViewPagerFragment
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.GenrePageContract
@@ -20,7 +20,8 @@ import me.jbusdriver.ui.data.enums.DataSourceType
 /**
  * 类别分类
  */
-class GenrePagesFragment : TabViewPagerFragment<GenrePagePresenter, GenrePageContract.GenrePageView>(), GenrePageContract.GenrePageView {
+class GenrePagesFragment : TabViewPagerFragment<GenrePagePresenter, GenrePageContract.GenrePageView>(),
+    GenrePageContract.GenrePageView {
 
     override val titleValues: MutableList<String> = mutableListOf()
 
@@ -29,7 +30,8 @@ class GenrePagesFragment : TabViewPagerFragment<GenrePagePresenter, GenrePageCon
     private val fragmentsBak = mutableListOf<Fragment>()
 
 
-    override fun createPresenter() = GenrePagePresenterImpl(arguments?.getString(C.BundleKey.Key_1) ?: error("no url for GenrePagesFragment"))
+    override fun createPresenter() =
+        GenrePagePresenterImpl(arguments?.getString(C.BundleKey.Key_1) ?: error("no url for GenrePagesFragment"))
 
     override val mTitles: List<String>
         get() = titleValues
@@ -44,7 +46,7 @@ class GenrePagesFragment : TabViewPagerFragment<GenrePagePresenter, GenrePageCon
 
     override fun <T> showContent(data: T?) {
         require(titleValues.size == fragmentValues.size)
-        fragmentValues.mapTo(fragmentsBak){
+        fragmentValues.mapTo(fragmentsBak) {
             GenreListFragment.newInstance(it)
         }
         initForViewPager()
@@ -53,9 +55,10 @@ class GenrePagesFragment : TabViewPagerFragment<GenrePagePresenter, GenrePageCon
     companion object {
 
         fun newInstance(type: DataSourceType) = GenrePagesFragment().apply {
-            val urls = CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { GSON.fromJson<ArrayMap<String, String>>(it) }
+            val urls =
+                CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { GSON.fromJson<ArrayMap<String, String>>(it) }
                     ?: arrayMapof()
-            val url = urls[type.key] ?: JAVBusService.defaultFastUrl + "/genre"
+            val url = urls[type.key] ?: JAVBusService.defaultFastUrl+"/genre"
             arguments = Bundle().apply {
                 putString(C.BundleKey.Key_1, url)
             }

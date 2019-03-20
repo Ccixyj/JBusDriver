@@ -1,7 +1,5 @@
 package me.jbusdriver.base.http
 
-import com.bumptech.glide.load.engine.GlideException
-import me.jbusdriver.base.KLog
 import okhttp3.ResponseBody
 import okio.*
 import java.lang.ref.WeakReference
@@ -17,11 +15,17 @@ private val listeners by lazy { CopyOnWriteArrayList<WeakReference<OnProgressLis
 
 val GlobalProgressListener
     get() = object : OnProgressListener {
-        override fun onProgress(url: String, bytesRead: Long, totalBytes: Long, isDone: Boolean, exception: Exception?) {
+        override fun onProgress(
+            url: String,
+            bytesRead: Long,
+            totalBytes: Long,
+            isDone: Boolean,
+            exception: Exception?
+        ) {
             if (listeners.isEmpty()) return
             listeners.forEach {
                 it.get()?.onProgress(url, bytesRead, totalBytes, isDone, exception)
-                        ?: listeners.remove(it)
+                    ?: listeners.remove(it)
             }
         }
     }
@@ -40,9 +44,14 @@ fun removeProgressListener(progressListener: OnProgressListener) {
     }
 }
 
-private fun findProgressListener(listener: OnProgressListener): WeakReference<OnProgressListener>? = listeners.find { it.get() == listener }
+private fun findProgressListener(listener: OnProgressListener): WeakReference<OnProgressListener>? =
+    listeners.find { it.get() == listener }
 
-class ProgressResponseBody(private val imageUrl: String, private val responseBody: ResponseBody?, private val progressListener: OnProgressListener?) : ResponseBody() {
+class ProgressResponseBody(
+    private val imageUrl: String,
+    private val responseBody: ResponseBody?,
+    private val progressListener: OnProgressListener?
+) : ResponseBody() {
     private var bufferedSource: BufferedSource? = null
 
     override fun contentType() = responseBody?.contentType()

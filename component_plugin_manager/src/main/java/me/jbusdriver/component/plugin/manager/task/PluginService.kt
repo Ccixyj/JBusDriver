@@ -25,7 +25,8 @@ class PluginService : IntentService("PluginService") {
         if (intent != null) {
             when (intent.action) {
                 ACTION_PLUGINS_DOWNLOAD -> {
-                    val plugins = GSON.fromJson<List<PluginBean>>(intent.getStringExtra(ACTION_PLUGINS_DOWNLOAD).orEmpty())
+                    val plugins =
+                        GSON.fromJson<List<PluginBean>>(intent.getStringExtra(ACTION_PLUGINS_DOWNLOAD).orEmpty())
                     if (plugins.isNotEmpty()) {
                         handleDownAndInstall(plugins)
                     }
@@ -39,43 +40,49 @@ class PluginService : IntentService("PluginService") {
     private fun handleDownAndInstall(plugins: List<PluginBean>) {
         KLog.d("handleDownAndInstall ----> $plugins")
         val pnl = object : OnProgressListener {
-            override fun onProgress(url: String, bytesRead: Long, totalBytes: Long, isDone: Boolean, exception: Exception?) {
+            override fun onProgress(
+                url: String,
+                bytesRead: Long,
+                totalBytes: Long,
+                isDone: Boolean,
+                exception: Exception?
+            ) {
 //                KLog.d("download $url , $bytesRead $totalBytes $isDone")
             }
         }
         addProgressListener(pnl)
 
         Flowable.fromIterable(plugins)
-                .parallel()
-                .runOn(Schedulers.io())//指定在哪些线程上并发执行
-                .flatMap { pluginBean ->
-                    val f: File = PluginManagerComponent.getPluginDownloadFile(pluginBean)
-                    try {
-                        f.createNewFile()
-                    } catch (e: Exception) {
-                        f.delete()
-                        throw e
-                    }
-                    return@flatMap service.downloadPluginAsync(pluginBean.url).map { body ->
-                        kotlin.runCatching {
-                            f.outputStream().use {
-                                body.byteStream().copyTo(f.outputStream())
-                                body.close()
-                            }
-                            f
-                        }.onSuccess {
-                            PluginManagerComponent.checkInstall(plugin = pluginBean, pluginFile = it)
-                        }.onFailure {
-                            f.delete()
+            .parallel()
+            .runOn(Schedulers.io())//指定在哪些线程上并发执行
+            .flatMap { pluginBean ->
+                val f: File = PluginManagerComponent.getPluginDownloadFile(pluginBean)
+                try {
+                    f.createNewFile()
+                } catch (e: Exception) {
+                    f.delete()
+                    throw e
+                }
+                return@flatMap service.downloadPluginAsync(pluginBean.url).map { body ->
+                    kotlin.runCatching {
+                        f.outputStream().use {
+                            body.byteStream().copyTo(f.outputStream())
+                            body.close()
                         }
+                        f
+                    }.onSuccess {
+                        PluginManagerComponent.checkInstall(plugin = pluginBean, pluginFile = it)
+                    }.onFailure {
+                        f.delete()
                     }
-                }.sequentialDelayError().blockingSubscribe({
-                    KLog.d("download end $it")
-                    removeProgressListener(pnl)
-                }, {
-                    KLog.d("download error $it")
-                    removeProgressListener(pnl)
-                })
+                }
+            }.sequentialDelayError().blockingSubscribe({
+                KLog.d("download end $it")
+                removeProgressListener(pnl)
+            }, {
+                KLog.d("download error $it")
+                removeProgressListener(pnl)
+            })
 
 
     }

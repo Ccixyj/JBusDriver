@@ -22,10 +22,10 @@ object AppConfiguration {
 
     private const val PageModeS: String = "PageMode"
     var pageMode: Int by Delegates.vetoable(
-            getSp(PageModeS)?.toIntOrNull() ?: let {
-                saveSp(PageModeS, "1")
-                1
-            }) { _, old, new ->
+        getSp(PageModeS)?.toIntOrNull() ?: let {
+            saveSp(PageModeS, "1")
+            1
+        }) { _, old, new ->
         return@vetoable (new in 0..1 && old != new).also {
             if (it) {
                 saveSp(PageModeS, new.toString())
@@ -37,15 +37,14 @@ object AppConfiguration {
     //endregion
 
 
-
     //region menu
     private const val MenuConfigS: String = "MenuConfig"
 
     val menuConfig: MutableMap<String, Boolean> by lazy {
         GSON.fromJson<MutableMap<String, Boolean>>(
-                getSp(MenuConfigS) ?: hashMapOf("最近" to false).toJsonString().apply {
-                    saveSp(MenuConfigS, this)
-                })
+            getSp(MenuConfigS) ?: hashMapOf("最近" to false).toJsonString().apply {
+                saveSp(MenuConfigS, this)
+            })
     }
 
     fun saveSaveMenuConfig(menuOpValue: MutableMap<String, Boolean>) {
@@ -68,8 +67,6 @@ object AppConfiguration {
 
     private const val HistoryS: String = "HistoryS"
     var enableHistory: Boolean = true
-
-
 
 
 }

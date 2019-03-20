@@ -17,10 +17,10 @@ abstract class BaseApp : Application() {
 
     private val phantomCompConfig by lazy {
         PhantomCore.Config()
-                .setCheckSignature(false)
-                .setCheckVersion(false)
-                .setDebug(true)
-                .setLogLevel(android.util.Log.VERBOSE)
+            .setCheckSignature(false)
+            .setCheckVersion(false)
+            .setDebug(true)
+            .setLogLevel(android.util.Log.VERBOSE)
     }
 
 
@@ -29,19 +29,19 @@ abstract class BaseApp : Application() {
         JBusManager.setContext(this)
 
         val formatStrategy = PrettyFormatStrategy.newBuilder()
-                .showThreadInfo(true)  // (Optional) Whether to show thread info or not. Default true
-                .methodCount(2)         // (Optional) How many method line to show. Default 2
-                .methodOffset(0)        // (Optional) Hides internal method calls up to offset. Default 5
-                // .logStrategy(customLog) // (Optional) Changes the log strategy to print out. Default LogCat
-                .tag(getTag())   // (Optional) Global tag for every log. Default PRETTY_LOGGER
-                .build()
+            .showThreadInfo(true)  // (Optional) Whether to show thread info or not. Default true
+            .methodCount(2)         // (Optional) How many method line to show. Default 2
+            .methodOffset(0)        // (Optional) Hides internal method calls up to offset. Default 5
+            // .logStrategy(customLog) // (Optional) Changes the log strategy to print out. Default LogCat
+            .tag(getTag())   // (Optional) Global tag for every log. Default PRETTY_LOGGER
+            .build()
 
         Logger.addLogAdapter(object : AndroidLogAdapter(formatStrategy) {
             override fun isLoggable(priority: Int, tag: String?) = true
         })
 
         RxJavaPlugins.setErrorHandler {
-           KLog.w("error : ${it.message}")
+            KLog.w("error : ${it.message}")
         }
         PhantomCore.getInstance().init(this, phantomCompConfig)
         CC.enableVerboseLog(true)

@@ -9,7 +9,10 @@ import me.jbusdriver.base.mvp.model.AbstractBaseModel
 import me.jbusdriver.base.mvp.model.BaseModel
 import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.http.JAVBusService
-import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.mvp.bean.PageLink
+import me.jbusdriver.mvp.bean.loadMovieFromDoc
+import me.jbusdriver.mvp.bean.newPageMovie
 import me.jbusdriver.ui.data.AppConfiguration
 import me.jbusdriver.ui.data.enums.DataSourceType
 import org.jsoup.Jsoup
@@ -22,13 +25,15 @@ open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink)
 
     private val urls by lazy {
         CacheLoader.acache.getAsString(C.Cache.BUS_URLS)?.let { GSON.fromJson<ArrayMap<String, String>>(it) }
-                ?: arrayMapof()
+            ?: arrayMapof()
     }
     private val saveKey: String
         inline get() = "${type.key}$IsAll"
     private val service by lazy {
-        JAVBusService.getInstance(urls[type.key]
-                ?: JAVBusService.defaultFastUrl).apply { JAVBusService.INSTANCE = this }
+        JAVBusService.getInstance(
+            urls[type.key]
+                ?: JAVBusService.defaultFastUrl
+        ).apply { JAVBusService.INSTANCE = this }
     }
 
     private val loadFromNet = { page: Int ->
@@ -50,7 +55,10 @@ open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink)
 
     override val model: BaseModel<Int, Document> = object : AbstractBaseModel<Int, Document>(loadFromNet) {
         override fun requestFromCache(t: Int): Flowable<Document> =
-                Flowable.concat(CacheLoader.justLru(saveKey).map { Jsoup.parse(it) }, requestFor(t)).firstOrError().toFlowable()
+            Flowable.concat(
+                CacheLoader.justLru(saveKey).map { Jsoup.parse(it) },
+                requestFor(t)
+            ).firstOrError().toFlowable()
     }
 
 

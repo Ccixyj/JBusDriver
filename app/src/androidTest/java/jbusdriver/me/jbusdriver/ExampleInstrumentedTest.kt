@@ -1,11 +1,6 @@
 package jbusdriver.me.jbusdriver
 
-import android.content.Context
-import android.support.test.InstrumentationRegistry
-
 import org.junit.Test
-
-import org.junit.Assert.assertEquals
 
 /**
  * Instrumentation test, which will execute on an Android device.
@@ -19,7 +14,7 @@ class ExampleInstrumentedTest {
 
         (0..100).mapIndexed() { index, i ->
 
-            if (i %3 ==0) return@mapIndexed i * 3
+            if (i % 3 == 0) return@mapIndexed i * 3
             return@mapIndexed i
         }.let {
             println(it)

@@ -8,8 +8,8 @@ import android.widget.ImageView
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-import me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_detail_image_samples.view.*
+import me.jbusdriver.R
 import me.jbusdriver.base.GlideApp
 import me.jbusdriver.base.displayMetrics
 import me.jbusdriver.base.dpToPx
@@ -17,7 +17,6 @@ import me.jbusdriver.base.inflate
 import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.mvp.bean.ImageSample
 import me.jbusdriver.ui.activity.WatchLargeImageActivity
-
 import me.jbusdriver.ui.adapter.GridSpacingItemDecoration
 
 
@@ -60,20 +59,21 @@ class ImageSampleHolder(context: Context) : BaseHolder(context) {
     }
 
 
-    private val imageSampleAdapter = object : BaseQuickAdapter<ImageSample, BaseViewHolder>(R.layout.layout_image_sample_item) {
-        override fun convert(holder: BaseViewHolder, item: ImageSample) {
-            weakRef.get()?.apply {
-                holder.getView<ImageView>(R.id.iv_movie_thumb)?.let {
-                    GlideApp.with(this).load(item.thumb.toGlideNoHostUrl)
+    private val imageSampleAdapter =
+        object : BaseQuickAdapter<ImageSample, BaseViewHolder>(R.layout.layout_image_sample_item) {
+            override fun convert(holder: BaseViewHolder, item: ImageSample) {
+                weakRef.get()?.apply {
+                    holder.getView<ImageView>(R.id.iv_movie_thumb)?.let {
+                        GlideApp.with(this).load(item.thumb.toGlideNoHostUrl)
                             .fitCenter()
                             .placeholder(R.drawable.ic_child_care_black_24dp)
                             .error(R.drawable.ic_child_care_black_24dp)
                             .into(DrawableImageViewTarget(it))
 
+                    }
                 }
             }
         }
-    }
 
     fun init(data: List<ImageSample>) {
         //imageSamples

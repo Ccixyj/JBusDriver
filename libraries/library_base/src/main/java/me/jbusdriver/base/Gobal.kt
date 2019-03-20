@@ -13,16 +13,17 @@ import java.util.*
 typealias  KLog = Logger
 
 val GSON by lazy {
-    GsonBuilder().excludeFieldsWithModifiers(TRANSIENT).registerTypeAdapter(Int::class.java, JsonDeserializer<Int> { json, _, _ ->
-        if (json.isJsonNull || json.asString.isEmpty()) {
-            return@JsonDeserializer null
-        }
-        try {
-            return@JsonDeserializer json.asInt
-        } catch (e: NumberFormatException) {
-            return@JsonDeserializer null
-        }
-    }).registerTypeAdapter(Date::class.java, JsonDeserializer { json, _, _ ->
+    GsonBuilder().excludeFieldsWithModifiers(TRANSIENT)
+        .registerTypeAdapter(Int::class.java, JsonDeserializer<Int> { json, _, _ ->
+            if (json.isJsonNull || json.asString.isEmpty()) {
+                return@JsonDeserializer null
+            }
+            try {
+                return@JsonDeserializer json.asInt
+            } catch (e: NumberFormatException) {
+                return@JsonDeserializer null
+            }
+        }).registerTypeAdapter(Date::class.java, JsonDeserializer { json, _, _ ->
         try {
             return@JsonDeserializer Date(json.asJsonPrimitive.asString)
         } catch (e: Exception) {

@@ -10,25 +10,29 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-import me.jbusdriver.R
 import kotlinx.android.synthetic.main.layout_recycle.*
 import kotlinx.android.synthetic.main.layout_swipe_recycle.*
+import me.jbusdriver.R
 import me.jbusdriver.base.GlideApp
 import me.jbusdriver.base.common.AppBaseRecycleFragment
 import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.common.toGlideNoHostUrl
 import me.jbusdriver.db.bean.History
 import me.jbusdriver.mvp.HistoryContract
-import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.bean.ActressInfo
+import me.jbusdriver.mvp.bean.Movie
+import me.jbusdriver.mvp.bean.SearchLink
+import me.jbusdriver.mvp.bean.des
 import me.jbusdriver.mvp.presenter.HistoryPresenterImpl
-
 import java.text.SimpleDateFormat
 import java.util.*
 
 /**
  * Created by Administrator on 2017/9/18 0018.
  */
-class HistoryFragment : AppBaseRecycleFragment<HistoryContract.HistoryPresenter, HistoryContract.HistoryView, History>(), HistoryContract.HistoryView {
+class HistoryFragment :
+    AppBaseRecycleFragment<HistoryContract.HistoryPresenter, HistoryContract.HistoryView, History>(),
+    HistoryContract.HistoryView {
 
     override fun createPresenter() = HistoryPresenterImpl()
 
@@ -72,7 +76,7 @@ class HistoryFragment : AppBaseRecycleFragment<HistoryContract.HistoryPresenter,
                     if (item.isAll) "全部电影" else "已有种子电影"
                 } else ""
                 helper.setText(R.id.tv_history_date, format.format(item.createTime))
-                        .setText(R.id.tv_history_title, itemLink.des + appender)
+                    .setText(R.id.tv_history_title, itemLink.des + appender)
 
                 val img by lazy {
                     (itemLink as? ActressInfo)?.avatar ?: (itemLink as? Movie)?.imageUrl ?: ""

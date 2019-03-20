@@ -14,20 +14,22 @@ import me.jbusdriver.base.mvp.presenter.AbstractRefreshLoadMorePresenterImpl
 import me.jbusdriver.common.bean.ICollectCategory
 import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.common.bean.db.ActressCategory
-import me.jbusdriver.common.bean.db.MovieCategory
 import me.jbusdriver.common.bean.db.Category
 import me.jbusdriver.common.bean.db.LinkCategory
+import me.jbusdriver.common.bean.db.MovieCategory
 import me.jbusdriver.db.service.CategoryService
 import me.jbusdriver.db.service.LinkService
 import me.jbusdriver.mvp.ActressCollectContract
 import me.jbusdriver.mvp.MovieCollectContract
-import me.jbusdriver.mvp.bean.*
+import me.jbusdriver.mvp.bean.CollectLinkWrapper
+import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.mvp.model.CollectModel
 import me.jbusdriver.ui.data.AppConfiguration
 import org.jsoup.nodes.Document
 
 
-abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T : ICollectCategory> : AbstractRefreshLoadMorePresenterImpl<V, T>(), BaseCollectPresenter<T> {
+abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T : ICollectCategory> :
+    AbstractRefreshLoadMorePresenterImpl<V, T>(), BaseCollectPresenter<T> {
 
 
     protected open val pageSize = 20
@@ -46,7 +48,8 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
 
     override val collectGroupMap: MutableMap<Category, List<T>> = mutableMapOf()
 
-    override val adapterDelegate: BaseCollectPresenter.CollectMultiTypeDelegate<T> = BaseCollectPresenter.CollectMultiTypeDelegate()
+    override val adapterDelegate: BaseCollectPresenter.CollectMultiTypeDelegate<T> =
+        BaseCollectPresenter.CollectMultiTypeDelegate()
 
 
     private fun load() = when {
@@ -66,42 +69,42 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
         if (AppConfiguration.enableCategory) {
             //一次性加载完成
             Flowable.just(ancestor)
-                    .filter { ancestor.id != null }
-                    .flatMap { Flowable.fromIterable(CategoryService.queryCategoryTreeLike(it.id!!)) }
-                    .map { cate ->
-                        val parent = CollectLinkWrapper<T>(cate).apply {
-                            adapterDelegate.needInjectType.add(level)
-                        }
-                        val list = LinkService.queryByCategory(cate)
-                        val items = mutableListOf<T>()
-                        list.forEach {
-                            val mapValue = it.getLinkValue() as? T
-                            if (mapValue != null) {
-                                parent.addSubItem(CollectLinkWrapper(cate, mapValue).apply {
-                                    adapterDelegate.needInjectType.add(level)
-                                })
-                                items.add(mapValue)
-                            }
-                        }
-                        collectGroupMap[cate] = items
-                        parent
+                .filter { ancestor.id != null }
+                .flatMap { Flowable.fromIterable(CategoryService.queryCategoryTreeLike(it.id!!)) }
+                .map { cate ->
+                    val parent = CollectLinkWrapper<T>(cate).apply {
+                        adapterDelegate.needInjectType.add(level)
                     }
+                    val list = LinkService.queryByCategory(cate)
+                    val items = mutableListOf<T>()
+                    list.forEach {
+                        val mapValue = it.getLinkValue() as? T
+                        if (mapValue != null) {
+                            parent.addSubItem(CollectLinkWrapper(cate, mapValue).apply {
+                                adapterDelegate.needInjectType.add(level)
+                            })
+                            items.add(mapValue)
+                        }
+                    }
+                    collectGroupMap[cate] = items
+                    parent
+                }
 
-                    .toList()
-                    .doOnSubscribe { mView?.showLoading() }
-                    .doAfterTerminate { mView?.dismissLoading() }
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy({
-                        mView?.showError(it)
-                    }, {
-                        mView?.resetList()
-                        mView?.showContents(it)
-                        mView?.loadMoreComplete()
-                        mView?.loadMoreEnd()
+                .toList()
+                .doOnSubscribe { mView?.showLoading() }
+                .doAfterTerminate { mView?.dismissLoading() }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy({
+                    mView?.showError(it)
+                }, {
+                    mView?.resetList()
+                    mView?.showContents(it)
+                    mView?.loadMoreComplete()
+                    mView?.loadMoreEnd()
 
-                    })
-                    .addTo(rxManager)
+                })
+                .addTo(rxManager)
 
         } else {
             val next = if (page < pageNum) page + 1 else pageNum
@@ -116,16 +119,16 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
                     }
                 }
             }.doOnSubscribe { mView?.showLoading() }
-                    .doAfterTerminate { mView?.dismissLoading() }
-                    .compose(SchedulersCompat.io())
-                    .subscribeBy({
-                        mView?.showError(it)
-                    }, {
-                        if (!pageInfo.hasNext) mView?.loadMoreEnd()
-                    }, {
-                        mView?.showContents(it)
-                        mView?.loadMoreComplete()
-                    }).addTo(rxManager)
+                .doAfterTerminate { mView?.dismissLoading() }
+                .compose(SchedulersCompat.io())
+                .subscribeBy({
+                    mView?.showError(it)
+                }, {
+                    if (!pageInfo.hasNext) mView?.loadMoreEnd()
+                }, {
+                    mView?.showContents(it)
+                    mView?.loadMoreComplete()
+                }).addTo(rxManager)
         }
 
 
@@ -138,11 +141,11 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
             collectGroupMap.clear()
         }
         mView?.resetList()
-       load().doOnNext { listData.addAll(it) }
-               .compose(SchedulersCompat.io())
-               .subscribe {
-                   loadData4Page(1)
-               }.addTo(rxManager)
+        load().doOnNext { listData.addAll(it) }
+            .compose(SchedulersCompat.io())
+            .subscribe {
+                loadData4Page(1)
+            }.addTo(rxManager)
     }
 
     override val model: BaseModel<Int, Document>

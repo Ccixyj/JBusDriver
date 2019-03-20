@@ -3,16 +3,17 @@ package me.jbusdriver.mvp.presenter
 import io.reactivex.BackpressureStrategy
 import io.reactivex.rxkotlin.addTo
 import me.jbusdriver.base.SchedulersCompat
-import me.jbusdriver.db.bean.History
-import me.jbusdriver.db.service.HistoryService
-import me.jbusdriver.mvp.HistoryContract
 import me.jbusdriver.base.mvp.bean.PageInfo
 import me.jbusdriver.base.mvp.bean.ResultPageBean
 import me.jbusdriver.base.mvp.model.BaseModel
 import me.jbusdriver.base.mvp.presenter.AbstractRefreshLoadMorePresenterImpl
+import me.jbusdriver.db.bean.History
+import me.jbusdriver.db.service.HistoryService
+import me.jbusdriver.mvp.HistoryContract
 import org.jsoup.nodes.Document
 
-class HistoryPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HistoryContract.HistoryView, History>(), HistoryContract.HistoryPresenter {
+class HistoryPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HistoryContract.HistoryView, History>(),
+    HistoryContract.HistoryPresenter {
 
     private val dbPage by lazy { HistoryService.page() }
 
@@ -21,22 +22,22 @@ class HistoryPresenterImpl : AbstractRefreshLoadMorePresenterImpl<HistoryContrac
             lastPage = totalPage
         }
         HistoryService.queryPage(dbPage).toFlowable(BackpressureStrategy.DROP)
-                .map {
-                    ResultPageBean(pageInfo.copy(activePage = dbPage.currentPage, nextPage = dbPage.currentPage + 1), it)
-                }
-                .compose(SchedulersCompat.io())
-                .subscribeWith(object : ListDefaultSubscriber(PageInfo(page)) {
+            .map {
+                ResultPageBean(pageInfo.copy(activePage = dbPage.currentPage, nextPage = dbPage.currentPage + 1), it)
+            }
+            .compose(SchedulersCompat.io())
+            .subscribeWith(object : ListDefaultSubscriber(PageInfo(page)) {
 
-                    override fun onNext(t: ResultPageBean<History>) {
-                        super.onNext(t)
-                        if (page >= dbPage.totalPage) mView?.loadMoreEnd()
-                        mView?.dismissLoading()
-                        (page == 1).let {
-                            if (it) mView?.enableLoadMore(true) else mView?.enableRefresh(true)
-                        }
+                override fun onNext(t: ResultPageBean<History>) {
+                    super.onNext(t)
+                    if (page >= dbPage.totalPage) mView?.loadMoreEnd()
+                    mView?.dismissLoading()
+                    (page == 1).let {
+                        if (it) mView?.enableLoadMore(true) else mView?.enableRefresh(true)
                     }
-                })
-                .addTo(rxManager)
+                }
+            })
+            .addTo(rxManager)
     }
 
     override fun clearHistory() {

@@ -1,8 +1,7 @@
-package me.jbusdriver.plugin.magnet.loaderImpl
-
-import me.jbusdriver.plugin.magnet.IMagnetLoader.Companion.MagnetFormatPrefix
+package me.jbusdriver.plugin.magnet.loaders
 
 import me.jbusdriver.plugin.magnet.IMagnetLoader
+import me.jbusdriver.plugin.magnet.IMagnetLoader.Companion.MagnetFormatPrefix
 import org.json.JSONObject
 import org.jsoup.Jsoup
 
@@ -16,7 +15,8 @@ class BtanvMagnetLoaderImpl : IMagnetLoader {
         hasNexPage = (doc.select(".bottom-pager").firstOrNull()?.children()?.size ?: 0) > 0
         return doc.select("#content .cili-item").map {
             //it.log()
-            val bars = it.select(".item-bar").firstOrNull()?.children()?.map { if (it.tagName() == "a") it.attr("href") else it.text() }
+            val bars =
+                it.select(".item-bar").firstOrNull()?.children()?.map { if (it.tagName() == "a") it.attr("href") else it.text() }
                     ?: emptyList<String>()
             JSONObject().apply {
                 put("name", it.select(".item-title").text())

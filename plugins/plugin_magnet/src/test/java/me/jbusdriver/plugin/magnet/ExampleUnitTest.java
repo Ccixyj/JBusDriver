@@ -1,8 +1,9 @@
 package me.jbusdriver.plugin.magnet;
 
+import kotlin.text.Charsets;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.util.Base64;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -12,6 +13,9 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
+        String key = "1";
+        String encode = Base64.getEncoder().encodeToString(key.getBytes(Charsets.UTF_8));
+
+        System.out.println(encode);
     }
 }

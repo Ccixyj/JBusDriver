@@ -29,17 +29,24 @@ class HistoryDao(private val db: BriteDatabase) {
     fun update(histories: List<History>) {
         db.inTransaction {
             histories.forEach {
-                db.update(HistoryTable.TABLE_NAME, CONFLICT_IGNORE, it.cv(false), HistoryTable.COLUMN_ID + " = ? ",
-                        it.id.toString())
+                db.update(
+                    HistoryTable.TABLE_NAME, CONFLICT_IGNORE, it.cv(false), HistoryTable.COLUMN_ID + " = ? ",
+                    it.id.toString()
+                )
             }
         }
     }
 
     fun queryByLimit(size: Int, offset: Int): Observable<List<History>> {
-        return db.createQuery(HistoryTable.TABLE_NAME, "SELECT * FROM ${HistoryTable.TABLE_NAME} ORDER BY ${HistoryTable.COLUMN_ID} DESC LIMIT $offset , $size ").mapToList {
-            History(it.getIntByColumn(HistoryTable.COLUMN_DB_TYPE), Date(it.getLongByColumn(HistoryTable.COLUMN_CREATE_TIME)),
-                    it.getStringByColumn(HistoryTable.COLUMN_JSON_STR) ?: "",
-                    it.getIntByColumn(HistoryTable.COLUMN_IS_ALL) == 1
+        return db.createQuery(
+            HistoryTable.TABLE_NAME,
+            "SELECT * FROM ${HistoryTable.TABLE_NAME} ORDER BY ${HistoryTable.COLUMN_ID} DESC LIMIT $offset , $size "
+        ).mapToList {
+            History(
+                it.getIntByColumn(HistoryTable.COLUMN_DB_TYPE),
+                Date(it.getLongByColumn(HistoryTable.COLUMN_CREATE_TIME)),
+                it.getStringByColumn(HistoryTable.COLUMN_JSON_STR) ?: "",
+                it.getIntByColumn(HistoryTable.COLUMN_IS_ALL) == 1
             ).apply {
                 id = it.getIntByColumn(HistoryTable.COLUMN_ID)
             }

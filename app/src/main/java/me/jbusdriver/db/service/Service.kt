@@ -4,13 +4,13 @@ import android.text.TextUtils
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import me.jbusdriver.base.KLog
-import me.jbusdriver.db.DB
+import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.common.bean.db.Category
+import me.jbusdriver.db.DB
 import me.jbusdriver.db.bean.DBPage
 import me.jbusdriver.db.bean.History
 import me.jbusdriver.db.bean.LinkItem
 import me.jbusdriver.mvp.bean.ActressInfo
-import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.mvp.bean.Movie
 import me.jbusdriver.mvp.bean.convertDBItem
 import me.jbusdriver.ui.data.AppConfiguration
@@ -33,7 +33,7 @@ object HistoryService {
     }
 
     fun queryPage(dbPage: DBPage): Observable<List<History>> =
-            dao.queryByLimit(dbPage.pageSize, (dbPage.currentPage - 1) * dbPage.pageSize)
+        dao.queryByLimit(dbPage.pageSize, (dbPage.currentPage - 1) * dbPage.pageSize)
 
     fun clearAll() {
         dao.deleteAndSetZero()
@@ -122,9 +122,11 @@ object LinkService {
         }
     }
 
-    fun queryActress(): Flowable<List<ActressInfo>> = Flowable.fromCallable { dao.listByType(2) }.map { it -> it.mapNotNull { (it.getLinkValue() as? ActressInfo) } }
+    fun queryActress(): Flowable<List<ActressInfo>> =
+        Flowable.fromCallable { dao.listByType(2) }.map { it -> it.mapNotNull { (it.getLinkValue() as? ActressInfo) } }
 
-    fun queryLink(): Flowable<List<ILink>> = Flowable.fromCallable { dao.queryLink() }.map { it -> it.map { it.getLinkValue() } }
+    fun queryLink(): Flowable<List<ILink>> =
+        Flowable.fromCallable { dao.queryLink() }.map { it -> it.map { it.getLinkValue() } }
 
     fun resetCategory(category: Category, dBType: Int) {
         KLog.d("reset $category")

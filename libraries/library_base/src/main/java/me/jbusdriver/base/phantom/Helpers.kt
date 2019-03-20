@@ -1,7 +1,6 @@
 package me.jbusdriver.base.phantom
 
 import android.content.res.AssetManager
-import com.tbruyelle.rxpermissions2.RxPermissions
 import com.wlqq.phantom.communication.PhantomServiceManager
 import com.wlqq.phantom.library.PhantomCore
 import com.wlqq.phantom.library.pm.PluginInfo
@@ -16,26 +15,26 @@ fun installAssetsPlugins(assets: AssetManager, dir: String): Flowable<List<Plugi
     val f = assets.list(dir) ?: emptyArray()
     KLog.i("start installAssetsPlugins $assets  ---> $dir ---->${f.joinToString()}")
     return Flowable.just(f)
-            .map {
-                return@map it.mapNotNull { file ->
-                    if (file.endsWith(".apk")) {
-                        val filePath = "$dir/$file"
-                        val installResult = PhantomCore.getInstance().installPluginFromAssets(filePath)
-                        if (installResult.isSuccess && installResult.plugin != null) {
-                            installResult.plugin?.start()
-                            installResult.plugin
-                        } else {
-                            // should not happen
-                            throw error("install success , but plugin is null!!!!")
-                        }
-                    } else null
-                }.apply {
-                    if (this.isNotEmpty()) {
-                        KLog.d("install success $this")
-                    } else error("not find any plugins to install")
-                }
+        .map {
+            return@map it.mapNotNull { file ->
+                if (file.endsWith(".apk")) {
+                    val filePath = "$dir/$file"
+                    val installResult = PhantomCore.getInstance().installPluginFromAssets(filePath)
+                    if (installResult.isSuccess && installResult.plugin != null) {
+                        installResult.plugin?.start()
+                        installResult.plugin
+                    } else {
+                        // should not happen
+                        throw error("install success , but plugin is null!!!!")
+                    }
+                } else null
+            }.apply {
+                if (this.isNotEmpty()) {
+                    KLog.d("install success $this")
+                } else error("not find any plugins to install")
+            }
 
-            }.subscribeOn(Schedulers.io()).timeout(10, TimeUnit.SECONDS)
+        }.subscribeOn(Schedulers.io()).timeout(10, TimeUnit.SECONDS)
 }
 
 /**
@@ -98,7 +97,7 @@ fun installFromFile(f: File): Flowable<PluginInfo> {
  * call method throw exception value if null or error
  */
 @Throws
-fun pluginServiceCall(packageName: String, serviceName: String, method: String, vararg p: Any): Any {
+fun pluginServiceCall(packageName: String, serviceName: String, method: String,  p: Array<Any> = emptyArray()): Any {
     // 插件 Phantom Service 代理对象
     val service = PhantomServiceManager.getService(packageName, serviceName)
     if (service == null) {
@@ -111,6 +110,7 @@ fun pluginServiceCall(packageName: String, serviceName: String, method: String, 
         if (res == null) error("call method $method but plugin is null")
         return res
     } catch (e: Exception) {
+        e.printStackTrace()
         error(e)
     }
 }
