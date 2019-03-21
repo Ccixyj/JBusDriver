@@ -17,7 +17,8 @@ open class MagnetService {
 
     @RemoteMethod(name = "pluginToast")
     open fun pluginToast(context: Context): String {
-        val info = "$context hello from plugin! test2" //update to version 2!!!!
+        val info =
+            "$context hello from plugin! ver : ${BuildConfig.VERSION_NAME} ,code: ${BuildConfig.VERSION_CODE}" //update to version 2!!!!
         Toast.makeText(context, info, Toast.LENGTH_LONG).show()
         return info
     }

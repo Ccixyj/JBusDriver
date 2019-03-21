@@ -27,7 +27,7 @@ interface DownloadService {
             .build()
 
         fun createService() =
-            Retrofit.Builder().client(client).baseUrl("https://raw.githubusercontent.com").addCallAdapterFactory(
+            Retrofit.Builder().client(client).baseUrl("https://raw.githubusercontent.com/").addCallAdapterFactory(
                 RxJavaCallAdapterFactory
             ).build().create(DownloadService::class.java)
 
