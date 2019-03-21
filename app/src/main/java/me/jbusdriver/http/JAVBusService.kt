@@ -39,7 +39,7 @@ interface JAVBusService {
         }
 
         private fun createService(url: String) =
-            NetClient.getRetrofit(if (!url.endsWith("/")) "$url/" else url).create(JAVBusService::class.java)
+            NetClient.getRetrofit("${url.trimEnd('/')}/").create(JAVBusService::class.java)
 
     }
 }
