@@ -1,6 +1,7 @@
 package me.jbusdriver.plugin.magnet.loaders
 
 
+import android.util.Log
 import me.jbusdriver.plugin.magnet.IMagnetLoader
 import me.jbusdriver.plugin.magnet.loaders.Helper.gzDeflateBase64
 import org.json.JSONObject
@@ -12,6 +13,7 @@ class CNBtkittyMangetLoaderImpl : IMagnetLoader {
 
     override var hasNexPage: Boolean = true
 
+    private val Tag = "MagnetLoader:CNBtkitty"
 
     init {
         val manager = java.net.CookieManager()
@@ -22,7 +24,9 @@ class CNBtkittyMangetLoaderImpl : IMagnetLoader {
 
     override fun loadMagnets(key: String, page: Int): List<JSONObject> {
         return try {
-            val doc = Jsoup.connect(search.format(gzDeflateBase64(key) , page)).get()
+            val url = search.format(gzDeflateBase64(key), page)
+            Log.i(Tag, "laod url $url")
+            val doc = Jsoup.connect(url).get()
             val nextPages = doc.select(".pagination strong~a")
             hasNexPage = nextPages.size > 0
 
@@ -43,7 +47,9 @@ class CNBtkittyMangetLoaderImpl : IMagnetLoader {
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            Log.e(Tag, "throw error $e", e)
             emptyList()
+
         }
 
 
