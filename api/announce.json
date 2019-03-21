@@ -21,10 +21,10 @@
     ]
   },
   "update": {
-    "versionCode": 0,
-    "versionName": "1.2.17",
-    "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/JubsDriver_v1.2.17build532.apk",
-    "desc": "JBusDriver 1.2.17 更新!\r\n1.修复可用的磁力站（bitty）。\r\n2.加入插件管理器。"
+    "versionCode": 312,
+    "versionName": "1.2.17build537",
+    "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/JubsDriver_v1.2.17build537.apk",
+    "desc": "JBusDriver 1.2.17 更新!\r\n1.加入插件管理器。\r\n[plugin.magnet] 更新至1.0.1 \r\n[plugin.magnet]  1)修复可用的磁力站（bitty）"
   },
   "notice": {
     "id": 10,
