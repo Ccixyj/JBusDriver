@@ -3,15 +3,16 @@ package me.jbusdriver.plugin.magnet.loaders
 
 import android.util.Log
 import me.jbusdriver.plugin.magnet.IMagnetLoader
+import me.jbusdriver.plugin.magnet.IMagnetLoader.Companion.safeJsoupGet
 import me.jbusdriver.plugin.magnet.loaders.EncodeHelper.gzDeflateBase64
 import org.json.JSONObject
-import org.jsoup.Jsoup
 
 class CNBtkittyMangetLoaderImpl : IMagnetLoader {
 
+    private val host = "http://btkitty.pet/"
     private val search = "http://btkitty.pet/search/%s/%s/0/0.html"
 
-    override var hasNexPage: Boolean = true
+    override var hasNexPage: Boolean = false
 
     private val Tag = "MagnetLoader:CNBtkitty"
 
@@ -26,7 +27,7 @@ class CNBtkittyMangetLoaderImpl : IMagnetLoader {
         return try {
             val url = search.format(gzDeflateBase64(key), page)
             Log.i(Tag, "laod url $url")
-            val doc = Jsoup.connect(url).get()
+            val doc = IMagnetLoader.safeJsoupGet(url) ?: return emptyList()
             val nextPages = doc.select(".pagination strong~a")
             hasNexPage = nextPages.size > 0
 
@@ -57,6 +58,6 @@ class CNBtkittyMangetLoaderImpl : IMagnetLoader {
 
 
     override fun fetchMagnetLink(url: String): String {
-        return Jsoup.connect(search + url).get().select(".content .magnet a").attr("href")
+        return safeJsoupGet(host + url)?.select(".content .magnet a")?.attr("href").orEmpty()
     }
 }

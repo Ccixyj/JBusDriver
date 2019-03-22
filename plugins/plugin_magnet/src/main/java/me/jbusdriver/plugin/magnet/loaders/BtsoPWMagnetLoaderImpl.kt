@@ -2,8 +2,8 @@ package me.jbusdriver.plugin.magnet.loaders
 
 import me.jbusdriver.plugin.magnet.IMagnetLoader
 import me.jbusdriver.plugin.magnet.IMagnetLoader.Companion.MagnetFormatPrefix
+import me.jbusdriver.plugin.magnet.IMagnetLoader.Companion.safeJsoupGet
 import org.json.JSONObject
-import org.jsoup.Jsoup
 
 /**
  * 当前无法使用
@@ -16,7 +16,7 @@ class BtsoPWMagnetLoaderImpl : IMagnetLoader {
     override var hasNexPage: Boolean = true
 
     override fun loadMagnets(key: String, page: Int): List<JSONObject> {
-        val doc = Jsoup.connect(search.format(key.trim(), page)).headers(headers).get()
+        val doc = safeJsoupGet(search.format(key.trim(), page)) ?: return emptyList()
         hasNexPage = doc.select(".pagination [name=nextpage]").isNotEmpty()
         return doc.select(".data-list [class=row]").map {
             val labels = it.children().map { it.text() }.takeLast(2)

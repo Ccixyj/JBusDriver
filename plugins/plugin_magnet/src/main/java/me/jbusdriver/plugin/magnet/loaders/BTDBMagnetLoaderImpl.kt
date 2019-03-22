@@ -6,13 +6,13 @@ import org.json.JSONObject
 import org.jsoup.Jsoup
 
 class BTDBMagnetLoaderImpl : IMagnetLoader {
-    override var hasNexPage: Boolean = true
+    override var hasNexPage: Boolean = false
 
     private val search = "https://btdb.to/q/%s/%s"
 
     override fun loadMagnets(key: String, page: Int): List<JSONObject> {
         val url = search.format(key, page)
-        val doc = Jsoup.connect(url).get()
+        val doc = IMagnetLoader.safeJsoupGet(url) ?: return emptyList()
 
         val nextHref = doc.select(".pagination  a").last() ?: let {
             hasNexPage = false

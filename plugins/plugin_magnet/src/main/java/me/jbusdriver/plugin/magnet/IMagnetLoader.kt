@@ -1,7 +1,9 @@
 package me.jbusdriver.plugin.magnet
 
+import android.util.Log
 import org.json.JSONObject
 import org.jsoup.Connection
+import org.jsoup.Jsoup
 
 fun Connection.initHeaders(): Connection = this.userAgent(IMagnetLoader.USER_AGENT).followRedirects(true)
     .header("Accept-Encoding", "gzip, deflate, sdch")
@@ -21,13 +23,18 @@ interface IMagnetLoader {
     fun loadMagnets(key: String, page: Int): List<JSONObject>
 
 
-
-
     fun fetchMagnetLink(url: String): String = ""
 
 
     companion object {
 
+        fun safeJsoupGet(url: String) = kotlin.runCatching {
+            Jsoup.connect(url).initHeaders().cookies(emptyMap()).followRedirects(true).get()
+        }.onFailure {
+            Log.e("Jsoup", "get url $url error :$it")
+        }.onSuccess {
+            Log.i("Jsoup", "get url $url success ")
+        }.getOrNull()
 
 
         const val USER_AGENT =

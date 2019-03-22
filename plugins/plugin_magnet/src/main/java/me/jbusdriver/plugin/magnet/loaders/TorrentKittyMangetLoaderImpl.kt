@@ -1,6 +1,7 @@
 package me.jbusdriver.plugin.magnet.loaders
 
 import me.jbusdriver.plugin.magnet.IMagnetLoader
+import me.jbusdriver.plugin.magnet.IMagnetLoader.Companion.safeJsoupGet
 import org.json.JSONObject
 import org.jsoup.Jsoup
 
@@ -8,7 +9,7 @@ class TorrentKittyMangetLoaderImpl : IMagnetLoader {
 
     private var search = "https://www.torrentkitty.tv/search/%s/%s"
 
-    override var hasNexPage: Boolean = true
+    override var hasNexPage: Boolean = false
 
     init {
         val manager = java.net.CookieManager()
@@ -17,7 +18,7 @@ class TorrentKittyMangetLoaderImpl : IMagnetLoader {
     }
 
     override fun loadMagnets(key: String, page: Int): List<JSONObject> {
-        val doc = Jsoup.connect(search.format(key, page)).get()
+        val doc = safeJsoupGet(search.format(key, page)) ?: return emptyList()
         hasNexPage = (doc.select(".pagination").firstOrNull()?.select(".current~a")?.size ?: 0) > 0
         val mag = doc.select("#archiveResult tr").drop(1)
         return mag.map {

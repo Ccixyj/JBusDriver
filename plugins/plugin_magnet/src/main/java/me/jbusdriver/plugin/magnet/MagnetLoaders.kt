@@ -9,11 +9,14 @@ object MagnetLoaders {
         mapOf(
             "Kitty" to CNBtkittyMangetLoaderImpl(),
             "btdigg" to BtdiggsMagnetLoaderImpl(),
+            "zzjd" to ZZJDMagnetLoaderImpl(),
+            "btsearch" to BTSearchMagnetLoaderImpl(),
+            "Btanv" to BtanvMagnetLoaderImpl(),
             "BTSO.PW" to BtsoPWMagnetLoaderImpl(),
-            "TorrentKitty" to TorrentKittyMangetLoaderImpl(),
             "BTSOW" to BTSOWMagnetLoaderImpl(),
             "BTDB" to BTDBMagnetLoaderImpl(),
-            "Btanv" to BtanvMagnetLoaderImpl()
+            "TorrentKitty" to TorrentKittyMangetLoaderImpl()
+
         )
     }
 
