@@ -29,7 +29,11 @@ class BTSearchMagnetLoaderImpl : IMagnetLoader {
                 put("size", attrs.take(split).joinToString("  ") { it.text() })
                 put("date", attrs.takeLast(attrs.size - split).joinToString("  ") { it.text() })
                 put(
-                    "link", links.asSequence().first { it.attr("href").trim().startsWith(IMagnetLoader.MagnetFormatPrefix) }           )
+                    "link",
+                    links.map {
+                        it.attr("href").trim()
+                    }.firstOrNull { it.startsWith(IMagnetLoader.MagnetFormatPrefix) }.orEmpty()
+                )
             }
         }
     }

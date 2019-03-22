@@ -83,7 +83,4 @@ val String.urlPath: String
         val uri = Uri.parse(this)
         urlCache.put(this, uri)
         uri
-    }).let {
-        checkNotNull(it)
-        it.path
-    }
+    })?.path ?: ""

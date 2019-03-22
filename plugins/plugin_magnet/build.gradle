@@ -23,8 +23,8 @@ android {
         applicationId CurrentAppID
         minSdkVersion 18
         targetSdkVersion versions.targetSdk
-        versionCode 2
-        versionName "1.0.1"
+        versionCode 3
+        versionName "1.0.2"
 //        multiDexEnabled true
     }
 

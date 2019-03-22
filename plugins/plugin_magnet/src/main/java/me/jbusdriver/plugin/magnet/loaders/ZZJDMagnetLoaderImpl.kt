@@ -29,7 +29,7 @@ class ZZJDMagnetLoaderImpl : IMagnetLoader {
                 put("size", attrs.take(split).joinToString("  ") { it.text() })
                 put("date", attrs.takeLast(attrs.size - split).joinToString("  ") { it.text() })
                 put(
-                    "link", links.firstOrNull()?.select("a")?.attr("href")
+                    "link", IMagnetLoader.MagnetFormatPrefix + links.firstOrNull()?.select("a")?.attr("href")
                         ?.substringBefore(".html")?.substringAfterLast("/").orEmpty()
                 )
             }
