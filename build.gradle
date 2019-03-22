@@ -3,11 +3,8 @@
 buildscript {
     apply from: this.file("version.gradle")
     repositories {
-//        maven { url 'https://mirrors.huaweicloud.com/repository/maven/' }
-        maven {   url 'http://maven.aliyun.com/' }
-        maven { url 'https://dl.bintray.com/umsdk/release' }
-        jcenter()
-        google()
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url "https://jitpack.io" }
     }
     dependencies {
@@ -28,14 +25,17 @@ buildscript {
 
 allprojects {
     repositories {
-//        maven { url 'https://mirrors.huaweicloud.com/repository/maven/' }
-        maven {   url 'http://maven.aliyun.com/' }
-        maven { url 'https://dl.bintray.com/umsdk/release' }
-        jcenter()
-        google()
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url "https://jitpack.io" }
+        maven { url 'https://dl.bintray.com/umsdk/release' }
     }
 }
+
+/**
+ *  maven { url 'https://mirrors.huaweicloud.com/repository/maven/' }*   jcenter()
+ *   google()
+ */
 
 task clean(type: Delete) {
     delete rootProject.buildDir

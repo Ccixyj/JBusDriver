@@ -111,34 +111,6 @@ class CompMagnetMainActivity : BaseActivity() {
             }
         }
 
-        iv_test_plugin_java.setOnClickListener {
-            val jName = "me.jbusdriver.plugin.magnet"
-            // 插件 Phantom Service 的 'NAME'
-            val jservice = "MangetJavaService"
-            val pluginInfo = PhantomCore.getInstance().findPluginInfoByPackageName(jName)
-            pluginInfo?.let {
-                val pluginContext = PluginContext(this, pluginInfo).createContext()
-                // 插件 Phantom Service 代理对象
-                val service = PhantomServiceManager.getService(jName, jservice)
-
-                if (service == null) {
-
-                    KLog.w("not find service ")
-                    return@let
-                }
-                try {
-                    val res = service.call("pluginToast", pluginContext)
-                    KLog.d("result $res")
-                } catch (e: Exception) {
-                    KLog.w("service.call error $e")
-                }
-
-
-            } ?: kotlin.run {
-                KLog.w("not find plugin info")
-            }
-        }
-
         iv_test_loader_keys.setOnClickListener {
             val keys = MagnetPluginHelper.getLoaderKeys()
             KLog.d("keys $keys")

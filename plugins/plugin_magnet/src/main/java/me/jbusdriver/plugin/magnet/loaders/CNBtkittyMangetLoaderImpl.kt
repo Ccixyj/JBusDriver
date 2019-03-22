@@ -3,7 +3,7 @@ package me.jbusdriver.plugin.magnet.loaders
 
 import android.util.Log
 import me.jbusdriver.plugin.magnet.IMagnetLoader
-import me.jbusdriver.plugin.magnet.loaders.Helper.gzDeflateBase64
+import me.jbusdriver.plugin.magnet.loaders.EncodeHelper.gzDeflateBase64
 import org.json.JSONObject
 import org.jsoup.Jsoup
 

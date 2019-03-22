@@ -4,7 +4,7 @@ import android.util.Base64
 import java.util.zip.Deflater
 import java.util.zip.DeflaterInputStream
 
-object Helper {
+object EncodeHelper {
 
     fun encodeBase64(str: String) =
         Base64.encodeToString(str.toByteArray(), Base64.NO_PADDING or Base64.URL_SAFE).trim()

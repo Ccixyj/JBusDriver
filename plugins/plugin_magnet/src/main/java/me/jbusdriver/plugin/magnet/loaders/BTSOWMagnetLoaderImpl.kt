@@ -2,6 +2,7 @@ package me.jbusdriver.plugin.magnet.loaders
 
 import me.jbusdriver.plugin.magnet.IMagnetLoader
 import me.jbusdriver.plugin.magnet.IMagnetLoader.Companion.MagnetFormatPrefix
+import me.jbusdriver.plugin.magnet.initHeaders
 import org.json.JSONObject
 import org.jsoup.Jsoup
 

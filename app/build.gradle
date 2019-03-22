@@ -178,6 +178,3 @@ if (checkEnable) {
     this.rootProject.extensions.appVerName = VersionName()
     apply from: 'tinker.gradle'
 }*/
-repositories {
-    mavenCentral()
-}
