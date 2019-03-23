@@ -44,6 +44,7 @@ object MagnetPluginHelper {
         PhantomCore.getInstance().allPlugins.filter { !it.isStarted }.forEach {
             try {
                 it.start()
+                KLog.d("plugin $it start success ...")
             } catch (e: Exception) {
                 e.printStackTrace()
                 KLog.e("plugin $it can not start!!!")

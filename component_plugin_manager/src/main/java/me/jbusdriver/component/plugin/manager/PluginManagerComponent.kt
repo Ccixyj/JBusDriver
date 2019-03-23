@@ -129,15 +129,16 @@ class PluginManagerComponent : IComponent {
          * @see me.jbusdriver.base.common.C.PluginComponents
          */
         private fun checkPluginsInComps() {
-            com.wlqq.phantom.library.utils.ReflectUtils.getAllFieldsList(C.PluginComponents::class.java).mapNotNull {
+            val comps = C.PluginComponents.AllPlugins()
+            KLog.d("checkPluginsInComps ${comps.joinToString()}")
+            comps.mapNotNull { name ->
                 try {
-                    if (it.type != String::class.java) return@mapNotNull null
-                    val name = it.get(C.Components::class.java)?.toString()
-                        ?: return@mapNotNull null
+                    KLog.d("check comp $name for plugins.all ...")
                     CC.obtainBuilder(name)
                         .setActionName("plugins.all")
                         .build().call()
                         .getDataItem<List<PluginBean>>("plugins")?.apply {
+                            KLog.d("check comp $name for plugins.all has plugins $this")
                             Plugin_Maps[name] = this
                         }
                 } catch (e: Exception) {

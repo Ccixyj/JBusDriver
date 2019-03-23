@@ -23,11 +23,15 @@ public class C {
         public static final String Magnet = "C_Magnet";
         public static final String PluginManager = "C_PluginManager";
     }
+
     public static class PluginComponents {
 
         public static final String PluginMagnet = "C_Magnet_Plugin";
-    }
 
+        public static String[] AllPlugins() {
+            return new String[]{PluginMagnet};
+        }
+    }
 
 
     public static class SavedInstanceState {

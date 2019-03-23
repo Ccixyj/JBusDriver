@@ -228,12 +228,10 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
                     }
                     .show()
             }
-
-            if (data is NoticeBean) {
-                showNotice(data)
-            }
         }
-
+        if (data is NoticeBean) {
+            showNotice(data)
+        }
     }
 
     @SuppressLint("ResourceAsColor")
