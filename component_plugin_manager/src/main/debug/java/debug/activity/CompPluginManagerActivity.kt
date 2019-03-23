@@ -18,11 +18,11 @@ class CompPluginManagerActivity : AppCompatActivity() {
     "internal": [
       {
         "name": "me.jbusdriver.plugin.magnet",
-        "versionCode": 2,
-        "versionName": "1.0.1",
-        "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/plugins/me.jbusdriver.plugin.magnet_1.0.1.apk",
+        "versionCode": 3,
+        "versionName": "1.0.2",
+        "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/plugins/me.jbusdriver.plugin.magnet_1.0.2.apk",
         "desc": "[内部插件]磁力链接解析插件",
-        "eTag": "5512A0B47B3268F79A2ACA5B1D1AF8B2"
+        "eTag": "5D9B24BAA625F21D074AA7116BD856CD"
       }
      ]
    }
@@ -46,12 +46,12 @@ class CompPluginManagerActivity : AppCompatActivity() {
         }
 
 
-        val callBack = { p: Int -> KLog.d("progress ---> $p") }
-        comp_plugin_manager_iv_test_callback.setOnClickListener {
+        comp_plugin_manager_info.setOnClickListener {
             CC.obtainBuilder(C.Components.PluginManager)
-                .setActionName("callback")
-                .setParamWithNoKey(callBack)
-                .build().call()
+                .setActionName("plugins.info")
+                .build().callAsync { cc, result ->
+                    KLog.d("result ${result.dataMap.values}")
+                }
         }
     }
 

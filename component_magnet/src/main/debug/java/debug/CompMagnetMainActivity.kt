@@ -11,6 +11,7 @@ import com.wlqq.phantom.library.proxy.PluginContext
 import io.reactivex.BackpressureStrategy
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.comp_magnet_activity_main.*
+import me.jbusdriver.base.IO_Worker
 import me.jbusdriver.base.JBusManager
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.common.BaseActivity
@@ -108,6 +109,13 @@ class CompMagnetMainActivity : BaseActivity() {
 
             } ?: kotlin.run {
                 KLog.w("not find plugin info")
+            }
+        }
+
+        iv_test_uninstall_plugin.setOnClickListener {
+            IO_Worker.schedule {
+                PhantomCore.getInstance().uninstallAllPlugins()
+                KLog.d("uninstall all  success")
             }
         }
 

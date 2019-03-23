@@ -173,7 +173,7 @@ class PluginManagerComponent : IComponent {
          */
         fun checkInstall(plugin: PluginBean, pluginFile: File) {
             KLog.i("checkInstall $plugin for $pluginFile Plugin_Maps -> $Plugin_Maps")
-            val where = Plugin_Maps.filter { it.value.find { it.name == plugin.name } != null }.keys
+            val where = Plugin_Maps.filter { it.value.find { it.name == plugin.name } != null }.keys.takeIf { it.isNotEmpty() } ?: Plugin_Maps.keys
             where.forEach {
                 CC.obtainBuilder(it)
                     .setActionName("plugins.install")

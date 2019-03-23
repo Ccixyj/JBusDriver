@@ -77,10 +77,10 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/material_16dp" />
     <TextView
-        android:id="@+id/iv_test_plugin_java"
+        android:id="@+id/iv_test_uninstall_plugin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="test java plugin" />
+        android:text="test uninstall plugin" />
 
 
     <Space
