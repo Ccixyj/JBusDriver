@@ -30,6 +30,7 @@ import me.jbusdriver.base.*
 import me.jbusdriver.base.common.BaseActivity
 import me.jbusdriver.base.common.C
 import me.jbusdriver.common.JBus
+import me.jbusdriver.common.bean.plugin.PluginBean
 import me.jbusdriver.db.service.LinkService
 import me.jbusdriver.mvp.bean.BackUpEvent
 import me.jbusdriver.mvp.bean.Expand_Type_Head
@@ -41,7 +42,6 @@ import me.jbusdriver.ui.task.LoadCollectService
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-@SuppressLint("ValidFragment")
 class SettingActivity : BaseActivity() {
 
     private var pageModeHolder = AppConfiguration.pageMode
@@ -80,6 +80,23 @@ class SettingActivity : BaseActivity() {
 
     @SuppressLint("ResourceAsColor")
     private fun initSettingView() {
+
+        //check install plugins
+        ll_check_plugins.setOnClickListener {
+
+            val plugins = CC.obtainBuilder(C.Components.PluginManager)
+                .setActionName("plugins.info")
+                .build()
+                .call()
+                .getDataItemWithNoKey<List<PluginBean>>()
+            val pluginInfos = plugins?.map { "${it.name} : ${it.versionName}" } ?: emptyList()
+            MaterialDialog.Builder(this)
+                .title(if (plugins.isNullOrEmpty()) "没有插件信息!" else "已安装插件")
+                .items(pluginInfos)
+                .show()
+        }
+
+
         //page mode
         changePageMode(AppConfiguration.pageMode)
         ll_page_mode_page.setOnClickListener {

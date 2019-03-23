@@ -39,6 +39,12 @@ class PluginManagerComponent : IComponent {
                     }
                     return true
                 }
+
+                "plugins.info" -> {
+                    // async call
+                    checkPluginsInComps()
+                    CC.sendCCResult(cc.callId, CCResult.successWithNoKey(Plugin_Maps.values.flatten()))
+                }
                 else -> {
                     CC.sendCCResult(cc.callId, CCResult.errorUnsupportedActionName())
                 }
@@ -52,8 +58,8 @@ class PluginManagerComponent : IComponent {
     }
 
     private fun initPlugins(cc: CC, plugins: Plugins) {
-        if (!pluginsDir.exists()) pluginsDir.mkdirs()
         checkPluginsInComps()
+        if (!pluginsDir.exists()) pluginsDir.mkdirs()
         plugins.internal.takeIf { it.isNotEmpty() }?.let {
             val need = checkPluginNeedUpdate(it)
             validateDownload(cc, need)
@@ -108,7 +114,6 @@ class PluginManagerComponent : IComponent {
 
 
     companion object {
-
         private val Plugin_Maps = mutableMapOf<String, List<PluginBean>>()
         private val pluginsDir by lazy {
             File(
