@@ -36,7 +36,7 @@
         "name": "me.jbusdriver.plugin.magnet",
         "versionCode": 3,
         "versionName": "1.0.3",
-        "url": "https://github.com/Ccixyj/jbusfile/blob/master/plugins/me.jbusdriver.plugin.magnet_1.0.2.apk?raw=true",
+        "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/plugins/me.jbusdriver.plugin.magnet_1.0.2.apk",
         "desc": "[内部插件]磁力链接解析插件",
         "eTag": "5D9B24BAA625F21D074AA7116BD856CD"
       }
