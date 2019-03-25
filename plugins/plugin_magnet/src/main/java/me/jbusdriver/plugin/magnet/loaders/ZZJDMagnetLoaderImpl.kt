@@ -5,8 +5,8 @@ import org.json.JSONObject
 
 class ZZJDMagnetLoaderImpl : IMagnetLoader {
 
-    private val search = "http://zhongzijidi.ws/list/%s/%s/0/0/"
-    private val TAG = "MagnetLoader:ZJD"
+    private val search = "http://zhongzijidi.xyz/list/%s/%s/0/0/"
+    private val TAG = "MagnetLoader:ZZJD"
 
     override var hasNexPage = false
 
