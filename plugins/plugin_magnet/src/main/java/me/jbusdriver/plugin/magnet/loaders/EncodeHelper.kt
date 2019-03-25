@@ -21,7 +21,7 @@ object EncodeHelper {
         return URLEncoder.encode(str, Charsets.UTF_8.name())
     }
 
-    val CHARS by lazy { "0123456789abcdef".toCharArray() }
+    private val CHARS by lazy { "0123456789abcdef".toCharArray() }
     fun str2HexStr(str: String): String {
         val sb = StringBuilder("")
         val bs = str.toByteArray()

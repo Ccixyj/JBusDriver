@@ -14,7 +14,9 @@ import me.jbusdriver.base.http.removeProgressListener
 import me.jbusdriver.base.toJsonString
 import me.jbusdriver.common.bean.plugin.PluginBean
 import me.jbusdriver.component.plugin.manager.PluginManagerComponent
+import okio.Okio
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 class PluginService : IntentService("PluginService") {
 
@@ -65,10 +67,16 @@ class PluginService : IntentService("PluginService") {
                 }
                 return@flatMap service.downloadPluginAsync(pluginBean.url).map { body ->
                     kotlin.runCatching {
-                        f.outputStream().use {
-                            body.byteStream().copyTo(f.outputStream())
-                            body.close()
+                        //                        f.outputStream().use {
+//                            body.byteStream().copyTo(f.outputStream())
+//                            body.close()
+//                        }
+
+                        Okio.buffer(Okio.sink(f)).use {
+                            it.timeout().deadline(6, TimeUnit.SECONDS)
+                            it.writeAll(body.source())
                         }
+
                         f
                     }.onSuccess {
                         PluginManagerComponent.checkInstall(plugin = pluginBean, pluginFile = it)
