@@ -126,7 +126,7 @@ object LinkService {
         Flowable.fromCallable { dao.listByType(2) }.map { it -> it.mapNotNull { (it.getLinkValue() as? ActressInfo) } }
 
     fun queryLink(): Flowable<List<ILink>> =
-        Flowable.fromCallable { dao.queryLink() }.map { it -> it.map { it.getLinkValue() } }
+        Flowable.fromCallable { dao.queryLink() }.map { it -> it.mapNotNull { it.getLinkValue() } }
 
     fun resetCategory(category: Category, dBType: Int) {
         KLog.d("reset $category")

@@ -1,12 +1,9 @@
 package me.jbusdriver.db.bean
 
 import android.content.Context
-import me.jbusdriver.base.GSON
-import me.jbusdriver.base.fromJson
+import com.umeng.analytics.MobclickAgent
+import me.jbusdriver.base.*
 import me.jbusdriver.base.mvp.bean.PageInfo
-import me.jbusdriver.base.toast
-import me.jbusdriver.base.urlHost
-import me.jbusdriver.common.bean.ICollectCategory
 import me.jbusdriver.common.bean.ILink
 import me.jbusdriver.common.isEndWithXyzHost
 import me.jbusdriver.http.JAVBusService
@@ -24,10 +21,17 @@ data class LinkItem(
     var categoryId: Int = -1
 ) {
     var id: Int? = null
-    fun getLinkValue(): ILink = doGet(type, jsonStr).also {
-        if (it is ICollectCategory) {
-            it.categoryId = this.categoryId
-        }
+    fun getLinkValue(): ILink? {
+        return kotlin.runCatching {
+            val link = doGet(type, jsonStr)
+            link.categoryId = this.categoryId
+            link
+        }.onFailure {
+            val error = "error getLinkValue : $this"
+            KLog.w(error)
+            MobclickAgent.reportError(JBusManager.context, error)
+
+        }.getOrNull()
     }
 }
 
@@ -65,14 +69,16 @@ private fun doGet(type: Int, jsonStr: String) = when (type) {
             val linkChange = data.link.urlHost != host
             data.copy(
                 link = if (linkChange) data.link.replace(data.link.urlHost, host) else data.link,
-                imageUrl = /*if (imageChange) data.imageUrl.replace(data.imageUrl.urlHost, imageHost) else*/ data.imageUrl
+                imageUrl = /*if (imageChange) data.imageUrl.replace(data.imageUrl.urlHost, imageHost) else*/ data.imageUrl,
+                tags = emptyList()
             )
         }
         is ActressInfo -> {
             val linkChange = data.link.urlHost != host
             data.copy(
                 link = if (linkChange) data.link.replace(data.link.urlHost, host) else data.link,
-                avatar = /*if (imageChange) data.avatar.replace(data.avatar.urlHost, imageHost) else*/ data.avatar
+                avatar = /*if (imageChange) data.avatar.replace(data.avatar.urlHost, imageHost) else*/ data.avatar,
+                tag = null
             )
         }
         else -> {

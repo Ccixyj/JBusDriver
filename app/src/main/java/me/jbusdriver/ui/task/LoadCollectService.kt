@@ -51,13 +51,15 @@ class LoadCollectService : IntentService("LoadCollectService") {
                     this.index = index + 1
                 })
                 if (linkItem.categoryId < 0) return@forEachIndexed
-                val item: LinkItem
                 try {
-                    item = if (CategoryService.getById(linkItem.categoryId) == null) {
-                        linkItem.getLinkValue().convertDBItem()
-                    } else linkItem
+                    if (CategoryService.getById(linkItem.categoryId) == null) {
+                        linkItem.getLinkValue()?.convertDBItem()?.let {
+                            LinkService.saveOrUpdate(it)
+                        }
+                    } else {
+                        LinkService.saveOrUpdate(linkItem)
+                    }
 
-                    LinkService.saveOrUpdate(item)
                 } catch (e: Exception) {
                     e.printStackTrace()
                     MobclickAgent.reportError(this@LoadCollectService, "恢复数据出错: $e")

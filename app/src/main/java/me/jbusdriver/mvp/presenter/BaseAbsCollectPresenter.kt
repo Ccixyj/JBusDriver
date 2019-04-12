@@ -113,10 +113,13 @@ abstract class BaseAbsCollectPresenter<V : BaseView.BaseListWithRefreshView, T :
                 val start = (pageInfo.activePage - 1) * pageSize
                 val nextSize = start + pageSize
                 val end = if (nextSize <= listData.size) nextSize else listData.size
-                listData.subList(start, end).map {
-                    CollectLinkWrapper(null, it.convertDBItem().getLinkValue()).apply {
-                        adapterDelegate.needInjectType.add(level)
-                    }
+                listData.subList(start, end).mapNotNull {
+                    val data = it.convertDBItem().getLinkValue()
+                    if (data != null) {
+                        CollectLinkWrapper(null, data).apply {
+                            adapterDelegate.needInjectType.add(level)
+                        }
+                    } else null
                 }
             }.doOnSubscribe { mView?.showLoading() }
                 .doAfterTerminate { mView?.dismissLoading() }
