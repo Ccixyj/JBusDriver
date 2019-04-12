@@ -10,11 +10,12 @@ object MagnetLoaders {
             "Kitty" to CNBtkittyMangetLoaderImpl(),
             "btdigg" to BtdiggsMagnetLoaderImpl(),
             "zzjd" to ZZJDMagnetLoaderImpl(),
-            "btsearch" to BTSearchMagnetLoaderImpl(),
+            "BTbaocai" to BTBCMagnetLoaderImpl(),
             "Btanv" to BtanvMagnetLoaderImpl(),
             "BTSO.PW" to BtsoPWMagnetLoaderImpl(),
             "BTSOW" to BTSOWMagnetLoaderImpl(),
             "BTDB" to BTDBMagnetLoaderImpl(),
+            "btsearch" to BTSearchMagnetLoaderImpl(),
             "TorrentKitty" to TorrentKittyMangetLoaderImpl()
 
         )
