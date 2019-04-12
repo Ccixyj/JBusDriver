@@ -251,7 +251,48 @@ class SettingActivity : BaseActivity() {
 
     }
 
+
+    private fun secondSpannableString(str: String): SpannableString {
+        return SpannableString(str).apply {
+            setSpan(
+                RelativeSizeSpan(0.8f),
+                0,
+                str.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            setSpan(
+                ForegroundColorSpan(R.color.secondText.toColorInt()),
+                0,
+                str.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+    }
+
+    private fun showBackupFileInfo(file: File) {
+        val tip = "拷贝备份目录或备份文件至其他手机的相同sd目录即可。如sdcard/me.jbusdriver/collect/backup/xxx.json"
+
+        val str = SpannableStringBuilder("1. 路径")
+            .append(System.getProperty("line.separator"))
+            .append(secondSpannableString(file.absolutePath))
+            .append(System.getProperty("line.separator"))
+            .append(System.getProperty("line.separator"))
+            .append("2. 迁移至其他手机")
+            .append(System.getProperty("line.separator"))
+            .append(secondSpannableString(tip))
+
+
+
+        MaterialDialog.Builder(viewContext)
+            .title("信息")
+            .content(str)
+            .show()
+    }
+
+
     private fun loadBackUp() {
+
+
         ll_collect_backup_files.removeAllViews()
         Flowable.fromCallable { backDir }
             .map {
@@ -261,10 +302,9 @@ class SettingActivity : BaseActivity() {
                 if (list.isEmpty()) {
                     listOf(inflate(R.layout.layout_collect_back_edit_item).apply {
                         tv_backup_name.text = "没有备份呢~~"
-                        tv_backup_load.visibility = View.GONE
-                        tv_backup_delete.visibility = View.GONE
-                    }
-                    )
+                        iv_backup_load.visibility = View.GONE
+                        iv_backup_delete.visibility = View.GONE
+                    })
                 } else {
                     list.mapIndexed { index, file ->
                         inflate(R.layout.layout_collect_back_edit_item).apply {
@@ -276,27 +316,22 @@ class SettingActivity : BaseActivity() {
                                         DateUtils.FORMAT_SHOW_TIME
                             )
 
-                            setOnLongClickListener {
-                                MaterialDialog.Builder(viewContext)
-                                    .title("文件路径")
-                                    .content(file.absolutePath)
-                                    .show()
-                                return@setOnLongClickListener true
+
+
+                            tv_backup_name.setOnClickListener {
+                                showBackupFileInfo(file)
+                            }
+                            iv_backup_info.setOnClickListener {
+                                showBackupFileInfo(file)
                             }
 
                             tv_backup_name.text = SpannableStringBuilder("${index + 1}. ${file.name}")
                                 .append(System.getProperty("line.separator"))
                                 .append("    ")
-                                .append(SpannableString(date).apply {
-                                    setSpan(RelativeSizeSpan(0.8f), 0, date.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                                    setSpan(
-                                        ForegroundColorSpan(R.color.secondText.toColorInt()),
-                                        0,
-                                        date.length,
-                                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                                    )
-                                })
-                            tv_backup_load.setOnClickListener {
+                                .append(secondSpannableString(date))
+
+
+                            iv_backup_load.setOnClickListener {
                                 MaterialDialog.Builder(viewContext)
                                     .title("加载备份")
                                     .content("${file.name}\n注意:相同文件会被覆盖")
@@ -309,7 +344,7 @@ class SettingActivity : BaseActivity() {
                                     .show()
 
                             }
-                            tv_backup_delete.setOnClickListener {
+                            iv_backup_delete.setOnClickListener {
                                 MaterialDialog.Builder(viewContext)
                                     .title("注意")
                                     .content("确定要删除${file.name}吗?")

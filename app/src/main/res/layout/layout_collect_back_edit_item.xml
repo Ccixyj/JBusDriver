@@ -19,27 +19,40 @@
 
 
     <ImageView
-        android:id="@+id/tv_backup_load"
-        android:layout_width="@dimen/material_32dp"
-        android:layout_height="@dimen/material_32dp"
+        android:id="@+id/iv_backup_load"
+        android:layout_width="@dimen/material_24dp"
+        android:layout_height="@dimen/material_24dp"
         android:gravity="center"
         android:padding="@dimen/material_4dp"
+        android:tint="@color/colorPrimary"
         android:src="@drawable/ic_cc_enter" />
 
 
     <android.support.v4.widget.Space
-        android:layout_width="@dimen/material_16dp"
+        android:layout_width="@dimen/material_8dp"
         android:layout_height="0dp" />
 
     <ImageView
-        android:id="@+id/tv_backup_delete"
-        android:layout_width="@dimen/material_32dp"
-        android:layout_height="@dimen/material_32dp"
+        android:id="@+id/iv_backup_delete"
+        android:layout_width="@dimen/material_24dp"
+        android:layout_height="@dimen/material_24dp"
         android:gravity="center"
         android:padding="@dimen/material_4dp"
+        android:tint="@color/colorPrimary"
         android:src="@drawable/ic_close" />
 
     <android.support.v4.widget.Space
-        android:layout_width="@dimen/material_16dp"
+        android:layout_width="@dimen/material_8dp"
         android:layout_height="0dp" />
+
+    <ImageView
+            android:id="@+id/iv_backup_info"
+            android:layout_width="@dimen/material_24dp"
+            android:layout_height="@dimen/material_24dp"
+            android:gravity="center"
+            android:padding="@dimen/material_4dp"
+            android:tint="@color/colorPrimary"
+            android:src="@drawable/ic_info_24dp" />
+
+
 </LinearLayout>

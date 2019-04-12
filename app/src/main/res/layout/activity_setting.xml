@@ -217,7 +217,7 @@
                         android:gravity="center_vertical"
                         android:minHeight="@dimen/material_40dp"
                         android:text="点击备份"
-                        android:textColor="@color/secondText" />
+                        android:textColor="@color/colorPrimaryDark" />
 
                     <View style="@style/DividerLine.Horizontal" />
 
