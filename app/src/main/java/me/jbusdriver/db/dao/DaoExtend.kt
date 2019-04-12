@@ -12,11 +12,3 @@ fun <T> ioBlock(timeout: Long = 3000, timeUnit: TimeUnit = TimeUnit.MILLISECONDS
     ).subscribeOn(Schedulers.io()).unsubscribeOn(Schedulers.trampoline()).blockingFirst()
 
 
-fun <T> TryIgnoreEx(block: () -> T) {
-    try {
-        block()
-    } catch (e: Exception) {
-        //ignore ex
-
-    }
-}

@@ -38,36 +38,42 @@ class HistoryDao(private val db: BriteDatabase) {
     }
 
     fun queryByLimit(size: Int, offset: Int): Observable<List<History>> {
-        return db.createQuery(
-            HistoryTable.TABLE_NAME,
-            "SELECT * FROM ${HistoryTable.TABLE_NAME} ORDER BY ${HistoryTable.COLUMN_ID} DESC LIMIT $offset , $size "
-        ).mapToList {
-            History(
-                it.getIntByColumn(HistoryTable.COLUMN_DB_TYPE),
-                Date(it.getLongByColumn(HistoryTable.COLUMN_CREATE_TIME)),
-                it.getStringByColumn(HistoryTable.COLUMN_JSON_STR) ?: "",
-                it.getIntByColumn(HistoryTable.COLUMN_IS_ALL) == 1
-            ).apply {
-                id = it.getIntByColumn(HistoryTable.COLUMN_ID)
-            }
-        }.flatMap { Observable.just(it) }
+        return runCatching {
+            db.createQuery(
+                HistoryTable.TABLE_NAME,
+                "SELECT * FROM ${HistoryTable.TABLE_NAME} ORDER BY ${HistoryTable.COLUMN_ID} DESC LIMIT $offset , $size "
+            ).mapToList {
+                History(
+                    it.getIntByColumn(HistoryTable.COLUMN_DB_TYPE),
+                    Date(it.getLongByColumn(HistoryTable.COLUMN_CREATE_TIME)),
+                    it.getStringByColumn(HistoryTable.COLUMN_JSON_STR) ?: "",
+                    it.getIntByColumn(HistoryTable.COLUMN_IS_ALL) == 1
+                ).apply {
+                    id = it.getIntByColumn(HistoryTable.COLUMN_ID)
+                }
+            }.flatMap { Observable.just(it) }
+
+        }.getOrDefault(Observable.just(emptyList()))
     }
 
     val count: Int
-        get() = db.query("select count(1) from ${HistoryTable.TABLE_NAME}").let {
-            if (it.moveToFirst()) {
-                it.getInt(0)
-            } else -1
-        }
+        get() = runCatching {
+            db.query("select count(1) from ${HistoryTable.TABLE_NAME}").let {
+                if (it.moveToFirst()) {
+                    it.getInt(0)
+                } else -1
+            }
+        }.getOrDefault(-1)
 
     fun deleteAndSetZero() {
-        TryIgnoreEx {
+        runCatching {
             ioBlock {
                 db.run {
                     delete(HistoryTable.TABLE_NAME, null)
                     execute("update sqlite_sequence SET seq = 0 where name = '${HistoryTable.TABLE_NAME}'")
                 }
             }
+
         }
     }
 

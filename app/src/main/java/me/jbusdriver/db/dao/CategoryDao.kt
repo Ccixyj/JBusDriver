@@ -29,30 +29,31 @@ class CategoryDao(private val db: BriteDatabase) {
 
     @Throws
     fun delete(category: Category) {
-        TryIgnoreEx {
+        runCatching {
             ioBlock { db.delete(CategoryTable.TABLE_NAME, "${CategoryTable.COLUMN_ID} = ? ", category.id.toString()) }
         }
     }
 
     fun findById(cId: Int): Category? {
-        return db.query(
-            "select * from ${CategoryTable.TABLE_NAME}  where ${CategoryTable.COLUMN_ID} = ?",
-            cId.toString()
-        )?.let {
-            KLog.d("cursor :$it")
-            if (it.moveToFirst()) {
-                return Category(
-                    it.getStringByColumn(CategoryTable.COLUMN_NAME)
-                        ?: "", it.getIntByColumn(CategoryTable.COLUMN_P_ID),
-                    it.getStringByColumn(CategoryTable.COLUMN_TREE) ?: ""
-                ).apply {
-                    id = it.getIntByColumn(CategoryTable.COLUMN_ID)
+        return kotlin.runCatching {
+            db.query(
+                "select * from ${CategoryTable.TABLE_NAME}  where ${CategoryTable.COLUMN_ID} = ?",
+                cId.toString()
+            )?.let {
+                KLog.d("cursor :$it")
+                if (it.moveToFirst()) {
+                    return Category(
+                        it.getStringByColumn(CategoryTable.COLUMN_NAME)
+                            ?: "", it.getIntByColumn(CategoryTable.COLUMN_P_ID),
+                        it.getStringByColumn(CategoryTable.COLUMN_TREE) ?: ""
+                    ).apply {
+                        id = it.getIntByColumn(CategoryTable.COLUMN_ID)
+                    }
+
                 }
-
+                null
             }
-            null
-        }
-
+        }.getOrNull()
     }
 
     private fun toCategory(it: Cursor): Category {
@@ -66,17 +67,19 @@ class CategoryDao(private val db: BriteDatabase) {
     }
 
     fun queryTreeByLike(like: String): List<Category> {
-        return db.createQuery(
-            CategoryTable.TABLE_NAME,
-            "select * from ${CategoryTable.TABLE_NAME}  where ${CategoryTable.COLUMN_TREE} like ? ORDER BY ${CategoryTable.COLUMN_ORDER} DESC",
-            like
-        )
-            .mapToList { toCategory(it) }.timeout(6, TimeUnit.SECONDS).blockingFirst()
+        return runCatching {
+            db.createQuery(
+                CategoryTable.TABLE_NAME,
+                "select * from ${CategoryTable.TABLE_NAME}  where ${CategoryTable.COLUMN_TREE} like ? ORDER BY ${CategoryTable.COLUMN_ORDER} DESC",
+                like
+            )
+                .mapToList { toCategory(it) }.timeout(6, TimeUnit.SECONDS).blockingFirst()
+        }.getOrDefault(emptyList())
     }
 
     fun update(category: Category): Boolean {
         KLog.d("update $category")
-        return try {
+        return runCatching {
             ioBlock {
                 db.update(
                     CategoryTable.TABLE_NAME,
@@ -85,10 +88,6 @@ class CategoryDao(private val db: BriteDatabase) {
                     CategoryTable.COLUMN_ID + " = ${category.id!!} "
                 ) > 0
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            false
-        }
-
+        }.getOrDefault(false)
     }
 }
