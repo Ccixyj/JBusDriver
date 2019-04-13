@@ -27,8 +27,8 @@
     "desc": "JBusDriver 1.2.18 更新!\r\n1.设置中可以查看相关插件。\r\n[plugin.magnet] 更新至1.0.2"
   },
   "notice": {
-    "id": 12,
-    "content": "提示：\r\n1.磁力插件更新至v1.0.2。\r\n2. 磁力插件更新了新的磁力站点，请在设置中查看。\r\n3.修复bitty磁力站"
+    "id": 13,
+    "content": "提示：\r\n1. 磁力插件更新了新的磁力站点，请在设置中查看。"
   },
   "plugins": {
     "internal": [
