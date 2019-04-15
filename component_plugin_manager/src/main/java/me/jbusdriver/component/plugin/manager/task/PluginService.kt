@@ -66,14 +66,13 @@ class PluginService : IntentService("PluginService") {
                     throw e
                 }
                 return@flatMap service.downloadPluginAsync(pluginBean.url).map { body ->
-                    kotlin.runCatching {
+                    runCatching {
                         //                        f.outputStream().use {
 //                            body.byteStream().copyTo(f.outputStream())
 //                            body.close()
 //                        }
 
                         Okio.buffer(Okio.sink(f)).use {
-                            it.timeout().deadline(6, TimeUnit.SECONDS)
                             it.writeAll(body.source())
                         }
 

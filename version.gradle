@@ -31,8 +31,8 @@ ext {
             'bubbleseekbar'                : '3.16',
             'photoView'                    :'2.1.4',
 
-            'cc_register'                  : '1.0.8',
-            'cc'                           : '2.1.4',
+            'cc_register'                  : '1.0.9',
+            'cc'                           : '2.1.5',
 
             'leakcanary'                   : '1.6.2',
             'stetho'                       : '1.5.0',
