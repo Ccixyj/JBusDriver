@@ -84,7 +84,7 @@ class CompMagnetMainActivity : BaseActivity() {
                 toast("插件已经安装 ${it.joinToString { it.packageName }}")
             }, {
 
-                KLog.w("erorr $it")
+                KLog.w("error $it")
             }).addTo(rxManager)
         }
         iv_test_plugin.setOnClickListener {
@@ -95,7 +95,6 @@ class CompMagnetMainActivity : BaseActivity() {
                 // 插件 Phantom Service 代理对象
                 val service = PhantomServiceManager.getService(PluginMagnetPackage, MagnetService)
                 if (service == null) {
-
                     KLog.w("not find service ")
                     return@let
                 }
@@ -106,8 +105,7 @@ class CompMagnetMainActivity : BaseActivity() {
                     KLog.w("service.call error $e")
                 }
 
-
-            } ?: kotlin.run {
+            } ?: run {
                 KLog.w("not find plugin info")
             }
         }
@@ -115,7 +113,7 @@ class CompMagnetMainActivity : BaseActivity() {
         iv_test_uninstall_plugin.setOnClickListener {
             IO_Worker.schedule {
                 PhantomCore.getInstance().uninstallAllPlugins()
-                KLog.d("uninstall all  success")
+                KLog.d("uninstall all plugin success")
             }
         }
 

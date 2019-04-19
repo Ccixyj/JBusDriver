@@ -16,7 +16,6 @@ import me.jbusdriver.common.bean.plugin.PluginBean
 import me.jbusdriver.component.plugin.manager.PluginManagerComponent
 import okio.Okio
 import java.io.File
-import java.util.concurrent.TimeUnit
 
 class PluginService : IntentService("PluginService") {
 
@@ -92,11 +91,6 @@ class PluginService : IntentService("PluginService") {
             })
 
 
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        KLog.w("service onDestroy")
     }
 
     companion object {

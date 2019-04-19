@@ -28,7 +28,7 @@ class PluginManagerComponent : IComponent {
 
     override fun onCall(cc: CC): Boolean {
         try {
-            when (val action = cc.actionName) {
+            when (cc.actionName) {
                 "plugins.init" -> {
                     // async call
                     val plugins = GSON.fromJson(cc.getParamItem<JsonObject>("plugins"), Plugins::class.java)
@@ -138,7 +138,7 @@ class PluginManagerComponent : IComponent {
             KLog.d("checkPluginsInComps ${comps.joinToString()}")
             comps.mapNotNull { name ->
                 try {
-                    KLog.d("check comp $name for plugins.all ...")
+                    KLog.d("checkPluginsInComps $name for plugins.all ...")
                     CC.obtainBuilder(name)
                         .setActionName("plugins.all")
                         .build().call()
@@ -147,6 +147,7 @@ class PluginManagerComponent : IComponent {
                             Plugin_Maps[name] = this
                         }
                 } catch (e: Exception) {
+                    KLog.d("checkPluginsInComps name $name error $e ")
                     null
                 }
 
@@ -173,7 +174,9 @@ class PluginManagerComponent : IComponent {
          */
         fun checkInstall(plugin: PluginBean, pluginFile: File) {
             KLog.i("checkInstall $plugin for $pluginFile Plugin_Maps -> $Plugin_Maps")
-            val where = Plugin_Maps.filter { it.value.find { it.name == plugin.name } != null }.keys.takeIf { it.isNotEmpty() } ?: Plugin_Maps.keys
+            val where =
+                Plugin_Maps.filter { it.value.find { it.name == plugin.name } != null }.keys.takeIf { it.isNotEmpty() }
+                    ?: Plugin_Maps.keys
             where.forEach {
                 CC.obtainBuilder(it)
                     .setActionName("plugins.install")

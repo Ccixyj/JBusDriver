@@ -16,8 +16,6 @@ object MagnetPluginHelper {
 
     const val PluginMagnetPackage = "me.jbusdriver.plugin.magnet"
     const val MagnetService = "MagnetService"
-    const val MagnetJavaService = "MagnetJavaService"
-
 
     private val MagnetLoaders = mutableSetOf<String>()
 

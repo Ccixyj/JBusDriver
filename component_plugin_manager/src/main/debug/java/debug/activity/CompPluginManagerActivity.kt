@@ -4,39 +4,56 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.billy.cc.core.component.CC
 import com.google.gson.JsonObject
+import io.reactivex.Flowable
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.comp_plugin_manager_activity_main.*
 import me.jbusdriver.base.GSON
 import me.jbusdriver.base.KLog
+import me.jbusdriver.base.SchedulersCompat
 import me.jbusdriver.base.common.C
 import me.jbusdriver.base.fromJson
+import me.jbusdriver.common.bean.plugin.PluginBean
 import me.jbusdriver.component.plugin.manager.R
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.util.concurrent.TimeUnit
 
 class CompPluginManagerActivity : AppCompatActivity() {
 
-    val jsonStr = """
-   {
-    "internal": [
-      {
-        "name": "me.jbusdriver.plugin.magnet",
-        "versionCode": 3,
-        "versionName": "1.0.2",
-        "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/plugins/me.jbusdriver.plugin.magnet_1.0.2.apk",
-        "desc": "[内部插件]磁力链接解析插件",
-        "eTag": "5D9B24BAA625F21D074AA7116BD856CD"
-      }
-     ]
-   }
+    private val rxManager = CompositeDisposable()
 
-    """.trimIndent()
-
+    private val url = "https://raw.githubusercontent.com/Ccixyj/JBusDriver/%s/api/announce.json"
+    private val cache = hashMapOf<String, JsonObject>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.comp_plugin_manager_activity_main)
-        val plugins = GSON.fromJson<JsonObject>(jsonStr)
+
+        val dev = url.format("dev")
+
+        if ((cache[dev]?.getAsJsonArray("internal")?.size() ?: 0) <= 0) {
+            Flowable.just(dev)
+                .map {
+                    OkHttpClient().newCall(Request.Builder().url(it).get().build())
+                        .execute().body()?.string() ?: error("request error")
+                }
+                .map {
+                    GSON.fromJson<JsonObject>(it).getAsJsonObject("plugins") ?: JsonObject()
+                }
+                .compose(SchedulersCompat.io())
+                .timeout(30, TimeUnit.SECONDS)
+                .subscribeBy {
+                    cache.put(dev, it)
+                    KLog.d("resolved : $it")
+                }
+                .addTo(rxManager)
+        }
+
         comp_plugin_manager_tv_install.setOnClickListener {
 
-            KLog.d("comp_plugin_manager_tv_install $plugins")
+            val plugins = cache[dev] ?: return@setOnClickListener
             CC.obtainBuilder(C.Components.PluginManager)
                 .setActionName("plugins.init")
                 .setContext(this)
@@ -47,12 +64,21 @@ class CompPluginManagerActivity : AppCompatActivity() {
 
 
         comp_plugin_manager_info.setOnClickListener {
+            KLog.d("check comp manager : ${C.Components.PluginManager} : ${CC.hasComponent(C.Components.PluginManager)}")
+
             CC.obtainBuilder(C.Components.PluginManager)
                 .setActionName("plugins.info")
-                .build().callAsync { cc, result ->
-                    KLog.d("result ${result.dataMap.values}")
+                .build().callAsyncCallbackOnMainThread { _, result ->
+                    val plugins = result?.getDataItemWithNoKey() as? List<PluginBean> ?: emptyList()
+                    KLog.d("result ${result?.dataMap?.values} ==> $plugins")
+                    comp_plugin_manager_info_content.text = plugins.joinToString("\r\n==============\r\n")
                 }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        rxManager.clear()
     }
 
 }

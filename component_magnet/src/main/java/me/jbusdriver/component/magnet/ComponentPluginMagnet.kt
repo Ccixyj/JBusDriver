@@ -50,7 +50,7 @@ class ComponentPluginMagnet : IComponent {
 
     private fun getAllPlugin(cc: CC) {
         val plugins = PhantomCore.getInstance().allPlugins.map { it.toPluginBean() }
-        KLog.d(" comp : $name has plugins $plugins")
+        KLog.d("comp : $name has plugins $plugins")
         CC.sendCCResult(
             cc.callId,
             CCResult.success(mapOf("plugins" to plugins))
