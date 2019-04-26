@@ -8,7 +8,7 @@ buildscript {
         maven { url "https://jitpack.io" }
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:${versions.gradle}"
+        classpath "com.android.tools.build:gradle:${versions.androidGradleTools}"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
         // tinkersupport插件, 其中lastest.release指拉取最新版本，也可以指定明确版本号，例如1.0.4
 //        classpath "com.tencent.bugly:tinker-support:${versions.tinker_support}"
