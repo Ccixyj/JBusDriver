@@ -68,8 +68,6 @@ class AppContext : Application() {
         if (isDebug) {
             LeakCanary.install(this)
 
-//            initializeStetho(this) //chrome://inspect/#devices
-
             val formatStrategy = PrettyFormatStrategy.newBuilder()
                 .showThreadInfo(true)  // (Optional) Whether to show thread info or not. Default true
                 .methodCount(2)         // (Optional) How many method line to show. Default 2
