@@ -33,7 +33,9 @@ ext {
             'gson'                         : '2.8.5',
             'jsoup'                        : '1.11.3',
             'logger'                       : '2.2.0',
-            'rxpermissions2'               : '0.9.5@aar',
+
+
+            'rxpermissions2'               : '0.10.2',
 
             'constraint_layout'            : '1.1.3',
             'material_dialogs_core'        : '0.9.6.0',

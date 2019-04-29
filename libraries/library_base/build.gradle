@@ -75,7 +75,7 @@ dependencies {
     api "io.reactivex.rxjava2:rxandroid:${versions.rxandroid}"
     api "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"
     api "com.jakewharton.rxrelay2:rxrelay:${versions.rxrelay}"
-    api "com.tbruyelle.rxpermissions2:rxpermissions:${versions.rxpermissions2}"
+    api "com.github.tbruyelle:rxpermissions:${versions.rxpermissions2}"
 
     //sqllite
     api "com.squareup.sqlbrite3:sqlbrite:${versions.sqlbrite}"
