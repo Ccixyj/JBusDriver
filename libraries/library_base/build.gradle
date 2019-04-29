@@ -82,16 +82,13 @@ dependencies {
     api "com.squareup.sqlbrite3:sqlbrite-kotlin:${versions.sqlbrite}"
     api "android.arch.persistence:db-framework:${versions.db_framework}"
 
-    //stetho
-//    api "com.facebook.stetho:stetho:${versions.stetho}"
-//    api "com.facebook.stetho:stetho-okhttp3:${versions.stetho}"
 
     //cc
     api "com.billy.android:cc:${versions.cc}"
 
     //umneg
-    api  'com.umeng.umsdk:analytics:8.0.0'
-    api  'com.umeng.umsdk:common:2.0.0'
+    api 'com.umeng.umsdk:analytics:8.0.2'
+    api 'com.umeng.umsdk:common:2.0.0'
 
 
     //compileOnly
