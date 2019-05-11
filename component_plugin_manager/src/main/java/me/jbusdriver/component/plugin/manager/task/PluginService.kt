@@ -1,8 +1,11 @@
 package me.jbusdriver.component.plugin.manager.task
 
 import android.app.IntentService
+import android.app.Service
+import android.app.job.JobService
 import android.content.Context
 import android.content.Intent
+import androidx.core.app.JobIntentService
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.base.GSON
@@ -81,7 +84,7 @@ class PluginService : IntentService("PluginService") {
                     }.onFailure {
                         f.delete()
                     }
-                }
+                }.toFlowable()
             }.sequentialDelayError().blockingSubscribe({
                 KLog.d("download end $it")
                 removeProgressListener(pnl)

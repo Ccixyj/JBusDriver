@@ -7,7 +7,8 @@ ext {
             'androidGradleTools'           : '3.2.0',
 //            'androidGradleTools'           : '3.1.4',
             'kotlin'                       : '1.3.31',
-//            'supportLibrary'               : '28.0.0',
+            'coroutines'                   : '1.2.1',
+
 
             'okhttp'                       : '3.12.2',
             'retrofit'                     : '2.5.0',
@@ -24,8 +25,10 @@ ext {
 
             'leakcanary'                   : '1.6.3',
             'phantom'                      : [
-                    allVersion   : "3.1.2",
-                    gradle   : "3.1.3-SNAPSHOT",
+                    gradle       : "3.1.2",
+                    host         : "3.1.3",
+                    plugin       : "3.1.2",
+                    communication: "3.1.2",
                     allVersionInt: 30102,
             ],
 
@@ -44,7 +47,7 @@ ext {
             'immersionBar'                 : '2.3.1',
             'flowlayoutmanager'            : '1.2.3.2',
             'bubbleseekbar'                : '3.16',
-            'photoView'                    :'2.1.4',
+            'photoView'                    : '2.1.4',
 
     ]
 }

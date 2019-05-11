@@ -4,61 +4,52 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.billy.cc.core.component.CC
 import com.google.gson.JsonObject
-import io.reactivex.Flowable
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.comp_plugin_manager_activity_main.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.rx2.await
 import me.jbusdriver.base.GSON
 import me.jbusdriver.base.KLog
-import me.jbusdriver.base.SchedulersCompat
 import me.jbusdriver.base.common.C
 import me.jbusdriver.base.fromJson
 import me.jbusdriver.common.bean.plugin.PluginBean
 import me.jbusdriver.component.plugin.manager.R
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import java.util.concurrent.TimeUnit
+import me.jbusdriver.component.plugin.manager.task.DownloadService
+import kotlin.coroutines.CoroutineContext
 
-class CompPluginManagerActivity : AppCompatActivity() {
+class CompPluginManagerActivity : AppCompatActivity(), CoroutineScope {
 
-    private val rxManager = CompositeDisposable()
+    override val coroutineContext: CoroutineContext = Dispatchers.IO + Job()
 
     private val url = "https://raw.githubusercontent.com/Ccixyj/JBusDriver/%s/api/announce.json"
     private val cache = hashMapOf<String, JsonObject>()
+
+    private val downloadService by lazy { DownloadService.createService() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.comp_plugin_manager_activity_main)
 
-        val dev = url.format("dev")
 
-        if ((cache[dev]?.getAsJsonArray("internal")?.size() ?: 0) <= 0) {
-            Flowable.just(dev)
-                .map {
-                    OkHttpClient().newCall(Request.Builder().url(it).get().build())
-                        .execute().body()?.string() ?: error("request error")
-                }
-                .map {
-                    GSON.fromJson<JsonObject>(it).getAsJsonObject("plugins") ?: JsonObject()
-                }
-                .compose(SchedulersCompat.io())
-                .timeout(30, TimeUnit.SECONDS)
-                .subscribeBy {
-                    cache.put(dev, it)
-                    KLog.d("resolved : $it")
-                }
-                .addTo(rxManager)
-        }
 
         comp_plugin_manager_tv_install.setOnClickListener {
+            val dev = url.format("dev")
+            launch {
+                var cacheObj = cache[dev] ?: JsonObject()
+                if ((cacheObj.getAsJsonArray("internal")?.size() ?: 0) <= 0) {
+                    val res = downloadService.downloadPluginAsync(dev).await()
+                    cacheObj = GSON.fromJson<JsonObject>(res.string()).getAsJsonObject("plugins") ?: JsonObject()
+                    cache.put(dev, cacheObj)
+                }
 
-            val plugins = cache[dev] ?: return@setOnClickListener
-            CC.obtainBuilder(C.Components.PluginManager)
-                .setActionName("plugins.init")
-                .setContext(this)
-                .addParam("plugins", plugins)
-                .build().callAsync()
+                KLog.d("plugins:$cacheObj")
+                CC.obtainBuilder(C.Components.PluginManager)
+                    .setActionName("plugins.init")
+                    .setContext(this@CompPluginManagerActivity)
+                    .addParam("plugins", cacheObj)
+                    .build().callAsync()
+            }
+
 
         }
 
@@ -78,7 +69,7 @@ class CompPluginManagerActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        rxManager.clear()
+        cancel()
     }
 
 }
