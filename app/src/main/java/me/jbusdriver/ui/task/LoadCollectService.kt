@@ -3,6 +3,7 @@ package me.jbusdriver.ui.task
 import android.app.IntentService
 import android.content.Context
 import android.content.Intent
+import com.squareup.leakcanary.LeakCanary
 import com.umeng.analytics.MobclickAgent
 import me.jbusdriver.base.GSON
 import me.jbusdriver.base.RxBus
@@ -76,6 +77,13 @@ class LoadCollectService : IntentService("LoadCollectService") {
             RxBus.post(event.copy(total = 0, index = 0))
         }
 
+
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        LeakCanary.installedRefWatcher().watch(this)
     }
 
     companion object {

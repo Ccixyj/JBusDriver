@@ -5,8 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.Toolbar
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -14,6 +12,7 @@ import android.text.format.DateUtils
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.view.View
+import androidx.recyclerview.widget.GridLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.billy.cc.core.component.CC
 import com.chad.library.adapter.base.entity.MultiItemEntity
@@ -291,14 +290,18 @@ class SettingActivity : BaseActivity() {
 
 
     private fun loadBackUp() {
-
-
         ll_collect_backup_files.removeAllViews()
         Flowable.fromCallable { backDir }
             .map {
-                val list = it.walk().maxDepth(1).filter {
+                it.walk().maxDepth(1).filter {
                     it.isFile && it.name.contains("backup.+json".toRegex())
                 }.toList()
+
+            }.compose(SchedulersCompat.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy({
+                KLog.w("error $it")
+            }, onNext = { list ->
                 if (list.isEmpty()) {
                     listOf(inflate(R.layout.layout_collect_back_edit_item).apply {
                         tv_backup_name.text = "没有备份呢~~"
@@ -306,7 +309,7 @@ class SettingActivity : BaseActivity() {
                         iv_backup_delete.visibility = View.GONE
                     })
                 } else {
-                    list.mapIndexed { index, file ->
+                    val views = list.mapIndexed { index, file ->
                         inflate(R.layout.layout_collect_back_edit_item).apply {
 
                             val date = DateUtils.formatDateTime(
@@ -315,9 +318,6 @@ class SettingActivity : BaseActivity() {
                                         DateUtils.FORMAT_SHOW_DATE or
                                         DateUtils.FORMAT_SHOW_TIME
                             )
-
-
-
                             tv_backup_name.setOnClickListener {
                                 showBackupFileInfo(file)
                             }
@@ -359,14 +359,13 @@ class SettingActivity : BaseActivity() {
                             }
                         }
                     }
+                    views.onEach {
+                        ll_collect_backup_files.addView(it)
+                    }
                 }
 
-            }.compose(SchedulersCompat.single())
-            .subscribeBy {
-                it.forEach {
-                    ll_collect_backup_files.addView(it)
-                }
-            }
+
+            })
             .addTo(rxManager)
     }
 
@@ -384,7 +383,6 @@ class SettingActivity : BaseActivity() {
     }
 
     private fun setToolBar() {
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.title = "设置"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

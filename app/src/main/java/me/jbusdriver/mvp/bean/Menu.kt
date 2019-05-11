@@ -1,6 +1,6 @@
 package me.jbusdriver.mvp.bean
 
-import android.support.annotation.IdRes
+import androidx.annotation.IdRes
 import com.chad.library.adapter.base.entity.AbstractExpandableItem
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import me.jbusdriver.R

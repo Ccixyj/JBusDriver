@@ -25,7 +25,7 @@ android {
         targetSdkVersion versions.targetSdk
         versionCode 4
         versionName "1.0.3"
-//        multiDexEnabled true
+        //multiDexEnabled true
     }
 
     signingConfigs {
@@ -128,9 +128,23 @@ phantomPluginConfig {
     excludeLib "com.android.support:palette-v7:${versions.supportLibrary}"
     excludeLib "com.android.support.constraint:constraint-layout:${versions.constraint_layout}"
 
+    /*------------------------------ 删除 androidx及其依赖的库  END  ----------------------------*/
+    excludeLib 'androidx.legacy:legacy-support-v4:1.0.0'
+    excludeLib 'androidx.appcompat:appcompat:1.0.2'
+    excludeLib 'androidx.cardview:cardview:1.0.0'
+    excludeLib 'androidx.palette:palette:1.0.0'
+    excludeLib 'com.google.android.material:material:1.0.0'
+    excludeLib 'androidx.constraintlayout:constraintlayout:1.1.3'
+
     //kotlin
-//    excludeLib "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
-    excludeClass "org.jsoup.**"
+    excludeLib "org.jetbrains.kotlin:kotlin-stdlib-common:${versions.kotlin}"
+    excludeLib "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+    excludeLib "org.jetbrains.kotlin:kotlin-android-extensions-runtime:${versions.kotlin}"
+    excludeLib "org.jsoup:jsoup:${versions.jsoup}"
+    excludeClass "org.jsoup"
+    excludeClass "kotlin"
+
+
     /*------------------------------ 混淆配置 BEGIN ------------------------------*/
     libraryJarsProguardFile file('proguard-phantom.pro')
     /*------------------------------ 混淆配置  END  ------------------------------*/

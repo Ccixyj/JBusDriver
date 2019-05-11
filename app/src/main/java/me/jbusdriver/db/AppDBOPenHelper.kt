@@ -1,8 +1,8 @@
 package me.jbusdriver.db
 
-import android.arch.persistence.db.SupportSQLiteDatabase
-import android.arch.persistence.db.SupportSQLiteOpenHelper
 import android.database.sqlite.SQLiteDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.sqlite.db.SupportSQLiteOpenHelper
 import me.jbusdriver.base.KLog
 import me.jbusdriver.common.bean.db.AllFirstParentDBCategoryGroup
 import me.jbusdriver.common.bean.db.CategoryTable

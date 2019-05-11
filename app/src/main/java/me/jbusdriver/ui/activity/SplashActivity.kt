@@ -4,7 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.util.ArrayMap
+import androidx.collection.ArrayMap
 import com.google.gson.JsonObject
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.umeng.analytics.MobclickAgent

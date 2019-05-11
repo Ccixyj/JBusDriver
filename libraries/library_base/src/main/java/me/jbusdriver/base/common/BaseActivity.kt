@@ -2,14 +2,12 @@ package me.jbusdriver.base.common
 
 import android.annotation.TargetApi
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import com.gyf.barlibrary.ImmersionBar
 import com.umeng.analytics.MobclickAgent
 import io.reactivex.disposables.CompositeDisposable
-import me.jbusdriver.base.BuildConfig
 import me.jbusdriver.base.KLog
 
 /**
@@ -61,17 +59,7 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     val isDestroyedCompatible: Boolean
-        get() {
-            return if (Build.VERSION.SDK_INT >= 17)
-                isDestroyedCompatible17
-            else
-                destroyed || super.isFinishing()
-
-        }
-
-    private val isDestroyedCompatible17: Boolean
-        @TargetApi(17)
-        get() = super.isDestroyed()
+        get() = destroyed || super.isFinishing()
 
     val viewContext: Context by lazy { this }
 }

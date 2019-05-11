@@ -1,10 +1,10 @@
 package me.jbusdriver.ui.holder
 
 import android.content.Context
-import android.support.v7.widget.GridLayoutManager
 import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
+import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder

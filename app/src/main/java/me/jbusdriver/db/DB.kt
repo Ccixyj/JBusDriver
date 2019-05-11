@@ -1,8 +1,8 @@
 package me.jbusdriver.db
 
 import android.annotation.SuppressLint
-import android.arch.persistence.db.SupportSQLiteOpenHelper
-import android.arch.persistence.db.framework.FrameworkSQLiteOpenHelperFactory
+import androidx.sqlite.db.SupportSQLiteOpenHelper
+import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import com.squareup.sqlbrite3.SqlBrite
 import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.base.KLog

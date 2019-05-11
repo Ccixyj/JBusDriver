@@ -2,8 +2,8 @@ package me.jbusdriver.ui.holder
 
 import android.content.Context
 import android.graphics.Paint
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.widget.LinearLayoutManager
+import androidx.core.content.res.ResourcesCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.text.TextUtils
 import android.view.View
 import android.widget.TextView

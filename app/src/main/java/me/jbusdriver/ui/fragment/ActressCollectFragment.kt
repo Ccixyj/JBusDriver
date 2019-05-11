@@ -1,14 +1,14 @@
 package me.jbusdriver.ui.fragment
 
 import android.graphics.Bitmap
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.graphics.Palette
-import android.support.v7.widget.OrientationHelper
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.StaggeredGridLayoutManager
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuInflater
+import androidx.palette.graphics.Palette
+import androidx.recyclerview.widget.OrientationHelper
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.transition.Transition

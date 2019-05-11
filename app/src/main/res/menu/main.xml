@@ -8,7 +8,7 @@
         android:inputType="textCapWords"
         android:orderInCategory="1"
         android:title="搜索"
-        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always" />
 
 

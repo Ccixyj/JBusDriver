@@ -1,8 +1,8 @@
 package me.jbusdriver.ui.adapter
 
 import android.graphics.Bitmap
-import android.support.v7.graphics.Palette
 import android.text.TextUtils
+import androidx.palette.graphics.Palette
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.transition.Transition

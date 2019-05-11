@@ -6,20 +6,22 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.NavigationView
-import android.support.v4.graphics.drawable.DrawableCompat
-import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.widget.Toolbar
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.view.GravityCompat
 import android.text.TextUtils
 import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
 import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.navigation.NavigationView
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.nav_header_main.*
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 import me.jbusdriver.R
 import me.jbusdriver.base.*
@@ -33,7 +35,7 @@ import java.util.concurrent.TimeUnit
 class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.MainView>(),
     NavigationView.OnNavigationItemSelectedListener, MainContract.MainView {
 
-    private val navigationView by lazy { findViewById<NavigationView>(R.id.nav_view) }
+    private val navigationView by lazy { nav_view }
     private var selectMenu: MenuItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,13 +75,11 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
 
     private fun initNavigationView() {
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         val toggle = ActionBarDrawerToggle(
-            this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+            this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
         )
-        drawer.addDrawerListener(toggle)
+        drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
 
@@ -101,7 +101,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
             tv_app_setting.setOnClickListener {
                 SettingActivity.start(this@MainActivity)
-                drawer.closeDrawer(GravityCompat.START)
+                drawer_layout.closeDrawer(GravityCompat.START)
             }
 
 
@@ -160,9 +160,8 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
 
 
     override fun onBackPressed() {
-        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START)
+        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            drawer_layout.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
         }
@@ -174,8 +173,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         switchFragment(item.itemId)
         //更新当前选择菜单
         selectMenu = item
-        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
-        drawer.closeDrawer(GravityCompat.START)
+        drawer_layout.closeDrawer(GravityCompat.START)
         supportActionBar?.title = selectMenu?.title
         return true
     }

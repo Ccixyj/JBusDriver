@@ -3,8 +3,9 @@ package me.jbusdriver.ui.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.Toolbar
+import androidx.appcompat.widget.Toolbar
 import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_moive_list.*
 import me.jbusdriver.R
 import me.jbusdriver.base.common.AppBaseActivity
 import me.jbusdriver.base.common.C
@@ -38,7 +39,6 @@ class MovieListActivity : AppBaseActivity<MovieParseContract.MovieParsePresenter
     }
 
     private fun setToolBar() {
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = linkData.des

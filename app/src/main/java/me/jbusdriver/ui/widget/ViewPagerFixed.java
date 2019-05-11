@@ -3,8 +3,9 @@ package me.jbusdriver.ui.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import androidx.viewpager.widget.ViewPager;
 
-public class ViewPagerFixed extends android.support.v4.view.ViewPager {
+public class ViewPagerFixed extends ViewPager {
   
     public ViewPagerFixed(Context context) {
         super(context);  
