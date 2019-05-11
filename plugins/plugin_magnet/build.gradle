@@ -77,15 +77,19 @@ dependencies {
 //    implementation "com.android.support:support-v4:${versions.supportLibrary}"
 
     testImplementation 'junit:junit:4.12'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     compileOnly "org.jsoup:jsoup:${versions.jsoup}"
 //    implementation "com.google.code.gson:gson:${versions.gson}"
 //    implementation 'com.android.support:multidex:1.0.3'
 }
 
+
+
+apply from: rootProject.file('buildscripts/plugin-common.gradle')
+
+
 phantomPluginConfig {
-//    excludeClass("me.jbusdriver.plugin.magnet.IMagnetLoader")
-//    excludeClass("me.jbusdriver.plugin.magnet.bean.Magnet")
+
     def  archLib= '1.1.1'
     /*------------------------------ 剔除 support-v4 及其依赖的库 BEGIN ----------------------------*/
     excludeLib "com.android.support:support-v4:${versions.supportLibrary}"
@@ -126,7 +130,7 @@ phantomPluginConfig {
 
     //kotlin
 //    excludeLib "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
-
+    excludeClass "org.jsoup.**"
     /*------------------------------ 混淆配置 BEGIN ------------------------------*/
     libraryJarsProguardFile file('proguard-phantom.pro')
     /*------------------------------ 混淆配置  END  ------------------------------*/
@@ -143,6 +147,3 @@ phantomPluginConfig {
     pluginVersionName = android.defaultConfig.versionName
     /*------------------------------ 快速安装插件配置  END  -------------------------*/
 }
-
-
-apply from: rootProject.file('buildscripts/plugin-common.gradle')

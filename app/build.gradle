@@ -150,8 +150,8 @@ dependencies {
     addComponent "component_plugin_manager"
 
     implementation "com.android.support:multidex:1.0.3" // 多dex配置
-    implementation "com.wlqq.phantom:phantom-host-lib:${versions.phantom.allVersion}"
-    implementation "com.wlqq.phantom:phantom-communication-lib:${versions.phantom.allVersion}"
+    implementation "com.wlqq.phantom:phantom-host-lib:${versions.phantom.host}"
+    implementation "com.wlqq.phantom:phantom-communication-lib:${versions.phantom.communication}"
 }
 
 configurations.all { config ->

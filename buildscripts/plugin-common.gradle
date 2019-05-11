@@ -13,8 +13,8 @@ if (project.ext.has('runAsApp') && project.ext.runAsApp) {
         println("$project ----> appid : $appId avaliable")
         if (appId == null || appId.trim() == "") throw GradleException("application must set applicationId")
     }
-    project.dependencies.add("implementation", "com.wlqq.phantom:phantom-host-lib:${versions.phantom.allVersion}")
-    project.dependencies.add("implementation", "com.wlqq.phantom:phantom-communication-lib:${versions.phantom.allVersion}")
+    project.dependencies.add("implementation", "com.wlqq.phantom:phantom-host-lib:${versions.phantom.host}")
+    project.dependencies.add("implementation", "com.wlqq.phantom:phantom-communication-lib:${versions.phantom.communication}")
     apply plugin: 'com.wlqq.phantom.host'
 } else if (project.name.startsWith("plugin_")) {
     println("$project ---->  set app as client plugin")
@@ -25,8 +25,8 @@ if (project.ext.has('runAsApp') && project.ext.runAsApp) {
         targetCompatibility 1.8
     }
 
-    project.dependencies.add("compileOnly", "com.wlqq.phantom:phantom-communication-lib:${versions.phantom.allVersion}")
-    project.dependencies.add("compileOnly", "com.wlqq.phantom:phantom-plugin-lib:${versions.phantom.allVersion}")
+    project.dependencies.add("compileOnly", "com.wlqq.phantom:phantom-communication-lib:${versions.phantom.communication}")
+    project.dependencies.add("compileOnly", "com.wlqq.phantom:phantom-plugin-lib:${versions.phantom.plugin}")
 
 //    println("----> for plugin appid $CurrentAppID")
 
@@ -50,8 +50,8 @@ if (project.ext.has('runAsApp') && project.ext.runAsApp) {
 
 } else if (project.name.startsWith("component_") && !(project.ext.has("alwaysLib") && project.ext.alwaysLib)) {
     println("$project ---->  set app as impl plugin only")
-    project.dependencies.add("implementation", "com.wlqq.phantom:phantom-host-lib:${versions.phantom.allVersion}")
-    project.dependencies.add("implementation", "com.wlqq.phantom:phantom-communication-lib:${versions.phantom.allVersion}")
+    project.dependencies.add("implementation", "com.wlqq.phantom:phantom-host-lib:${versions.phantom.host}")
+    project.dependencies.add("implementation", "com.wlqq.phantom:phantom-communication-lib:${versions.phantom.communication}")
 }
 
 println("-------------------end plugin config-------------------")

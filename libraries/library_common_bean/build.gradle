@@ -28,5 +28,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
 
     //compileOnly
-    compileOnly "com.wlqq.phantom:phantom-host-lib:${versions.phantom.allVersion}"
+    compileOnly "com.wlqq.phantom:phantom-host-lib:${versions.phantom.host}"
 }
