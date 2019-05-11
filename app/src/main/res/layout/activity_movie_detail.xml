@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/sr_refresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.CoordinatorLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="me.jbusdriver.ui.activity.MovieDetailActivity">
 
 
-        <android.support.design.widget.AppBarLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/AppTheme.AppBarOverlay">
 
-            <android.support.design.widget.CollapsingToolbarLayout
+            <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:id="@+id/toolbar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -27,10 +27,10 @@
 
                 <ImageView
                     android:id="@+id/iv_movie_cover"
-                    android:foregroundGravity="top"
-                    android:scaleType="centerCrop"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/material_200dp"
+                    android:foregroundGravity="top"
+                    android:scaleType="centerCrop"
                     app:layout_collapseMode="parallax" />
 
                 <View
@@ -39,29 +39,29 @@
                     android:layout_gravity="bottom"
                     android:background="@drawable/coll_toolbar_image_gradient" />
 
-                <android.support.v7.widget.Toolbar
+                <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     app:layout_collapseMode="pin"
                     app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-            </android.support.design.widget.CollapsingToolbarLayout>
-        </android.support.design.widget.AppBarLayout>
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
 
         <include layout="@layout/content_movie_detail" />
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/material_16dp"
-            app:layout_anchor="@id/app_bar"
-            app:layout_anchorGravity="bottom|end"
+            android:src="@drawable/ic_menu_refresh"
             android:tint="@color/white"
-            app:srcCompat="@drawable/ic_menu_refresh" />
+            app:layout_anchor="@id/app_bar"
+            app:layout_anchorGravity="bottom|end" />
 
-    </android.support.design.widget.CoordinatorLayout>
-</android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

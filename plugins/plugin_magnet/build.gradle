@@ -25,7 +25,7 @@ android {
         targetSdkVersion versions.targetSdk
         versionCode 4
         versionName "1.0.3"
-//        multiDexEnabled true
+        //multiDexEnabled true
     }
 
     signingConfigs {
@@ -77,7 +77,7 @@ dependencies {
 //    implementation "com.android.support:support-v4:${versions.supportLibrary}"
 
     testImplementation 'junit:junit:4.12'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     compileOnly "org.jsoup:jsoup:${versions.jsoup}"
 //    implementation "com.google.code.gson:gson:${versions.gson}"
 //    implementation 'com.android.support:multidex:1.0.3'
@@ -124,6 +124,21 @@ phantomPluginConfig {
     excludeLib "com.android.support:palette-v7:${versions.supportLibrary}"
     excludeLib "com.android.support.constraint:constraint-layout:${versions.constraint_layout}"
 
+    /*------------------------------ 删除 androidx及其依赖的库  END  ----------------------------*/
+    excludeLib 'androidx.legacy:legacy-support-v4:1.0.0'
+    excludeLib 'androidx.appcompat:appcompat:1.0.2'
+    excludeLib 'androidx.cardview:cardview:1.0.0'
+    excludeLib 'androidx.palette:palette:1.0.0'
+    excludeLib 'com.google.android.material:material:1.0.0'
+    excludeLib 'androidx.constraintlayout:constraintlayout:1.1.3'
+
+    //kotlin
+    excludeLib "org.jetbrains.kotlin:kotlin-stdlib-common:${versions.kotlin}"
+    excludeLib "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+    excludeLib "org.jetbrains.kotlin:kotlin-android-extensions-runtime:${versions.kotlin}"
+    excludeLib "org.jsoup:jsoup:${versions.jsoup}"
+
+    //   excludeLib "org.jetbrains.kotlin:kotlin-stdlib-common:${versions.kotlin}"
     //kotlin
 //    excludeLib "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
 

@@ -1,6 +1,6 @@
 package me.jbusdriver.component.magnet.ui.fragment
 
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.base.common.C
 import me.jbusdriver.base.ui.fragment.TabViewPagerFragment

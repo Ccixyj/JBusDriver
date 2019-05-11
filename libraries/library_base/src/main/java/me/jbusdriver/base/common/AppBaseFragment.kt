@@ -2,11 +2,11 @@ package me.jbusdriver.base.common
 
 import android.app.Application
 import android.os.Bundle
-import android.support.v4.app.LoaderManager
-import android.support.v4.content.Loader
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.loader.app.LoaderManager
+import androidx.loader.content.Loader
 import com.afollestad.materialdialogs.MaterialDialog
 import io.reactivex.rxkotlin.addTo
 import me.jbusdriver.base.KLog
@@ -39,6 +39,9 @@ abstract class AppBaseFragment<P : BasePresenter<V>, V> : BaseFragment(), Loader
     private var isLazyLoaded = false
 
     protected var placeDialogHolder: MaterialDialog? = null
+
+    protected val rootView
+                get() = rootViewWeakRef?.get()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -3,9 +3,11 @@
 buildscript {
     apply from: this.file("version.gradle")
     repositories {
+        mavenLocal()
         maven { url 'https://maven.aliyun.com/repository/public' }
         maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url "https://jitpack.io" }
+        google()
     }
     dependencies {
         classpath "com.android.tools.build:gradle:${versions.androidGradleTools}"
@@ -17,18 +19,21 @@ buildscript {
         // in the individual module build.gradle files
 
         //plugins
-        classpath "com.wlqq.phantom:phantom-host-gradle:${versions.phantom.allVersion}"
-        classpath "com.wlqq.phantom:phantom-plugin-gradle:${versions.phantom.allVersion}"
+//        classpath "com.wlqq.phantom:phantom-host-gradle:${versions.phantom.allVersion}"
+//        classpath "com.wlqq.phantom:phantom-plugin-gradle:${versions.phantom.allVersion}"
+        classpath "com.wlqq.phantom:phantom-gradle-plugin:3.1.3-SNAPSHOT"
 
     }
 }
 
 allprojects {
     repositories {
+        mavenLocal()
         maven { url 'https://maven.aliyun.com/repository/public' }
         maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url "https://jitpack.io" }
         maven { url 'https://dl.bintray.com/umsdk/release' }
+        google()
     }
 }
 

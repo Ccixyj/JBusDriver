@@ -2,7 +2,7 @@ package me.jbusdriver.base
 
 import android.app.Activity
 import android.app.ActivityManager
-import android.support.v4.util.LruCache
+import androidx.collection.LruCache
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.base.JBusManager.context

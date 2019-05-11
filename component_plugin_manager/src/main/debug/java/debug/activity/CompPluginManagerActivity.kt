@@ -1,7 +1,7 @@
 package debug.activity
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.billy.cc.core.component.CC
 import com.google.gson.JsonObject
 import io.reactivex.Flowable

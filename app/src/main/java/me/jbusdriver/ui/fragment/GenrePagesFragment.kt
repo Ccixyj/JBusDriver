@@ -1,9 +1,9 @@
 package me.jbusdriver.ui.fragment
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.util.ArrayMap
 import android.view.View
+import androidx.collection.ArrayMap
+import androidx.fragment.app.Fragment
 import me.jbusdriver.base.CacheLoader
 import me.jbusdriver.base.GSON
 import me.jbusdriver.base.arrayMapof

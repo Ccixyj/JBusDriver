@@ -2,9 +2,9 @@ package me.jbusdriver.ui.holder
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.support.v7.graphics.Palette
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
+import androidx.palette.graphics.Palette
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.chad.library.adapter.base.BaseQuickAdapter

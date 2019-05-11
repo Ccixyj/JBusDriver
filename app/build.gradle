@@ -22,7 +22,7 @@ android {
         targetSdkVersion versions.targetSdk
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         flavorDimensions "github"
 
         // 开启multidex
@@ -124,8 +124,8 @@ def VersionName() {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.test:runner:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     implementation "com.xw.repo:bubbleseekbar:${versions.bubbleseekbar}-lite"
     implementation("com.xiaofeng.android:flowlayoutmanager:${versions.flowlayoutmanager}") {
@@ -149,8 +149,8 @@ dependencies {
     addComponent "component_magnet"
     addComponent "component_plugin_manager"
 
-    implementation "com.android.support:multidex:1.0.3" // 多dex配置
-    implementation "com.wlqq.phantom:phantom-host-lib:${versions.phantom.allVersion}"
+    debugImplementation 'androidx.multidex:multidex:2.0.1' // 多dex配置
+    implementation "com.wlqq.phantom:phantom-host-lib:3.1.3"
     implementation "com.wlqq.phantom:phantom-communication-lib:${versions.phantom.allVersion}"
 }
 

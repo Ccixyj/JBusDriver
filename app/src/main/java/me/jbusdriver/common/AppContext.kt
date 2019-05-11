@@ -3,7 +3,7 @@ package me.jbusdriver.common
 import android.app.Application
 import android.content.Context
 import android.os.Environment
-import android.support.multidex.MultiDex
+import androidx.multidex.MultiDex
 import com.billy.cc.core.component.CC
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
@@ -49,7 +49,9 @@ class AppContext : Application() {
 
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
-        MultiDex.install(this)
+        if(BuildConfig.DEBUG){
+            MultiDex.install(this)
+        }
     }
 
     override fun onCreate() {

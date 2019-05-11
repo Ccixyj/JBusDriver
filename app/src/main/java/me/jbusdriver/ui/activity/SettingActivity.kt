@@ -5,8 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.Toolbar
+import androidx.appcompat.widget.Toolbar
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -14,6 +13,7 @@ import android.text.format.DateUtils
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.view.View
+import androidx.recyclerview.widget.GridLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.billy.cc.core.component.CC
 import com.chad.library.adapter.base.entity.MultiItemEntity
@@ -384,7 +384,6 @@ class SettingActivity : BaseActivity() {
     }
 
     private fun setToolBar() {
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.title = "设置"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

@@ -8,14 +8,14 @@ import android.content.pm.PackageInfo
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
-import android.support.annotation.Nullable
-import android.support.v4.util.ArrayMap
 import android.text.format.Formatter
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.annotation.Nullable
+import androidx.collection.ArrayMap
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.reactivex.Flowable

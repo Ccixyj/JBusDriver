@@ -1,6 +1,6 @@
 package me.jbusdriver.mvp.presenter
 
-import android.support.v4.util.ArrayMap
+import androidx.collection.ArrayMap
 import io.reactivex.Flowable
 import me.jbusdriver.base.*
 import me.jbusdriver.base.common.C

@@ -19,7 +19,7 @@
         android:orientation="vertical"
         android:paddingLeft="@dimen/material_16dp">
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_recycle_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

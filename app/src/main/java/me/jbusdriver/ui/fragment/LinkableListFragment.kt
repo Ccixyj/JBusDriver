@@ -1,14 +1,18 @@
 package me.jbusdriver.ui.fragment
 
 import android.os.Bundle
-import android.support.v4.view.MenuItemCompat
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.*
+import androidx.core.view.MenuItemCompat
 import android.text.InputType
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import androidx.appcompat.widget.SearchView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.OrientationHelper
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.afollestad.materialdialogs.MaterialDialog
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy

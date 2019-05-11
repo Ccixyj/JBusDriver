@@ -4,8 +4,8 @@ import android.annotation.TargetApi
 import android.app.Application
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.LoaderManager
-import android.support.v4.content.Loader
+import androidx.loader.app.LoaderManager
+import androidx.loader.content.Loader
 import com.afollestad.materialdialogs.MaterialDialog
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.inflate
@@ -37,10 +37,10 @@ abstract class AppBaseActivity<P : BasePresenter<V>, in V : BaseView> : BaseActi
         //  UIHelper.$optimizeBackgroundOverdraw(this);
         mFirstStart = savedInstanceState == null ||
                 savedInstanceState.getBoolean(C.SavedInstanceState.RECREATION_SAVED_STATE)
-        mUniqueLoaderIdentifier = savedInstanceState?.getInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE) ?:
-                sViewCounter.incrementAndGet()
+        mUniqueLoaderIdentifier =
+            savedInstanceState?.getInt(C.SavedInstanceState.LOADER_ID_SAVED_STATE) ?: sViewCounter.incrementAndGet()
         setContentView(this.inflate(layoutId))
-        supportLoaderManager.initLoader(mUniqueLoaderIdentifier, savedInstanceState, this@AppBaseActivity)
+        LoaderManager.getInstance(this).initLoader(mUniqueLoaderIdentifier, savedInstanceState, this@AppBaseActivity)
         if (savedInstanceState != null) {
             intent.putExtra(C.SavedInstanceState.LOADER_SAVED_STATES + mUniqueLoaderIdentifier, savedInstanceState)
         }

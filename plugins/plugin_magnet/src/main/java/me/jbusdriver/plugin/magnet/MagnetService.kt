@@ -1,11 +1,13 @@
 package me.jbusdriver.plugin.magnet
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import com.wlqq.phantom.communication.PhantomService
 import com.wlqq.phantom.communication.RemoteMethod
 import org.json.JSONArray
 import org.json.JSONObject
+import org.jsoup.Jsoup
 
 
 /**
@@ -17,9 +19,13 @@ open class MagnetService {
 
     @RemoteMethod(name = "pluginToast")
     open fun pluginToast(context: Context): String {
+        val clazz = Jsoup::class.java
         val info =
-            "$context hello from plugin! ver : ${BuildConfig.VERSION_NAME} ,code: ${BuildConfig.VERSION_CODE}" //update to version 2!!!!
+            "findclass $clazz  from plugin ! translate android x.\r\nver : ${BuildConfig.VERSION_NAME} ,code: ${BuildConfig.VERSION_CODE}" //update to version 2!!!!
         Toast.makeText(context, info, Toast.LENGTH_LONG).show()
+
+        Log.d("MagnetService", clazz.classLoader.toString())
+        Log.d("MagnetService", info)
         return info
     }
 
