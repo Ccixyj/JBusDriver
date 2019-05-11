@@ -84,8 +84,7 @@ dependencies {
 }
 
 phantomPluginConfig {
-//    excludeClass("me.jbusdriver.plugin.magnet.IMagnetLoader")
-//    excludeClass("me.jbusdriver.plugin.magnet.bean.Magnet")
+
     def  archLib= '1.1.1'
     /*------------------------------ 剔除 support-v4 及其依赖的库 BEGIN ----------------------------*/
     excludeLib "com.android.support:support-v4:${versions.supportLibrary}"
@@ -137,10 +136,9 @@ phantomPluginConfig {
     excludeLib "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     excludeLib "org.jetbrains.kotlin:kotlin-android-extensions-runtime:${versions.kotlin}"
     excludeLib "org.jsoup:jsoup:${versions.jsoup}"
+    excludeClass "org.jsoup"
+    excludeClass "kotlin"
 
-    //   excludeLib "org.jetbrains.kotlin:kotlin-stdlib-common:${versions.kotlin}"
-    //kotlin
-//    excludeLib "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
 
     /*------------------------------ 混淆配置 BEGIN ------------------------------*/
     libraryJarsProguardFile file('proguard-phantom.pro')
