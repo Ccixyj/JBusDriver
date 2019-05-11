@@ -28,7 +28,7 @@
         android:src="@drawable/ic_cc_enter" />
 
 
-    <androidx.core.widget.Space
+    <Space
         android:layout_width="@dimen/material_8dp"
         android:layout_height="0dp" />
 
@@ -41,7 +41,7 @@
         android:tint="@color/colorPrimary"
         android:src="@drawable/ic_close" />
 
-    <androidx.core.widget.Space
+    <Space
         android:layout_width="@dimen/material_8dp"
         android:layout_height="0dp" />
 
