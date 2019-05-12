@@ -2,7 +2,7 @@ package me.jbusdriver.http
 
 import io.reactivex.Flowable
 import me.jbusdriver.base.KLog
-import me.jbusdriver.base.http.NetClient
+import me.jbusdriver.library.http.NetClient
 import me.jbusdriver.common.JBus
 import retrofit2.http.GET
 import retrofit2.http.Header

@@ -3,7 +3,7 @@ package me.jbusdriver.component.magnet.ui.fragment
 import androidx.fragment.app.Fragment
 import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.base.common.C
-import me.jbusdriver.base.ui.fragment.TabViewPagerFragment
+import me.jbusdriver.library.res.ui.fragment.TabViewPagerFragment
 import me.jbusdriver.component.magnet.MagnetPluginHelper
 import me.jbusdriver.component.magnet.mvp.MagnetPagerContract.MagnetPagerPresenter
 import me.jbusdriver.component.magnet.mvp.MagnetPagerContract.MagnetPagerView

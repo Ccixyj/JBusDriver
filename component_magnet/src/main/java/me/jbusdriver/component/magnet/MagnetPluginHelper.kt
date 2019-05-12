@@ -6,9 +6,9 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.base.JBusManager
 import me.jbusdriver.base.KLog
-import me.jbusdriver.base.phantom.installAssetsPlugins
-import me.jbusdriver.base.phantom.installFromFile
-import me.jbusdriver.base.phantom.pluginServiceCall
+import me.jbusdriver.library.phantom.installAssetsPlugins
+import me.jbusdriver.library.phantom.installFromFile
+import me.jbusdriver.library.phantom.pluginServiceCall
 import java.io.File
 import java.util.concurrent.TimeUnit
 

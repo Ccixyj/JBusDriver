@@ -34,11 +34,9 @@ object JBusManager : Application.ActivityLifecycleCallbacks {
     }
 
     val context: Context
-        get() = manager.firstOrNull()?.get() as? Context
-            ?: ref.get() ?: error("can't get context")
+        get() = manager.firstOrNull()?.get() as? Context ?: error("can't get context")
 
-    private lateinit var ref: WeakReference<Context>
-    fun setContext(app: Application) {
-        this.ref = WeakReference(app)
-    }
+    val currentActivity: Activity
+        get() = manager.firstOrNull()?.get() ?: error("can't get context")
+
 }

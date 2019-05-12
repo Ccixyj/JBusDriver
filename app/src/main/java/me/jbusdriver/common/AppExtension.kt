@@ -1,6 +1,6 @@
 package me.jbusdriver.common
 
-import me.jbusdriver.base.glide.GlideNoHostUrl
+import me.jbusdriver.library.image.glide.GlideNoHostUrl
 import me.jbusdriver.http.JAVBusService
 
 

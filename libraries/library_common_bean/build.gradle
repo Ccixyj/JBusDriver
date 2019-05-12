@@ -24,7 +24,6 @@ android {
 }
 
 dependencies {
-    implementation project(':libraries:library_base')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
 
     //compileOnly

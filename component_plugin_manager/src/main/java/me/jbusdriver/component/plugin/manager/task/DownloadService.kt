@@ -1,9 +1,8 @@
 package me.jbusdriver.component.plugin.manager.task
 
-import io.reactivex.Flowable
 import io.reactivex.Single
-import me.jbusdriver.base.http.NetClient.PROGRESS_INTERCEPTOR
-import me.jbusdriver.base.http.NetClient.RxJavaCallAdapterFactory
+import me.jbusdriver.library.http.NetClient.PROGRESS_INTERCEPTOR
+import me.jbusdriver.library.http.NetClient.RxJavaCallAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import retrofit2.Retrofit

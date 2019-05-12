@@ -9,7 +9,7 @@ import me.jbusdriver.base.GSON
 import me.jbusdriver.base.arrayMapof
 import me.jbusdriver.base.common.C
 import me.jbusdriver.base.fromJson
-import me.jbusdriver.base.ui.fragment.TabViewPagerFragment
+import me.jbusdriver.library.res.ui.fragment.TabViewPagerFragment
 import me.jbusdriver.http.JAVBusService
 import me.jbusdriver.mvp.GenrePageContract
 import me.jbusdriver.mvp.GenrePageContract.GenrePagePresenter

@@ -16,8 +16,8 @@ import me.jbusdriver.base.JBusManager
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.common.BaseActivity
 import me.jbusdriver.base.common.C
-import me.jbusdriver.base.phantom.installAssetsPlugins
-import me.jbusdriver.base.phantom.installFromPathDir
+import me.jbusdriver.library.phantom.installAssetsPlugins
+import me.jbusdriver.library.phantom.installFromPathDir
 import me.jbusdriver.base.toast
 import me.jbusdriver.component.magnet.MagnetPluginHelper
 import me.jbusdriver.component.magnet.MagnetPluginHelper.MagnetService

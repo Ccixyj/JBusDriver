@@ -34,8 +34,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+//    androidTestImplementation 'androidx.test:runner:1.1.1'
+//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
 
     //kotlin&coroutines
@@ -43,15 +43,15 @@ dependencies {
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.coroutines}"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${versions.coroutines}"
     //android x
-    api 'androidx.appcompat:appcompat:1.0.2'
-    api 'androidx.legacy:legacy-support-v4:1.0.0'
-    api 'androidx.cardview:cardview:1.0.0'
-    api 'androidx.palette:palette:1.0.0'
-    api 'com.google.android.material:material:1.0.0'
-    api 'androidx.constraintlayout:constraintlayout:1.1.3'
-    api 'androidx.core:core-ktx:1.0.2'
-    api 'androidx.fragment:fragment-ktx:1.0.0'
-    api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
+//    api 'androidx.appcompat:appcompat:1.0.2'
+//    api 'androidx.legacy:legacy-support-v4:1.0.0'
+//    api 'androidx.cardview:cardview:1.0.0'
+//    api 'androidx.palette:palette:1.0.0'
+//    api 'com.google.android.material:material:1.0.0'
+//    api 'androidx.constraintlayout:constraintlayout:1.1.3'
+//    api 'androidx.core:core-ktx:1.0.2'
+//    api 'androidx.fragment:fragment-ktx:1.0.0'
+//    api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
 
 
 
@@ -60,24 +60,7 @@ dependencies {
     api "com.orhanobut:logger:${versions.logger}"
     api "org.jsoup:jsoup:${versions.jsoup}"
 
-    //view widget
-    api "com.afollestad.material-dialogs:core:${versions.material_dialogs_core}"
-    api "com.github.CymChad:BaseRecyclerViewAdapterHelper:${versions.BaseRecyclerViewAdapterHelper}"
-    api "com.gyf.immersionbar:immersionbar:${versions.immersionBar}"
-    api "com.github.chrisbanes:PhotoView:${versions.photoView}"
 
-    //okhttp
-    api "com.squareup.okhttp3:okhttp:${versions.okhttp}"
-    api "com.squareup.retrofit2:retrofit:${versions.retrofit}"
-    //    implementation "com.squareup.retrofit2:converter-gson:${versions.retrofit}"
-    api "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}"
-
-    //glide
-    api("com.github.bumptech.glide:glide:${versions.glide}") {
-        exclude group: "com.android.support"
-    }
-    kapt "com.github.bumptech.glide:compiler:${versions.glide}"
-    api "com.github.bumptech.glide:okhttp3-integration:${versions.glide}"
 
     //rx
     api "io.reactivex.rxjava2:rxjava:${versions.rxjava}"
@@ -92,15 +75,13 @@ dependencies {
     api 'androidx.sqlite:sqlite-framework:2.0.1'
 
 
-    //cc
-    api "com.billy.android:cc:${versions.cc}"
+
 
     //umneg
     api 'com.umeng.umsdk:analytics:8.0.2'
     api 'com.umeng.umsdk:common:2.0.0'
 
 
-    //compileOnly
-    compileOnly "com.wlqq.phantom:phantom-host-lib:${versions.phantom.host}"
+
 
 }

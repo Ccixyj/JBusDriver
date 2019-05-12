@@ -1,4 +1,5 @@
 include ':app'
-include ':component_interceptors',  ':component_magnet', ':component_plugin_manager'
-include ':libraries:library_base',':libraries:library_common_bean'
+include ':component_interceptors', ':component_magnet', ':component_plugin_manager'
 include ':plugins:plugin_magnet'
+include ':libraries:library_base', ':libraries:library_common_bean', ':libraries:library_cc', ':libraries:library_image'
+include ':libraries:library_http', ':libraries:library_res'

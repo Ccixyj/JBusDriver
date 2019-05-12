@@ -1,19 +1,16 @@
 package me.jbusdriver.component.plugin.manager.task
 
 import android.app.IntentService
-import android.app.Service
-import android.app.job.JobService
 import android.content.Context
 import android.content.Intent
-import androidx.core.app.JobIntentService
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 import me.jbusdriver.base.GSON
 import me.jbusdriver.base.KLog
 import me.jbusdriver.base.fromJson
-import me.jbusdriver.base.http.OnProgressListener
-import me.jbusdriver.base.http.addProgressListener
-import me.jbusdriver.base.http.removeProgressListener
+import me.jbusdriver.library.http.OnProgressListener
+import me.jbusdriver.library.http.addProgressListener
+import me.jbusdriver.library.http.removeProgressListener
 import me.jbusdriver.base.toJsonString
 import me.jbusdriver.common.bean.plugin.PluginBean
 import me.jbusdriver.component.plugin.manager.PluginManagerComponent
