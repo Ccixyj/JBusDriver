@@ -9,8 +9,8 @@ import org.json.JSONObject
 
 class CNBtkittyMangetLoaderImpl : IMagnetLoader {
 
-    private val host = "http://btkitty.pet/"
-    private val search = "http://btkitty.pet/search/%s/%s/0/0.html"
+    private val host = "http://btkittymax.net/"
+    private val search = "http://btkittymax.pet/search/%s/%s/0/0.html"
 
     override var hasNexPage: Boolean = false
 

@@ -68,7 +68,6 @@ object MagnetPluginHelper {
             return@runCatching MagnetLoaders.toList()
         }
         (call("getLoaderKeys") as? List<String>)?.onEach { t ->
-            KLog.i("find loader $t")
             MagnetLoaders.add(t)
         }
         return@runCatching MagnetLoaders.toList()

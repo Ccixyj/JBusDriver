@@ -23,8 +23,8 @@ android {
         applicationId CurrentAppID
         minSdkVersion 18
         targetSdkVersion versions.targetSdk
-        versionCode 4
-        versionName "1.0.3"
+        versionCode 1 //4
+        versionName "1.0.0-debug" //1.0.3
         //multiDexEnabled true
     }
 
@@ -90,7 +90,10 @@ apply from: rootProject.file('buildscripts/plugin-common.gradle')
 
 phantomPluginConfig {
 
-    def  archLib= '1.1.1'
+    //不要生成依赖require
+    genProvidedDeps = true
+
+    def archLib = '1.1.1'
     /*------------------------------ 剔除 support-v4 及其依赖的库 BEGIN ----------------------------*/
     excludeLib "com.android.support:support-v4:${versions.supportLibrary}"
     excludeLib "com.android.support:support-core-ui:${versions.supportLibrary}"
@@ -143,7 +146,6 @@ phantomPluginConfig {
     excludeLib "org.jsoup:jsoup:${versions.jsoup}"
     excludeClass "org.jsoup"
     excludeClass "kotlin"
-
 
     /*------------------------------ 混淆配置 BEGIN ------------------------------*/
     libraryJarsProguardFile file('proguard-phantom.pro')

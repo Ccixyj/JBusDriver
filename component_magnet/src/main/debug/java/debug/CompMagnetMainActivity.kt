@@ -160,7 +160,6 @@ class CompMagnetMainActivity : BaseActivity() {
                 .build().callAsync()
         }
 
-        MagnetPluginHelper.init()
     }
 
 
