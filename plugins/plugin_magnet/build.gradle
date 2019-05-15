@@ -23,8 +23,8 @@ android {
         applicationId CurrentAppID
         minSdkVersion 18
         targetSdkVersion versions.targetSdk
-        versionCode 1 //4
-        versionName "1.0.0-debug" //1.0.3
+        versionCode 5 //4
+        versionName "1.0.4" //1.0.3
         //multiDexEnabled true
     }
 
@@ -91,7 +91,7 @@ apply from: rootProject.file('buildscripts/plugin-common.gradle')
 phantomPluginConfig {
 
     //不要生成依赖require
-    genProvidedDeps = true
+    genProvidedDeps = false
 
     def archLib = '1.1.1'
     /*------------------------------ 剔除 support-v4 及其依赖的库 BEGIN ----------------------------*/
@@ -139,13 +139,13 @@ phantomPluginConfig {
     excludeLib 'com.google.android.material:material:1.0.0'
     excludeLib 'androidx.constraintlayout:constraintlayout:1.1.3'
 
-    //kotlin
-    excludeLib "org.jetbrains.kotlin:kotlin-stdlib-common:${versions.kotlin}"
-    excludeLib "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
-    excludeLib "org.jetbrains.kotlin:kotlin-android-extensions-runtime:${versions.kotlin}"
-    excludeLib "org.jsoup:jsoup:${versions.jsoup}"
-    excludeClass "org.jsoup"
-    excludeClass "kotlin"
+
+//    excludeLib "org.jetbrains.kotlin:kotlin-stdlib-common:${versions.kotlin}"
+//    excludeLib "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+//    excludeLib "org.jetbrains.kotlin:kotlin-android-extensions-runtime:${versions.kotlin}"
+//    excludeLib "org.jsoup:jsoup:${versions.jsoup}"
+//    excludeClass "org.jsoup"
+//    excludeClass "kotlin"
 
     /*------------------------------ 混淆配置 BEGIN ------------------------------*/
     libraryJarsProguardFile file('proguard-phantom.pro')
