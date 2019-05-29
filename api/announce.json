@@ -1,13 +1,13 @@
 {
   "backUp": [
-    "https://www.seedmm.net",
+    "https://www.seedmm.life",
     "https://www.buscdn.net",
     "https://www.xwb2uooia5o59avwxb.com",
     "https://www.javbus.com",
     "https://www.busdmm.net",
-    "https://www.dmmbus.co",
+    "https://www.dmmbus.bid",
     "https://www.seedmm.co",
-    "https://www.javbus.com",
+    "https://www.busjav.life",
     "https://www.dmmbus.in",
     "https://www.dmmsee.in",
     "https://www.seedmm.in"
@@ -32,13 +32,13 @@
   },
   "plugins": {
     "internal": [
-      {
+            {
         "name": "me.jbusdriver.plugin.magnet",
-        "versionCode": 4,
-        "versionName": "1.0.3",
-        "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/plugins/me.jbusdriver.plugin.magnet_1.0.3.apk",
+        "versionCode": 5,
+        "versionName": "1.0.4",
+        "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/plugins/me.jbusdriver.plugin.magnet_1.0.4.apk",
         "desc": "[内部插件]磁力链接解析插件",
-        "eTag": "4546F6475CFA4F7669E6EB2F75377BFB"
+        "eTag": "1F6648FF174032A48DC50092D95BBD32"
       }
     ]
   }
