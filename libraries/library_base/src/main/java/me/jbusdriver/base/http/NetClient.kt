@@ -29,8 +29,12 @@ object NetClient {
         Interceptor { chain ->
             var request = chain.request()
             val builder = request.newBuilder().header("User-Agent", USER_AGENT)
-            if (!TextUtils.isEmpty(request.header("existmag")))
-                builder.addHeader("Cookie", "existmag=all")
+            if (!TextUtils.isEmpty(request.header("existmag"))){
+                builder.header("Cookie","existmag=all")
+            }else{
+                builder.header("Cookie","existmag=mag")
+            }
+
             request = builder.build()
             chain.proceed(request)
         }
