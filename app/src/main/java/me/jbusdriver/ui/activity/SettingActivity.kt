@@ -304,6 +304,12 @@ class SettingActivity : BaseActivity() {
                         tv_backup_name.text = "没有备份呢~~"
                         iv_backup_load.visibility = View.GONE
                         iv_backup_delete.visibility = View.GONE
+                        iv_backup_info.setOnClickListener {
+                            MaterialDialog.Builder(viewContext)
+                                .title("信息")
+                                .content("还没有备份哦？来一发试试！")
+                                .show()
+                        }
                     })
                 } else {
                     list.mapIndexed { index, file ->
