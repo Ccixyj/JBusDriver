@@ -14,9 +14,10 @@
   ],
   "xyz": "https://www.javbus.work",
   "xyzLoader": {
-    "url": "https://www.javbus.work",
+    "url": "https://www.javbus.zone",
     "legacyHost": [
       "work",
+      "zone",
       "xyz"
     ]
   },
