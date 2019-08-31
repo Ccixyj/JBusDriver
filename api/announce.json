@@ -28,18 +28,18 @@
     "desc": "JBusDriver 1.2.19 更新!\r\n1.修复无法加载全部影片的问题。\r\n2.添加备份提示。\r\n3.修复已知问题"
   },
   "notice": {
-    "id": 13,
-    "content": "提示：\r\n1. 磁力插件更新了新的磁力站点，请在设置中查看。"
+    "id": 14,
+    "content": "提示：\r\n1. 磁力插件更新了新的磁力站点，请在设置中查看。\n2. 部分磁力站点需要梯子。"
   },
   "plugins": {
     "internal": [
             {
         "name": "me.jbusdriver.plugin.magnet",
-        "versionCode": 5,
-        "versionName": "1.0.4",
-        "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/plugins/me.jbusdriver.plugin.magnet_1.0.4.apk",
+        "versionCode": 6,
+        "versionName": "1.0.5",
+        "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/plugins/me.jbusdriver.plugin.magnet_1.0.5.apk",
         "desc": "[内部插件]磁力链接解析插件",
-        "eTag": "1F6648FF174032A48DC50092D95BBD32"
+        "eTag": "DA526DB5C273F6DF9F7E0D8AABCED6C1"
       }
     ]
   }
