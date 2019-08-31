@@ -17,9 +17,7 @@ object EncodeHelper {
         }
     }
 
-    fun utf8Encode(str: String): String {
-        return URLEncoder.encode(str, Charsets.UTF_8.name())
-    }
+    fun utf8Encode(str: String): String = URLEncoder.encode(str, Charsets.UTF_8.name())
 
     private val CHARS by lazy { "0123456789abcdef".toCharArray() }
     fun str2HexStr(str: String): String {

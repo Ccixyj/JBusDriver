@@ -4,14 +4,13 @@ import android.util.Log
 import me.jbusdriver.plugin.magnet.IMagnetLoader
 import me.jbusdriver.plugin.magnet.IMagnetLoader.Companion.MagnetFormatPrefix
 import org.json.JSONObject
-import org.jsoup.Jsoup
 
 class BTSOWMagnetLoaderImpl : IMagnetLoader {
 
     private val Tag = "MagnetLoader:BTSOW"
 
     //  key -> page
-    private val search = "http://www.btsow5.com/com/%s_%s.html"
+    private val search = "https://www.btsow.in/com/%s_%s.html"
 
     override var hasNexPage: Boolean = false
 
