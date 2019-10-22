@@ -29,7 +29,7 @@ ext {
             'immersionBar'                 : '2.3.1',
             'flowlayoutmanager'            : '1.2.3.2',
             'bubbleseekbar'                : '3.16',
-            'photoView'                    :'2.1.4',
+            'photoView'                    : '2.1.4',
 
             'cc_register'                  : '1.0.8',
             'cc'                           : '2.1.4',
@@ -39,6 +39,12 @@ ext {
             'phantom'                      : [
                     allVersion   : "3.1.2",
                     allVersionInt: 30102,
+            ],
+            'plugins'                      : [
+                    magnet: [
+                            version_code: 7,
+                            version_name: '1.0.6'
+                    ]
             ]
 
 

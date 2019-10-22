@@ -23,8 +23,8 @@ android {
         applicationId CurrentAppID
         minSdkVersion 18
         targetSdkVersion versions.targetSdk
-        versionCode 6
-        versionName "1.0.5"
+        versionCode versions.plugins.magnet.version_code
+        versionName versions.plugins.magnet.version_name
 //        multiDexEnabled true
     }
 

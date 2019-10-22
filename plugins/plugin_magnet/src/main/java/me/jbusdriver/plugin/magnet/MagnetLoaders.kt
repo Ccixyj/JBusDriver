@@ -15,7 +15,7 @@ object MagnetLoaders {
             "BTSO.PW" to BtsoPWMagnetLoaderImpl(),
             "BTSOW" to BTSOWMagnetLoaderImpl(),
            /* "BTDB" to BTDBMagnetLoaderImpl(),*/
-            "btsearch" to BTSearchMagnetLoaderImpl(),
+            "btcherries" to BTCherryMagnetLoaderImpl(),
             "TorrentKitty" to TorrentKittyMangetLoaderImpl()
 
         )

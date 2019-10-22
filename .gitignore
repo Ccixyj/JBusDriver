@@ -47,7 +47,6 @@ captures/
 # Keystore files
 *.jks
 /.idea/
-/gradle/
 /projectFilesBackup/.idea
 /gradlew
 /local.properties
