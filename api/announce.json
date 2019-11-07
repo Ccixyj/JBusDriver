@@ -1,46 +1,45 @@
 {
-  "backUp": [
-    "https://www.seedmm.life",
-    "https://www.javbus.com",
-    "https://www.busdmm.net",
-    "https://www.dmmbus.bid",
-    "https://www.dmmbus.in",
-    "https://www.cdnbus.men",
-    "https://www.dmmsee.icu",
-    "https://www.javbus.icu",
-	  "https://www.busdmm.icu",
-	  "https://www.busjav.icu",
-    "https://www.seedmm.in"
-  ],
-  "xyz": "https://www.javbus.work",
-  "xyzLoader": {
-    "url": "https://www.javbus.zone",
-    "legacyHost": [
-      "work",
-      "zone",
-      "xyz"
-    ]
-  },
-  "update": {
-    "versionCode": 332,
-    "versionName": "1.2.19build583",
-    "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/JubsDriver_v1.2.19build583.apk",
-    "desc": "JBusDriver 1.2.19 更新!\r\n1.修复无法加载全部影片的问题。\r\n2.添加备份提示。\r\n3.修复已知问题"
-  },
-  "notice": {
-    "id": 15,
-    "content": "提示：\r\n1. 磁力插件更新，请在设置中查看。"
-  },
-  "plugins": {
-    "internal": [
+    "backUp": [
+        "https://www.seedmm.life",
+        "https://www.javbus.com",
+        "https://www.cdnbus.work",
+        "https://www.dmmbus.bid",
+        "https://www.cdnbus.men",
+        "https://www.dmmsee.icu",
+        "https://www.javbus.icu",
+        "https://www.busdmm.icu",
+        "https://www.busjav.icu",
+        "https://www.seedmm.in"
+    ],
+    "xyz": "https://www.javbus.work",
+    "xyzLoader": {
+        "url": "https://www.javbus.zone",
+        "legacyHost": [
+            "work",
+            "zone",
+            "xyz"
+        ]
+    },
+    "update": {
+        "versionCode": 332,
+        "versionName": "1.2.19build583",
+        "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/JubsDriver_v1.2.19build583.apk",
+        "desc": "JBusDriver 1.2.19 更新!\r\n1.修复无法加载全部影片的问题。\r\n2.添加备份提示。\r\n3.修复已知问题"
+    },
+    "notice": {
+        "id": 15,
+        "content": "提示：\r\n1. 磁力插件更新，请在设置中查看。"
+    },
+    "plugins": {
+        "internal": [
             {
-        "name": "me.jbusdriver.plugin.magnet",
-        "versionCode": 7,
-        "versionName": "1.0.6",
-        "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/plugins/me.jbusdriver.plugin.magnet_1.0.6.apk",
-        "desc": "[内部插件]磁力链接解析插件",
-        "eTag": "833D7635328892B8B4A7EE0DCFA37A96"
-      }
-    ]
-  }
+                "name": "me.jbusdriver.plugin.magnet",
+                "versionCode": 7,
+                "versionName": "1.0.6",
+                "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/plugins/me.jbusdriver.plugin.magnet_1.0.6.apk",
+                "desc": "[内部插件]磁力链接解析插件",
+                "eTag": "833D7635328892B8B4A7EE0DCFA37A96"
+            }
+        ]
+    }
 }
