@@ -72,7 +72,7 @@ class SplashActivity : BaseActivity() {
                 GSON.fromJson<ArrayMap<String, String>>(it)
             }
             val urlsFromUpdateCache =
-                Flowable.concat(CacheLoader.justLru(C.Cache.ANNOUNCE_URL), GitHub.INSTANCE.announce().addUserCase(4))
+                Flowable.concat(CacheLoader.justLru(C.Cache.ANNOUNCE_URL), GitHub.INSTANCE.announce())
                     .firstOrError().toFlowable()
                     .map { source ->
                         //放入内存缓存,更新需要
