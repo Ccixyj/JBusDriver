@@ -21,7 +21,6 @@
         android:supportsRtl="true"
         android:resizeableActivity="true"
         tools:replace="android:allowBackup"
-        android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme.NoActionBar" >
 
         <meta-data
