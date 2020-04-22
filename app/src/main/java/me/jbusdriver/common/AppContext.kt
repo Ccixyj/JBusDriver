@@ -21,6 +21,7 @@ import me.jbusdriver.base.arrayMapof
 import me.jbusdriver.http.JAVBusService
 import java.io.File
 import java.util.*
+import java.util.logging.Logger
 
 
 lateinit var JBus: AppContext
@@ -82,7 +83,6 @@ class AppContext : Application() {
                 override fun isLoggable(priority: Int, tag: String?) = isDebug
             })
 
-
             CC.enableVerboseLog(isDebug)
             CC.enableDebug(isDebug)
             CC.enableRemoteCC(isDebug)
@@ -103,6 +103,8 @@ class AppContext : Application() {
 
 
         this.registerActivityLifecycleCallbacks(JBusManager)
+
+
     }
 
 

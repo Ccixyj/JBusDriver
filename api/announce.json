@@ -1,45 +1,43 @@
 {
-    "backUp": [
-        "https://www.seedmm.life",
-        "https://www.javbus.com",
-        "https://www.cdnbus.work",
-        "https://www.dmmbus.bid",
-        "https://www.cdnbus.men",
-        "https://www.dmmsee.icu",
-        "https://www.javbus.icu",
-        "https://www.busdmm.icu",
-        "https://www.busjav.icu",
-        "https://www.seedmm.in"
-    ],
-    "xyz": "https://www.javbus.work",
-    "xyzLoader": {
-        "url": "https://www.javbus.zone",
-        "legacyHost": [
-            "work",
-            "zone",
-            "xyz"
-        ]
-    },
-    "update": {
-        "versionCode": 332,
-        "versionName": "1.2.19build583",
-        "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/JubsDriver_v1.2.19build583.apk",
-        "desc": "JBusDriver 1.2.19 更新!\r\n1.修复无法加载全部影片的问题。\r\n2.添加备份提示。\r\n3.修复已知问题"
-    },
-    "notice": {
-        "id": 16,
-        "content": "提示：\r\n1. 磁力插件btso.pw更新。"
-    },
-    "plugins": {
-        "internal": [
-            {
-                "name": "me.jbusdriver.plugin.magnet",
-                "versionCode": 8,
-                "versionName": "1.0.7",
-                "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/plugins/me.jbusdriver.plugin.magnet_1.0.7.apk",
-                "desc": "[内部插件]磁力链接解析插件",
-                "eTag": "F3D1BF6EA4174259BDD71AEF5FBD18F5"
-            }
-        ]
-    }
+  "backUp": [
+    "https://www.seedmm.life",
+    "https://www.javbus.icu",
+    "https://www.busjav.icu",
+    "https://www.javbus.com",
+    "https://www.dmmsee.one",
+    "https://www.buscdn.one",
+    "https://www.dmmbus.zone"
+  ],
+  "xyz": "https://www.avbus.one",
+  "xyzLoader": {
+    "url": "https://www.avbus.one",
+    "legacyHost": [
+      "work",
+      "zone",
+      "one",
+      "xyz"
+    ]
+  },
+  "update": {
+    "versionCode": 332,
+    "versionName": "1.2.19build583",
+    "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/JubsDriver_v1.2.19build583.apk",
+    "desc": "JBusDriver 1.2.19 更新!\r\n1.修复无法加载全部影片的问题。\r\n2.添加备份提示。\r\n3.修复已知问题"
+  },
+  "notice": {
+    "id": 16,
+    "content": "提示：\r\n1. 磁力插件btso.pw更新。"
+  },
+  "plugins": {
+    "internal": [
+      {
+        "name": "me.jbusdriver.plugin.magnet",
+        "versionCode": 8,
+        "versionName": "1.0.7",
+        "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/plugins/me.jbusdriver.plugin.magnet_1.0.7.apk",
+        "desc": "[内部插件]磁力链接解析插件",
+        "eTag": "F3D1BF6EA4174259BDD71AEF5FBD18F5"
+      }
+    ]
+  }
 }
