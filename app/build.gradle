@@ -99,6 +99,7 @@ android {
 def VersionCode() {
     def cmd = 'git rev-list master --first-parent --count'//master分支
 //    def cmd = 'git tag'
+//    def cmd = 'git tag'
 //    def code = cmd.execute().text.trim().split("\n").size()
     def code = cmd.execute().text.trim().toInteger()
     logger.quiet(cmd + " >>>> code = " + code)

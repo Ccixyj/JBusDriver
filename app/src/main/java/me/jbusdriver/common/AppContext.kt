@@ -82,7 +82,6 @@ class AppContext : Application() {
                 override fun isLoggable(priority: Int, tag: String?) = isDebug
             })
 
-
             CC.enableVerboseLog(isDebug)
             CC.enableDebug(isDebug)
             CC.enableRemoteCC(isDebug)
@@ -90,7 +89,7 @@ class AppContext : Application() {
 
         UMConfigure.init(this, UMConfigure.DEVICE_TYPE_PHONE, null)
         UMConfigure.setLogEnabled(isDebug)
-        MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_AUTO)
+        MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.AUTO)
         MobclickAgent.setCatchUncaughtExceptions(true)
 
         RxJavaPlugins.setErrorHandler {
@@ -103,6 +102,8 @@ class AppContext : Application() {
 
 
         this.registerActivityLifecycleCallbacks(JBusManager)
+
+
     }
 
 

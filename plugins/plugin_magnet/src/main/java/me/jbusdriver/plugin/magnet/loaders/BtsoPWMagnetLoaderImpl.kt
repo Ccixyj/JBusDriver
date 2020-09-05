@@ -9,9 +9,8 @@ import org.json.JSONObject
  * 当前无法使用
  */
 class BtsoPWMagnetLoaderImpl : IMagnetLoader {
-    //  key -> page
-    private val search = "https://btso.pw/search/%s/page/%s"
-    private val headers = mapOf("Accept-Language" to "zh-CN,zh;q=0.9,en;q=0.8,ja;q=0.7")
+    //  key -> page https://btos.pw/search/ebod/page/2
+    private val search = "https://btos.pw/search/%s/page/%s"
 
     override var hasNexPage: Boolean = true
 

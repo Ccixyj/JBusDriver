@@ -94,7 +94,7 @@ dependencies {
     api  'com.umeng.umsdk:common:2.0.0'
 
 
-    //compileOnly
+    //compileOnly`
     compileOnly "com.wlqq.phantom:phantom-host-lib:${versions.phantom.allVersion}"
 
 }

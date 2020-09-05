@@ -6,7 +6,7 @@ import org.json.JSONObject
 
 class BTBCMagnetLoaderImpl : IMagnetLoader {
 
-    private val searchUrl = "http://www.cilibc.com/search/%s/?c=&s=create_time&p=%s"
+    private val searchUrl = "http://www.btbaocai8.pw/search/%s/?c=&s=create_time&p=%s"
 
     private val Tag = "MagnetLoader:BtBC"
     override var hasNexPage: Boolean = false
