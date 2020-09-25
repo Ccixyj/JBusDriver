@@ -18,17 +18,7 @@ apply from: rootProject.file('buildscripts/cc-settings-2.gradle')
 //    project.apply plugin: 'kotlin-android-extensions'
 //    project.apply plugin: 'kotlin-kapt'//kapt3插件
 //}
-/**
- *   compileOptions {
- *          sourceCompatibility 1.8
- *         targetCompatibility 1.8
- *     }
- */
 
-android.compileOptions{
-    sourceCompatibility 1.8
-    targetCompatibility 1.8
-}
 
 dependencies {
     implementation project(':libraries:library_base')
