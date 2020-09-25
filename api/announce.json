@@ -21,10 +21,10 @@
     ]
   },
   "update": {
-    "versionCode": 332,
-    "versionName": "1.2.19build583",
-    "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/JubsDriver_v1.2.19build583.apk",
-    "desc": "JBusDriver 1.2.19 更新!\r\n1.修复无法加载全部影片的问题。\r\n2.添加备份提示。\r\n3.修复已知问题"
+    "versionCode": 347,
+    "versionName": "1.2.20build602",
+    "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/JubsDriver_v1.2.20build602.apk",
+    "desc": "JBusDriver 1.2.20build602 更新!\r\n1.配置地址更新"
   },
   "notice": {
     "id": 16,
