@@ -28,7 +28,7 @@ class PluginManagerComponent : IComponent {
 
     override fun onCall(cc: CC): Boolean {
         try {
-            when (val action = cc.actionName) {
+            when (cc.actionName) {
                 "plugins.init" -> {
                     // async call
                     val plugins = GSON.fromJson(cc.getParamItem<JsonObject>("plugins"), Plugins::class.java)

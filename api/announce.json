@@ -28,17 +28,17 @@
   },
   "notice": {
     "id": 16,
-    "content": "提示：\r\n1. 磁力插件btso.pw更新。"
+    "content": "提示：\r\n1. 磁力插件更新,添加超人。"
   },
   "plugins": {
     "internal": [
       {
         "name": "me.jbusdriver.plugin.magnet",
-        "versionCode": 8,
-        "versionName": "1.0.7",
-        "url": "https://raw.githubusercontent.com/Ccixyj/jbusfile/master/plugins/me.jbusdriver.plugin.magnet_1.0.7.apk",
+        "versionCode": 9,
+        "versionName": "1.0.8",
+        "url": "https://gitee.com/jbusdriver/static/raw/master/plugins/me.jbusdriver.plugin.magnet_1.0.8.apk",
         "desc": "[内部插件]磁力链接解析插件",
-        "eTag": "F3D1BF6EA4174259BDD71AEF5FBD18F5"
+        "eTag": "FB60460C68DD9E5D0EA3C833026020DA"
       }
     ]
   }
