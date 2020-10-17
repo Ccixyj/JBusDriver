@@ -8,7 +8,7 @@ import java.util.regex.Pattern
 
 class ChaoRenLoaderImpl : IMagnetLoader {
 
-    private val searchUrl = "https://www.chaoren99.xyz/search/page-%s.html?name=%s"
+    private val searchUrl = "https://www.chaoren66.xyz/search/page-%s.html?name=%s"
 
     private val Tag = "ChaoRen"
     override var hasNexPage: Boolean = false

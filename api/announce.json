@@ -27,18 +27,18 @@
     "desc": "JBusDriver 1.2.20build602 更新!\r\n1.配置地址更新"
   },
   "notice": {
-    "id": 16,
-    "content": "提示：\r\n1. 磁力插件更新,添加超人。"
+    "id": 17,
+    "content": "提示：\r\n1. 磁力插件更新,添加超人磁力站。"
   },
   "plugins": {
     "internal": [
       {
         "name": "me.jbusdriver.plugin.magnet",
-        "versionCode": 9,
-        "versionName": "1.0.8",
-        "url": "https://gitee.com/jbusdriver/static/raw/master/plugins/me.jbusdriver.plugin.magnet_1.0.8.apk",
+        "versionCode": 10,
+        "versionName": "1.0.9",
+        "url": "https://gitee.com/jbusdriver/static/raw/master/plugins/me.jbusdriver.plugin.magnet_1.0.9.apk",
         "desc": "[内部插件]磁力链接解析插件",
-        "eTag": "FB60460C68DD9E5D0EA3C833026020DA"
+        "eTag": "E8E145C05BBDB4C21866BC15B5782A01"
       }
     ]
   }
