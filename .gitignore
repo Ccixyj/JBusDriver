@@ -50,3 +50,4 @@ captures/
 /projectFilesBackup/.idea
 /gradlew
 /local.properties
+/gradle-build/

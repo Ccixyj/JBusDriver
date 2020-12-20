@@ -7,11 +7,12 @@ object MagnetLoaders {
      */
     val Loaders: Map<String, IMagnetLoader> by lazy {
         mapOf(
+            "超人" to ChaoRenLoaderImpl(),
+            "Btanv" to BtAntMagnetLoaderImpl(),
             "Kitty" to CNBtkittyMangetLoaderImpl(),
             "btdigg" to BtdiggsMagnetLoaderImpl(),
             "zzjd" to ZZJDMagnetLoaderImpl(),
             "BTbaocai" to BTBCMagnetLoaderImpl(),
-            "Btanv" to BtanvMagnetLoaderImpl(),
             "BTSO.PW" to BtsoPWMagnetLoaderImpl(),
             "BTSOW" to BTSOWMagnetLoaderImpl(),
            /* "BTDB" to BTDBMagnetLoaderImpl(),*/

@@ -6,6 +6,7 @@ buildscript {
         maven { url 'https://maven.aliyun.com/repository/public' }
         maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url "https://jitpack.io" }
+        maven { url 'https://dl.bintray.com/umsdk/release' }
         google()
     }
     dependencies {
@@ -31,7 +32,27 @@ allprojects {
         maven { url "https://jitpack.io" }
         maven { url 'https://dl.bintray.com/umsdk/release' }
     }
+
+    apply plugin: 'idea'
+    buildDir = new File(rootDir, "gradle-build/${path.replaceAll(':', '/')}")
+    println(" $it ->  ${path.replaceAll(':', '/')} ,$buildDir")
+
+    it.afterEvaluate {
+        try {
+            it.android {
+                compileOptions {
+                    sourceCompatibility 1.8
+                    targetCompatibility 1.8
+                }
+//                kotlinOptions {
+//                    jvmTarget = "1.8"
+//                }
+            }
+        } catch (Exception e) {
+        }
+    }
 }
+
 
 /**
  *  maven { url 'https://mirrors.huaweicloud.com/repository/maven/' }*   jcenter()
