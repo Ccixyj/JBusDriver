@@ -116,11 +116,11 @@ class MagnetListFragment : AppBaseRecycleFragment<MagnetListPresenter, MagnetLis
 
     companion object {
         fun newInstance(keyword: String, loaderKey: String) = MagnetListFragment().apply {
-            arguments = Bundle().apply {
-                putString(C.BundleKey.Key_1, keyword)
-                putString(C.BundleKey.Key_2, loaderKey)
+                arguments = Bundle().apply {
+                    putString(C.BundleKey.Key_1, keyword)
+                    putString(C.BundleKey.Key_2, loaderKey)
+                }
             }
-        }
     }
 
 }

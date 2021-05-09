@@ -1,12 +1,13 @@
-package me.jbusdriver.plugin.magnet
+package me.jbusdriver.plugin.magnet.loaders
 
-import me.jbusdriver.plugin.magnet.loaders.*
+import me.jbusdriver.plugin.magnet.IMagnetLoader
 
 object MagnetLoaders {
     /**  "btso.pw" to BtsoPWMagnetLoaderImpl()
      */
     val Loaders: Map<String, IMagnetLoader> by lazy {
         mapOf(
+            "default" to DefaultLoaderImpl(),
             "超人" to ChaoRenLoaderImpl(),
             "Btanv" to BtAntMagnetLoaderImpl(),
             "Kitty" to CNBtkittyMangetLoaderImpl(),

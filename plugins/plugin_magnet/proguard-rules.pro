@@ -189,3 +189,5 @@
     @com.wlqq.phantom.communication.RemoteMethod <methods>;
 }
 
+#html loader
+-keep class me.jbusdriver.plugin.magnet.loaders.DefaultLoaderImpl$HtmlContentProvider{*;}

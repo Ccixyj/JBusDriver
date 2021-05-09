@@ -145,6 +145,7 @@ class MovieDetailActivity :
                 CC.obtainBuilder(C.Components.Magnet)
                     .setActionName("show")
                     .addParam("keyword", code)
+                    .addParam("link", movie?.link.orEmpty())
                     .build().call().let { res ->
                         if (!res.isSuccess) {
                             toast(res.toString())

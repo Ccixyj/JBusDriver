@@ -13,12 +13,13 @@ import me.jbusdriver.component.magnet.ui.config.Configuration
 /**
  * Created by Administrator on 2017/7/17 0017.
  */
-class MagnetPagersFragment : TabViewPagerFragment<MagnetPagerPresenter, MagnetPagerView>(), MagnetPagerView {
+class MagnetPagersFragment : TabViewPagerFragment<MagnetPagerPresenter, MagnetPagerView>(),
+    MagnetPagerView {
 
     private val keyword by lazy {
         arguments?.getString(C.BundleKey.Key_1) ?: error("must set keyword")
     }
-
+    private val link by lazy { arguments?.getString(C.BundleKey.Key_2).orEmpty() }
 
     override fun createPresenter() = MagnetPagerPresenterImpl()
 
@@ -37,7 +38,10 @@ class MagnetPagersFragment : TabViewPagerFragment<MagnetPagerPresenter, MagnetPa
     }
 
     override val mFragments: List<Fragment> by lazy {
-        mTitles.map { MagnetListFragment.newInstance(keyword, it) }
+        mTitles.map {
+            val mapKey = if ("default" == it) link else keyword
+            MagnetListFragment.newInstance(mapKey, it)
+        }
     }
 
 
