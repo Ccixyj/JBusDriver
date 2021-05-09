@@ -78,7 +78,7 @@ dependencies {
 
     testImplementation 'junit:junit:4.12'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
-    implementation "org.jsoup:jsoup:${versions.jsoup}"
+    compileOnly "org.jsoup:jsoup:${versions.jsoup}"
 //    implementation "com.google.code.gson:gson:${versions.gson}"
 //    implementation 'com.android.support:multidex:1.0.3'
 }
