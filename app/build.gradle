@@ -63,6 +63,9 @@ android {
         additionalParameters "--no-version-vectors"
     }
     buildTypes {
+        debug{
+            signingConfig signingConfigs.release
+        }
         release {
             signingConfig signingConfigs.release
             minifyEnabled true
