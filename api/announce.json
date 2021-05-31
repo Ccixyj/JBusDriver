@@ -13,13 +13,14 @@
     "https://www.busfan.bar",
     "https://www.dmmbus.zone"
   ],
-  "xyz": "https://www.javbus.one",
+  "xyz": "https://www.javbus.red",
   "xyzLoader": {
-    "url": "https://www.javbus.one",
+    "url": "https://www.javbus.red",
     "legacyHost": [
       "work",
       "zone",
       "one",
+      "red",
       "xyz"
     ]
   },

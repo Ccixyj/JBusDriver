@@ -11,23 +11,38 @@ import me.jbusdriver.base.urlPath
 import java.io.InputStream
 
 
-class GlideNoHostUrl(val url: String, private val noFilterHost: Set<String>) {
+class GlideNoHostUrl(
+    val url: String,
+    private val noFilterHost: Set<String>,
+    private val providedHost: String
+) {
 
     private fun isNeedFilter(url: String) = noFilterHost.any { url.endsWith(it) }
     fun getId() =
         ((if (isNeedFilter(url)) url else url.urlPath))  /*.apply { KLog.t("GlideNoHostUrl").d("${toStringUrl()} :$this") }*/
 
     override fun toString(): String = "GlideNoHostUrl(url='$url') ,id =${getId()}"
+
+
+    val httpUrl by lazy {
+        if (url.startsWith("http") || url.startsWith("wwww.")) {
+            url
+        } else {
+            "$providedHost/${url.removePrefix("/")}"
+        }
+    }
 }
 
-class NoHostImageLoader(private val fac: okhttp3.Call.Factory) : ModelLoader<GlideNoHostUrl, InputStream> {
+class NoHostImageLoader(private val fac: okhttp3.Call.Factory) :
+    ModelLoader<GlideNoHostUrl, InputStream> {
     override fun buildLoadData(
         model: GlideNoHostUrl,
         width: Int,
         height: Int,
         options: Options
-    ): ModelLoader.LoadData<InputStream>? {
-        val gUrl = object : GlideUrl(model.url) {
+    ): ModelLoader.LoadData<InputStream> {
+
+        val gUrl = object : GlideUrl(model.httpUrl) {
             override fun getCacheKey(): String = model.getId()
         }
 //        KLog.d("load for url $model -> $gUrl")
