@@ -37,6 +37,7 @@ class CompMagnetMainActivity : BaseActivity() {
             CC.obtainBuilder(C.Components.Magnet)
                 .setActionName("show")
                 .addParam("keyword", et_keyword.text.toString())
+                .addParam("link", "https://www.busdmm.blog/JUL-229")
                 .build().callAsync { cc, result ->
                     KLog.d("install result $result")
                 }

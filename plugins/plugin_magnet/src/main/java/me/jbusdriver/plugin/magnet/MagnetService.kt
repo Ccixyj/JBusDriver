@@ -4,6 +4,7 @@ import android.content.Context
 import android.widget.Toast
 import com.wlqq.phantom.communication.PhantomService
 import com.wlqq.phantom.communication.RemoteMethod
+import me.jbusdriver.plugin.magnet.loaders.MagnetLoaders
 import org.json.JSONArray
 import org.json.JSONObject
 

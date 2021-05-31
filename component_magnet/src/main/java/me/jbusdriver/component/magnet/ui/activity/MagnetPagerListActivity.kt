@@ -12,7 +12,10 @@ import me.jbusdriver.component.magnet.ui.fragment.MagnetPagersFragment
 
 class MagnetPagerListActivity : BaseActivity() {
 
-    private val keyword by lazy { intent.getStringExtra(C.BundleKey.Key_1) ?: error("must set keyword") }
+    private val keyword by lazy {
+        intent.getStringExtra(C.BundleKey.Key_1) ?: error("must set keyword")
+    }
+    private val link by lazy { intent.getStringExtra(C.BundleKey.Key_2).orEmpty() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,7 +26,10 @@ class MagnetPagerListActivity : BaseActivity() {
         //go to SearchResultPagesFragment
         supportFragmentManager.beginTransaction()
             .replace(R.id.comp_magnet_fl_magnet_list, MagnetPagersFragment().apply {
-                arguments = Bundle().apply { putString(C.BundleKey.Key_1, keyword) }
+                arguments = Bundle().apply {
+                    putString(C.BundleKey.Key_1, keyword)
+                    putString(C.BundleKey.Key_2, link)
+                }
             }).commit()
 
     }
@@ -33,10 +39,15 @@ class MagnetPagerListActivity : BaseActivity() {
     }
 
     companion object {
-        fun start(cc: CC, keyword: String) {
-            context.startActivity(CCUtil.createNavigateIntent(cc, MagnetPagerListActivity::class.java).apply {
-                putExtra(C.BundleKey.Key_1, keyword)
-            })
+        fun start(cc: CC, keyword: String, link: String) {
+            context.startActivity(
+                CCUtil.createNavigateIntent(
+                    cc,
+                    MagnetPagerListActivity::class.java
+                ).apply {
+                    putExtra(C.BundleKey.Key_1, keyword)
+                    putExtra(C.BundleKey.Key_2, link)
+                })
         }
     }
 }
