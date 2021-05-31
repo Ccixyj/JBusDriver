@@ -26,7 +26,7 @@ class GlideNoHostUrl(
 
     val httpUrl by lazy {
         if (url.startsWith("http") || url.startsWith("wwww.")) {
-            url
+            "$providedHost/${url.urlPath.removePrefix("/")}"
         } else {
             "$providedHost/${url.removePrefix("/")}"
         }

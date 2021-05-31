@@ -15,6 +15,7 @@ import com.billy.cc.core.component.CC
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.gyf.barlibrary.ImmersionBar
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_movie_detail.*
 import kotlinx.android.synthetic.main.content_movie_detail.*
 import kotlinx.android.synthetic.main.layout_load_magnet.view.*
@@ -117,7 +118,11 @@ class MovieDetailActivity :
     }
 
     private fun initWidget() {
-        sr_refresh.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimaryLight)
+        sr_refresh.setColorSchemeResources(
+            R.color.colorPrimary,
+            R.color.colorPrimaryDark,
+            R.color.colorPrimaryLight
+        )
         sr_refresh.setOnRefreshListener {
             //reload
             mBasePresenter?.onRefresh()
@@ -139,7 +144,8 @@ class MovieDetailActivity :
                     null
                 )
             )
-            this.tv_movie_look_magnet.paintFlags = this.tv_movie_look_magnet.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+            this.tv_movie_look_magnet.paintFlags =
+                this.tv_movie_look_magnet.paintFlags or Paint.UNDERLINE_TEXT_FLAG
             setOnClickListener {
                 val code = movie?.code?.replace("-", " ") ?: url.urlPath
                 CC.obtainBuilder(C.Components.Magnet)
@@ -205,7 +211,14 @@ class MovieDetailActivity :
     }
 
     override fun <T> showContent(data: T?) {
-        if (data is Movie && movie == null) {
+        if (data is Movie) {
+            val convertDBItem = data.convertDBItem()
+            if (movie?.imageUrl != data.imageUrl && CollectModel.has(convertDBItem)) {
+                Schedulers.single().scheduleDirect {
+                    //如果已收藏演员, 需要重新设置头像
+                    CollectModel.update(convertDBItem)
+                }
+            }
             movie = data
             invalidateOptionsMenu()
         }
