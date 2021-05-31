@@ -27,29 +27,28 @@ object MagnetPluginHelper {
     private val rxManager by lazy { CompositeDisposable() }
 
     fun init() {
-        if (!PhantomCore.getInstance().isPluginInstalled(PluginMagnetPackage)) {
-            installAssetsPlugins(JBusManager.context.assets, "plugins")
-                .timeout(30, TimeUnit.SECONDS)
-                .doOnNext {
-                    getLoaderKeys()
-                }.subscribeOn(Schedulers.io()).subscribe({
-                    KLog.d("install  success -> $plugin")
-                }, {
-                    KLog.w("install  error -> $it")
-                }).addTo(rxManager)
-            return
-        }
-        //installed
-        //check start
-        PhantomCore.getInstance().allPlugins.filter { !it.isStarted }.forEach {
-            try {
-                it.start()
-                KLog.d("plugin $it start success ...")
-            } catch (e: Exception) {
-                e.printStackTrace()
-                KLog.e("plugin $it can not start!!!")
-            }
-        }
+//        val uninstall = !PhantomCore.getInstance().isPluginInstalled(PluginMagnetPackage)
+        installAssetsPlugins(JBusManager.context.assets, "plugins")
+            .timeout(30, TimeUnit.SECONDS)
+            .doOnNext {
+                getLoaderKeys()
+            }.subscribeOn(Schedulers.io()).subscribe({
+                KLog.d("install  success -> $plugin")
+            }, {
+                KLog.w("install  error -> $it")
+            }).addTo(rxManager)
+
+//        //installed
+//        //check start
+//        PhantomCore.getInstance().allPlugins.filter { !it.isStarted }.forEach {
+//            try {
+//                it.start()
+//                KLog.d("plugin $it start success ...")
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//                KLog.e("plugin $it can not start!!!")
+//            }
+//        }
 
     }
 

@@ -21,7 +21,8 @@ class ComponentMagnet : IComponent {
                 "show" -> {
                     val keyWord = cc.getParamItem<String>("keyword")
                         ?: error("show activity must pass keyword")
-                    MagnetPagerListActivity.start(cc, keyWord)
+                    val link = cc.getParamItem<String?>("link").orEmpty()
+                    MagnetPagerListActivity.start(cc, keyWord , link)
                     CC.sendCCResult(cc.callId, CCResult.success())
                 }
                 "allKeys" -> {
