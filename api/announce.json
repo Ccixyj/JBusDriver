@@ -25,10 +25,10 @@
     ]
   },
   "update": {
-    "versionCode": 357,
-    "versionName": "1.3.10build612",
-    "url": "https://gitee.com/jbusdriver/static/raw/master/apks/JubsDriver_v1.3.10build612.apk",
-    "desc": "JubsDriver_v1.3.1build612 更新!\r\n1.修复图片加载失败的问题."
+    "versionCode": 359,
+    "versionName": "v1.3.2build614",
+    "url": "https://gitee.com/jbusdriver/static/raw/master/apks/JubsDriver_v1.3.2build614.apk",
+    "desc": "JubsDriver_v1.3.2build614 更新!\r\n1.修复详情图片加载失败的问题."
   },
   "notice": {
     "id": 17,
