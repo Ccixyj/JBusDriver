@@ -154,8 +154,7 @@ class SplashActivity : BaseActivity() {
                         }
 
                         CacheLoader.cacheLruAndDisk(
-                            C.Cache.BUS_URLS to urls,
-                            C.Cache.DAY * 2
+                            C.Cache.BUS_URLS to urls
                         ) //缓存所有的urls
                         CacheLoader.lru.put(
                             DataSourceType.CENSORED.key + "false",
