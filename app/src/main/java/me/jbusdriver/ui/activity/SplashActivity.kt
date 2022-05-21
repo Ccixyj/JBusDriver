@@ -74,7 +74,8 @@ class SplashActivity : BaseActivity() {
             val urlsFromUpdateCache =
                 Flowable.concat(
                     CacheLoader.justLru(C.Cache.ANNOUNCE_URL),
-                    GitHub.INSTANCE.announce()
+                    GitHub.INSTANCE.announce().addUserCase()
+                        .doOnNext {  CacheLoader.cacheDisk(C.Cache.ANNOUNCE_VALUE to it)}
                 )
                     .firstOrError().toFlowable()
                     .map { source ->
