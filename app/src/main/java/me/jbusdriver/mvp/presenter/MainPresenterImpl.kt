@@ -22,9 +22,12 @@ class MainPresenterImpl : BasePresenterImpl<MainContract.MainView>(), MainContra
     }
 
     private fun fetchUpdate() {
-        Flowable.concat<JsonObject>(CacheLoader.justLru(C.Cache.ANNOUNCE_VALUE).map { GSON.fromJson<JsonObject>(it) },
+        Flowable.concat<JsonObject>(
+            CacheLoader.justLru(C.Cache.ANNOUNCE_VALUE).map { GSON.fromJson<JsonObject>(it) },
+            CacheLoader.justDisk(C.Cache.ANNOUNCE_VALUE).map { GSON.fromJson<JsonObject>(it) },
             GitHub.INSTANCE.announce().addUserCase()
-                .map { GSON.fromJson<JsonObject>(it) } //
+                .map { GSON.fromJson<JsonObject>(it) }
+                .doOnNext {  CacheLoader.cacheDisk(C.Cache.ANNOUNCE_VALUE to it)}
         )
             .firstOrError()
             .map {

@@ -74,7 +74,8 @@ class SplashActivity : BaseActivity() {
             val urlsFromUpdateCache =
                 Flowable.concat(
                     CacheLoader.justLru(C.Cache.ANNOUNCE_URL),
-                    GitHub.INSTANCE.announce()
+                    GitHub.INSTANCE.announce().addUserCase()
+                        .doOnNext {  CacheLoader.cacheDisk(C.Cache.ANNOUNCE_VALUE to it)}
                 )
                     .firstOrError().toFlowable()
                     .map { source ->
@@ -154,8 +155,7 @@ class SplashActivity : BaseActivity() {
                         }
 
                         CacheLoader.cacheLruAndDisk(
-                            C.Cache.BUS_URLS to urls,
-                            C.Cache.DAY * 2
+                            C.Cache.BUS_URLS to urls
                         ) //缓存所有的urls
                         CacheLoader.lru.put(
                             DataSourceType.CENSORED.key + "false",
