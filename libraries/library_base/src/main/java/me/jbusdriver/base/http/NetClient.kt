@@ -34,7 +34,7 @@ object NetClient {
             }else{
                 builder.header("Cookie","existmag=mag")
             }
-
+            builder.header("Cookie","bus_auth=4b85UbbfIo1f9unsrObLRtu0aYAe8VOgu7OjJJBPE95b9jKg0Jqj7xGmCEzb9VJOGoJO")
             request = builder.build()
             chain.proceed(request)
         }
