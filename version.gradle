@@ -42,8 +42,8 @@ ext {
             ],
             'plugins'                      : [
                     magnet: [
-                            version_code: 12,
-                            version_name: '1.1.1'
+                            version_code: 13,
+                            version_name: '1.1.2'
                     ]
             ]
 

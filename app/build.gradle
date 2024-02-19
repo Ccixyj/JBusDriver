@@ -115,8 +115,8 @@ def VersionName() {
     def tags = cmd.execute().text.readLines()
     logger.quiet(cmd + " >>>> tags  = " + tags)
     def verName = tags.find {
-        it.contains("v")
-    }.find(Pattern.compile("v[0-9a-z.-]+")).substring(1).trim()
+        it.contains("tag:")
+    }.find(Pattern.compile(/tag: v[0-9a-z.-]+/)).replace("tag: v" ,"").trim()
     logger.quiet(cmd + " >>>> verName  = " + verName)
     cmd = 'git rev-list  --all  --count'
     def code = cmd.execute().text.trim().toInteger()

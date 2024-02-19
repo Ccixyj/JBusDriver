@@ -1,6 +1,7 @@
 package me.jbusdriver.plugin.magnet.loaders
 
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -35,6 +36,7 @@ class WebViewHtmlContentLoader {
             webView.webChromeClient = HtmlLoaderChromeClient(countDownLatch)
 
             webView.addJavascriptInterface(provider, "html_content")
+
             webView.loadUrl(url)
 
         }
@@ -52,6 +54,7 @@ class WebViewHtmlContentLoader {
             stopLoad()
         }
     }
+
 
     fun stopLoad() {
         mainH.post {
@@ -132,6 +135,40 @@ class WebViewHtmlContentLoader {
             }
             super.onPageFinished(view, url)
         }
+
+        override fun shouldInterceptRequest(
+            view: WebView?,
+            request: WebResourceRequest?
+        ): WebResourceResponse? {
+            val delegate = DelegateWebRequest(request ?: object :WebResourceRequest{
+                override fun getUrl(): Uri = Uri.EMPTY
+
+                override fun isRedirect(): Boolean =false
+
+                override fun getMethod(): String  = "GET"
+
+                override fun getRequestHeaders(): MutableMap<String, String> = mutableMapOf()
+
+                override fun hasGesture(): Boolean  =false
+
+                override fun isForMainFrame(): Boolean =false
+            })
+            return super.shouldInterceptRequest(view, delegate)
+        }
+
     }
 
+    class DelegateWebRequest(val old: WebResourceRequest) : WebResourceRequest by old {
+
+        init {
+            val cookieManager = CookieManager.getInstance()
+            cookieManager.acceptCookie()
+            cookieManager.flush()
+        }
+        override fun getRequestHeaders(): MutableMap<String, String> {
+            val requestHeaders = old.requestHeaders
+            Log.d("DelegateRequest" ,"requestHeader $requestHeaders")
+            return requestHeaders
+        }
+    }
 }
