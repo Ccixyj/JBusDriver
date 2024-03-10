@@ -131,11 +131,14 @@ phantomPluginConfig {
     libraryJarsProguardFile file('proguard-phantom.pro')
     /*------------------------------ 混淆配置  END  ------------------------------*/
 
+    // 禁用自动生成 provided_dependencies_v2.txt
+//    genProvidedDeps  false  // 默认 true
+
     /*------------------------------ 快速安装插件配置 BEGIN ------------------------*/
     // 宿主包名
-    hostApplicationId = "me.jbusdriver.component.magnet"
+    hostApplicationId = "me.jbusdriver"
     // 宿主 launcher Activity full class name
-    hostAppLauncherActivity = "debug.CompMagnetMainActivity"
+    hostAppLauncherActivity = "me.jbusdriver.ui.activity.SplashActivity"
 
     // 插件包名
     pluginApplicationId = android.defaultConfig.applicationId

@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.webkit.*
+import android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
 import me.jbusdriver.plugin.magnet.BuildConfig
 import me.jbusdriver.plugin.magnet.app.instance
 import java.util.concurrent.CountDownLatch
@@ -29,6 +30,7 @@ class WebViewHtmlContentLoader {
             webView.settings?.databaseEnabled = true
             webView.settings?.domStorageEnabled = true
             webView.settings?.setAppCacheEnabled(true)
+            webView.settings?.mixedContentMode = MIXED_CONTENT_ALWAYS_ALLOW
             webView.settings?.cacheMode = WebSettings.LOAD_DEFAULT
             webView.stopLoading()
 
@@ -78,7 +80,7 @@ class WebViewHtmlContentLoader {
 
         @JavascriptInterface
         fun getSource(html: String) {
-            Log.d(TAG, "getSource: $html")
+            Log.e(TAG, "getSource: ${html.length}")
             if (html.isNotBlank()) {
                 htmlContent = "<html>$html</html>"
                 countDownLatch.countDown()
@@ -91,22 +93,23 @@ class WebViewHtmlContentLoader {
 
         override fun onProgressChanged(view: WebView?, newProgress: Int) {
             super.onProgressChanged(view, newProgress)
-            Log.d(TAG, "onProgressChanged: $newProgress ... ")
+            Log.e(TAG, "onProgressChanged: $newProgress ... ")
             if (countDownLatch.count > 0 && newProgress >= 70) {
-                Log.d(TAG, "onProgressChanged: getSource $JS")
+                Log.e(TAG, "onProgressChanged: getSource $JS")
                 view?.loadUrl(JS)
             }
         }
 
         override fun onReceivedTitle(view: WebView?, title: String?) {
             super.onReceivedTitle(view, title)
-            Log.d(TAG, "onReceivedTitle: $title ")
+            Log.e(TAG, "onReceivedTitle: $title ")
         }
 
         override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
-            Log.d(TAG, "onConsoleMessage: ${consoleMessage?.message()}")
+            Log.e(TAG, "onConsoleMessage: ${consoleMessage?.message()}")
             return super.onConsoleMessage(consoleMessage)
         }
+
     }
 
     class HtmlContentClient(private val countDownLatch: CountDownLatch) : WebViewClient() {
@@ -117,20 +120,20 @@ class WebViewHtmlContentLoader {
             description: String?,
             failingUrl: String?
         ) {
-            Log.d(TAG, "onReceivedError: $errorCode $description $failingUrl")
+            Log.e(TAG, "onReceivedError: $errorCode $description $failingUrl")
             super.onReceivedError(view, errorCode, description, failingUrl)
         }
 
 
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-            Log.d(TAG, "onPageStarted: $url")
+            Log.e(TAG, "onPageStarted: $url")
             super.onPageStarted(view, url, favicon)
         }
 
         override fun onPageFinished(view: WebView?, url: String?) {
-            Log.d(TAG, "onPageFinished: $view , $url")
+            Log.e(TAG, "onPageFinished: $view , $url")
             if (countDownLatch.count > 0) {
-                Log.d(TAG, "onProgressChanged: getSource")
+                Log.e(TAG, "onProgressChanged: getSource")
                 view?.loadUrl(JS)
             }
             super.onPageFinished(view, url)
@@ -140,35 +143,15 @@ class WebViewHtmlContentLoader {
             view: WebView?,
             request: WebResourceRequest?
         ): WebResourceResponse? {
-            val delegate = DelegateWebRequest(request ?: object :WebResourceRequest{
-                override fun getUrl(): Uri = Uri.EMPTY
-
-                override fun isRedirect(): Boolean =false
-
-                override fun getMethod(): String  = "GET"
-
-                override fun getRequestHeaders(): MutableMap<String, String> = mutableMapOf()
-
-                override fun hasGesture(): Boolean  =false
-
-                override fun isForMainFrame(): Boolean =false
-            })
-            return super.shouldInterceptRequest(view, delegate)
+            Log.e(TAG, "shouldInterceptRequest ${request?.url}")
+            if (request?.url?.path?.contains("jpg|png|gif".toRegex() )== true) {
+                Log.e(TAG, "shouldInterceptRequest NONE")
+                return null
+            }
+            return super.shouldInterceptRequest(view, request)
         }
 
     }
 
-    class DelegateWebRequest(val old: WebResourceRequest) : WebResourceRequest by old {
 
-        init {
-            val cookieManager = CookieManager.getInstance()
-            cookieManager.acceptCookie()
-            cookieManager.flush()
-        }
-        override fun getRequestHeaders(): MutableMap<String, String> {
-            val requestHeaders = old.requestHeaders
-            Log.d("DelegateRequest" ,"requestHeader $requestHeaders")
-            return requestHeaders
-        }
-    }
 }

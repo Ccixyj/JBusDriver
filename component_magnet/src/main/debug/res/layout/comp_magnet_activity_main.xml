@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/material_48dp"
         android:hint="put something to search"
-        android:text="ebod 580" />
+        android:text="https://www.javsee.cfd/ABP-752" />
 
     <TextView
         android:id="@+id/comp_magnet_tv_go_search"

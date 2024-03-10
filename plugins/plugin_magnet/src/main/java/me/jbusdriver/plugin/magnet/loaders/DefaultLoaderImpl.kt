@@ -27,7 +27,7 @@ class DefaultLoaderImpl : IMagnetLoader {
         require(URLUtil.isHttpUrl(key) || URLUtil.isHttpsUrl(key)) { "需要为网络连接!" }
         require(Looper.getMainLooper() != Looper.myLooper()) { "需要在子线程执行!" }
         val content = WebViewHtmlContentLoader().startLoad(key)
-        Log.d(TAG, "loadMagnets: $content")
+        Log.e(TAG, "loadMagnets: $content")
         return Jsoup.parse(content).select("#magnet-table tr").asSequence()
             .drop(1).map {
                 val contents = it.select("td")
