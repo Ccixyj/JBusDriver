@@ -37,14 +37,15 @@ open class HomeMovieListPresenterImpl(val type: DataSourceType, val link: ILink)
     }
 
     private val loadFromNet = { page: Int ->
-        val urlN = urls.getOrElse(type.key) { "" }.let { url ->
+        val urlN = urls.getOrElse(type.key) { JAVBusService.defaultFastUrl }.let { url ->
             return@let if (page == 1) url else "$url${type.prefix}$page"
         }
+        KLog.d("loadFromNet $urlN")
         //existmag=all
         //add his
         val pageLink = PageLink(page = page, title = type.key, link = urlN)
         addHistory(pageLink)
-        service.get(urlN, if (IsAll) "all" else null).addUserCase().doOnNext {
+        service.get(urlN, if (IsAll) "all" else "").addUserCase().doOnNext {
             if (page == 1 && !it.isNullOrBlank()) CacheLoader.lru.put(saveKey, it!!)
         }.map { Jsoup.parse(it) }.doOnError {
             //可能网址被封

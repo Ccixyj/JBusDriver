@@ -23,12 +23,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original type file name.
 #-renamesourcefileattribute SourceFile
--optimizations !code/simplification/cast,!field/*,!class/merging/*
--optimizationpasses 5
--dontusemixedcaseclassnames
--dontskipnonpubliclibraryclasses
--dontpreverify
--ignorewarnings
 
 # 保持枚举 enum 类不被混淆
 -keepclassmembers enum * {
@@ -206,4 +200,9 @@ public static final int *;
     @com.wlqq.phantom.communication.RemoteMethod <methods>;
 }
 
+#-keep class me.jbusdriver.http.** { *; }
+# Retain service method parameters when optimizing.
+-keepclassmembers,allowshrinking,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
+}
 # Phantom Service method for exclude

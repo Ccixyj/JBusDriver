@@ -65,7 +65,7 @@ abstract class LinkAbsPresenterImpl<T>(val linkData: ILink, private val isHistor
     override val model: BaseModel<Int, Document> = object : BaseModel<Int, Document> {
         override fun requestFor(t: Int) =
             (if (t == 1) linkData.link else "${linkData.link.urlHost}$urlPath/$t").let {
-                JAVBusService.INSTANCE.get(it, if (IsAll) "all" else null).addUserCase().map { Jsoup.parse(it) }
+                JAVBusService.INSTANCE.get(it, if (IsAll) "all" else "").addUserCase().map { Jsoup.parse(it) }
             }.doOnNext {
                 if (t == 1) CacheLoader.lru.put("${linkData.link}$IsAll", it.toString())
             }

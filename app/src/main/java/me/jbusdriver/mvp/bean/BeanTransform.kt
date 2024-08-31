@@ -1,6 +1,7 @@
 package me.jbusdriver.mvp.bean
 
 import android.text.TextUtils
+import me.jbusdriver.http.JAVBusService
 import org.jsoup.nodes.Document
 
 
@@ -39,18 +40,26 @@ fun parseMovieDetails(doc: Document): MovieDetail {
 
 
     val actresses = doc.select("#avatar-waterfall .avatar-box").map {
-        ActressInfo(it.text(), it.select("img").attr("src"), it.attr("href"))
+        ActressInfo(it.text(), it.select("img").attr("src").wrapImage(), it.attr("href"))
     }
 
     val samples = doc.select("#sample-waterfall .sample-box").map {
-        val thumb = it.select("img").attr("src")
+        val thumb = it.select("img").attr("src").wrapImage()
         val image = it.attr("href")
-        ImageSample(it.select("img").attr("title"), thumb, if (TextUtils.isEmpty(image)) thumb else image)
+        ImageSample(
+            it.select("img").attr("title"),
+            thumb,
+            if (TextUtils.isEmpty(image)) thumb else image
+        )
     }
 
     val relatedMovies = doc.select("#related-waterfall .movie-box").map {
         val url = it.attr("href")
-        Movie(it.attr("title"), it.select("img").attr("src"), url.split("/").last(), "", url)
+        Movie(
+            it.attr("title"),
+            it.select("img").attr("src").wrapImage(),
+            url.split("/").last(), "", url
+        )
     }
 
     return MovieDetail(title, content, cover, headers, geneses, actresses, samples, relatedMovies)
@@ -63,7 +72,10 @@ fun parseActressAttrs(doc: Document): ActressAttrs {
     val frame = doc.select(".avatar-box")
     val photo = frame.select("img")
     val attrs = frame.select("p").map { it.text() }
-    return ActressAttrs(photo.attr("title"), photo.attr("src"), attrs)
+    return ActressAttrs(
+        photo.attr("title"),
+        photo.attr("src").wrapImage(), attrs
+    )
 }
 
 /**
@@ -72,6 +84,11 @@ fun parseActressAttrs(doc: Document): ActressAttrs {
 fun parseActressList(doc: Document): List<ActressInfo> {
     return doc.select(".avatar-box")?.map {
         val img = it.select("img")
-        ActressInfo(img.attr("title"), img.attr("src"), it.attr("href"), it.select("button").text())
+        ActressInfo(
+            img.attr("title"), img.attr("src").wrapImage(),
+            it.attr("href"), it.select("button").text()
+        )
     } ?: emptyList()
 }
+
+fun String.wrapImage() = if (this.startsWith("http")) this else JAVBusService.defaultFastUrl + this

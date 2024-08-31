@@ -6,6 +6,7 @@ import android.text.TextUtils
 import com.google.gson.JsonObject
 import me.jbusdriver.base.BuildConfig
 import me.jbusdriver.base.GSON
+import me.jbusdriver.base.KLog
 import okhttp3.*
 import retrofit2.CallAdapter
 import retrofit2.Converter
@@ -55,6 +56,25 @@ object NetClient {
     }
 
     private val strConv = object : Converter.Factory() {
+
+        override fun requestBodyConverter(
+            type: Type,
+            parameterAnnotations: Array<Annotation>,
+            methodAnnotations: Array<Annotation>,
+            retrofit: Retrofit
+        ): Converter<*, RequestBody>? {
+            KLog.d("requestBodyConverter", type, parameterAnnotations, methodAnnotations)
+            for (parameterAnnotation in parameterAnnotations) {
+                KLog.d("parameterAnnotation", parameterAnnotation)
+            }
+            return super.requestBodyConverter(
+                type,
+                parameterAnnotations,
+                methodAnnotations,
+                retrofit
+            )
+        }
+
         override fun responseBodyConverter(
             type: Type?,
             annotations: Array<out Annotation>?,
@@ -91,7 +111,8 @@ object NetClient {
         Retrofit.Builder().client(client).apply {
             if (baseUrl.isNotEmpty()) this.baseUrl(baseUrl)
         }.addConverterFactory(if (handleJson) jsonConv else strConv)
-            .addCallAdapterFactory(RxJavaCallAdapterFactory).build()
+            .addCallAdapterFactory(RxJavaCallAdapterFactory)
+            .build()
 
     //endregion
 
@@ -105,13 +126,13 @@ object NetClient {
             .connectTimeout((15 * 1000).toLong(), TimeUnit.MILLISECONDS)
             .addNetworkInterceptor(EXIST_MAGNET_INTERCEPTOR)
             .cookieJar(object : CookieJar {
-                private val cookieStore = HashMap<HttpUrl, List<Cookie>>()
+                private val cookieStore = HashMap<String, List<Cookie>>()
 
                 override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
-                    cookieStore[url] = cookies
+                    cookieStore[url.host()] = cookies
                 }
 
-                override fun loadForRequest(url: HttpUrl) = cookieStore[url] ?: ArrayList()
+                override fun loadForRequest(url: HttpUrl) = cookieStore[url.host()] ?: emptyList()
             })
         if (BuildConfig.DEBUG) {
             client.addInterceptor(LoggerInterceptor("OK_HTTP"))
@@ -119,17 +140,7 @@ object NetClient {
         client.build()
     }
 
-    val glideOkHttpClient: OkHttpClient by lazy {
-        val client = OkHttpClient.Builder()
-            .readTimeout((20 * 1000).toLong(), TimeUnit.MILLISECONDS)
-            .connectTimeout((15 * 1000).toLong(), TimeUnit.MILLISECONDS)
-            .addNetworkInterceptor(PROGRESS_INTERCEPTOR)
-        if (BuildConfig.DEBUG) {
-            client.addInterceptor(LoggerInterceptor("OK_HTTP"))
-        }
-        client.build()
-    }
-
+    val glideOkHttpClient: OkHttpClient  by lazy { okHttpClient }
 
     /**
      * 判断是否有网络可用

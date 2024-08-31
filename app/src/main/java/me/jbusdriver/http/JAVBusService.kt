@@ -16,7 +16,8 @@ interface JAVBusService {
 
     //https://announce.javbus8.com/website.php
     @GET
-    fun get(@Url url: String, @Header("existmag") existmag: String? = null): Flowable<String?>
+    fun get(@Url url: String, @Header("existmag") existmag: String = ""): Flowable<String>
+
 
 
     companion object {
@@ -31,10 +32,11 @@ interface JAVBusService {
 
         var INSTANCE = getInstance(defaultFastUrl)
         fun getInstance(source: String): JAVBusService {
-            KLog.d("instances : ${JBus.JBusServices}, defaultFastUrl : $defaultFastUrl")
             //JBusServices[type] 会出异常
             return JBus.JBusServices.getOrPut(source) {
                 createService(source)
+            }.apply {
+                KLog.d("instances : ${JBus.JBusServices}, defaultFastUrl : $defaultFastUrl")
             }
         }
 

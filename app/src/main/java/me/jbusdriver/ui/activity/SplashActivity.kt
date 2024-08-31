@@ -53,6 +53,8 @@ class SplashActivity : BaseActivity() {
                 }.addTo(rxManager)
             }
             .subscribeBy(onNext = {
+                KLog.w("init urls ok : $it")
+
                 it.get(DataSourceType.CENSORED.key)?.let {
                     JAVBusService.defaultFastUrl = it.urlHost
                 }
@@ -75,7 +77,11 @@ class SplashActivity : BaseActivity() {
                 Flowable.concat(
                     CacheLoader.justLru(C.Cache.ANNOUNCE_URL),
                     GitHub.INSTANCE.announce().addUserCase()
-                        .doOnNext {  CacheLoader.cacheDisk(C.Cache.ANNOUNCE_VALUE to it)}
+                        .doOnError { KLog.e("announce error", it) }
+                        .doOnNext {
+                            KLog.i("announce ok", it)
+                            CacheLoader.cacheDisk(C.Cache.ANNOUNCE_VALUE to it)
+                        }
                 )
                     .firstOrError().toFlowable()
                     .map { source ->

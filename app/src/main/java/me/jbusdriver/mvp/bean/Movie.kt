@@ -29,7 +29,7 @@ fun loadMovieFromDoc(str: Document): List<Movie> {
     return str.select(".movie-box").mapIndexed { _, element ->
         Movie(
             title = element.select("img").attr("title"),
-            imageUrl = element.select("img").attr("src"),
+            imageUrl = element.select("img").attr("src").wrapImage(),
             code = element.select("date").first().text(),
             date = element.select("date").getOrNull(1)?.text() ?: "",
             link = element.attr("href"),
@@ -39,7 +39,8 @@ fun loadMovieFromDoc(str: Document): List<Movie> {
     }
 }
 
-fun newPageMovie(page: Int, pages: List<Int>) = Movie(page.toString(), pages.joinToString("#"), "", "", "")
+fun newPageMovie(page: Int, pages: List<Int>) =
+    Movie(page.toString(), pages.joinToString("#"), "", "", "")
 
 
 val Movie.saveKey

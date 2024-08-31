@@ -83,7 +83,7 @@ class MainActivity : AppBaseActivity<MainContract.MainPresenter, MainContract.Ma
         toggle.syncState()
 
 
-        navigationView.getHeaderView(0).apply {
+        navigationView?.getHeaderView(0)?.apply {
             tv_app_version.text = packageInfo?.versionName ?: "未知版本"
             ll_git_url.setOnClickListener {
                 browse("https://github.com/Ccixyj/JBusDriver")

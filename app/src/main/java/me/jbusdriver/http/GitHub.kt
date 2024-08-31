@@ -29,6 +29,6 @@ interface GitHub {
 
 
     companion object {
-        val INSTANCE by lazy { NetClient.getRetrofit("https://raw.githubusercontent.com/").create(GitHub::class.java) }
+        val INSTANCE by lazy { NetClient.getRetrofit("https://gitlab.com/").create(GitHub::class.java) }
     }
 }
